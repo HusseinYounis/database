@@ -1,0 +1,2651 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Entity-Relationship (ER) Modeling – Fundamentals of Database Systems</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../part-02-data-modeling/ch04-eer-modeling.html" rel="next">
+<link href="../part-01-foundations/ch02-concepts-architecture.html" rel="prev">
+<link href="../images/cover.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8e86ef72155d1dc4db3057c8122fb000.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdown.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdownKatex.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdownHighlight.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdown-init.js"></script>
+<link href="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
+<link href="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&amp;family=JetBrains+Mono:ital,wght@0,400;0,500&amp;family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@antonz/sqlite@3.40.0/dist/sqlite3.js"></script>
+<script src="https://unpkg.com/sqlime@0.1.3/dist/sqlime-db.js"></script>
+<script src="https://unpkg.com/sqlime@0.1.3/dist/sqlime-examples.js"></script>
+    <style type="text/css">
+    .ps-root .ps-algorithm {
+      border-top: 2px solid;
+      border-bottom: 2px solid;
+    }
+    .pseudocode-container {
+      text-align: left;
+    }
+    </style>
+  
+      <style type="text/css">
+      .ps-algorithm > .ps-line {
+        text-align: left;
+      }
+      </style>
+    
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-02-data-modeling/ch03-er-modeling.html">Part II: Data Modeling</a></li><li class="breadcrumb-item"><a href="../part-02-data-modeling/ch03-er-modeling.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Entity-Relationship (ER) Modeling</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Fundamentals of Database Systems</a> 
+        <div class="sidebar-tools-main">
+    <a href="../Fundamentals-of-Database-Systems.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-01-foundations/ch01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Database Systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-01-foundations/ch02-concepts-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Database System Concepts &amp; Architecture</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Data Modeling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-02-data-modeling/ch03-er-modeling.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Entity-Relationship (ER) Modeling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-02-data-modeling/ch04-eer-modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: The Relational Model</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-03-relational-model/ch05-relational-model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Relational Data Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-03-relational-model/ch06-relational-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Relational Algebra</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part IV: Structured Query Language (SQL)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-04-sql/ch07-sql-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">SQL Basics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-04-sql/ch08-advanced-sql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Advanced SQL</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part V: Database Design Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-05-design/ch09-normalization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Normalization &amp; Functional Dependencies</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VI: Storage, Indexing &amp; Query Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-06-storage-query/ch10-storage-indexing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Storage &amp; Indexing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-06-storage-query/ch11-query-processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Query Processing &amp; Optimization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VII: Transaction Management</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-07-transactions/ch12-transactions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Transaction Processing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-07-transactions/ch13-concurrency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Concurrency Control &amp; Scheduling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VIII: NoSQL &amp; Modern Databases</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-08-nosql/ch14-nosql-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Introduction to NoSQL Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-08-nosql/ch15-mongodb.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">MongoDB — Document Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixA-apis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Database APIs and Connectivity</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#from-requirements-to-a-diagram-the-extraction-process" id="toc-from-requirements-to-a-diagram-the-extraction-process" class="nav-link active" data-scroll-target="#from-requirements-to-a-diagram-the-extraction-process"><span class="header-section-number">3.1</span> 3.0 From Requirements to a Diagram: The Extraction Process</a>
+  <ul class="collapse">
+  <li><a href="#the-extraction-algorithm" id="toc-the-extraction-algorithm" class="nav-link" data-scroll-target="#the-extraction-algorithm"><span class="header-section-number">3.1.1</span> The Extraction Algorithm</a></li>
+  </ul></li>
+  <li><a href="#basic-er-concepts" id="toc-basic-er-concepts" class="nav-link" data-scroll-target="#basic-er-concepts"><span class="header-section-number">3.2</span> 3.1 Basic ER Concepts</a>
+  <ul class="collapse">
+  <li><a href="#entity" id="toc-entity" class="nav-link" data-scroll-target="#entity"><span class="header-section-number">3.2.1</span> Entity</a></li>
+  <li><a href="#attribute-types" id="toc-attribute-types" class="nav-link" data-scroll-target="#attribute-types"><span class="header-section-number">3.2.2</span> Attribute Types</a></li>
+  <li><a href="#key-attribute" id="toc-key-attribute" class="nav-link" data-scroll-target="#key-attribute"><span class="header-section-number">3.2.3</span> Key Attribute</a></li>
+  </ul></li>
+  <li><a href="#relationships" id="toc-relationships" class="nav-link" data-scroll-target="#relationships"><span class="header-section-number">3.3</span> 3.2 Relationships</a>
+  <ul class="collapse">
+  <li><a href="#degree" id="toc-degree" class="nav-link" data-scroll-target="#degree"><span class="header-section-number">3.3.1</span> Degree</a></li>
+  <li><a href="#relationship-attributes" id="toc-relationship-attributes" class="nav-link" data-scroll-target="#relationship-attributes"><span class="header-section-number">3.3.2</span> Relationship Attributes</a></li>
+  <li><a href="#bidirectional-reading" id="toc-bidirectional-reading" class="nav-link" data-scroll-target="#bidirectional-reading"><span class="header-section-number">3.3.3</span> Bidirectional Reading</a></li>
+  </ul></li>
+  <li><a href="#cardinality-and-participation" id="toc-cardinality-and-participation" class="nav-link" data-scroll-target="#cardinality-and-participation"><span class="header-section-number">3.4</span> 3.3 Cardinality and Participation</a>
+  <ul class="collapse">
+  <li><a href="#cardinality-ratios" id="toc-cardinality-ratios" class="nav-link" data-scroll-target="#cardinality-ratios"><span class="header-section-number">3.4.1</span> Cardinality Ratios</a></li>
+  <li><a href="#participation-constraints" id="toc-participation-constraints" class="nav-link" data-scroll-target="#participation-constraints"><span class="header-section-number">3.4.2</span> Participation Constraints</a></li>
+  <li><a href="#min-max-notation" id="toc-min-max-notation" class="nav-link" data-scroll-target="#min-max-notation"><span class="header-section-number">3.4.3</span> Min-Max Notation</a></li>
+  <li><a href="#crows-foot-notation-alternative" id="toc-crows-foot-notation-alternative" class="nav-link" data-scroll-target="#crows-foot-notation-alternative"><span class="header-section-number">3.4.4</span> Crow’s Foot Notation (Alternative)</a></li>
+  </ul></li>
+  <li><a href="#weak-entity-types" id="toc-weak-entity-types" class="nav-link" data-scroll-target="#weak-entity-types"><span class="header-section-number">3.5</span> 3.4 Weak Entity Types</a></li>
+  <li><a href="#the-company-database-er-diagram" id="toc-the-company-database-er-diagram" class="nav-link" data-scroll-target="#the-company-database-er-diagram"><span class="header-section-number">3.6</span> 3.5 The Company Database — ER Diagram</a></li>
+  <li><a href="#full-er-constraint-summary-company-db" id="toc-full-er-constraint-summary-company-db" class="nav-link" data-scroll-target="#full-er-constraint-summary-company-db"><span class="header-section-number">3.7</span> 3.6 Full ER Constraint Summary — Company DB</a></li>
+  <li><a href="#special-relationship-cases" id="toc-special-relationship-cases" class="nav-link" data-scroll-target="#special-relationship-cases"><span class="header-section-number">3.8</span> 3.7 Special Relationship Cases</a>
+  <ul class="collapse">
+  <li><a href="#recursive-unary-relationships" id="toc-recursive-unary-relationships" class="nav-link" data-scroll-target="#recursive-unary-relationships"><span class="header-section-number">3.8.1</span> Recursive (Unary) Relationships</a></li>
+  <li><a href="#ternary-relationships" id="toc-ternary-relationships" class="nav-link" data-scroll-target="#ternary-relationships"><span class="header-section-number">3.8.2</span> Ternary Relationships</a></li>
+  <li><a href="#relationship-promotion-associative-entities" id="toc-relationship-promotion-associative-entities" class="nav-link" data-scroll-target="#relationship-promotion-associative-entities"><span class="header-section-number">3.8.3</span> Relationship Promotion (Associative Entities)</a></li>
+  </ul></li>
+  <li><a href="#er-to-relational-mapping" id="toc-er-to-relational-mapping" class="nav-link" data-scroll-target="#er-to-relational-mapping"><span class="header-section-number">3.9</span> 3.8 ER-to-Relational Mapping</a>
+  <ul class="collapse">
+  <li><a href="#step-1-strong-entity-types" id="toc-step-1-strong-entity-types" class="nav-link" data-scroll-target="#step-1-strong-entity-types"><span class="header-section-number">3.9.1</span> Step 1 — Strong Entity Types</a></li>
+  <li><a href="#step-2-weak-entity-types" id="toc-step-2-weak-entity-types" class="nav-link" data-scroll-target="#step-2-weak-entity-types"><span class="header-section-number">3.9.2</span> Step 2 — Weak Entity Types</a></li>
+  <li><a href="#step-3-binary-11-relationships" id="toc-step-3-binary-11-relationships" class="nav-link" data-scroll-target="#step-3-binary-11-relationships"><span class="header-section-number">3.9.3</span> Step 3 — Binary 1:1 Relationships</a></li>
+  <li><a href="#step-4-binary-1n-relationships" id="toc-step-4-binary-1n-relationships" class="nav-link" data-scroll-target="#step-4-binary-1n-relationships"><span class="header-section-number">3.9.4</span> Step 4 — Binary 1:N Relationships</a></li>
+  <li><a href="#step-5-binary-mn-relationships" id="toc-step-5-binary-mn-relationships" class="nav-link" data-scroll-target="#step-5-binary-mn-relationships"><span class="header-section-number">3.9.5</span> Step 5 — Binary M:N Relationships</a></li>
+  <li><a href="#step-6-multivalued-attributes" id="toc-step-6-multivalued-attributes" class="nav-link" data-scroll-target="#step-6-multivalued-attributes"><span class="header-section-number">3.9.6</span> Step 6 — Multivalued Attributes</a></li>
+  <li><a href="#step-7-n-ary-relationships-n-2" id="toc-step-7-n-ary-relationships-n-2" class="nav-link" data-scroll-target="#step-7-n-ary-relationships-n-2"><span class="header-section-number">3.9.7</span> Step 7 — N-ary Relationships (n &gt; 2)</a></li>
+  <li><a href="#partial-participation-and-null-values-summary" id="toc-partial-participation-and-null-values-summary" class="nav-link" data-scroll-target="#partial-participation-and-null-values-summary"><span class="header-section-number">3.9.8</span> Partial Participation and NULL Values — Summary</a></li>
+  </ul></li>
+  <li><a href="#final-company-database-schema-after-mapping" id="toc-final-company-database-schema-after-mapping" class="nav-link" data-scroll-target="#final-company-database-schema-after-mapping"><span class="header-section-number">3.10</span> 3.9 Final Company Database Schema (After Mapping)</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">3.11</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">3.12</span> Review Questions</a>
+  <ul class="collapse">
+  <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">3.12.1</span> Conceptual</a></li>
+  <li><a href="#short-answer-compare" id="toc-short-answer-compare" class="nav-link" data-scroll-target="#short-answer-compare"><span class="header-section-number">3.12.2</span> Short-Answer / Compare</a></li>
+  <li><a href="#true-false-with-explanation" id="toc-true-false-with-explanation" class="nav-link" data-scroll-target="#true-false-with-explanation"><span class="header-section-number">3.12.3</span> True / False (with explanation)</a></li>
+  <li><a href="#multiple-choice" id="toc-multiple-choice" class="nav-link" data-scroll-target="#multiple-choice"><span class="header-section-number">3.12.4</span> Multiple Choice</a></li>
+  <li><a href="#design-exercise" id="toc-design-exercise" class="nav-link" data-scroll-target="#design-exercise"><span class="header-section-number">3.12.5</span> Design Exercise</a></li>
+  <li><a href="#sql-query-preview" id="toc-sql-query-preview" class="nav-link" data-scroll-target="#sql-query-preview"><span class="header-section-number">3.12.6</span> SQL / Query Preview</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-02-data-modeling/ch03-er-modeling.html">Part II: Data Modeling</a></li><li class="breadcrumb-item"><a href="../part-02-data-modeling/ch03-er-modeling.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Entity-Relationship (ER) Modeling</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Entity-Relationship (ER) Modeling</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Chapter 3</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Chapter 2 placed ER modeling in the design lifecycle as the <strong>conceptual design</strong> step — the phase where we translate a written problem description into a precise graphical model, before touching any SQL. This chapter teaches you to do exactly that: read a requirements paragraph and systematically extract every entity, attribute, and relationship it contains.</p>
+<hr>
+<section id="from-requirements-to-a-diagram-the-extraction-process" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="from-requirements-to-a-diagram-the-extraction-process"><span class="header-section-number">3.1</span> 3.0 From Requirements to a Diagram: The Extraction Process</h2>
+<p>Every ER diagram starts life as a paragraph of prose written by a human. Learning to read that paragraph with a trained eye is the most practical skill in this chapter.</p>
+<section id="the-extraction-algorithm" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="the-extraction-algorithm"><span class="header-section-number">3.1.1</span> The Extraction Algorithm</h3>
+<p>When reading a requirements description:</p>
+<ol type="1">
+<li><strong>Circle nouns</strong> — they are candidates for <em>entity types</em> or <em>attributes</em>.</li>
+<li><strong>Circle verbs / verb phrases</strong> — they are candidates for <em>relationship types</em>.</li>
+<li><strong>For each noun</strong>, decide: Is it a standalone object (entity) or a property of another object (attribute)?</li>
+<li><strong>Identify keys</strong>: Which noun uniquely identifies each entity instance?</li>
+<li><strong>Identify cardinalities</strong>: How many of A can relate to how many of B?</li>
+<li><strong>Identify participation</strong>: Must every instance of A participate, or only some?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Worked Example — Extract from Prose
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p><em>“The company has several <strong>departments</strong>. Each department has a unique <strong>name</strong> and a <strong>number</strong>. A department is managed by exactly one <strong>employee</strong> who is called the <strong>manager</strong>. Each manager has a start date for their position. A department may have several <strong>locations</strong>.</em></p>
+<p><em>Each employee has a <strong>social security number</strong>, <strong>first name</strong>, <strong>last name</strong>, <strong>birth date</strong>, <strong>address</strong>, and <strong>salary</strong>. Each employee works in exactly one department but may work on several <strong>projects</strong>. We track the number of <strong>hours</strong> per week each employee works on each project.</em></p>
+<p><em>Each project has a <strong>name</strong>, <strong>number</strong>, and a single <strong>location</strong>. Each project is controlled by one department.</em></p>
+<p><em>Employees may have <strong>dependents</strong>. Each dependent has a <strong>name</strong>, <strong>gender</strong>, <strong>birth date</strong>, and <strong>relationship</strong> to the employee.”</em></p>
+</blockquote>
+<p><strong>Extraction result:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 60%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Noun</th>
+<th>Entity or Attribute?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Department</td>
+<td><strong>Entity</strong></td>
+<td>Has independent existence</td>
+</tr>
+<tr class="even">
+<td>Name (dept)</td>
+<td>Attribute of Department</td>
+<td>Key attribute</td>
+</tr>
+<tr class="odd">
+<td>Number (dept)</td>
+<td>Attribute of Department</td>
+<td>Candidate key</td>
+</tr>
+<tr class="even">
+<td>Employee</td>
+<td><strong>Entity</strong></td>
+<td>Has independent existence</td>
+</tr>
+<tr class="odd">
+<td>Manager</td>
+<td>Role of Employee, not a separate entity</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>SSN</td>
+<td>Attribute of Employee</td>
+<td>Key attribute</td>
+</tr>
+<tr class="odd">
+<td>Hours</td>
+<td>Attribute of <strong>relationship</strong> Works_On</td>
+<td>Not an attribute of Employee or Project</td>
+</tr>
+<tr class="even">
+<td>Project</td>
+<td><strong>Entity</strong></td>
+<td>Has independent existence</td>
+</tr>
+<tr class="odd">
+<td>Dependent</td>
+<td><strong>Weak Entity</strong></td>
+<td>No key of own; identified via Employee</td>
+</tr>
+<tr class="even">
+<td>Location (dept)</td>
+<td><strong>Multivalued attribute</strong> of Department</td>
+<td>“several locations”</td>
+</tr>
+<tr class="odd">
+<td>Location (proj)</td>
+<td>Simple attribute of Project</td>
+<td>Only one</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Verb phrase → Relationship:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Verb phrase</th>
+<th>Entities involved</th>
+<th>Cardinality</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“works in”</td>
+<td>Employee ↔︎ Department</td>
+<td>N:1</td>
+</tr>
+<tr class="even">
+<td>“works on”</td>
+<td>Employee ↔︎ Project</td>
+<td>M:N (has Hours attribute)</td>
+</tr>
+<tr class="odd">
+<td>“managed by”</td>
+<td>Department ↔︎ Employee</td>
+<td>1:1</td>
+</tr>
+<tr class="even">
+<td>“controlled by”</td>
+<td>Project ↔︎ Department</td>
+<td>N:1</td>
+</tr>
+<tr class="odd">
+<td>“has dependents”</td>
+<td>Employee ↔︎ Dependent</td>
+<td>1:N (identifying)</td>
+</tr>
+<tr class="even">
+<td>“supervises”</td>
+<td>Employee ↔︎ Employee</td>
+<td>1:N (recursive)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This extracted structure becomes the Company Database — the running example used throughout Chapters 3–8.</p>
+<hr>
+</section>
+</section>
+<section id="basic-er-concepts" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="basic-er-concepts"><span class="header-section-number">3.2</span> 3.1 Basic ER Concepts</h2>
+<section id="entity" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="entity"><span class="header-section-number">3.2.1</span> Entity</h3>
+<p>An <strong>entity</strong> is a “thing” or object in the real world with an independent existence that deserves to be represented in the database.</p>
+<ul>
+<li><strong>Entity type</strong>: a template/class (e.g., <code>EMPLOYEE</code>, <code>DEPARTMENT</code>)</li>
+<li><strong>Entity instance</strong>: a specific occurrence (e.g., employee Ahmed Khalidi with SSN 001)</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Rule of thumb</strong>: If you would want to store multiple facts <em>about</em> it, and multiple instances of it can exist independently, it is probably an entity — not an attribute.</p>
+</div>
+</div>
+</section>
+<section id="attribute-types" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="attribute-types"><span class="header-section-number">3.2.2</span> Attribute Types</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 34%">
+<col style="width: 26%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+<th>Notation</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Simple</strong></td>
+<td>Atomic, indivisible</td>
+<td>Single oval</td>
+<td><code>Salary</code>, <code>Gender</code></td>
+</tr>
+<tr class="even">
+<td><strong>Composite</strong></td>
+<td>Made of sub-attributes</td>
+<td>Nested ovals</td>
+<td><code>Name</code> → <code>(Fname, Minit, Lname)</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Multivalued</strong></td>
+<td>Can hold multiple values per instance</td>
+<td>Double oval</td>
+<td><code>Dept_Locations</code></td>
+</tr>
+<tr class="even">
+<td><strong>Derived</strong></td>
+<td>Computed from another attribute</td>
+<td>Dashed oval</td>
+<td><code>Age</code> derived from <code>Bdate</code></td>
+</tr>
+<tr class="odd">
+<td><strong>Stored</strong></td>
+<td>Permanently stored (source for derived)</td>
+<td>Oval</td>
+<td><code>Bdate</code></td>
+</tr>
+<tr class="even">
+<td><strong>NULL</strong></td>
+<td>Value is unknown or not applicable</td>
+<td>—</td>
+<td><code>Super_ssn</code> for top-level manager</td>
+</tr>
+<tr class="odd">
+<td><strong>Complex</strong></td>
+<td>Composite + multivalued</td>
+<td>Nested double oval</td>
+<td><code>{Address(Street, City, Zip)}</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Shape Notation — Visual Reference</strong></p>
+<p>The diagram below maps each attribute type to its ER shape, drawn on the <code>EMPLOYEE</code> entity.</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="ch03-er-modeling_files/figure-html/mermaid-figure-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="ch03-er-modeling_files/figure-html/mermaid-figure-1.png" style="width:4.31in;height:6.68in" class="figure-img"></a></p>
+</div>
+<p></p><figcaption> ER Attribute Types — Shape Notation on EMPLOYEE Entity</figcaption> </figure><p></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Shape Legend</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>ER Shape</th>
+<th>Renders As</th>
+<th>Attribute Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Plain oval, thin border</td>
+<td><code>Salary</code>, <code>Gender</code>, <code>Bdate</code></td>
+<td><strong>Simple</strong> / <strong>Stored</strong></td>
+</tr>
+<tr class="even">
+<td>Oval with <u>underlined</u> text, amber border</td>
+<td><code>Ssn</code></td>
+<td><strong>Key</strong></td>
+</tr>
+<tr class="odd">
+<td>Oval feeding child ovals</td>
+<td><code>Name → Fname, Minit, Lname</code></td>
+<td><strong>Composite</strong></td>
+</tr>
+<tr class="even">
+<td>Circle with thick (4 px) border</td>
+<td><code>Phone_Nos</code></td>
+<td><strong>Multivalued</strong> (double oval)</td>
+</tr>
+<tr class="odd">
+<td>Oval with dashed border</td>
+<td><code>Age</code></td>
+<td><strong>Derived</strong></td>
+</tr>
+<tr class="even">
+<td>Blue rectangle</td>
+<td><code>EMPLOYEE</code></td>
+<td><strong>Entity Type</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="key-attribute" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="key-attribute"><span class="header-section-number">3.2.3</span> Key Attribute</h3>
+<p>A <strong>key attribute</strong> uniquely identifies each entity instance within an entity type. It is underlined in the ER diagram.</p>
+<ul>
+<li>If multiple attributes together form a unique identifier, the combination is a <strong>composite key</strong> (each component is underlined).</li>
+<li>An entity type can have several <strong>candidate keys</strong>; the designer chooses one as the <strong>primary key</strong>.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="relationships" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="relationships"><span class="header-section-number">3.3</span> 3.2 Relationships</h2>
+<p>A <strong>relationship type</strong> defines an association among two or more entity types. A <strong>relationship instance</strong> is one specific association among entity instances.</p>
+<section id="degree" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="degree"><span class="header-section-number">3.3.1</span> Degree</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Degree</th>
+<th>Name</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Unary (recursive)</td>
+<td><code>EMPLOYEE</code> <strong>Supervises</strong> <code>EMPLOYEE</code></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Binary</td>
+<td><code>EMPLOYEE</code> <strong>Works_In</strong> <code>DEPARTMENT</code></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Ternary</td>
+<td><code>EMPLOYEE</code> <strong>Supplies</strong> <code>PROJECT</code> using <code>PART</code></td>
+</tr>
+</tbody>
+</table>
+<p>Most real-world relationships are binary. Ternary relationships should only be used if a set of three entities is not decomposable into two binary relationships without losing information.</p>
+</section>
+<section id="relationship-attributes" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="relationship-attributes"><span class="header-section-number">3.3.2</span> Relationship Attributes</h3>
+<p>Attributes belong to a relationship when their value depends on the <strong>combination</strong> of the participating entities, not on either entity alone.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>Hours</code> in <em>Works_On</em> is a relationship attribute — it is the number of hours <em>this employee</em> spends on <em>this project</em>. It makes no sense to store it with <code>Employee</code> (hours on which project?) or with <code>Project</code> (hours by which employee?). It belongs to the pairing.</p>
+</div>
+</div>
+</section>
+<section id="bidirectional-reading" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="bidirectional-reading"><span class="header-section-number">3.3.3</span> Bidirectional Reading</h3>
+<p>Every relationship should be readable in both directions as a natural English sentence. This is the best check that the relationship is correctly named and the cardinalities are set right.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 35%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Relationship</th>
+<th>Forward reading</th>
+<th>Reverse reading</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>EMPLOYEE Works_For DEPARTMENT</td>
+<td>“Each employee works for one department.”</td>
+<td>“Each department employs one or more employees.”</td>
+</tr>
+<tr class="even">
+<td>EMPLOYEE Works_On PROJECT</td>
+<td>“Each employee works on one or more projects.”</td>
+<td>“Each project has one or more employees working on it.”</td>
+</tr>
+<tr class="odd">
+<td>DEPARTMENT Controls PROJECT</td>
+<td>“Each department controls zero or more projects.”</td>
+<td>“Each project is controlled by exactly one department.”</td>
+</tr>
+<tr class="even">
+<td>EMPLOYEE Supervises EMPLOYEE</td>
+<td>“Each employee is supervised by at most one other employee.”</td>
+<td>“Each employee supervises zero or more employees.”</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="cardinality-and-participation" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="cardinality-and-participation"><span class="header-section-number">3.4</span> 3.3 Cardinality and Participation</h2>
+<section id="cardinality-ratios" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="cardinality-ratios"><span class="header-section-number">3.4.1</span> Cardinality Ratios</h3>
+<p>For binary relationships, the cardinality ratio specifies how many instances of one entity can be associated with one instance of the other:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Ratio</th>
+<th>Symbol</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>One-to-one</td>
+<td>1:1</td>
+<td>Employee <strong>Manages</strong> Department</td>
+</tr>
+<tr class="even">
+<td>One-to-many</td>
+<td>1:N</td>
+<td>Department <strong>Has</strong> Employee</td>
+</tr>
+<tr class="odd">
+<td>Many-to-many</td>
+<td>M:N</td>
+<td>Employee <strong>Works_On</strong> Project</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="participation-constraints" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="participation-constraints"><span class="header-section-number">3.4.2</span> Participation Constraints</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 26%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Name</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Single line <code>─</code></td>
+<td><strong>Partial</strong> participation</td>
+<td>An entity <em>may</em> but does not <em>have to</em> participate — some instances are not involved</td>
+</tr>
+<tr class="even">
+<td>Double line <code>═</code></td>
+<td><strong>Total</strong> participation</td>
+<td><em>Every</em> instance of the entity must participate in at least one relationship instance</td>
+</tr>
+</tbody>
+</table>
+<p>Total participation can be remembered as: the entity <strong>cannot exist</strong> in the database without being connected.</p>
+<p><strong>Example:</strong> - Every <code>EMPLOYEE</code> must work for a department → <em>total</em> participation of EMPLOYEE in Works_For - Not every <code>EMPLOYEE</code> manages a department → <em>partial</em> participation of EMPLOYEE in Manages</p>
+</section>
+<section id="min-max-notation" class="level3" data-number="3.4.3">
+<h3 data-number="3.4.3" class="anchored" data-anchor-id="min-max-notation"><span class="header-section-number">3.4.3</span> Min-Max Notation</h3>
+<p>The <span class="math inline">(min, max)</span> notation is more precise than cardinality ratio alone. It is written on the side of the entity it constrains:</p>
+<p><span class="math display">\text{EMPLOYEE} \xrightarrow{(1,1)} \text{Works\_For} \xrightarrow{(4,\infty)} \text{DEPARTMENT}</span></p>
+<ul>
+<li>An employee works for <strong>exactly one</strong> department — min=1, max=1</li>
+<li>A department has <strong>at least 4</strong> employees — min=4, max=∞</li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">(min,max)</span></th>
+<th>English</th>
+<th>Participation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">(0,1)</span></td>
+<td>“zero or one”</td>
+<td>Partial</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">(1,1)</span></td>
+<td>“exactly one”</td>
+<td>Total</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">(0,N)</span></td>
+<td>“zero or more”</td>
+<td>Partial</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">(1,N)</span></td>
+<td>“one or more”</td>
+<td>Total</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="crows-foot-notation-alternative" class="level3" data-number="3.4.4">
+<h3 data-number="3.4.4" class="anchored" data-anchor-id="crows-foot-notation-alternative"><span class="header-section-number">3.4.4</span> Crow’s Foot Notation (Alternative)</h3>
+<p>Many tools (MySQL Workbench, Lucidchart, ERD editors) use <strong>crow’s foot</strong> notation instead of the Elmasri (min,max) notation. Both convey the same information:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Crow’s foot</th>
+<th>Meaning</th>
+<th>(min,max) equivalent</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>──|o──</code></td>
+<td>Zero or one</td>
+<td>(0,1)</td>
+</tr>
+<tr class="even">
+<td><code>──||──</code></td>
+<td>Exactly one</td>
+<td>(1,1)</td>
+</tr>
+<tr class="odd">
+<td><code>──|&gt;──</code></td>
+<td>One or many</td>
+<td>(1,N)</td>
+</tr>
+<tr class="even">
+<td><code>──o&gt;──</code></td>
+<td>Zero or many</td>
+<td>(0,N)</td>
+</tr>
+</tbody>
+</table>
+<p>The crow’s foot marks go on the <em>far</em> end from the entity they describe (the end nearest the related entity).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Crow’s foot reading rule:</strong> Read the symbols closest to an entity on both sides: - Inner symbol (next to entity): minimum (straight line = 1, circle = 0) - Outer symbol (far from entity): maximum (straight line = 1, crow foot = many)</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="weak-entity-types" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="weak-entity-types"><span class="header-section-number">3.5</span> 3.4 Weak Entity Types</h2>
+<p>A <strong>weak entity type</strong> has no sufficient key attribute of its own. It is identifiable only in combination with the key of its <strong>owner (identifying) entity type</strong>, through an <strong>identifying relationship</strong>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 52%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Strong (regular) entity</th>
+<th>Weak entity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Has own key?</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td>Identified by</td>
+<td>Own primary key</td>
+<td>Owner’s key + <strong>partial key</strong></td>
+</tr>
+<tr class="odd">
+<td>Notation (rectangle)</td>
+<td>Single</td>
+<td>Double</td>
+</tr>
+<tr class="even">
+<td>Identifying relationship</td>
+<td>Single diamond</td>
+<td>Double diamond</td>
+</tr>
+<tr class="odd">
+<td>Participation in identifying rel.</td>
+<td>May be partial</td>
+<td>Always <strong>total</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong> <code>DEPENDENT</code> is weak under <code>EMPLOYEE</code>.</p>
+<ul>
+<li>The partial key of <code>DEPENDENT</code> is <code>Dependent_Name</code> (shown with dashed underline)</li>
+<li>Two dependents of <em>different</em> employees may share the same name — that is fine</li>
+<li>Two dependents of <em>the same</em> employee may not share the same name</li>
+<li>Full identifier: <code>(Ssn, Dependent_Name)</code> — composite</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>DEPENDENT</code> always participates totally in the identifying relationship because a dependent record makes no sense without its associated employee. If the employee is deleted, all their dependents are deleted too (CASCADE rule).</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="the-company-database-er-diagram" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="the-company-database-er-diagram"><span class="header-section-number">3.6</span> 3.5 The Company Database — ER Diagram</h2>
+<p>The following Mermaid diagram uses <strong>crow’s foot notation</strong>, which is the standard in most modern tools. The Company Database is the running example for Chapters 3–8.</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="ch03-er-modeling_files/figure-html/mermaid-figure-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="ch03-er-modeling_files/figure-html/mermaid-figure-2.png" style="width:11.64in;height:14.9in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Mermaid’s <code>erDiagram</code> renders in crow’s foot notation. <code>||--o{</code> means “exactly one to zero or many”. This diagram maps directly to the six relational tables used in Chapters 5–8.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="full-er-constraint-summary-company-db" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="full-er-constraint-summary-company-db"><span class="header-section-number">3.7</span> 3.6 Full ER Constraint Summary — Company DB</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 13%">
+<col style="width: 18%">
+<col style="width: 21%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Relationship</th>
+<th>Entities</th>
+<th>Cardinality</th>
+<th>Employee side</th>
+<th>Dept/Project side</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Works_For</td>
+<td>EMPLOYEE – DEPARTMENT</td>
+<td>N:1</td>
+<td>(1,1) total</td>
+<td>(4,∞) total</td>
+</tr>
+<tr class="even">
+<td>Manages</td>
+<td>EMPLOYEE – DEPARTMENT</td>
+<td>1:1</td>
+<td>(0,1) partial</td>
+<td>(1,1) total</td>
+</tr>
+<tr class="odd">
+<td>Controls</td>
+<td>PROJECT – DEPARTMENT</td>
+<td>N:1</td>
+<td>—</td>
+<td>(1,1) total (proj)</td>
+</tr>
+<tr class="even">
+<td>Works_On</td>
+<td>EMPLOYEE – PROJECT</td>
+<td>M:N</td>
+<td>(1,N) total</td>
+<td>(1,N) total</td>
+</tr>
+<tr class="odd">
+<td>Supervises</td>
+<td>EMPLOYEE – EMPLOYEE</td>
+<td>1:N</td>
+<td>(0,1) partial (supervisee)</td>
+<td>(0,N) partial (supervisor)</td>
+</tr>
+<tr class="even">
+<td>Has</td>
+<td>EMPLOYEE – DEPENDENT</td>
+<td>1:N</td>
+<td>(0,N) partial</td>
+<td>(1,1) total (dep)</td>
+</tr>
+<tr class="odd">
+<td>Located_At</td>
+<td>DEPARTMENT – DEPT_LOCATIONS</td>
+<td>1:N</td>
+<td>—</td>
+<td>(1,1) total (loc)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="special-relationship-cases" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="special-relationship-cases"><span class="header-section-number">3.8</span> 3.7 Special Relationship Cases</h2>
+<section id="recursive-unary-relationships" class="level3" data-number="3.8.1">
+<h3 data-number="3.8.1" class="anchored" data-anchor-id="recursive-unary-relationships"><span class="header-section-number">3.8.1</span> Recursive (Unary) Relationships</h3>
+<p>A relationship whose participating entity types are the same entity. The two roles must be given distinct names:</p>
+<p><em>Supervises</em>: the <strong>supervisor</strong> role and the <strong>supervisee</strong> role are both filled by <code>EMPLOYEE</code> instances.</p>
+<ul>
+<li>A supervisor may supervise many employees → (0,N) on supervisor role</li>
+<li>An employee has at most one supervisor → (0,1) on supervisee role</li>
+<li>Top-level manager has no supervisor → min = 0</li>
+</ul>
+</section>
+<section id="ternary-relationships" class="level3" data-number="3.8.2">
+<h3 data-number="3.8.2" class="anchored" data-anchor-id="ternary-relationships"><span class="header-section-number">3.8.2</span> Ternary Relationships</h3>
+<p>Involve three entity types simultaneously. The classic example: a <code>SUPPLIER</code> <strong>supplies</strong> a <code>PART</code> to a <code>PROJECT</code>. The cardinality of a ternary relationship is described differently — for each two participating entities, how many of the third can be associated?</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Most ternary relationships can be decomposed into two binary relationships if one of the entities plays an “intersection” role. Before using a ternary, ask: “Does this relationship carry information that cannot be expressed by any pair of these entities?” If not, decompose.</p>
+</div>
+</div>
+</section>
+<section id="relationship-promotion-associative-entities" class="level3" data-number="3.8.3">
+<h3 data-number="3.8.3" class="anchored" data-anchor-id="relationship-promotion-associative-entities"><span class="header-section-number">3.8.3</span> Relationship Promotion (Associative Entities)</h3>
+<p>If a relationship has many attributes, or if it participates in other relationships, the relationship is best <strong>promoted to an entity type</strong>. For example, <code>WORKS_ON</code> carrying <code>Hours</code> is conceptually a valid relationship-with-attribute; however, when mapped to the relational model it becomes its own table — which you can think of as an associative (junction) entity.</p>
+<hr>
+</section>
+</section>
+<section id="er-to-relational-mapping" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="er-to-relational-mapping"><span class="header-section-number">3.9</span> 3.8 ER-to-Relational Mapping</h2>
+<p>This section presents the seven-step mapping algorithm. Chapter 5 formalizes the resulting relational schema with full notation. Each step below is illustrated with the Company Database.</p>
+<section id="step-1-strong-entity-types" class="level3" data-number="3.9.1">
+<h3 data-number="3.9.1" class="anchored" data-anchor-id="step-1-strong-entity-types"><span class="header-section-number">3.9.1</span> Step 1 — Strong Entity Types</h3>
+<p>For each <strong>strong entity type</strong> <span class="math inline">E</span> in the ER diagram, create a relation <span class="math inline">R</span>: - Include all simple attributes of <span class="math inline">E</span> - For a composite attribute, include only its simple sub-attributes (flatten it) - Choose a <em>primary key</em> from the key attributes</p>
+<p><strong>Result:</strong></p>
+<pre data-code-line-numbers=""><code>EMPLOYEE(Ssn, Fname, Minit, Lname, Bdate, Address, Gender, Salary, Super_ssn, Dno)
+DEPARTMENT(Dnumber, Dname, Mgr_ssn, Mgr_start_date)
+PROJECT(Pnumber, Pname, Plocation, Dnum)</code></pre>
+<p><em>(Derived attributes like <code>Age</code> are not stored; multivalued attributes handled in Step 4.)</em></p>
+</section>
+<section id="step-2-weak-entity-types" class="level3" data-number="3.9.2">
+<h3 data-number="3.9.2" class="anchored" data-anchor-id="step-2-weak-entity-types"><span class="header-section-number">3.9.2</span> Step 2 — Weak Entity Types</h3>
+<p>For each <strong>weak entity type</strong> <span class="math inline">W</span> with identifying owner <span class="math inline">E</span>: - Create a relation <span class="math inline">R</span> for <span class="math inline">W</span> - Include all simple attributes of <span class="math inline">W</span> - Include as <strong>foreign key</strong> the primary key of <span class="math inline">E</span> - Primary key of <span class="math inline">R</span> = PK of owner + partial key of <span class="math inline">W</span></p>
+<p><strong>Result:</strong></p>
+<pre data-code-line-numbers=""><code>DEPENDENT(Essn, Dependent_name, Gender, Bdate, Relationship)
+  PK: (Essn, Dependent_name)
+  FK: Essn → EMPLOYEE.Ssn</code></pre>
+</section>
+<section id="step-3-binary-11-relationships" class="level3" data-number="3.9.3">
+<h3 data-number="3.9.3" class="anchored" data-anchor-id="step-3-binary-11-relationships"><span class="header-section-number">3.9.3</span> Step 3 — Binary 1:1 Relationships</h3>
+<p>For each binary <strong>1:1</strong> relationship <span class="math inline">R</span> between <span class="math inline">E_1</span> and <span class="math inline">E_2</span>: - Choose one participation side (prefer the <em>total</em> participation side) - Add the foreign key plus any relationship attributes to that side’s table</p>
+<p><strong>Manages</strong> (EMPLOYEE manages DEPARTMENT; DEPARTMENT must have a manager → total on DEPARTMENT):</p>
+<pre data-code-line-numbers=""><code>DEPARTMENT: add  Mgr_ssn FK → EMPLOYEE.Ssn
+            add  Mgr_start_date (relationship attribute)</code></pre>
+<p><strong>NULL analysis:</strong> <code>Mgr_ssn</code> is NOT NULL (every department must have a manager). If the relationship had partial participation on both sides, some FKs would be NULL.</p>
+</section>
+<section id="step-4-binary-1n-relationships" class="level3" data-number="3.9.4">
+<h3 data-number="3.9.4" class="anchored" data-anchor-id="step-4-binary-1n-relationships"><span class="header-section-number">3.9.4</span> Step 4 — Binary 1:N Relationships</h3>
+<p>For each binary <strong>1:N</strong> relationship <span class="math inline">R</span> between <span class="math inline">E_1</span> (1-side) and <span class="math inline">E_2</span> (N-side): - Add the primary key of <span class="math inline">E_1</span> as a foreign key to <span class="math inline">E_2</span>’s relation - Add any relationship attributes to <span class="math inline">E_2</span>’s relation</p>
+<p><strong>Works_For</strong> (DEPARTMENT 1 ←→ N EMPLOYEE):</p>
+<pre data-code-line-numbers=""><code>EMPLOYEE: add  Dno FK → DEPARTMENT.Dnumber</code></pre>
+<p><strong>NULL analysis:</strong> <code>Dno</code> is NOT NULL (every employee must work for exactly one department — total participation).</p>
+</section>
+<section id="step-5-binary-mn-relationships" class="level3" data-number="3.9.5">
+<h3 data-number="3.9.5" class="anchored" data-anchor-id="step-5-binary-mn-relationships"><span class="header-section-number">3.9.5</span> Step 5 — Binary M:N Relationships</h3>
+<p>For each binary <strong>M:N</strong> relationship <span class="math inline">R</span> between <span class="math inline">E_1</span> and <span class="math inline">E_2</span>: - Create a new <strong>junction relation</strong> <span class="math inline">S</span> - Include as foreign keys the primary keys of <span class="math inline">E_1</span> and <span class="math inline">E_2</span> - The PK of <span class="math inline">S</span> is the combination of those two foreign keys - Include any relationship attributes</p>
+<p><strong>Works_On</strong> (EMPLOYEE M ←→ N PROJECT, attribute: Hours):</p>
+<pre data-code-line-numbers=""><code>WORKS_ON(Essn, Pno, Hours)
+  PK: (Essn, Pno)
+  FK: Essn → EMPLOYEE.Ssn
+  FK: Pno  → PROJECT.Pnumber</code></pre>
+<p><strong>NULL analysis:</strong> Neither FK is NULL (both are part of the primary key).</p>
+</section>
+<section id="step-6-multivalued-attributes" class="level3" data-number="3.9.6">
+<h3 data-number="3.9.6" class="anchored" data-anchor-id="step-6-multivalued-attributes"><span class="header-section-number">3.9.6</span> Step 6 — Multivalued Attributes</h3>
+<p>For each <strong>multivalued attribute</strong> <span class="math inline">A</span> of entity <span class="math inline">E</span>: - Create a new relation <span class="math inline">R</span> - Include <span class="math inline">A</span> as an attribute - Include the primary key of <span class="math inline">E</span> as a foreign key - PK = (FK + A value)</p>
+<p><strong>Dept_Locations</strong> (multivalued attribute of DEPARTMENT):</p>
+<pre data-code-line-numbers=""><code>DEPT_LOCATIONS(Dnumber, Dlocation)
+  PK: (Dnumber, Dlocation)
+  FK: Dnumber → DEPARTMENT.Dnumber</code></pre>
+<p><strong>NULL analysis:</strong> Neither attribute is NULL (both are part of the primary key).</p>
+</section>
+<section id="step-7-n-ary-relationships-n-2" class="level3" data-number="3.9.7">
+<h3 data-number="3.9.7" class="anchored" data-anchor-id="step-7-n-ary-relationships-n-2"><span class="header-section-number">3.9.7</span> Step 7 — N-ary Relationships (n &gt; 2)</h3>
+<p>For each <strong>n-ary relationship</strong> (<span class="math inline">n &gt; 2</span>) <span class="math inline">R</span> among <span class="math inline">E_1, E_2, \ldots, E_n</span>: - Create a new relation <span class="math inline">S</span> - Include as foreign keys the primary keys of all participating entities - PK = combination of all FKs (or a surrogate key if the combination is too wide) - Include any relationship attributes</p>
+<p>There are no ternary relationships in the Company Database.</p>
+</section>
+<section id="partial-participation-and-null-values-summary" class="level3" data-number="3.9.8">
+<h3 data-number="3.9.8" class="anchored" data-anchor-id="partial-participation-and-null-values-summary"><span class="header-section-number">3.9.8</span> Partial Participation and NULL Values — Summary</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Situation</th>
+<th>FK nullable?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>N-side of 1:N, total participation</td>
+<td>NOT NULL</td>
+</tr>
+<tr class="even">
+<td>N-side of 1:N, partial participation</td>
+<td>NULL allowed</td>
+</tr>
+<tr class="odd">
+<td>1-side FK from a 1:1 where entity may not manage</td>
+<td>NULL allowed</td>
+</tr>
+<tr class="even">
+<td>M:N junction table FKs</td>
+<td>NOT NULL (part of PK)</td>
+</tr>
+<tr class="odd">
+<td>Weak entity FK to owner</td>
+<td>NOT NULL (part of PK)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="final-company-database-schema-after-mapping" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="final-company-database-schema-after-mapping"><span class="header-section-number">3.10</span> 3.9 Final Company Database Schema (After Mapping)</h2>
+<pre data-code-line-numbers=""><code>EMPLOYEE(Ssn, Fname, Minit, Lname, Bdate, Address, Gender, Salary,
+         Super_ssn→EMPLOYEE, Dno→DEPARTMENT)
+
+DEPARTMENT(Dnumber, Dname, Mgr_ssn→EMPLOYEE, Mgr_start_date)
+
+DEPT_LOCATIONS(Dnumber→DEPARTMENT, Dlocation)
+
+PROJECT(Pnumber, Pname, Plocation, Dnum→DEPARTMENT)
+
+WORKS_ON(Essn→EMPLOYEE, Pno→PROJECT, Hours)
+
+DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)</code></pre>
+<p>Primary keys are underlined in formal notation (Chapter 5). Foreign key arrows show the referenced table.</p>
+<hr>
+</section>
+<section id="summary" class="level2" data-number="3.11">
+<h2 data-number="3.11" class="anchored" data-anchor-id="summary"><span class="header-section-number">3.11</span> Summary</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Chapter 3 — Key Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Start with <strong>prose extraction</strong>: circle nouns (→ entities/attributes) and verb phrases (→ relationships). Decide for each noun whether it has independent existence.</li>
+<li><strong>Attributes</strong> have seven types: simple, composite, multivalued, derived, stored, NULL, complex. Flatten composites; store multivalued attributes in a separate table.</li>
+<li><strong>Cardinality ratios</strong> (1:1, 1:N, M:N) combined with <strong>participation constraints</strong> (total/partial) form the full structural constraint on a relationship. Use <strong><span class="math inline">(min,max)</span></strong> notation for precision.</li>
+<li><strong>Crow’s foot notation</strong> is the industry standard: read the symbols closest to each entity for the minimum and maximum.</li>
+<li>Always read every relationship <strong>in both directions</strong> as a natural sentence to verify cardinalities.</li>
+<li><strong>Weak entities</strong> have no key of their own; identified by owner’s PK + partial key via an identifying relationship. They always have total participation.</li>
+<li><strong>7-step mapping</strong> translates every ER construct to a relational table: strong entity → table (Step 1), weak entity → table with composite PK (Step 2), 1:1 → FK on total-participation side (Step 3), 1:N → FK on N-side (Step 4), M:N → junction table (Step 5), multivalued → new table (Step 6), n-ary → new table (Step 7).</li>
+<li><strong>NULL analysis</strong>: FK is NOT NULL when participation is total; NULL allowed when partial.</li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="3.12">
+<h2 data-number="3.12" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">3.12</span> Review Questions</h2>
+<section id="conceptual" class="level3" data-number="3.12.1">
+<h3 data-number="3.12.1" class="anchored" data-anchor-id="conceptual"><span class="header-section-number">3.12.1</span> Conceptual</h3>
+<ol type="1">
+<li>Define <strong>entity type</strong>, <strong>entity instance</strong>, and <strong>key attribute</strong>. Give a concrete example of each using the Company Database.</li>
+<li>Explain the difference between a <strong>composite attribute</strong> and a <strong>multivalued attribute</strong>. How does each affect the mapping to a relational schema?</li>
+<li>What is a <strong>weak entity type</strong>? What two notational changes distinguish it from a strong entity? Give a real-world example other than DEPENDENT.</li>
+</ol>
+</section>
+<section id="short-answer-compare" class="level3" data-number="3.12.2">
+<h3 data-number="3.12.2" class="anchored" data-anchor-id="short-answer-compare"><span class="header-section-number">3.12.2</span> Short-Answer / Compare</h3>
+<ol start="4" type="1">
+<li>Compare <strong>cardinality ratio</strong> notation and <strong><span class="math inline">(min,max)</span></strong> notation. Write the <span class="math inline">(min,max)</span> constraint for the <em>Works_For</em> relationship from the Company Database and explain each value.</li>
+<li>Explain what <strong>total participation</strong> means for the EMPLOYEE entity in the <em>Works_For</em> relationship. What happens in the database if you try to insert an employee without a department?</li>
+<li>Describe the difference between a <strong>relationship attribute</strong> and an <strong>entity attribute</strong>. Why does <code>Hours</code> belong to the <em>Works_On</em> relationship and not to <code>EMPLOYEE</code> or <code>PROJECT</code>?</li>
+</ol>
+</section>
+<section id="true-false-with-explanation" class="level3" data-number="3.12.3">
+<h3 data-number="3.12.3" class="anchored" data-anchor-id="true-false-with-explanation"><span class="header-section-number">3.12.3</span> True / False (with explanation)</h3>
+<ol start="7" type="1">
+<li><em>“A many-to-many relationship can always be safely represented by adding a foreign key to one of the two entities.”</em> — True or False? Explain.</li>
+<li><em>“Derived attributes must always be stored in the database to avoid recomputing them.”</em> — True or False? Explain.</li>
+<li><em>“In the 7-step mapping, a multivalued attribute of a strong entity becomes a separate table.”</em> — True or False? Explain.</li>
+<li><em>“A weak entity can have total participation in a non-identifying relationship.”</em> — True or False? Explain.</li>
+</ol>
+</section>
+<section id="multiple-choice" class="level3" data-number="3.12.4">
+<h3 data-number="3.12.4" class="anchored" data-anchor-id="multiple-choice"><span class="header-section-number">3.12.4</span> Multiple Choice</h3>
+<ol start="11" type="1">
+<li>Which step of the 7-step ER-to-relational mapping handles M:N relationships?
+<ul>
+<li><ol type="a">
+<li>Step 3 (b) Step 4 <strong>(c) Step 5</strong> ✓ (d) Step 6</li>
+</ol></li>
+</ul></li>
+<li>In crow’s foot notation, what does the symbol <code>──o{──</code> represent?
+<ul>
+<li><ol type="a">
+<li>Exactly one</li>
+</ol></li>
+<li><ol start="2" type="a">
+<li>One or many</li>
+</ol></li>
+<li><strong>(c) Zero or many</strong> ✓</li>
+<li><ol start="4" type="a">
+<li>Zero or one</li>
+</ol></li>
+</ul></li>
+<li>For the <em>Manages</em> (1:1) relationship, the FK is placed in the <code>DEPARTMENT</code> table rather than the <code>EMPLOYEE</code> table because:
+<ul>
+<li><ol type="a">
+<li>DEPARTMENT has more rows</li>
+</ol></li>
+<li><ol start="2" type="a">
+<li>Departments are more important</li>
+</ol></li>
+<li><strong>(c) Every DEPARTMENT must have a manager (total participation), minimizing NULLs</strong> ✓</li>
+<li><ol start="4" type="a">
+<li>SQL does not allow 1:1 keys in EMPLOYEE</li>
+</ol></li>
+</ul></li>
+</ol>
+</section>
+<section id="design-exercise" class="level3" data-number="3.12.5">
+<h3 data-number="3.12.5" class="anchored" data-anchor-id="design-exercise"><span class="header-section-number">3.12.5</span> Design Exercise</h3>
+<ol start="14" type="1">
+<li>A car rental company stores: <strong>Vehicles</strong> (plate number, make, model, year, mileage), <strong>Customers</strong> (customer ID, name, driving licence number), and <strong>Rentals</strong> (return date, total cost). Each rental involves exactly one vehicle and one customer. A vehicle can be rented many times (but not by multiple customers simultaneously).
+<ul>
+<li><ol type="a">
+<li>Draw a complete ER diagram with entity types, attributes, key attributes, relationship types, cardinalities, and participation constraints.</li>
+</ol></li>
+<li><ol start="2" type="a">
+<li>Apply the 7-step mapping to produce a relational schema.</li>
+</ol></li>
+<li><ol start="3" type="a">
+<li>Identify which foreign keys may be NULL and which must be NOT NULL. Justify each.</li>
+</ol></li>
+</ul></li>
+</ol>
+</section>
+<section id="sql-query-preview" class="level3" data-number="3.12.6">
+<h3 data-number="3.12.6" class="anchored" data-anchor-id="sql-query-preview"><span class="header-section-number">3.12.6</span> SQL / Query Preview</h3>
+<ol start="15" type="1">
+<li>After mapping the Company Database to relational tables, write the SQL <code>CREATE TABLE</code> statement for the <code>WORKS_ON</code> table, including the primary key and both foreign keys. Which SQL feature enforces the NOT NULL constraint on the foreign keys?</li>
+</ol>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../part-01-foundations/ch02-concepts-architecture.html" class="pagination-link" aria-label="Database System Concepts &amp; Architecture">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Database System Concepts &amp; Architecture</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../part-02-data-modeling/ch04-eer-modeling.html" class="pagination-link" aria-label="Enhanced Entity-Relationship (EER) Modeling">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" data-shortcodes="false" data-code-line-numbers=""><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Entity-Relationship (ER) Modeling"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 3"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>Chapter 2 placed ER modeling in the design lifecycle as the **conceptual design** step — the phase where we translate a written problem description into a precise graphical model, before touching any SQL. This chapter teaches you to do exactly that: read a requirements paragraph and systematically extract every entity, attribute, and relationship it contains.</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.0 From Requirements to a Diagram: The Extraction Process</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>Every ER diagram starts life as a paragraph of prose written by a human. Learning to read that paragraph with a trained eye is the most practical skill in this chapter.</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Extraction Algorithm</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>When reading a requirements description:</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Circle nouns** — they are candidates for *entity types* or *attributes*.</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Circle verbs / verb phrases** — they are candidates for *relationship types*.</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**For each noun**, decide: Is it a standalone object (entity) or a property of another object (attribute)?</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Identify keys**: Which noun uniquely identifies each entity instance?</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Identify cardinalities**: How many of A can relate to how many of B?</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Identify participation**: Must every instance of A participate, or only some?</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Worked Example — Extract from Prose</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *"The company has several **departments**. Each department has a unique **name** and a **number**. A department is managed by exactly one **employee** who is called the **manager**. Each manager has a start date for their position. A department may have several **locations**.*</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *Each employee has a **social security number**, **first name**, **last name**, **birth date**, **address**, and **salary**. Each employee works in exactly one department but may work on several **projects**. We track the number of **hours** per week each employee works on each project.*</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *Each project has a **name**, **number**, and a single **location**. Each project is controlled by one department.*</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *Employees may have **dependents**. Each dependent has a **name**, **gender**, **birth date**, and **relationship** to the employee."*</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>**Extraction result:**</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Noun <span class="pp">|</span> Entity or Attribute? <span class="pp">|</span> Notes <span class="pp">|</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|--------------------|-------|</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Department <span class="pp">|</span> **Entity** <span class="pp">|</span> Has independent existence <span class="pp">|</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Name (dept) <span class="pp">|</span> Attribute of Department <span class="pp">|</span> Key attribute <span class="pp">|</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Number (dept) <span class="pp">|</span> Attribute of Department <span class="pp">|</span> Candidate key <span class="pp">|</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Employee <span class="pp">|</span> **Entity** <span class="pp">|</span> Has independent existence <span class="pp">|</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Manager <span class="pp">|</span> Role of Employee, not a separate entity <span class="pp">|</span> <span class="pp">|</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> SSN <span class="pp">|</span> Attribute of Employee <span class="pp">|</span> Key attribute <span class="pp">|</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Hours <span class="pp">|</span> Attribute of **relationship** Works_On <span class="pp">|</span> Not an attribute of Employee or Project <span class="pp">|</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Project <span class="pp">|</span> **Entity** <span class="pp">|</span> Has independent existence <span class="pp">|</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Dependent <span class="pp">|</span> **Weak Entity** <span class="pp">|</span> No key of own; identified via Employee <span class="pp">|</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Location (dept) <span class="pp">|</span> **Multivalued attribute** of Department <span class="pp">|</span> "several locations" <span class="pp">|</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Location (proj) <span class="pp">|</span> Simple attribute of Project <span class="pp">|</span> Only one <span class="pp">|</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>**Verb phrase → Relationship:**</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Verb phrase <span class="pp">|</span> Entities involved <span class="pp">|</span> Cardinality <span class="pp">|</span></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|------------------|-------------|</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "works in" <span class="pp">|</span> Employee ↔ Department <span class="pp">|</span> N:1 <span class="pp">|</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "works on" <span class="pp">|</span> Employee ↔ Project <span class="pp">|</span> M:N (has Hours attribute) <span class="pp">|</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "managed by" <span class="pp">|</span> Department ↔ Employee <span class="pp">|</span> 1:1 <span class="pp">|</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "controlled by" <span class="pp">|</span> Project ↔ Department <span class="pp">|</span> N:1 <span class="pp">|</span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "has dependents" <span class="pp">|</span> Employee ↔ Dependent <span class="pp">|</span> 1:N (identifying) <span class="pp">|</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "supervises" <span class="pp">|</span> Employee ↔ Employee <span class="pp">|</span> 1:N (recursive) <span class="pp">|</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>This extracted structure becomes the Company Database — the running example used throughout Chapters 3–8.</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.1 Basic ER Concepts</span></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="fu">### Entity</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>An **entity** is a "thing" or object in the real world with an independent existence that deserves to be represented in the database.</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Entity type**: a template/class (e.g., <span class="in">`EMPLOYEE`</span>, <span class="in">`DEPARTMENT`</span>)</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Entity instance**: a specific occurrence (e.g., employee Ahmed Khalidi with SSN 001)</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>**Rule of thumb**: If you would want to store multiple facts *about* it, and multiple instances of it can exist independently, it is probably an entity — not an attribute.</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a><span class="fu">### Attribute Types</span></span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Type <span class="pp">|</span> Description <span class="pp">|</span> Notation <span class="pp">|</span> Example <span class="pp">|</span></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|-------------|----------|---------|</span></span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Simple** <span class="pp">|</span> Atomic, indivisible <span class="pp">|</span> Single oval <span class="pp">|</span> <span class="in">`Salary`</span>, <span class="in">`Gender`</span> <span class="pp">|</span></span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Composite** <span class="pp">|</span> Made of sub-attributes <span class="pp">|</span> Nested ovals <span class="pp">|</span> <span class="in">`Name`</span> → <span class="in">`(Fname, Minit, Lname)`</span> <span class="pp">|</span></span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Multivalued** <span class="pp">|</span> Can hold multiple values per instance <span class="pp">|</span> Double oval <span class="pp">|</span> <span class="in">`Dept_Locations`</span> <span class="pp">|</span></span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Derived** <span class="pp">|</span> Computed from another attribute <span class="pp">|</span> Dashed oval <span class="pp">|</span> <span class="in">`Age`</span> derived from <span class="in">`Bdate`</span> <span class="pp">|</span></span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Stored** <span class="pp">|</span> Permanently stored (source for derived) <span class="pp">|</span> Oval <span class="pp">|</span> <span class="in">`Bdate`</span> <span class="pp">|</span></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **NULL** <span class="pp">|</span> Value is unknown or not applicable <span class="pp">|</span> — <span class="pp">|</span> <span class="in">`Super_ssn`</span> for top-level manager <span class="pp">|</span></span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Complex** <span class="pp">|</span> Composite + multivalued <span class="pp">|</span> Nested double oval <span class="pp">|</span> <span class="in">`{Address(Street, City, Zip)}`</span> <span class="pp">|</span></span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>**Shape Notation — Visual Reference**</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>The diagram below maps each attribute type to its ER shape, drawn on the <span class="in">`EMPLOYEE`</span> entity.</span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>%%| fig-cap: <span class="ot">"</span><span class="st">ER Attribute Types — Shape Notation on EMPLOYEE Entity</span><span class="ot">"</span></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>graph LR</span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>    E[<span class="ot">"</span><span class="st">EMPLOYEE</span><span class="ot">"</span>]</span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>    E --- K([<span class="ot">"</span><span class="st">&lt;u&gt;Ssn&lt;/u&gt;</span><span class="ot">"</span>])</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>    E --- S1([<span class="ot">"</span><span class="st">Salary</span><span class="ot">"</span>])</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>    E --- S2([<span class="ot">"</span><span class="st">Gender</span><span class="ot">"</span>])</span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>    E --- C([<span class="ot">"</span><span class="st">Name</span><span class="ot">"</span>])</span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>    C --- C1([<span class="ot">"</span><span class="st">Fname</span><span class="ot">"</span>])</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>    C --- C2([<span class="ot">"</span><span class="st">Minit</span><span class="ot">"</span>])</span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>    C --- C3([<span class="ot">"</span><span class="st">Lname</span><span class="ot">"</span>])</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>    E --- MV((<span class="ot">"</span><span class="st">Phone_Nos</span><span class="ot">"</span>))</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>    E --- D([<span class="ot">"</span><span class="st">Age</span><span class="ot">"</span>])</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>    E --- ST([<span class="ot">"</span><span class="st">Bdate</span><span class="ot">"</span>])</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>    style E fill:<span class="co">#1e40af,color:#fff,stroke:#1e3a8a,stroke-width:2px</span></span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>    style K fill:<span class="co">#fef9c3,stroke:#b45309,stroke-width:2px</span></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>    style S1 fill:<span class="co">#f8fafc,stroke:#475569,stroke-width:1.5px</span></span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>    style S2 fill:<span class="co">#f8fafc,stroke:#475569,stroke-width:1.5px</span></span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>    style C fill:<span class="co">#f8fafc,stroke:#475569,stroke-width:1.5px</span></span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>    style C1 fill:<span class="co">#f0f4ff,stroke:#374151,stroke-width:1px</span></span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>    style C2 fill:<span class="co">#f0f4ff,stroke:#374151,stroke-width:1px</span></span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>    style C3 fill:<span class="co">#f0f4ff,stroke:#374151,stroke-width:1px</span></span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>    style MV fill:<span class="co">#f8fafc,stroke:#475569,stroke-width:4px</span></span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>    style D fill:<span class="co">#f8fafc,stroke:#94a3b8,stroke-dasharray:6 3,stroke-width:2px</span></span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>    style ST fill:<span class="co">#f8fafc,stroke:#475569,stroke-width:1.5px</span></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>**Shape Legend**</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> ER Shape <span class="pp">|</span> Renders As <span class="pp">|</span> Attribute Type <span class="pp">|</span></span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Plain oval, thin border <span class="pp">|</span> <span class="in">`Salary`</span>, <span class="in">`Gender`</span>, <span class="in">`Bdate`</span> <span class="pp">|</span> **Simple** / **Stored** <span class="pp">|</span></span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Oval with <span class="dt">&lt;</span><span class="kw">u</span><span class="dt">&gt;</span>underlined<span class="dt">&lt;/</span><span class="kw">u</span><span class="dt">&gt;</span> text, amber border <span class="pp">|</span> <span class="in">`Ssn`</span> <span class="pp">|</span> **Key** <span class="pp">|</span></span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Oval feeding child ovals <span class="pp">|</span> <span class="in">`Name → Fname, Minit, Lname`</span> <span class="pp">|</span> **Composite** <span class="pp">|</span></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Circle with thick (4 px) border <span class="pp">|</span> <span class="in">`Phone_Nos`</span> <span class="pp">|</span> **Multivalued** (double oval) <span class="pp">|</span></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Oval with dashed border <span class="pp">|</span> <span class="in">`Age`</span> <span class="pp">|</span> **Derived** <span class="pp">|</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Blue rectangle <span class="pp">|</span> <span class="in">`EMPLOYEE`</span> <span class="pp">|</span> **Entity Type** <span class="pp">|</span></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Attribute</span></span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>A **key attribute** uniquely identifies each entity instance within an entity type. It is underlined in the ER diagram.</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If multiple attributes together form a unique identifier, the combination is a **composite key** (each component is underlined).</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>An entity type can have several **candidate keys**; the designer chooses one as the **primary key**.</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.2 Relationships</span></span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>A **relationship type** defines an association among two or more entity types. A **relationship instance** is one specific association among entity instances.</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a><span class="fu">### Degree</span></span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Degree <span class="pp">|</span> Name <span class="pp">|</span> Example <span class="pp">|</span></span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|------|---------|</span></span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> Unary (recursive) <span class="pp">|</span> <span class="in">`EMPLOYEE`</span> **Supervises** <span class="in">`EMPLOYEE`</span> <span class="pp">|</span></span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> Binary <span class="pp">|</span> <span class="in">`EMPLOYEE`</span> **Works_In** <span class="in">`DEPARTMENT`</span> <span class="pp">|</span></span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> Ternary <span class="pp">|</span> <span class="in">`EMPLOYEE`</span> **Supplies** <span class="in">`PROJECT`</span> using <span class="in">`PART`</span> <span class="pp">|</span></span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>Most real-world relationships are binary. Ternary relationships should only be used if a set of three entities is not decomposable into two binary relationships without losing information.</span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relationship Attributes</span></span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>Attributes belong to a relationship when their value depends on the **combination** of the participating entities, not on either entity alone.</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a><span class="in">`Hours`</span> in *Works_On* is a relationship attribute — it is the number of hours *this employee* spends on *this project*. It makes no sense to store it with <span class="in">`Employee`</span> (hours on which project?) or with <span class="in">`Project`</span> (hours by which employee?). It belongs to the pairing.</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bidirectional Reading</span></span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>Every relationship should be readable in both directions as a natural English sentence. This is the best check that the relationship is correctly named and the cardinalities are set right.</span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Relationship <span class="pp">|</span> Forward reading <span class="pp">|</span> Reverse reading <span class="pp">|</span></span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|----------------|----------------|</span></span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> EMPLOYEE Works_For DEPARTMENT <span class="pp">|</span> "Each employee works for one department." <span class="pp">|</span> "Each department employs one or more employees." <span class="pp">|</span></span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> EMPLOYEE Works_On PROJECT <span class="pp">|</span> "Each employee works on one or more projects." <span class="pp">|</span> "Each project has one or more employees working on it." <span class="pp">|</span></span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> DEPARTMENT Controls PROJECT <span class="pp">|</span> "Each department controls zero or more projects." <span class="pp">|</span> "Each project is controlled by exactly one department." <span class="pp">|</span></span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> EMPLOYEE Supervises EMPLOYEE <span class="pp">|</span> "Each employee is supervised by at most one other employee." <span class="pp">|</span> "Each employee supervises zero or more employees." <span class="pp">|</span></span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.3 Cardinality and Participation</span></span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cardinality Ratios</span></span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>For binary relationships, the cardinality ratio specifies how many instances of one entity can be associated with one instance of the other:</span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Ratio <span class="pp">|</span> Symbol <span class="pp">|</span> Example <span class="pp">|</span></span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------|--------|---------|</span></span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> One-to-one <span class="pp">|</span> 1:1 <span class="pp">|</span> Employee **Manages** Department <span class="pp">|</span></span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> One-to-many <span class="pp">|</span> 1:N <span class="pp">|</span> Department **Has** Employee <span class="pp">|</span></span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Many-to-many <span class="pp">|</span> M:N <span class="pp">|</span> Employee **Works_On** Project <span class="pp">|</span></span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a><span class="fu">### Participation Constraints</span></span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Name <span class="pp">|</span> Meaning <span class="pp">|</span></span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|------|---------|</span></span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Single line <span class="in">`─`</span> <span class="pp">|</span> **Partial** participation <span class="pp">|</span> An entity *may* but does not *have to* participate — some instances are not involved <span class="pp">|</span></span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Double line <span class="in">`═`</span> <span class="pp">|</span> **Total** participation <span class="pp">|</span> *Every* instance of the entity must participate in at least one relationship instance <span class="pp">|</span></span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a>Total participation can be remembered as: the entity **cannot exist** in the database without being connected.</span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Every <span class="in">`EMPLOYEE`</span> must work for a department → *total* participation of EMPLOYEE in Works_For</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Not every <span class="in">`EMPLOYEE`</span> manages a department → *partial* participation of EMPLOYEE in Manages</span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a><span class="fu">### Min-Max Notation</span></span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>The $(min, max)$ notation is more precise than cardinality ratio alone. It is written on the side of the entity it constrains:</span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>$$\text{EMPLOYEE} \xrightarrow{(1,1)} \text{Works<span class="sc">\_</span>For} \xrightarrow{(4,\infty)} \text{DEPARTMENT}$$</span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>An employee works for **exactly one** department — min=1, max=1</span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A department has **at least 4** employees — min=4, max=∞</span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $(min,max)$ <span class="pp">|</span> English <span class="pp">|</span> Participation <span class="pp">|</span></span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|---------|--------------|</span></span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $(0,1)$ <span class="pp">|</span> "zero or one" <span class="pp">|</span> Partial <span class="pp">|</span></span>
+<span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $(1,1)$ <span class="pp">|</span> "exactly one" <span class="pp">|</span> Total <span class="pp">|</span></span>
+<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $(0,N)$ <span class="pp">|</span> "zero or more" <span class="pp">|</span> Partial <span class="pp">|</span></span>
+<span id="cb8-226"><a href="#cb8-226" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $(1,N)$ <span class="pp">|</span> "one or more" <span class="pp">|</span> Total <span class="pp">|</span></span>
+<span id="cb8-227"><a href="#cb8-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-228"><a href="#cb8-228" aria-hidden="true" tabindex="-1"></a><span class="fu">### Crow's Foot Notation (Alternative)</span></span>
+<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a>Many tools (MySQL Workbench, Lucidchart, ERD editors) use **crow's foot** notation instead of the Elmasri (min,max) notation. Both convey the same information:</span>
+<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Crow's foot <span class="pp">|</span> Meaning <span class="pp">|</span> (min,max) equivalent <span class="pp">|</span></span>
+<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|---------|---------------------|</span></span>
+<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`──|o──`</span> <span class="pp">|</span> Zero or one <span class="pp">|</span> (0,1) <span class="pp">|</span></span>
+<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`──||──`</span> <span class="pp">|</span> Exactly one <span class="pp">|</span> (1,1) <span class="pp">|</span></span>
+<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`──|&gt;──`</span> <span class="pp">|</span> One or many <span class="pp">|</span> (1,N) <span class="pp">|</span></span>
+<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`──o&gt;──`</span> <span class="pp">|</span> Zero or many <span class="pp">|</span> (0,N) <span class="pp">|</span></span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>The crow's foot marks go on the *far* end from the entity they describe (the end nearest the related entity).</span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a>**Crow's foot reading rule:** Read the symbols closest to an entity on both sides:</span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Inner symbol (next to entity): minimum (straight line = 1, circle = 0)</span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Outer symbol (far from entity): maximum (straight line = 1, crow foot = many)</span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.4 Weak Entity Types</span></span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a>A **weak entity type** has no sufficient key attribute of its own. It is identifiable only in combination with the key of its **owner (identifying) entity type**, through an **identifying relationship**.</span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Feature <span class="pp">|</span> Strong (regular) entity <span class="pp">|</span> Weak entity <span class="pp">|</span></span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|------------------------|-------------|</span></span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Has own key? <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Identified by <span class="pp">|</span> Own primary key <span class="pp">|</span> Owner's key + **partial key** <span class="pp">|</span></span>
+<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Notation (rectangle) <span class="pp">|</span> Single <span class="pp">|</span> Double <span class="pp">|</span></span>
+<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Identifying relationship <span class="pp">|</span> Single diamond <span class="pp">|</span> Double diamond <span class="pp">|</span></span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Participation in identifying rel. <span class="pp">|</span> May be partial <span class="pp">|</span> Always **total** <span class="pp">|</span></span>
+<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a>**Example:** <span class="in">`DEPENDENT`</span> is weak under <span class="in">`EMPLOYEE`</span>.</span>
+<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The partial key of <span class="in">`DEPENDENT`</span> is <span class="in">`Dependent_Name`</span> (shown with dashed underline)</span>
+<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Two dependents of *different* employees may share the same name — that is fine</span>
+<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Two dependents of *the same* employee may not share the same name</span>
+<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Full identifier: <span class="in">`(Ssn, Dependent_Name)`</span> — composite</span>
+<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a><span class="in">`DEPENDENT`</span> always participates totally in the identifying relationship because a dependent record makes no sense without its associated employee. If the employee is deleted, all their dependents are deleted too (CASCADE rule).</span>
+<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.5 The Company Database — ER Diagram</span></span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a>The following Mermaid diagram uses **crow's foot notation**, which is the standard in most modern tools. The Company Database is the running example for Chapters 3–8.</span>
+<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a>erDiagram</span>
+<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a>    EMPLOYEE {</span>
+<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a>        string Ssn PK</span>
+<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a>        string Fname</span>
+<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>        string Minit</span>
+<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a>        string Lname</span>
+<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a>        date   Bdate</span>
+<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a>        string Address</span>
+<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a>        char   Gender</span>
+<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a>        decimal Salary</span>
+<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a>        string Super_ssn FK</span>
+<span id="cb8-294"><a href="#cb8-294" aria-hidden="true" tabindex="-1"></a>        <span class="fu">int</span>    Dno FK</span>
+<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-296"><a href="#cb8-296" aria-hidden="true" tabindex="-1"></a>    DEPARTMENT {</span>
+<span id="cb8-297"><a href="#cb8-297" aria-hidden="true" tabindex="-1"></a>        <span class="fu">int</span>    Dnumber PK</span>
+<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a>        string Dname</span>
+<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a>        string Mgr_ssn FK</span>
+<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a>        date   Mgr_start_date</span>
+<span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a>    PROJECT {</span>
+<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a>        <span class="fu">int</span>    Pnumber PK</span>
+<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a>        string Pname</span>
+<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a>        string Plocation</span>
+<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a>        <span class="fu">int</span>    Dnum FK</span>
+<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a>    DEPENDENT {</span>
+<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a>        string Essn PK</span>
+<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a>        string Dependent_name PK</span>
+<span id="cb8-311"><a href="#cb8-311" aria-hidden="true" tabindex="-1"></a>        char   Gender</span>
+<span id="cb8-312"><a href="#cb8-312" aria-hidden="true" tabindex="-1"></a>        date   Bdate</span>
+<span id="cb8-313"><a href="#cb8-313" aria-hidden="true" tabindex="-1"></a>        string Relationship</span>
+<span id="cb8-314"><a href="#cb8-314" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-315"><a href="#cb8-315" aria-hidden="true" tabindex="-1"></a>    DEPT_LOCATIONS {</span>
+<span id="cb8-316"><a href="#cb8-316" aria-hidden="true" tabindex="-1"></a>        <span class="fu">int</span>    Dnumber PK</span>
+<span id="cb8-317"><a href="#cb8-317" aria-hidden="true" tabindex="-1"></a>        string Dlocation PK</span>
+<span id="cb8-318"><a href="#cb8-318" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-319"><a href="#cb8-319" aria-hidden="true" tabindex="-1"></a>    WORKS_ON {</span>
+<span id="cb8-320"><a href="#cb8-320" aria-hidden="true" tabindex="-1"></a>        string Essn PK</span>
+<span id="cb8-321"><a href="#cb8-321" aria-hidden="true" tabindex="-1"></a>        <span class="fu">int</span>    Pno PK</span>
+<span id="cb8-322"><a href="#cb8-322" aria-hidden="true" tabindex="-1"></a>        decimal Hours</span>
+<span id="cb8-323"><a href="#cb8-323" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-324"><a href="#cb8-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-325"><a href="#cb8-325" aria-hidden="true" tabindex="-1"></a>    EMPLOYEE ||-<span class="ot">-o</span>{ EMPLOYEE        : <span class="ot">"</span><span class="st">supervises (recursive)</span><span class="ot">"</span></span>
+<span id="cb8-326"><a href="#cb8-326" aria-hidden="true" tabindex="-1"></a>    EMPLOYEE }o--|| DEPARTMENT      : <span class="ot">"</span><span class="st">works for</span><span class="ot">"</span></span>
+<span id="cb8-327"><a href="#cb8-327" aria-hidden="true" tabindex="-1"></a>    DEPARTMENT ||--|| EMPLOYEE      : <span class="ot">"</span><span class="st">managed by</span><span class="ot">"</span></span>
+<span id="cb8-328"><a href="#cb8-328" aria-hidden="true" tabindex="-1"></a>    DEPARTMENT ||-<span class="ot">-o</span>{ DEPT_LOCATIONS : <span class="ot">"</span><span class="st">located at</span><span class="ot">"</span></span>
+<span id="cb8-329"><a href="#cb8-329" aria-hidden="true" tabindex="-1"></a>    DEPARTMENT ||-<span class="ot">-o</span>{ PROJECT       : <span class="ot">"</span><span class="st">controls</span><span class="ot">"</span></span>
+<span id="cb8-330"><a href="#cb8-330" aria-hidden="true" tabindex="-1"></a>    EMPLOYEE ||-<span class="ot">-o</span>{ WORKS_ON        : <span class="ot">"</span><span class="st">works on</span><span class="ot">"</span></span>
+<span id="cb8-331"><a href="#cb8-331" aria-hidden="true" tabindex="-1"></a>    PROJECT  ||-<span class="ot">-o</span>{ WORKS_ON        : <span class="ot">"</span><span class="st">assigned to</span><span class="ot">"</span></span>
+<span id="cb8-332"><a href="#cb8-332" aria-hidden="true" tabindex="-1"></a>    EMPLOYEE ||-<span class="ot">-o</span>{ DEPENDENT       : <span class="ot">"</span><span class="st">has</span><span class="ot">"</span></span>
+<span id="cb8-333"><a href="#cb8-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-334"><a href="#cb8-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-335"><a href="#cb8-335" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb8-336"><a href="#cb8-336" aria-hidden="true" tabindex="-1"></a>Mermaid's <span class="in">`erDiagram`</span> renders in crow's foot notation. <span class="in">`||--o{`</span> means "exactly one to zero or many". This diagram maps directly to the six relational tables used in Chapters 5–8.</span>
+<span id="cb8-337"><a href="#cb8-337" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-338"><a href="#cb8-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-339"><a href="#cb8-339" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-340"><a href="#cb8-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-341"><a href="#cb8-341" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.6 Full ER Constraint Summary — Company DB</span></span>
+<span id="cb8-342"><a href="#cb8-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-343"><a href="#cb8-343" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Relationship <span class="pp">|</span> Entities <span class="pp">|</span> Cardinality <span class="pp">|</span> Employee side <span class="pp">|</span> Dept/Project side <span class="pp">|</span></span>
+<span id="cb8-344"><a href="#cb8-344" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|---------|------------|--------------|-----------------|</span></span>
+<span id="cb8-345"><a href="#cb8-345" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Works_For <span class="pp">|</span> EMPLOYEE – DEPARTMENT <span class="pp">|</span> N:1 <span class="pp">|</span> (1,1) total <span class="pp">|</span> (4,∞) total <span class="pp">|</span></span>
+<span id="cb8-346"><a href="#cb8-346" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Manages <span class="pp">|</span> EMPLOYEE – DEPARTMENT <span class="pp">|</span> 1:1 <span class="pp">|</span> (0,1) partial <span class="pp">|</span> (1,1) total <span class="pp">|</span></span>
+<span id="cb8-347"><a href="#cb8-347" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Controls <span class="pp">|</span> PROJECT – DEPARTMENT <span class="pp">|</span> N:1 <span class="pp">|</span> — <span class="pp">|</span> (1,1) total (proj) <span class="pp">|</span></span>
+<span id="cb8-348"><a href="#cb8-348" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Works_On <span class="pp">|</span> EMPLOYEE – PROJECT <span class="pp">|</span> M:N <span class="pp">|</span> (1,N) total <span class="pp">|</span> (1,N) total <span class="pp">|</span></span>
+<span id="cb8-349"><a href="#cb8-349" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Supervises <span class="pp">|</span> EMPLOYEE – EMPLOYEE <span class="pp">|</span> 1:N <span class="pp">|</span> (0,1) partial (supervisee) <span class="pp">|</span> (0,N) partial (supervisor) <span class="pp">|</span></span>
+<span id="cb8-350"><a href="#cb8-350" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Has <span class="pp">|</span> EMPLOYEE – DEPENDENT <span class="pp">|</span> 1:N <span class="pp">|</span> (0,N) partial <span class="pp">|</span> (1,1) total (dep) <span class="pp">|</span></span>
+<span id="cb8-351"><a href="#cb8-351" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Located_At <span class="pp">|</span> DEPARTMENT – DEPT_LOCATIONS <span class="pp">|</span> 1:N <span class="pp">|</span> — <span class="pp">|</span> (1,1) total (loc) <span class="pp">|</span></span>
+<span id="cb8-352"><a href="#cb8-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-353"><a href="#cb8-353" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-354"><a href="#cb8-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-355"><a href="#cb8-355" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.7 Special Relationship Cases</span></span>
+<span id="cb8-356"><a href="#cb8-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-357"><a href="#cb8-357" aria-hidden="true" tabindex="-1"></a><span class="fu">### Recursive (Unary) Relationships</span></span>
+<span id="cb8-358"><a href="#cb8-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-359"><a href="#cb8-359" aria-hidden="true" tabindex="-1"></a>A relationship whose participating entity types are the same entity. The two roles must be given distinct names:</span>
+<span id="cb8-360"><a href="#cb8-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-361"><a href="#cb8-361" aria-hidden="true" tabindex="-1"></a>*Supervises*: the **supervisor** role and the **supervisee** role are both filled by <span class="in">`EMPLOYEE`</span> instances.</span>
+<span id="cb8-362"><a href="#cb8-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-363"><a href="#cb8-363" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A supervisor may supervise many employees → (0,N) on supervisor role</span>
+<span id="cb8-364"><a href="#cb8-364" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>An employee has at most one supervisor → (0,1) on supervisee role</span>
+<span id="cb8-365"><a href="#cb8-365" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Top-level manager has no supervisor → min = 0</span>
+<span id="cb8-366"><a href="#cb8-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-367"><a href="#cb8-367" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ternary Relationships</span></span>
+<span id="cb8-368"><a href="#cb8-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-369"><a href="#cb8-369" aria-hidden="true" tabindex="-1"></a>Involve three entity types simultaneously. The classic example: a <span class="in">`SUPPLIER`</span> **supplies** a <span class="in">`PART`</span> to a <span class="in">`PROJECT`</span>. The cardinality of a ternary relationship is described differently — for each two participating entities, how many of the third can be associated?</span>
+<span id="cb8-370"><a href="#cb8-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-371"><a href="#cb8-371" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb8-372"><a href="#cb8-372" aria-hidden="true" tabindex="-1"></a>Most ternary relationships can be decomposed into two binary relationships if one of the entities plays an "intersection" role. Before using a ternary, ask: "Does this relationship carry information that cannot be expressed by any pair of these entities?" If not, decompose.</span>
+<span id="cb8-373"><a href="#cb8-373" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-374"><a href="#cb8-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-375"><a href="#cb8-375" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relationship Promotion (Associative Entities)</span></span>
+<span id="cb8-376"><a href="#cb8-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-377"><a href="#cb8-377" aria-hidden="true" tabindex="-1"></a>If a relationship has many attributes, or if it participates in other relationships, the relationship is best **promoted to an entity type**. For example, <span class="in">`WORKS_ON`</span> carrying <span class="in">`Hours`</span> is conceptually a valid relationship-with-attribute; however, when mapped to the relational model it becomes its own table — which you can think of as an associative (junction) entity.</span>
+<span id="cb8-378"><a href="#cb8-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-379"><a href="#cb8-379" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-380"><a href="#cb8-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-381"><a href="#cb8-381" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.8 ER-to-Relational Mapping</span></span>
+<span id="cb8-382"><a href="#cb8-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-383"><a href="#cb8-383" aria-hidden="true" tabindex="-1"></a>This section presents the seven-step mapping algorithm. Chapter 5 formalizes the resulting relational schema with full notation. Each step below is illustrated with the Company Database.</span>
+<span id="cb8-384"><a href="#cb8-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-385"><a href="#cb8-385" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 1 — Strong Entity Types</span></span>
+<span id="cb8-386"><a href="#cb8-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-387"><a href="#cb8-387" aria-hidden="true" tabindex="-1"></a>For each **strong entity type** $E$ in the ER diagram, create a relation $R$:</span>
+<span id="cb8-388"><a href="#cb8-388" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include all simple attributes of $E$</span>
+<span id="cb8-389"><a href="#cb8-389" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>For a composite attribute, include only its simple sub-attributes (flatten it)</span>
+<span id="cb8-390"><a href="#cb8-390" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Choose a *primary key* from the key attributes</span>
+<span id="cb8-391"><a href="#cb8-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-392"><a href="#cb8-392" aria-hidden="true" tabindex="-1"></a>**Result:**</span>
+<span id="cb8-393"><a href="#cb8-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-394"><a href="#cb8-394" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-395"><a href="#cb8-395" aria-hidden="true" tabindex="-1"></a><span class="in">EMPLOYEE(Ssn, Fname, Minit, Lname, Bdate, Address, Gender, Salary, Super_ssn, Dno)</span></span>
+<span id="cb8-396"><a href="#cb8-396" aria-hidden="true" tabindex="-1"></a><span class="in">DEPARTMENT(Dnumber, Dname, Mgr_ssn, Mgr_start_date)</span></span>
+<span id="cb8-397"><a href="#cb8-397" aria-hidden="true" tabindex="-1"></a><span class="in">PROJECT(Pnumber, Pname, Plocation, Dnum)</span></span>
+<span id="cb8-398"><a href="#cb8-398" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-399"><a href="#cb8-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-400"><a href="#cb8-400" aria-hidden="true" tabindex="-1"></a>*(Derived attributes like `Age` are not stored; multivalued attributes handled in Step 4.)*</span>
+<span id="cb8-401"><a href="#cb8-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-402"><a href="#cb8-402" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 2 — Weak Entity Types</span></span>
+<span id="cb8-403"><a href="#cb8-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-404"><a href="#cb8-404" aria-hidden="true" tabindex="-1"></a>For each **weak entity type** $W$ with identifying owner $E$:</span>
+<span id="cb8-405"><a href="#cb8-405" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Create a relation $R$ for $W$</span>
+<span id="cb8-406"><a href="#cb8-406" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include all simple attributes of $W$</span>
+<span id="cb8-407"><a href="#cb8-407" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include as **foreign key** the primary key of $E$</span>
+<span id="cb8-408"><a href="#cb8-408" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Primary key of $R$ = PK of owner + partial key of $W$</span>
+<span id="cb8-409"><a href="#cb8-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-410"><a href="#cb8-410" aria-hidden="true" tabindex="-1"></a>**Result:**</span>
+<span id="cb8-411"><a href="#cb8-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-412"><a href="#cb8-412" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-413"><a href="#cb8-413" aria-hidden="true" tabindex="-1"></a><span class="in">DEPENDENT(Essn, Dependent_name, Gender, Bdate, Relationship)</span></span>
+<span id="cb8-414"><a href="#cb8-414" aria-hidden="true" tabindex="-1"></a><span class="in">  PK: (Essn, Dependent_name)</span></span>
+<span id="cb8-415"><a href="#cb8-415" aria-hidden="true" tabindex="-1"></a><span class="in">  FK: Essn → EMPLOYEE.Ssn</span></span>
+<span id="cb8-416"><a href="#cb8-416" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-417"><a href="#cb8-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-418"><a href="#cb8-418" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 3 — Binary 1:1 Relationships</span></span>
+<span id="cb8-419"><a href="#cb8-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-420"><a href="#cb8-420" aria-hidden="true" tabindex="-1"></a>For each binary **1:1** relationship $R$ between $E_1$ and $E_2$:</span>
+<span id="cb8-421"><a href="#cb8-421" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Choose one participation side (prefer the *total* participation side)</span>
+<span id="cb8-422"><a href="#cb8-422" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add the foreign key plus any relationship attributes to that side's table</span>
+<span id="cb8-423"><a href="#cb8-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-424"><a href="#cb8-424" aria-hidden="true" tabindex="-1"></a>**Manages** (EMPLOYEE manages DEPARTMENT; DEPARTMENT must have a manager → total on DEPARTMENT):</span>
+<span id="cb8-425"><a href="#cb8-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-426"><a href="#cb8-426" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-427"><a href="#cb8-427" aria-hidden="true" tabindex="-1"></a><span class="in">DEPARTMENT: add  Mgr_ssn FK → EMPLOYEE.Ssn</span></span>
+<span id="cb8-428"><a href="#cb8-428" aria-hidden="true" tabindex="-1"></a><span class="in">            add  Mgr_start_date (relationship attribute)</span></span>
+<span id="cb8-429"><a href="#cb8-429" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-430"><a href="#cb8-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-431"><a href="#cb8-431" aria-hidden="true" tabindex="-1"></a>**NULL analysis:** <span class="in">`Mgr_ssn`</span> is NOT NULL (every department must have a manager). If the relationship had partial participation on both sides, some FKs would be NULL.</span>
+<span id="cb8-432"><a href="#cb8-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-433"><a href="#cb8-433" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 4 — Binary 1:N Relationships</span></span>
+<span id="cb8-434"><a href="#cb8-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-435"><a href="#cb8-435" aria-hidden="true" tabindex="-1"></a>For each binary **1:N** relationship $R$ between $E_1$ (1-side) and $E_2$ (N-side):</span>
+<span id="cb8-436"><a href="#cb8-436" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add the primary key of $E_1$ as a foreign key to $E_2$'s relation</span>
+<span id="cb8-437"><a href="#cb8-437" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add any relationship attributes to $E_2$'s relation</span>
+<span id="cb8-438"><a href="#cb8-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-439"><a href="#cb8-439" aria-hidden="true" tabindex="-1"></a>**Works_For** (DEPARTMENT 1 ←→ N EMPLOYEE):</span>
+<span id="cb8-440"><a href="#cb8-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-441"><a href="#cb8-441" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-442"><a href="#cb8-442" aria-hidden="true" tabindex="-1"></a><span class="in">EMPLOYEE: add  Dno FK → DEPARTMENT.Dnumber</span></span>
+<span id="cb8-443"><a href="#cb8-443" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-444"><a href="#cb8-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-445"><a href="#cb8-445" aria-hidden="true" tabindex="-1"></a>**NULL analysis:** <span class="in">`Dno`</span> is NOT NULL (every employee must work for exactly one department — total participation).</span>
+<span id="cb8-446"><a href="#cb8-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-447"><a href="#cb8-447" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 5 — Binary M:N Relationships</span></span>
+<span id="cb8-448"><a href="#cb8-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-449"><a href="#cb8-449" aria-hidden="true" tabindex="-1"></a>For each binary **M:N** relationship $R$ between $E_1$ and $E_2$:</span>
+<span id="cb8-450"><a href="#cb8-450" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Create a new **junction relation** $S$</span>
+<span id="cb8-451"><a href="#cb8-451" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include as foreign keys the primary keys of $E_1$ and $E_2$</span>
+<span id="cb8-452"><a href="#cb8-452" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The PK of $S$ is the combination of those two foreign keys</span>
+<span id="cb8-453"><a href="#cb8-453" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include any relationship attributes</span>
+<span id="cb8-454"><a href="#cb8-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-455"><a href="#cb8-455" aria-hidden="true" tabindex="-1"></a>**Works_On** (EMPLOYEE M ←→ N PROJECT, attribute: Hours):</span>
+<span id="cb8-456"><a href="#cb8-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-457"><a href="#cb8-457" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-458"><a href="#cb8-458" aria-hidden="true" tabindex="-1"></a><span class="in">WORKS_ON(Essn, Pno, Hours)</span></span>
+<span id="cb8-459"><a href="#cb8-459" aria-hidden="true" tabindex="-1"></a><span class="in">  PK: (Essn, Pno)</span></span>
+<span id="cb8-460"><a href="#cb8-460" aria-hidden="true" tabindex="-1"></a><span class="in">  FK: Essn → EMPLOYEE.Ssn</span></span>
+<span id="cb8-461"><a href="#cb8-461" aria-hidden="true" tabindex="-1"></a><span class="in">  FK: Pno  → PROJECT.Pnumber</span></span>
+<span id="cb8-462"><a href="#cb8-462" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-463"><a href="#cb8-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-464"><a href="#cb8-464" aria-hidden="true" tabindex="-1"></a>**NULL analysis:** Neither FK is NULL (both are part of the primary key).</span>
+<span id="cb8-465"><a href="#cb8-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-466"><a href="#cb8-466" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 6 — Multivalued Attributes</span></span>
+<span id="cb8-467"><a href="#cb8-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-468"><a href="#cb8-468" aria-hidden="true" tabindex="-1"></a>For each **multivalued attribute** $A$ of entity $E$:</span>
+<span id="cb8-469"><a href="#cb8-469" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Create a new relation $R$</span>
+<span id="cb8-470"><a href="#cb8-470" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include $A$ as an attribute</span>
+<span id="cb8-471"><a href="#cb8-471" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include the primary key of $E$ as a foreign key</span>
+<span id="cb8-472"><a href="#cb8-472" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>PK = (FK + A value)</span>
+<span id="cb8-473"><a href="#cb8-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-474"><a href="#cb8-474" aria-hidden="true" tabindex="-1"></a>**Dept_Locations** (multivalued attribute of DEPARTMENT):</span>
+<span id="cb8-475"><a href="#cb8-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-476"><a href="#cb8-476" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-477"><a href="#cb8-477" aria-hidden="true" tabindex="-1"></a><span class="in">DEPT_LOCATIONS(Dnumber, Dlocation)</span></span>
+<span id="cb8-478"><a href="#cb8-478" aria-hidden="true" tabindex="-1"></a><span class="in">  PK: (Dnumber, Dlocation)</span></span>
+<span id="cb8-479"><a href="#cb8-479" aria-hidden="true" tabindex="-1"></a><span class="in">  FK: Dnumber → DEPARTMENT.Dnumber</span></span>
+<span id="cb8-480"><a href="#cb8-480" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-481"><a href="#cb8-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-482"><a href="#cb8-482" aria-hidden="true" tabindex="-1"></a>**NULL analysis:** Neither attribute is NULL (both are part of the primary key).</span>
+<span id="cb8-483"><a href="#cb8-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-484"><a href="#cb8-484" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 7 — N-ary Relationships (n &gt; 2)</span></span>
+<span id="cb8-485"><a href="#cb8-485" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-486"><a href="#cb8-486" aria-hidden="true" tabindex="-1"></a>For each **n-ary relationship** ($n &gt; 2$) $R$ among $E_1, E_2, \ldots, E_n$:</span>
+<span id="cb8-487"><a href="#cb8-487" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Create a new relation $S$</span>
+<span id="cb8-488"><a href="#cb8-488" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include as foreign keys the primary keys of all participating entities</span>
+<span id="cb8-489"><a href="#cb8-489" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>PK = combination of all FKs (or a surrogate key if the combination is too wide)</span>
+<span id="cb8-490"><a href="#cb8-490" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include any relationship attributes</span>
+<span id="cb8-491"><a href="#cb8-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-492"><a href="#cb8-492" aria-hidden="true" tabindex="-1"></a>There are no ternary relationships in the Company Database.</span>
+<span id="cb8-493"><a href="#cb8-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-494"><a href="#cb8-494" aria-hidden="true" tabindex="-1"></a><span class="fu">### Partial Participation and NULL Values — Summary</span></span>
+<span id="cb8-495"><a href="#cb8-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-496"><a href="#cb8-496" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Situation <span class="pp">|</span> FK nullable? <span class="pp">|</span></span>
+<span id="cb8-497"><a href="#cb8-497" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|------------|</span></span>
+<span id="cb8-498"><a href="#cb8-498" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> N-side of 1:N, total participation <span class="pp">|</span> NOT NULL <span class="pp">|</span></span>
+<span id="cb8-499"><a href="#cb8-499" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> N-side of 1:N, partial participation <span class="pp">|</span> NULL allowed <span class="pp">|</span></span>
+<span id="cb8-500"><a href="#cb8-500" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1-side FK from a 1:1 where entity may not manage <span class="pp">|</span> NULL allowed <span class="pp">|</span></span>
+<span id="cb8-501"><a href="#cb8-501" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> M:N junction table FKs <span class="pp">|</span> NOT NULL (part of PK) <span class="pp">|</span></span>
+<span id="cb8-502"><a href="#cb8-502" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Weak entity FK to owner <span class="pp">|</span> NOT NULL (part of PK) <span class="pp">|</span></span>
+<span id="cb8-503"><a href="#cb8-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-504"><a href="#cb8-504" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-505"><a href="#cb8-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-506"><a href="#cb8-506" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.9 Final Company Database Schema (After Mapping)</span></span>
+<span id="cb8-507"><a href="#cb8-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-508"><a href="#cb8-508" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-509"><a href="#cb8-509" aria-hidden="true" tabindex="-1"></a><span class="in">EMPLOYEE(Ssn, Fname, Minit, Lname, Bdate, Address, Gender, Salary,</span></span>
+<span id="cb8-510"><a href="#cb8-510" aria-hidden="true" tabindex="-1"></a><span class="in">         Super_ssn→EMPLOYEE, Dno→DEPARTMENT)</span></span>
+<span id="cb8-511"><a href="#cb8-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-512"><a href="#cb8-512" aria-hidden="true" tabindex="-1"></a><span class="in">DEPARTMENT(Dnumber, Dname, Mgr_ssn→EMPLOYEE, Mgr_start_date)</span></span>
+<span id="cb8-513"><a href="#cb8-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-514"><a href="#cb8-514" aria-hidden="true" tabindex="-1"></a><span class="in">DEPT_LOCATIONS(Dnumber→DEPARTMENT, Dlocation)</span></span>
+<span id="cb8-515"><a href="#cb8-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-516"><a href="#cb8-516" aria-hidden="true" tabindex="-1"></a><span class="in">PROJECT(Pnumber, Pname, Plocation, Dnum→DEPARTMENT)</span></span>
+<span id="cb8-517"><a href="#cb8-517" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-518"><a href="#cb8-518" aria-hidden="true" tabindex="-1"></a><span class="in">WORKS_ON(Essn→EMPLOYEE, Pno→PROJECT, Hours)</span></span>
+<span id="cb8-519"><a href="#cb8-519" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-520"><a href="#cb8-520" aria-hidden="true" tabindex="-1"></a><span class="in">DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)</span></span>
+<span id="cb8-521"><a href="#cb8-521" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-522"><a href="#cb8-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-523"><a href="#cb8-523" aria-hidden="true" tabindex="-1"></a>Primary keys are underlined in formal notation (Chapter 5). Foreign key arrows show the referenced table.</span>
+<span id="cb8-524"><a href="#cb8-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-525"><a href="#cb8-525" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-526"><a href="#cb8-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-527"><a href="#cb8-527" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb8-528"><a href="#cb8-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-529"><a href="#cb8-529" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb8-530"><a href="#cb8-530" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter 3 — Key Takeaways</span></span>
+<span id="cb8-531"><a href="#cb8-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-532"><a href="#cb8-532" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Start with **prose extraction**: circle nouns (→ entities/attributes) and verb phrases (→ relationships). Decide for each noun whether it has independent existence.</span>
+<span id="cb8-533"><a href="#cb8-533" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Attributes** have seven types: simple, composite, multivalued, derived, stored, NULL, complex. Flatten composites; store multivalued attributes in a separate table.</span>
+<span id="cb8-534"><a href="#cb8-534" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Cardinality ratios** (1:1, 1:N, M:N) combined with **participation constraints** (total/partial) form the full structural constraint on a relationship. Use **$(min,max)$** notation for precision.</span>
+<span id="cb8-535"><a href="#cb8-535" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Crow's foot notation** is the industry standard: read the symbols closest to each entity for the minimum and maximum.</span>
+<span id="cb8-536"><a href="#cb8-536" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Always read every relationship **in both directions** as a natural sentence to verify cardinalities.</span>
+<span id="cb8-537"><a href="#cb8-537" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Weak entities** have no key of their own; identified by owner's PK + partial key via an identifying relationship. They always have total participation.</span>
+<span id="cb8-538"><a href="#cb8-538" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**7-step mapping** translates every ER construct to a relational table: strong entity → table (Step 1), weak entity → table with composite PK (Step 2), 1:1 → FK on total-participation side (Step 3), 1:N → FK on N-side (Step 4), M:N → junction table (Step 5), multivalued → new table (Step 6), n-ary → new table (Step 7).</span>
+<span id="cb8-539"><a href="#cb8-539" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**NULL analysis**: FK is NOT NULL when participation is total; NULL allowed when partial.</span>
+<span id="cb8-540"><a href="#cb8-540" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-541"><a href="#cb8-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-542"><a href="#cb8-542" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb8-543"><a href="#cb8-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-544"><a href="#cb8-544" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
+<span id="cb8-545"><a href="#cb8-545" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-546"><a href="#cb8-546" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
+<span id="cb8-547"><a href="#cb8-547" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-548"><a href="#cb8-548" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define **entity type**, **entity instance**, and **key attribute**. Give a concrete example of each using the Company Database.</span>
+<span id="cb8-549"><a href="#cb8-549" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Explain the difference between a **composite attribute** and a **multivalued attribute**. How does each affect the mapping to a relational schema?</span>
+<span id="cb8-550"><a href="#cb8-550" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>What is a **weak entity type**? What two notational changes distinguish it from a strong entity? Give a real-world example other than DEPENDENT.</span>
+<span id="cb8-551"><a href="#cb8-551" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-552"><a href="#cb8-552" aria-hidden="true" tabindex="-1"></a><span class="fu">### Short-Answer / Compare</span></span>
+<span id="cb8-553"><a href="#cb8-553" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-554"><a href="#cb8-554" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Compare **cardinality ratio** notation and **$(min,max)$** notation. Write the $(min,max)$ constraint for the *Works_For* relationship from the Company Database and explain each value.</span>
+<span id="cb8-555"><a href="#cb8-555" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Explain what **total participation** means for the EMPLOYEE entity in the *Works_For* relationship. What happens in the database if you try to insert an employee without a department?</span>
+<span id="cb8-556"><a href="#cb8-556" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Describe the difference between a **relationship attribute** and an **entity attribute**. Why does <span class="in">`Hours`</span> belong to the *Works_On* relationship and not to <span class="in">`EMPLOYEE`</span> or <span class="in">`PROJECT`</span>?</span>
+<span id="cb8-557"><a href="#cb8-557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-558"><a href="#cb8-558" aria-hidden="true" tabindex="-1"></a><span class="fu">### True / False (with explanation)</span></span>
+<span id="cb8-559"><a href="#cb8-559" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-560"><a href="#cb8-560" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>*"A many-to-many relationship can always be safely represented by adding a foreign key to one of the two entities."* — True or False? Explain.</span>
+<span id="cb8-561"><a href="#cb8-561" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>*"Derived attributes must always be stored in the database to avoid recomputing them."* — True or False? Explain.</span>
+<span id="cb8-562"><a href="#cb8-562" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>*"In the 7-step mapping, a multivalued attribute of a strong entity becomes a separate table."* — True or False? Explain.</span>
+<span id="cb8-563"><a href="#cb8-563" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>*"A weak entity can have total participation in a non-identifying relationship."* — True or False? Explain.</span>
+<span id="cb8-564"><a href="#cb8-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-565"><a href="#cb8-565" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiple Choice</span></span>
+<span id="cb8-566"><a href="#cb8-566" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-567"><a href="#cb8-567" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>Which step of the 7-step ER-to-relational mapping handles M:N relationships?</span>
+<span id="cb8-568"><a href="#cb8-568" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Step 3   (b) Step 4   **(c) Step 5** ✓   (d) Step 6</span>
+<span id="cb8-569"><a href="#cb8-569" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-570"><a href="#cb8-570" aria-hidden="true" tabindex="-1"></a><span class="ss">12. </span>In crow's foot notation, what does the symbol <span class="in">`──o{──`</span> represent?</span>
+<span id="cb8-571"><a href="#cb8-571" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Exactly one</span>
+<span id="cb8-572"><a href="#cb8-572" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) One or many</span>
+<span id="cb8-573"><a href="#cb8-573" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>**(c) Zero or many** ✓</span>
+<span id="cb8-574"><a href="#cb8-574" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(d) Zero or one</span>
+<span id="cb8-575"><a href="#cb8-575" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-576"><a href="#cb8-576" aria-hidden="true" tabindex="-1"></a><span class="ss">13. </span>For the *Manages* (1:1) relationship, the FK is placed in the <span class="in">`DEPARTMENT`</span> table rather than the <span class="in">`EMPLOYEE`</span> table because:</span>
+<span id="cb8-577"><a href="#cb8-577" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) DEPARTMENT has more rows</span>
+<span id="cb8-578"><a href="#cb8-578" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) Departments are more important</span>
+<span id="cb8-579"><a href="#cb8-579" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>**(c) Every DEPARTMENT must have a manager (total participation), minimizing NULLs** ✓</span>
+<span id="cb8-580"><a href="#cb8-580" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(d) SQL does not allow 1:1 keys in EMPLOYEE</span>
+<span id="cb8-581"><a href="#cb8-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-582"><a href="#cb8-582" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design Exercise</span></span>
+<span id="cb8-583"><a href="#cb8-583" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-584"><a href="#cb8-584" aria-hidden="true" tabindex="-1"></a><span class="ss">14. </span>A car rental company stores: **Vehicles** (plate number, make, model, year, mileage), **Customers** (customer ID, name, driving licence number), and **Rentals** (return date, total cost). Each rental involves exactly one vehicle and one customer. A vehicle can be rented many times (but not by multiple customers simultaneously).</span>
+<span id="cb8-585"><a href="#cb8-585" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Draw a complete ER diagram with entity types, attributes, key attributes, relationship types, cardinalities, and participation constraints.</span>
+<span id="cb8-586"><a href="#cb8-586" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) Apply the 7-step mapping to produce a relational schema.</span>
+<span id="cb8-587"><a href="#cb8-587" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(c) Identify which foreign keys may be NULL and which must be NOT NULL. Justify each.</span>
+<span id="cb8-588"><a href="#cb8-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-589"><a href="#cb8-589" aria-hidden="true" tabindex="-1"></a><span class="fu">### SQL / Query Preview</span></span>
+<span id="cb8-590"><a href="#cb8-590" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-591"><a href="#cb8-591" aria-hidden="true" tabindex="-1"></a><span class="ss">15. </span>After mapping the Company Database to relational tables, write the SQL <span class="in">`CREATE TABLE`</span> statement for the <span class="in">`WORKS_ON`</span> table, including the primary key and both foreign keys. Which SQL feature enforces the NOT NULL constraint on the foreign keys?</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+    <script type="text/javascript">
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let pseudocodeOptions = {
+          indentSize: el.dataset.indentSize,
+          commentDelimiter: " " + el.dataset.commentDelimiter + " ",
+          lineNumber: el.dataset.lineNumber.toLowerCase() === "true",
+          lineNumberPunc: el.dataset.lineNumberPunc,
+          noEnd: el.dataset.noEnd.toLowerCase() === "true",
+          titlePrefix: el.dataset.captionPrefix,
+        };
+        pseudocode.renderElement(el.querySelector(".pseudocode"), pseudocodeOptions);
+      });
+    })(document);
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let captionSpan = el.querySelector(".ps-root > .ps-algorithm > .ps-line > .ps-keyword")
+        if (captionSpan !== null) {
+          let captionPrefix = el.dataset.captionPrefix + " ";
+          let captionNumber = "";
+          if (el.dataset.pseudocodeNumber) {
+            captionNumber = el.dataset.pseudocodeNumber + " ";
+            if (el.dataset.chapterLevel) {
+              captionNumber = el.dataset.chapterLevel + "." + captionNumber;
+            }
+          }
+          captionSpan.innerHTML = captionPrefix + captionNumber;
+        }
+      });
+    })(document);
+    </script>
+  
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
+<script src="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.js"></script>
+</body></html>

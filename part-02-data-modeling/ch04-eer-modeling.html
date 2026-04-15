@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>4&nbsp; Enhanced Entity-Relationship (EER) Modeling – Fundamentals of Database Systems</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../part-03-relational-model/ch05-relational-model.html" rel="next">
+<link href="../part-02-data-modeling/ch03-er-modeling.html" rel="prev">
+<link href="../images/cover.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8e86ef72155d1dc4db3057c8122fb000.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdown.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdownKatex.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdownHighlight.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdown-init.js"></script>
+<link href="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
+<link href="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&amp;family=JetBrains+Mono:ital,wght@0,400;0,500&amp;family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@antonz/sqlite@3.40.0/dist/sqlite3.js"></script>
+<script src="https://unpkg.com/sqlime@0.1.3/dist/sqlime-db.js"></script>
+<script src="https://unpkg.com/sqlime@0.1.3/dist/sqlime-examples.js"></script>
+    <style type="text/css">
+    .ps-root .ps-algorithm {
+      border-top: 2px solid;
+      border-bottom: 2px solid;
+    }
+    .pseudocode-container {
+      text-align: left;
+    }
+    </style>
+  
+      <style type="text/css">
+      .ps-algorithm > .ps-line {
+        text-align: left;
+      }
+      </style>
+    
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-02-data-modeling/ch03-er-modeling.html">Part II: Data Modeling</a></li><li class="breadcrumb-item"><a href="../part-02-data-modeling/ch04-eer-modeling.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Fundamentals of Database Systems</a> 
+        <div class="sidebar-tools-main">
+    <a href="../Fundamentals-of-Database-Systems.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-01-foundations/ch01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Database Systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-01-foundations/ch02-concepts-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Database System Concepts &amp; Architecture</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Data Modeling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-02-data-modeling/ch03-er-modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Entity-Relationship (ER) Modeling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-02-data-modeling/ch04-eer-modeling.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: The Relational Model</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-03-relational-model/ch05-relational-model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Relational Data Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-03-relational-model/ch06-relational-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Relational Algebra</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part IV: Structured Query Language (SQL)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-04-sql/ch07-sql-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">SQL Basics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-04-sql/ch08-advanced-sql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Advanced SQL</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part V: Database Design Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-05-design/ch09-normalization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Normalization &amp; Functional Dependencies</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VI: Storage, Indexing &amp; Query Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-06-storage-query/ch10-storage-indexing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Storage &amp; Indexing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-06-storage-query/ch11-query-processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Query Processing &amp; Optimization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VII: Transaction Management</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-07-transactions/ch12-transactions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Transaction Processing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-07-transactions/ch13-concurrency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Concurrency Control &amp; Scheduling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VIII: NoSQL &amp; Modern Databases</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-08-nosql/ch14-nosql-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Introduction to NoSQL Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-08-nosql/ch15-mongodb.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">MongoDB — Document Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixA-apis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Database APIs and Connectivity</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#subclasses-superclasses-and-inheritance" id="toc-subclasses-superclasses-and-inheritance" class="nav-link active" data-scroll-target="#subclasses-superclasses-and-inheritance"><span class="header-section-number">4.1</span> 4.1 Subclasses, Superclasses, and Inheritance</a>
+  <ul class="collapse">
+  <li><a href="#type-inheritance" id="toc-type-inheritance" class="nav-link" data-scroll-target="#type-inheritance"><span class="header-section-number">4.1.1</span> Type Inheritance</a></li>
+  </ul></li>
+  <li><a href="#specialization" id="toc-specialization" class="nav-link" data-scroll-target="#specialization"><span class="header-section-number">4.2</span> 4.2 Specialization</a>
+  <ul class="collapse">
+  <li><a href="#constraints-on-specialization" id="toc-constraints-on-specialization" class="nav-link" data-scroll-target="#constraints-on-specialization"><span class="header-section-number">4.2.1</span> Constraints on Specialization</a></li>
+  <li><a href="#combining-the-two-constraints" id="toc-combining-the-two-constraints" class="nav-link" data-scroll-target="#combining-the-two-constraints"><span class="header-section-number">4.2.2</span> Combining the Two Constraints</a></li>
+  </ul></li>
+  <li><a href="#generalization" id="toc-generalization" class="nav-link" data-scroll-target="#generalization"><span class="header-section-number">4.3</span> 4.3 Generalization</a></li>
+  <li><a href="#specialization-hierarchies-and-lattices" id="toc-specialization-hierarchies-and-lattices" class="nav-link" data-scroll-target="#specialization-hierarchies-and-lattices"><span class="header-section-number">4.4</span> 4.4 Specialization Hierarchies and Lattices</a></li>
+  <li><a href="#aggregation" id="toc-aggregation" class="nav-link" data-scroll-target="#aggregation"><span class="header-section-number">4.5</span> 4.5 Aggregation</a>
+  <ul class="collapse">
+  <li><a href="#why-aggregation" id="toc-why-aggregation" class="nav-link" data-scroll-target="#why-aggregation"><span class="header-section-number">4.5.1</span> Why Aggregation?</a></li>
+  </ul></li>
+  <li><a href="#category-union-types" id="toc-category-union-types" class="nav-link" data-scroll-target="#category-union-types"><span class="header-section-number">4.6</span> 4.6 Category (UNION) Types</a></li>
+  <li><a href="#eer-to-relational-mapping" id="toc-eer-to-relational-mapping" class="nav-link" data-scroll-target="#eer-to-relational-mapping"><span class="header-section-number">4.7</span> 4.7 EER-to-Relational Mapping</a>
+  <ul class="collapse">
+  <li><a href="#mapping-specialization-four-options" id="toc-mapping-specialization-four-options" class="nav-link" data-scroll-target="#mapping-specialization-four-options"><span class="header-section-number">4.7.1</span> Mapping Specialization — Four Options</a></li>
+  <li><a href="#mapping-aggregation" id="toc-mapping-aggregation" class="nav-link" data-scroll-target="#mapping-aggregation"><span class="header-section-number">4.7.2</span> Mapping Aggregation</a></li>
+  <li><a href="#mapping-categories" id="toc-mapping-categories" class="nav-link" data-scroll-target="#mapping-categories"><span class="header-section-number">4.7.3</span> Mapping Categories</a></li>
+  </ul></li>
+  <li><a href="#eer-vs.-object-oriented-mapping" id="toc-eer-vs.-object-oriented-mapping" class="nav-link" data-scroll-target="#eer-vs.-object-oriented-mapping"><span class="header-section-number">4.8</span> 4.8 EER vs.&nbsp;Object-Oriented Mapping</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">4.9</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">4.10</span> Review Questions</a>
+  <ul class="collapse">
+  <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">4.10.1</span> Conceptual</a></li>
+  <li><a href="#short-answer-compare" id="toc-short-answer-compare" class="nav-link" data-scroll-target="#short-answer-compare"><span class="header-section-number">4.10.2</span> Short-Answer / Compare</a></li>
+  <li><a href="#true-false-with-explanation" id="toc-true-false-with-explanation" class="nav-link" data-scroll-target="#true-false-with-explanation"><span class="header-section-number">4.10.3</span> True / False (with explanation)</a></li>
+  <li><a href="#multiple-choice" id="toc-multiple-choice" class="nav-link" data-scroll-target="#multiple-choice"><span class="header-section-number">4.10.4</span> Multiple Choice</a></li>
+  <li><a href="#design-exercise" id="toc-design-exercise" class="nav-link" data-scroll-target="#design-exercise"><span class="header-section-number">4.10.5</span> Design Exercise</a></li>
+  <li><a href="#sql-query-exercise" id="toc-sql-query-exercise" class="nav-link" data-scroll-target="#sql-query-exercise"><span class="header-section-number">4.10.6</span> SQL / Query Exercise</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-02-data-modeling/ch03-er-modeling.html">Part II: Data Modeling</a></li><li class="breadcrumb-item"><a href="../part-02-data-modeling/ch04-eer-modeling.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Chapter 4</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The ER model of Chapter 3 handles most real-world data structures, but it lacks one critical capability: <strong>type hierarchies</strong>. When some employees are engineers, some are managers, and a few are engineer-managers, the basic ER model forces you to bundle everything into one bloated entity type or fragment the design artificially. The Enhanced ER (EER) model adds three mechanisms — <em>specialization/generalization</em>, <em>aggregation</em>, and <em>union types</em> — to handle these situations cleanly.</p>
+<hr>
+<section id="subclasses-superclasses-and-inheritance" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="subclasses-superclasses-and-inheritance"><span class="header-section-number">4.1</span> 4.1 Subclasses, Superclasses, and Inheritance</h2>
+<p>An entity type <span class="math inline">S</span> is a <strong>subclass</strong> of entity type <span class="math inline">C</span> if: - Every entity instance of <span class="math inline">S</span> is <em>also</em> an instance of <span class="math inline">C</span> - <span class="math inline">S</span> has attributes or relationships that are not meaningful for all of <span class="math inline">C</span></p>
+<p><span class="math inline">C</span> is called the <strong>superclass</strong> of <span class="math inline">S</span>, and the pair forms a <strong>superclass/subclass (IS-A) relationship</strong>.</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="ch04-eer-modeling_files/figure-html/mermaid-figure-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="ch04-eer-modeling_files/figure-html/mermaid-figure-1.png" style="width:5.46in;height:2.56in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<section id="type-inheritance" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="type-inheritance"><span class="header-section-number">4.1.1</span> Type Inheritance</h3>
+<p>A subclass entity <strong>inherits</strong> all attributes and participation in relationships of its superclass. It additionally has its own <strong>specific attributes</strong> and may participate in its own <strong>specific relationships</strong>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Inheritance is <em>implicit</em> in the EER model — you do not explicitly copy attributes from superclass to subclass in the diagram. When you map to relational tables (§4.7), you choose how to physically represent shared attributes.</p>
+</div>
+</div>
+<p>With the IS-A relationship established, we can now distinguish between two design processes that produce it.</p>
+<hr>
+</section>
+</section>
+<section id="specialization" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="specialization"><span class="header-section-number">4.2</span> 4.2 Specialization</h2>
+<p><strong>Specialization</strong> is a <strong>top-down</strong> design process: starting with a superclass, the designer defines subclasses that represent better-defined subsets of the superclass.</p>
+<p><em>Rationale:</em> Some entities in <code>EMPLOYEE</code> have attributes irrelevant to others — not every employee has a <code>TypingSpeed</code>, but every secretary does. Specializing <code>EMPLOYEE</code> into <code>SECRETARY</code> keeps the schema clean.</p>
+<section id="constraints-on-specialization" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="constraints-on-specialization"><span class="header-section-number">4.2.1</span> Constraints on Specialization</h3>
+<p>A specialization carries two independent constraints, each with two options:</p>
+<section id="disjointness-constraint" class="level4">
+<h4 class="anchored" data-anchor-id="disjointness-constraint">1. Disjointness Constraint</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 39%">
+<col style="width: 28%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Constraint</th>
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Disjoint (d)</strong></td>
+<td>Circle with <code>d</code></td>
+<td>Each entity belongs to <strong>at most one</strong> subclass</td>
+</tr>
+<tr class="even">
+<td><strong>Overlapping (o)</strong></td>
+<td>Circle with <code>o</code></td>
+<td>An entity may belong to <strong>multiple</strong> subclasses simultaneously</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Disjoint example:</strong> An employee is either <code>HOURLY_EMPLOYEE</code> or <code>SALARIED_EMPLOYEE</code> — never both. Payroll would not compute correctly if an employee appeared in both.</p>
+<p><strong>Overlapping example:</strong> A university <code>PERSON</code> can simultaneously be a <code>STUDENT</code> and an <code>EMPLOYEE</code> (e.g., a teaching assistant). Excluding one membership would lose data.</p>
+</section>
+<section id="completeness-constraint" class="level4">
+<h4 class="anchored" data-anchor-id="completeness-constraint">2. Completeness Constraint</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 36%">
+<col style="width: 33%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Constraint</th>
+<th>Notation</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Total</strong></td>
+<td>Double line from superclass to circle</td>
+<td>Every superclass entity <strong>must</strong> belong to at least one subclass</td>
+</tr>
+<tr class="even">
+<td><strong>Partial</strong></td>
+<td>Single line from superclass to circle</td>
+<td>A superclass entity <strong>may</strong> belong to no subclass</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total example:</strong> Every <code>SHAPE</code> must be either a <code>CIRCLE</code>, <code>RECTANGLE</code>, or <code>TRIANGLE</code> — there are no “generic shapes” stored.</p>
+<p><strong>Partial example:</strong> Not every <code>EMPLOYEE</code> is a manager — most employees have no subclass membership.</p>
+</section>
+</section>
+<section id="combining-the-two-constraints" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="combining-the-two-constraints"><span class="header-section-number">4.2.2</span> Combining the Two Constraints</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 46%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Combination</th>
+<th>Practical meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Total + Disjoint</strong></td>
+<td>Every superclass entity is in exactly one subclass</td>
+<td>EMPLOYEE → {HOURLY, SALARIED}</td>
+</tr>
+<tr class="even">
+<td><strong>Total + Overlapping</strong></td>
+<td>Every entity is in at least one, possibly many subclasses</td>
+<td>PERSON → {STUDENT, EMPLOYEE}</td>
+</tr>
+<tr class="odd">
+<td><strong>Partial + Disjoint</strong></td>
+<td>Some entities are in no subclass; those that are fall in at most one</td>
+<td>VEHICLE → {CAR, TRUCK} (a bicycle doesn’t fit)</td>
+</tr>
+<tr class="even">
+<td><strong>Partial + Overlapping</strong></td>
+<td>Some entities are in no subclass; some are in multiple</td>
+<td>PRODUCT → {DIGITAL, PHYSICAL} (can be both for a bundled product)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="generalization" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="generalization"><span class="header-section-number">4.3</span> 4.3 Generalization</h2>
+<p><strong>Generalization</strong> is the <strong>bottom-up</strong> process: the designer observes that several entity types share common attributes and abstracts those into a new superclass.</p>
+<p><em>Example:</em> Designing independently, you create <code>CAR</code>, <code>TRUCK</code>, and <code>MOTORCYCLE</code> all with <code>LicensePlate</code>, <code>Make</code>, <code>Model</code>, <code>Year</code>. Noticing the overlap, you generalize them into <code>VEHICLE</code>, extracting the shared attributes:</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="ch04-eer-modeling_files/figure-html/mermaid-figure-5.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="ch04-eer-modeling_files/figure-html/mermaid-figure-5.png" style="width:6in;height:2.56in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Specialization vs.&nbsp;Generalization</strong> produce identical EER diagrams. The distinction is purely in the <em>decision process</em> (top-down design vs.&nbsp;bottom-up abstraction). In practice, real designs mix both: you may generalize two existing entities and then specialize the resulting superclass further.</p>
+</div>
+</div>
+<p>With hierarchies defined, the next structural concept addresses how entities organize into trees versus networks.</p>
+<hr>
+</section>
+<section id="specialization-hierarchies-and-lattices" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="specialization-hierarchies-and-lattices"><span class="header-section-number">4.4</span> 4.4 Specialization Hierarchies and Lattices</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 37%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Structure</th>
+<th>Description</th>
+<th>Constraint</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Specialization hierarchy</strong></td>
+<td>Each subclass has exactly one direct superclass</td>
+<td>Produces a tree</td>
+</tr>
+<tr class="even">
+<td><strong>Specialization lattice</strong></td>
+<td>A subclass can have more than one direct superclass</td>
+<td>Produces a DAG (directed acyclic graph)</td>
+</tr>
+</tbody>
+</table>
+<p>In a <strong>lattice</strong>, a subclass inherits from <strong>all</strong> its superclasses — this is <strong>multiple inheritance</strong>.</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="ch04-eer-modeling_files/figure-html/mermaid-figure-4.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="ch04-eer-modeling_files/figure-html/mermaid-figure-4.png" style="width:3.86in;height:2.56in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A <code>STUDENT_EMPLOYEE</code> entity must simultaneously be an instance of both <code>EMPLOYEE</code> <em>and</em> <code>STUDENT</code>. This is the key distinction between a lattice node (shared subclass) and a union type (§4.6), where membership in <em>only one</em> superclass is required.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="aggregation" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="aggregation"><span class="header-section-number">4.5</span> 4.5 Aggregation</h2>
+<p><strong>Aggregation</strong> promotes an existing <em>relationship type</em> to a higher-level entity, allowing that relationship to participate in another relationship.</p>
+<section id="why-aggregation" class="level3" data-number="4.5.1">
+<h3 data-number="4.5.1" class="anchored" data-anchor-id="why-aggregation"><span class="header-section-number">4.5.1</span> Why Aggregation?</h3>
+<p>Consider: “An <code>EMPLOYEE</code> <strong>Works_On</strong> a <code>PROJECT</code>. For some assignments, a specific <code>MACHINE</code> is <strong>Used</strong> during that assignment.”</p>
+<p>You might try to add <code>MACHINE</code> as a third participant in <code>Works_On</code> (making it ternary). But that implies that every combination of (Employee, Project, Machine) is an assignment — whereas the real constraint is: <em>given an existing (Employee, Project) assignment</em>, a machine may be used. Aggregation captures this:</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="ch04-eer-modeling_files/figure-html/mermaid-figure-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="ch04-eer-modeling_files/figure-html/mermaid-figure-3.png" style="width:5.15in;height:3.04in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>The aggregated entity (<code>ASSIGNMENT</code>) is a <em>virtual entity</em> made from the <code>Works_On</code> relationship. It can now participate in <code>Uses</code> with <code>MACHINE</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When mapped to relational tables, the aggregation maps to its junction table (<code>WORKS_ON</code>) plus an additional <code>USES</code> table that references <code>WORKS_ON</code>’s primary key.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="category-union-types" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="category-union-types"><span class="header-section-number">4.6</span> 4.6 Category (UNION) Types</h2>
+<p>A <strong>category</strong> (or <em>Union type</em>) is a subclass that can come from <strong>different, unrelated superclass types</strong>. The key difference from a lattice node:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 54%">
+<col style="width: 29%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Lattice node (shared subclass)</th>
+<th>Category (Union)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Superclasses</td>
+<td>Multiple, related IS-A hierarchy</td>
+<td>Multiple, different types</td>
+</tr>
+<tr class="even">
+<td>Membership</td>
+<td>Entity must be in <strong>all</strong> superclasses</td>
+<td>Entity is in <strong>exactly one</strong> superclass</td>
+</tr>
+<tr class="odd">
+<td>Symbol</td>
+<td>Arrows from multiple parents</td>
+<td><code>U</code> circle</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong> A <code>VEHICLE_OWNER</code> can be either a <code>PERSON</code> or a <code>COMPANY</code>. A <code>VEHICLE_OWNER</code> instance is exactly one of these — not both.</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="ch04-eer-modeling_files/figure-html/mermaid-figure-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="ch04-eer-modeling_files/figure-html/mermaid-figure-2.png" style="width:5.29in;height:3.4in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Categories require a <strong>surrogate key</strong> (<code>OwnerId</code>) because the natural keys of different superclasses are incompatible types (e.g., <code>Ssn</code> vs.&nbsp;<code>CompanyId</code>).</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="eer-to-relational-mapping" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="eer-to-relational-mapping"><span class="header-section-number">4.7</span> 4.7 EER-to-Relational Mapping</h2>
+<section id="mapping-specialization-four-options" class="level3" data-number="4.7.1">
+<h3 data-number="4.7.1" class="anchored" data-anchor-id="mapping-specialization-four-options"><span class="header-section-number">4.7.1</span> Mapping Specialization — Four Options</h3>
+<p>Given a superclass <span class="math inline">C</span> with subclasses <span class="math inline">S_1, S_2, \ldots, S_k</span>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 42%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>Schema design</th>
+<th>Best when</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>A — Single table</strong></td>
+<td>One table for all subclasses; NULL for inapplicable columns; add a <code>Type</code> discriminator column</td>
+<td>Few subclasses, few subclass-specific attributes. Simple queries but wastes space with NULLs.</td>
+</tr>
+<tr class="even">
+<td><strong>B — Subclass tables only</strong></td>
+<td>One table per subclass; each table includes <em>all inherited</em> superclass attributes (no shared superclass table)</td>
+<td>Total <strong>and</strong> disjoint. Fast subclass-only queries; no joins needed. But super-class-wide queries require UNION.</td>
+</tr>
+<tr class="odd">
+<td><strong>C — Superclass + subclass tables</strong></td>
+<td>Table for superclass with its attributes; each subclass table stores only subclass-specific attributes + FK to superclass</td>
+<td><strong>Most common</strong>. Works for overlapping or partial. Superclass-wide query uses superclass table alone; subclass-specific query joins two tables.</td>
+</tr>
+<tr class="even">
+<td><strong>D — Superclass table with all attributes</strong></td>
+<td>Single table, same as Option A but no separate subclass tables at all</td>
+<td>Legacy or read-only schemas; maximum NULL tolerance.</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Default choice: Option C.</strong></p>
+<pre data-code-line-numbers=""><code>EMPLOYEE(Ssn PK, Fname, Lname, Salary)
+SECRETARY(Ssn FK→EMPLOYEE, TypingSpeed)
+ENGINEER(Ssn FK→EMPLOYEE, EngType)
+MANAGER(Ssn FK→EMPLOYEE, MgrBonus)</code></pre>
+<p>A query asking for all engineers joins <code>EMPLOYEE</code> with <code>ENGINEER</code>. A query asking for all employees’ names goes to <code>EMPLOYEE</code> alone.</p>
+</div>
+</div>
+</section>
+<section id="mapping-aggregation" class="level3" data-number="4.7.2">
+<h3 data-number="4.7.2" class="anchored" data-anchor-id="mapping-aggregation"><span class="header-section-number">4.7.2</span> Mapping Aggregation</h3>
+<ol type="1">
+<li>Map the aggregated relationship to a junction table (Step 5 from Ch 3).</li>
+<li>Add a new table for the outer relationship that includes the junction table’s PK as a foreign key.</li>
+</ol>
+<p><strong>Example:</strong></p>
+<pre data-code-line-numbers=""><code>WORKS_ON(Essn, Pno, Hours)           -- from aggregated Works_On
+USES(Essn, Pno, MachineId, StartTime) -- new table; (Essn,Pno) FK→WORKS_ON</code></pre>
+</section>
+<section id="mapping-categories" class="level3" data-number="4.7.3">
+<h3 data-number="4.7.3" class="anchored" data-anchor-id="mapping-categories"><span class="header-section-number">4.7.3</span> Mapping Categories</h3>
+<ol type="1">
+<li>Assign a <strong>surrogate key</strong> to the category that is type-neutral.</li>
+<li>Create the category table using only the surrogate key plus category-specific attributes.</li>
+<li>Add the surrogate key as a FK to each superclass table.</li>
+</ol>
+<p><strong>Example:</strong></p>
+<pre data-code-line-numbers=""><code>VEHICLE_OWNER(OwnerId PK, LicenseCount)
+PERSON(Ssn PK, Name, Bdate, OwnerId FK→VEHICLE_OWNER)
+COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
+<hr>
+</section>
+</section>
+<section id="eer-vs.-object-oriented-mapping" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="eer-vs.-object-oriented-mapping"><span class="header-section-number">4.8</span> 4.8 EER vs.&nbsp;Object-Oriented Mapping</h2>
+<p>The EER specialization/generalization hierarchy closely resembles inheritance in object-oriented languages. The correspondences are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>OOP concept</th>
+<th>EER concept</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Superclass / parent class</td>
+<td>Superclass entity type</td>
+</tr>
+<tr class="even">
+<td>Subclass / child class</td>
+<td>Subclass entity type</td>
+</tr>
+<tr class="odd">
+<td>Single inheritance</td>
+<td>Specialization hierarchy (tree)</td>
+</tr>
+<tr class="even">
+<td>Multiple inheritance</td>
+<td>Specialization lattice</td>
+</tr>
+<tr class="odd">
+<td>Abstract class</td>
+<td>Total specialization superclass (no bare instances)</td>
+</tr>
+<tr class="even">
+<td>Concrete class</td>
+<td>Partial specialization superclass (bare instances allowed)</td>
+</tr>
+</tbody>
+</table>
+<p>The critical difference: OOP inheritance is about <em>behavior</em> (methods); EER inheritance is about <em>data</em> (attributes and relationships only).</p>
+<hr>
+</section>
+<section id="summary" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="summary"><span class="header-section-number">4.9</span> Summary</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Chapter 4 — Key Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>EER</strong> extends ER with superclass/subclass type hierarchies, enabling <strong>type inheritance</strong>.</li>
+<li><strong>Specialization</strong> (top-down) divides a superclass into subclasses. <strong>Generalization</strong> (bottom-up) abstracts common attributes into a new superclass. Both produce the same diagram.</li>
+<li>Two constraints must be declared for every specialization: <strong>disjointness</strong> (d/o) and <strong>completeness</strong> (total/partial).</li>
+<li><strong>Specialization hierarchy</strong>: each subclass has exactly one superclass (tree). <strong>Specialization lattice</strong>: a subclass can have multiple superclasses (DAG) — multiple inheritance.</li>
+<li><strong>Aggregation</strong> promotes a relationship to an entity so that it can itself participate in a further relationship.</li>
+<li><strong>Category (union type)</strong>: a subclass whose instances can come from <em>different</em> superclass types (union); contrast with lattice nodes (intersection).</li>
+<li>Mapping to relational: four options for specialization; <strong>Option C</strong> (superclass table + subclass tables with FK) is the standard default.</li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">4.10</span> Review Questions</h2>
+<section id="conceptual" class="level3" data-number="4.10.1">
+<h3 data-number="4.10.1" class="anchored" data-anchor-id="conceptual"><span class="header-section-number">4.10.1</span> Conceptual</h3>
+<ol type="1">
+<li>Define the <strong>IS-A relationship</strong> in EER modeling. Why is it fundamentally different from a regular ER relationship?</li>
+<li>What is <strong>type inheritance</strong> in the context of EER? If <code>ENGINEER</code> is a subclass of <code>EMPLOYEE</code>, what attributes does an <code>ENGINEER</code> entity have?</li>
+<li>Explain the difference between a <strong>specialization hierarchy</strong> and a <strong>specialization lattice</strong>. When does a lattice arise?</li>
+</ol>
+</section>
+<section id="short-answer-compare" class="level3" data-number="4.10.2">
+<h3 data-number="4.10.2" class="anchored" data-anchor-id="short-answer-compare"><span class="header-section-number">4.10.2</span> Short-Answer / Compare</h3>
+<ol start="4" type="1">
+<li>Compare <strong>total</strong> and <strong>partial</strong> completeness constraints with <strong>disjoint</strong> and <strong>overlapping</strong> disjointness constraints. Give one real-world example for each of the four possible combinations.</li>
+<li>Why is <strong>aggregation</strong> needed? Can the same modeling objective always be achieved with a ternary relationship instead? Give a scenario where aggregation is strictly necessary.</li>
+<li>Compare a <strong>category (union type)</strong> to a <strong>lattice node (shared subclass)</strong>. Which requires a surrogate key, and why?</li>
+</ol>
+</section>
+<section id="true-false-with-explanation" class="level3" data-number="4.10.3">
+<h3 data-number="4.10.3" class="anchored" data-anchor-id="true-false-with-explanation"><span class="header-section-number">4.10.3</span> True / False (with explanation)</h3>
+<ol start="7" type="1">
+<li><em>“In a total, disjoint specialization, a superclass entity may exist without belonging to any subclass.”</em> — True or False? Explain.</li>
+<li><em>“Type inheritance means that subclass tables in Option C must repeat all superclass attribute definitions.”</em> — True or False? Explain.</li>
+<li><em>“An overlapping specialization means every entity must belong to multiple subclasses.”</em> — True or False? Explain.</li>
+<li><em>“Aggregation and ternary relationships always model the same information, just with different notation.”</em> — True or False? Explain.</li>
+</ol>
+</section>
+<section id="multiple-choice" class="level3" data-number="4.10.4">
+<h3 data-number="4.10.4" class="anchored" data-anchor-id="multiple-choice"><span class="header-section-number">4.10.4</span> Multiple Choice</h3>
+<ol start="11" type="1">
+<li>Which mapping option for specialization is best when the specialization is <strong>total and disjoint</strong> and queries almost always target individual subclasses?
+<ul>
+<li><ol type="a">
+<li>Option A <strong>(b) Option B</strong> ✓ (c) Option C (d) Option D</li>
+</ol></li>
+</ul></li>
+<li>A <code>STUDENT_EMPLOYEE</code> that inherits from both <code>STUDENT</code> and <code>EMPLOYEE</code> is an example of:
+<ul>
+<li><ol type="a">
+<li>A union type</li>
+</ol></li>
+<li><ol start="2" type="a">
+<li>A category</li>
+</ol></li>
+<li><strong>(c) A shared subclass in a specialization lattice</strong> ✓</li>
+<li><ol start="4" type="a">
+<li>An aggregation</li>
+</ol></li>
+</ul></li>
+</ol>
+</section>
+<section id="design-exercise" class="level3" data-number="4.10.5">
+<h3 data-number="4.10.5" class="anchored" data-anchor-id="design-exercise"><span class="header-section-number">4.10.5</span> Design Exercise</h3>
+<ol start="13" type="1">
+<li>A hospital manages three kinds of patients: <strong>Inpatients</strong> (admitted, have a bed number and ward), <strong>Outpatients</strong> (have scheduled appointments), and some patients who are both inpatients and outpatients (continuity-of-care cases).
+<ul>
+<li><ol type="a">
+<li>Model this using EER notation: superclass, subclasses, disjointness constraint, completeness constraint.</li>
+</ol></li>
+<li><ol start="2" type="a">
+<li>Is the disjointness constraint <strong>disjoint</strong> or <strong>overlapping</strong>? Is the completeness <strong>total</strong> or <strong>partial</strong>? Justify.</li>
+</ol></li>
+<li><ol start="3" type="a">
+<li>Map the EER model to relational tables using Option C. Write the table schemas with primary and foreign keys.</li>
+</ol></li>
+</ul></li>
+</ol>
+</section>
+<section id="sql-query-exercise" class="level3" data-number="4.10.6">
+<h3 data-number="4.10.6" class="anchored" data-anchor-id="sql-query-exercise"><span class="header-section-number">4.10.6</span> SQL / Query Exercise</h3>
+<ol start="14" type="1">
+<li><p>Using Option C mapping for <code>EMPLOYEE → {SECRETARY, ENGINEER, MANAGER}</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>EMPLOYEE(Ssn, Fname, Lname, Salary)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ENGINEER(Ssn, EngType, LicenseNum)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Write a SQL query that retrieves the full name, salary, and engineering type for all engineers. Then write a second query that returns <em>all</em> employees including non-engineers (NULLs where engineering data is absent). Which SQL keyword enables the second result?</p></li>
+</ol>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../part-02-data-modeling/ch03-er-modeling.html" class="pagination-link" aria-label="Entity-Relationship (ER) Modeling">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Entity-Relationship (ER) Modeling</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../part-03-relational-model/ch05-relational-model.html" class="pagination-link" aria-label="The Relational Data Model">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Relational Data Model</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false" data-code-line-numbers=""><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Enhanced Entity-Relationship (EER) Modeling"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 4"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>The ER model of Chapter 3 handles most real-world data structures, but it lacks one critical capability: **type hierarchies**. When some employees are engineers, some are managers, and a few are engineer-managers, the basic ER model forces you to bundle everything into one bloated entity type or fragment the design artificially. The Enhanced ER (EER) model adds three mechanisms — *specialization/generalization*, *aggregation*, and *union types* — to handle these situations cleanly.</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.1 Subclasses, Superclasses, and Inheritance</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>An entity type $S$ is a **subclass** of entity type $C$ if:</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Every entity instance of $S$ is *also* an instance of $C$</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$S$ has attributes or relationships that are not meaningful for all of $C$</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>$C$ is called the **superclass** of $S$, and the pair forms a **superclass/subclass (IS-A) relationship**.</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    EMP[<span class="ot">"</span><span class="st">EMPLOYEE&lt;br/&gt;(superclass)&lt;br/&gt;Ssn, Fname, Lname, Salary</span><span class="ot">"</span>]</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    SEC[<span class="ot">"</span><span class="st">SECRETARY&lt;br/&gt;TypingSpeed</span><span class="ot">"</span>]</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    ENG[<span class="ot">"</span><span class="st">ENGINEER&lt;br/&gt;EngType</span><span class="ot">"</span>]</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    MGR[<span class="ot">"</span><span class="st">MANAGER&lt;br/&gt;MgrBonus</span><span class="ot">"</span>]</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; SEC</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; ENG</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; MGR</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="fu">### Type Inheritance</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>A subclass entity **inherits** all attributes and participation in relationships of its superclass. It additionally has its own **specific attributes** and may participate in its own **specific relationships**.</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>Inheritance is *implicit* in the EER model — you do not explicitly copy attributes from superclass to subclass in the diagram. When you map to relational tables (§4.7), you choose how to physically represent shared attributes.</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>With the IS-A relationship established, we can now distinguish between two design processes that produce it.</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.2 Specialization</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>**Specialization** is a **top-down** design process: starting with a superclass, the designer defines subclasses that represent better-defined subsets of the superclass.</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>*Rationale:* Some entities in <span class="in">`EMPLOYEE`</span> have attributes irrelevant to others — not every employee has a <span class="in">`TypingSpeed`</span>, but every secretary does. Specializing <span class="in">`EMPLOYEE`</span> into <span class="in">`SECRETARY`</span> keeps the schema clean.</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="fu">### Constraints on Specialization</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>A specialization carries two independent constraints, each with two options:</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. Disjointness Constraint</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constraint <span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|--------|---------|</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Disjoint (d)** | Circle with `d` | Each entity belongs to **at most one** subclass <span class="pp">|</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Overlapping (o)** | Circle with `o` | An entity may belong to **multiple** subclasses simultaneously <span class="pp">|</span></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>**Disjoint example:** An employee is either <span class="in">`HOURLY_EMPLOYEE`</span> or <span class="in">`SALARIED_EMPLOYEE`</span> — never both. Payroll would not compute correctly if an employee appeared in both.</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>**Overlapping example:** A university <span class="in">`PERSON`</span> can simultaneously be a <span class="in">`STUDENT`</span> and an <span class="in">`EMPLOYEE`</span> (e.g., a teaching assistant). Excluding one membership would lose data.</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. Completeness Constraint</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constraint <span class="pp">|</span> Notation <span class="pp">|</span> Meaning <span class="pp">|</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|---------|</span></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total** | Double line from superclass to circle | Every superclass entity **must** belong to at least one subclass <span class="pp">|</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial** | Single line from superclass to circle | A superclass entity **may** belong to no subclass <span class="pp">|</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>**Total example:** Every <span class="in">`SHAPE`</span> must be either a <span class="in">`CIRCLE`</span>, <span class="in">`RECTANGLE`</span>, or <span class="in">`TRIANGLE`</span> — there are no "generic shapes" stored.</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>**Partial example:** Not every <span class="in">`EMPLOYEE`</span> is a manager — most employees have no subclass membership.</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a><span class="fu">### Combining the Two Constraints</span></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Combination <span class="pp">|</span> Practical meaning <span class="pp">|</span> Example <span class="pp">|</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|------------------|---------|</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total + Disjoint** <span class="pp">|</span> Every superclass entity is in exactly one subclass <span class="pp">|</span> EMPLOYEE → {HOURLY, SALARIED} <span class="pp">|</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total + Overlapping** <span class="pp">|</span> Every entity is in at least one, possibly many subclasses <span class="pp">|</span> PERSON → {STUDENT, EMPLOYEE} <span class="pp">|</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial + Disjoint** <span class="pp">|</span> Some entities are in no subclass; those that are fall in at most one <span class="pp">|</span> VEHICLE → {CAR, TRUCK} (a bicycle doesn't fit) <span class="pp">|</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial + Overlapping** <span class="pp">|</span> Some entities are in no subclass; some are in multiple <span class="pp">|</span> PRODUCT → {DIGITAL, PHYSICAL} (can be both for a bundled product) <span class="pp">|</span></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.3 Generalization</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>**Generalization** is the **bottom-up** process: the designer observes that several entity types share common attributes and abstracts those into a new superclass.</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>*Example:* Designing independently, you create <span class="in">`CAR`</span>, <span class="in">`TRUCK`</span>, and <span class="in">`MOTORCYCLE`</span> all with <span class="in">`LicensePlate`</span>, <span class="in">`Make`</span>, <span class="in">`Model`</span>, <span class="in">`Year`</span>. Noticing the overlap, you generalize them into <span class="in">`VEHICLE`</span>, extracting the shared attributes:</span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>flowchart BT</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>    CAR[<span class="ot">"</span><span class="st">CAR&lt;br/&gt;+ NumDoors</span><span class="ot">"</span>] --&gt; VEH</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>    TRUCK[<span class="ot">"</span><span class="st">TRUCK&lt;br/&gt;+ PayloadTons</span><span class="ot">"</span>] --&gt; VEH</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>    MOTO[<span class="ot">"</span><span class="st">MOTORCYCLE&lt;br/&gt;+ HasSidecar</span><span class="ot">"</span>] --&gt; VEH</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>    VEH[<span class="ot">"</span><span class="st">VEHICLE&lt;br/&gt;LicensePlate&lt;br/&gt;Make · Model · Year</span><span class="ot">"</span>]</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>**Specialization vs. Generalization** produce identical EER diagrams. The distinction is purely in the *decision process* (top-down design vs. bottom-up abstraction). In practice, real designs mix both: you may generalize two existing entities and then specialize the resulting superclass further.</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>With hierarchies defined, the next structural concept addresses how entities organize into trees versus networks.</span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.4 Specialization Hierarchies and Lattices</span></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Structure <span class="pp">|</span> Description <span class="pp">|</span> Constraint <span class="pp">|</span></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|-------------|-----------|</span></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Specialization hierarchy** <span class="pp">|</span> Each subclass has exactly one direct superclass <span class="pp">|</span> Produces a tree <span class="pp">|</span></span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Specialization lattice** <span class="pp">|</span> A subclass can have more than one direct superclass <span class="pp">|</span> Produces a DAG (directed acyclic graph) <span class="pp">|</span></span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>In a **lattice**, a subclass inherits from **all** its superclasses — this is **multiple inheritance**.</span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>    EMP[<span class="ot">"</span><span class="st">EMPLOYEE&lt;br/&gt;Ssn, Salary</span><span class="ot">"</span>]</span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>    STU[<span class="ot">"</span><span class="st">STUDENT&lt;br/&gt;StudentId, Gpa</span><span class="ot">"</span>]</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>    STUDEMP[<span class="ot">"</span><span class="st">STUDENT_EMPLOYEE&lt;br/&gt;(inherits Ssn, Salary, StudentId, Gpa)</span><span class="ot">"</span>]</span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; STUDEMP</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>    STU --&gt; STUDEMP</span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>A <span class="in">`STUDENT_EMPLOYEE`</span> entity must simultaneously be an instance of both <span class="in">`EMPLOYEE`</span> *and* `STUDENT`. This is the key distinction between a lattice node (shared subclass) and a union type (§4.6), where membership in *only one* superclass is required.</span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.5 Aggregation</span></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>**Aggregation** promotes an existing *relationship type* to a higher-level entity, allowing that relationship to participate in another relationship.</span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why Aggregation?</span></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>Consider: "An <span class="in">`EMPLOYEE`</span> **Works_On** a `PROJECT`. For some assignments, a specific `MACHINE` is **Used** during that assignment."</span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>You might try to add <span class="in">`MACHINE`</span> as a third participant in <span class="in">`Works_On`</span> (making it ternary). But that implies that every combination of (Employee, Project, Machine) is an assignment — whereas the real constraint is: *given an existing (Employee, Project) assignment*, a machine may be used. Aggregation captures this:</span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>    subgraph AGG[<span class="ot">"</span><span class="st">Aggregated entity: ASSIGNMENT</span><span class="ot">"</span>]</span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>        EMP[<span class="ot">"</span><span class="st">EMPLOYEE</span><span class="ot">"</span>] -- Works_On --&gt; PROJ[<span class="ot">"</span><span class="st">PROJECT</span><span class="ot">"</span>]</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>    end</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>    AGG -- Uses --&gt; MACH[<span class="ot">"</span><span class="st">MACHINE&lt;br/&gt;MachineId, Type</span><span class="ot">"</span>]</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>The aggregated entity (<span class="in">`ASSIGNMENT`</span>) is a *virtual entity* made from the <span class="in">`Works_On`</span> relationship. It can now participate in <span class="in">`Uses`</span> with <span class="in">`MACHINE`</span>.</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>When mapped to relational tables, the aggregation maps to its junction table (<span class="in">`WORKS_ON`</span>) plus an additional <span class="in">`USES`</span> table that references <span class="in">`WORKS_ON`</span>'s primary key.</span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.6 Category (UNION) Types</span></span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a>A **category** (or *Union type*) is a subclass that can come from **different, unrelated superclass types**. The key difference from a lattice node:</span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Feature <span class="pp">|</span> Lattice node (shared subclass) <span class="pp">|</span> Category (Union) <span class="pp">|</span></span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------------------------------|-----------------|</span></span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Superclasses <span class="pp">|</span> Multiple, related IS-A hierarchy <span class="pp">|</span> Multiple, different types <span class="pp">|</span></span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Membership <span class="pp">|</span> Entity must be in **all** superclasses | Entity is in **exactly one** superclass <span class="pp">|</span></span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Arrows from multiple parents <span class="pp">|</span> <span class="in">`U`</span> circle <span class="pp">|</span></span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>**Example:** A <span class="in">`VEHICLE_OWNER`</span> can be either a <span class="in">`PERSON`</span> or a <span class="in">`COMPANY`</span>. A <span class="in">`VEHICLE_OWNER`</span> instance is exactly one of these — not both.</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a>    PER[<span class="ot">"</span><span class="st">PERSON&lt;br/&gt;Ssn, Name, Bdate</span><span class="ot">"</span>]</span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>    COMP[<span class="ot">"</span><span class="st">COMPANY&lt;br/&gt;CompanyId, CompanyName</span><span class="ot">"</span>]</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>    CIRC[<span class="ot">"</span><span class="st">⊂ U ⊃</span><span class="ot">"</span>]</span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>    OWN[<span class="ot">"</span><span class="st">VEHICLE_OWNER&lt;br/&gt;OwnerId</span><span class="ot">"</span>]</span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a>    PER --&gt; CIRC</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>    COMP --&gt; CIRC</span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>    CIRC --&gt; OWN</span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>Categories require a **surrogate key** (<span class="in">`OwnerId`</span>) because the natural keys of different superclasses are incompatible types (e.g., <span class="in">`Ssn`</span> vs. <span class="in">`CompanyId`</span>).</span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.7 EER-to-Relational Mapping</span></span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Specialization — Four Options</span></span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>Given a superclass $C$ with subclasses $S_1, S_2, \ldots, S_k$:</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Option <span class="pp">|</span> Schema design <span class="pp">|</span> Best when <span class="pp">|</span></span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|--------------|-----------|</span></span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **A — Single table** <span class="pp">|</span> One table for all subclasses; NULL for inapplicable columns; add a <span class="in">`Type`</span> discriminator column <span class="pp">|</span> Few subclasses, few subclass-specific attributes. Simple queries but wastes space with NULLs. <span class="pp">|</span></span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **B — Subclass tables only** | One table per subclass; each table includes *all inherited* superclass attributes (no shared superclass table) | Total **and** disjoint. Fast subclass-only queries; no joins needed. But super-class-wide queries require UNION. <span class="pp">|</span></span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **C — Superclass + subclass tables** | Table for superclass with its attributes; each subclass table stores only subclass-specific attributes + FK to superclass | **Most common**. Works for overlapping or partial. Superclass-wide query uses superclass table alone; subclass-specific query joins two tables. <span class="pp">|</span></span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **D — Superclass table with all attributes** <span class="pp">|</span> Single table, same as Option A but no separate subclass tables at all <span class="pp">|</span> Legacy or read-only schemas; maximum NULL tolerance. <span class="pp">|</span></span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a>**Default choice: Option C.**</span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a><span class="in">EMPLOYEE(Ssn PK, Fname, Lname, Salary)</span></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a><span class="in">SECRETARY(Ssn FK→EMPLOYEE, TypingSpeed)</span></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a><span class="in">ENGINEER(Ssn FK→EMPLOYEE, EngType)</span></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a><span class="in">MANAGER(Ssn FK→EMPLOYEE, MgrBonus)</span></span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>A query asking for all engineers joins <span class="in">`EMPLOYEE`</span> with <span class="in">`ENGINEER`</span>. A query asking for all employees' names goes to <span class="in">`EMPLOYEE`</span> alone.</span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Aggregation</span></span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Map the aggregated relationship to a junction table (Step 5 from Ch 3).</span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Add a new table for the outer relationship that includes the junction table's PK as a foreign key.</span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a><span class="in">WORKS_ON(Essn, Pno, Hours)           -- from aggregated Works_On</span></span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a><span class="in">USES(Essn, Pno, MachineId, StartTime) -- new table; (Essn,Pno) FK→WORKS_ON</span></span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Categories</span></span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Assign a **surrogate key** to the category that is type-neutral.</span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Create the category table using only the surrogate key plus category-specific attributes.</span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Add the surrogate key as a FK to each superclass table.</span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a><span class="in">VEHICLE_OWNER(OwnerId PK, LicenseCount)</span></span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="in">PERSON(Ssn PK, Name, Bdate, OwnerId FK→VEHICLE_OWNER)</span></span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a><span class="in">COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</span></span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.8 EER vs. Object-Oriented Mapping</span></span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>The EER specialization/generalization hierarchy closely resembles inheritance in object-oriented languages. The correspondences are:</span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OOP concept <span class="pp">|</span> EER concept <span class="pp">|</span></span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|-------------|</span></span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Superclass / parent class <span class="pp">|</span> Superclass entity type <span class="pp">|</span></span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Subclass / child class <span class="pp">|</span> Subclass entity type <span class="pp">|</span></span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Single inheritance <span class="pp">|</span> Specialization hierarchy (tree) <span class="pp">|</span></span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Multiple inheritance <span class="pp">|</span> Specialization lattice <span class="pp">|</span></span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Abstract class <span class="pp">|</span> Total specialization superclass (no bare instances) <span class="pp">|</span></span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Concrete class <span class="pp">|</span> Partial specialization superclass (bare instances allowed) <span class="pp">|</span></span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a>The critical difference: OOP inheritance is about *behavior* (methods); EER inheritance is about *data* (attributes and relationships only).</span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter 4 — Key Takeaways</span></span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**EER** extends ER with superclass/subclass type hierarchies, enabling **type inheritance**.</span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Specialization** (top-down) divides a superclass into subclasses. **Generalization** (bottom-up) abstracts common attributes into a new superclass. Both produce the same diagram.</span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Two constraints must be declared for every specialization: **disjointness** (d/o) and **completeness** (total/partial).</span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Specialization hierarchy**: each subclass has exactly one superclass (tree). **Specialization lattice**: a subclass can have multiple superclasses (DAG) — multiple inheritance.</span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Aggregation** promotes a relationship to an entity so that it can itself participate in a further relationship.</span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Category (union type)**: a subclass whose instances can come from *different* superclass types (union); contrast with lattice nodes (intersection).</span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Mapping to relational: four options for specialization; **Option C** (superclass table + subclass tables with FK) is the standard default.</span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define the **IS-A relationship** in EER modeling. Why is it fundamentally different from a regular ER relationship?</span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>What is **type inheritance** in the context of EER? If <span class="in">`ENGINEER`</span> is a subclass of <span class="in">`EMPLOYEE`</span>, what attributes does an <span class="in">`ENGINEER`</span> entity have?</span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explain the difference between a **specialization hierarchy** and a **specialization lattice**. When does a lattice arise?</span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a><span class="fu">### Short-Answer / Compare</span></span>
+<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Compare **total** and **partial** completeness constraints with **disjoint** and **overlapping** disjointness constraints. Give one real-world example for each of the four possible combinations.</span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Why is **aggregation** needed? Can the same modeling objective always be achieved with a ternary relationship instead? Give a scenario where aggregation is strictly necessary.</span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Compare a **category (union type)** to a **lattice node (shared subclass)**. Which requires a surrogate key, and why?</span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a><span class="fu">### True / False (with explanation)</span></span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>*"In a total, disjoint specialization, a superclass entity may exist without belonging to any subclass."* — True or False? Explain.</span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>*"Type inheritance means that subclass tables in Option C must repeat all superclass attribute definitions."* — True or False? Explain.</span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>*"An overlapping specialization means every entity must belong to multiple subclasses."* — True or False? Explain.</span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>*"Aggregation and ternary relationships always model the same information, just with different notation."* — True or False? Explain.</span>
+<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiple Choice</span></span>
+<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>Which mapping option for specialization is best when the specialization is **total and disjoint** and queries almost always target individual subclasses?</span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Option A  **(b) Option B** ✓  (c) Option C  (d) Option D</span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a><span class="ss">12. </span>A <span class="in">`STUDENT_EMPLOYEE`</span> that inherits from both <span class="in">`STUDENT`</span> and <span class="in">`EMPLOYEE`</span> is an example of:</span>
+<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) A union type</span>
+<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) A category</span>
+<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>**(c) A shared subclass in a specialization lattice** ✓</span>
+<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(d) An aggregation</span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design Exercise</span></span>
+<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a><span class="ss">13. </span>A hospital manages three kinds of patients: **Inpatients** (admitted, have a bed number and ward), **Outpatients** (have scheduled appointments), and some patients who are both inpatients and outpatients (continuity-of-care cases).</span>
+<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Model this using EER notation: superclass, subclasses, disjointness constraint, completeness constraint.</span>
+<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) Is the disjointness constraint **disjoint** or **overlapping**? Is the completeness **total** or **partial**? Justify.</span>
+<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(c) Map the EER model to relational tables using Option C. Write the table schemas with primary and foreign keys.</span>
+<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a><span class="fu">### SQL / Query Exercise</span></span>
+<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a><span class="ss">14. </span>Using Option C mapping for <span class="in">`EMPLOYEE → {SECRETARY, ENGINEER, MANAGER}`</span>:</span>
+<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a>    <span class="in">```sql</span></span>
+<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a>    EMPLOYEE(Ssn, Fname, Lname, Salary)</span>
+<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>    ENGINEER(Ssn, EngType, LicenseNum)</span>
+<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a>    <span class="in">```</span></span>
+<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>    Write a SQL query that retrieves the full name, salary, and engineering type for all engineers. Then write a second query that returns *all* employees including non-engineers (NULLs where engineering data is absent). Which SQL keyword enables the second result?</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+    <script type="text/javascript">
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let pseudocodeOptions = {
+          indentSize: el.dataset.indentSize,
+          commentDelimiter: " " + el.dataset.commentDelimiter + " ",
+          lineNumber: el.dataset.lineNumber.toLowerCase() === "true",
+          lineNumberPunc: el.dataset.lineNumberPunc,
+          noEnd: el.dataset.noEnd.toLowerCase() === "true",
+          titlePrefix: el.dataset.captionPrefix,
+        };
+        pseudocode.renderElement(el.querySelector(".pseudocode"), pseudocodeOptions);
+      });
+    })(document);
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let captionSpan = el.querySelector(".ps-root > .ps-algorithm > .ps-line > .ps-keyword")
+        if (captionSpan !== null) {
+          let captionPrefix = el.dataset.captionPrefix + " ";
+          let captionNumber = "";
+          if (el.dataset.pseudocodeNumber) {
+            captionNumber = el.dataset.pseudocodeNumber + " ";
+            if (el.dataset.chapterLevel) {
+              captionNumber = el.dataset.chapterLevel + "." + captionNumber;
+            }
+          }
+          captionSpan.innerHTML = captionPrefix + captionNumber;
+        }
+      });
+    })(document);
+    </script>
+  
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
+<script src="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.js"></script>
+</body></html>

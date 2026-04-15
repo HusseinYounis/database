@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; The Relational Data Model – Fundamentals of Database Systems</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../part-03-relational-model/ch06-relational-algebra.html" rel="next">
+<link href="../part-02-data-modeling/ch04-eer-modeling.html" rel="prev">
+<link href="../images/cover.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8e86ef72155d1dc4db3057c8122fb000.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdown.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdownKatex.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdownHighlight.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdown-init.js"></script>
+<link href="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
+<link href="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&amp;family=JetBrains+Mono:ital,wght@0,400;0,500&amp;family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@antonz/sqlite@3.40.0/dist/sqlite3.js"></script>
+<script src="https://unpkg.com/sqlime@0.1.3/dist/sqlime-db.js"></script>
+<script src="https://unpkg.com/sqlime@0.1.3/dist/sqlime-examples.js"></script>
+    <style type="text/css">
+    .ps-root .ps-algorithm {
+      border-top: 2px solid;
+      border-bottom: 2px solid;
+    }
+    .pseudocode-container {
+      text-align: left;
+    }
+    </style>
+  
+      <style type="text/css">
+      .ps-algorithm > .ps-line {
+        text-align: left;
+      }
+      </style>
+    
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-03-relational-model/ch05-relational-model.html">Part III: The Relational Model</a></li><li class="breadcrumb-item"><a href="../part-03-relational-model/ch05-relational-model.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Relational Data Model</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Fundamentals of Database Systems</a> 
+        <div class="sidebar-tools-main">
+    <a href="../Fundamentals-of-Database-Systems.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-01-foundations/ch01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Database Systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-01-foundations/ch02-concepts-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Database System Concepts &amp; Architecture</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Data Modeling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-02-data-modeling/ch03-er-modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Entity-Relationship (ER) Modeling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-02-data-modeling/ch04-eer-modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: The Relational Model</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-03-relational-model/ch05-relational-model.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Relational Data Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-03-relational-model/ch06-relational-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Relational Algebra</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part IV: Structured Query Language (SQL)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-04-sql/ch07-sql-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">SQL Basics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-04-sql/ch08-advanced-sql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Advanced SQL</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part V: Database Design Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-05-design/ch09-normalization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Normalization &amp; Functional Dependencies</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VI: Storage, Indexing &amp; Query Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-06-storage-query/ch10-storage-indexing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Storage &amp; Indexing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-06-storage-query/ch11-query-processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Query Processing &amp; Optimization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VII: Transaction Management</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-07-transactions/ch12-transactions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Transaction Processing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-07-transactions/ch13-concurrency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Concurrency Control &amp; Scheduling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VIII: NoSQL &amp; Modern Databases</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-08-nosql/ch14-nosql-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Introduction to NoSQL Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-08-nosql/ch15-mongodb.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">MongoDB — Document Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixA-apis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Database APIs and Connectivity</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#mathematical-foundation" id="toc-mathematical-foundation" class="nav-link active" data-scroll-target="#mathematical-foundation"><span class="header-section-number">5.1</span> 5.1 Mathematical Foundation</a></li>
+  <li><a href="#key-terminology" id="toc-key-terminology" class="nav-link" data-scroll-target="#key-terminology"><span class="header-section-number">5.2</span> 5.2 Key Terminology</a></li>
+  <li><a href="#properties-of-relations" id="toc-properties-of-relations" class="nav-link" data-scroll-target="#properties-of-relations"><span class="header-section-number">5.3</span> 5.3 Properties of Relations</a></li>
+  <li><a href="#formal-schema-notation" id="toc-formal-schema-notation" class="nav-link" data-scroll-target="#formal-schema-notation"><span class="header-section-number">5.4</span> 5.4 Formal Schema Notation</a></li>
+  <li><a href="#complete-key-taxonomy" id="toc-complete-key-taxonomy" class="nav-link" data-scroll-target="#complete-key-taxonomy"><span class="header-section-number">5.5</span> 5.5 Complete Key Taxonomy</a>
+  <ul class="collapse">
+  <li><a href="#definitions" id="toc-definitions" class="nav-link" data-scroll-target="#definitions"><span class="header-section-number">5.5.1</span> Definitions</a></li>
+  </ul></li>
+  <li><a href="#fd-based-key-identification" id="toc-fd-based-key-identification" class="nav-link" data-scroll-target="#fd-based-key-identification"><span class="header-section-number">5.6</span> 5.6 FD-Based Key Identification</a>
+  <ul class="collapse">
+  <li><a href="#what-is-a-functional-dependency" id="toc-what-is-a-functional-dependency" class="nav-link" data-scroll-target="#what-is-a-functional-dependency"><span class="header-section-number">5.6.1</span> What is a Functional Dependency?</a></li>
+  <li><a href="#identifying-candidate-keys-via-fds" id="toc-identifying-candidate-keys-via-fds" class="nav-link" data-scroll-target="#identifying-candidate-keys-via-fds"><span class="header-section-number">5.6.2</span> Identifying Candidate Keys via FDs</a></li>
+  <li><a href="#example-key-extraction" id="toc-example-key-extraction" class="nav-link" data-scroll-target="#example-key-extraction"><span class="header-section-number">5.6.3</span> Example: Key Extraction</a></li>
+  </ul></li>
+  <li><a href="#choosing-a-primary-key" id="toc-choosing-a-primary-key" class="nav-link" data-scroll-target="#choosing-a-primary-key"><span class="header-section-number">5.7</span> 5.7 Choosing a Primary Key</a></li>
+  <li><a href="#integrity-constraints" id="toc-integrity-constraints" class="nav-link" data-scroll-target="#integrity-constraints"><span class="header-section-number">5.8</span> 5.8 Integrity Constraints</a>
+  <ul class="collapse">
+  <li><a href="#domain-constraint" id="toc-domain-constraint" class="nav-link" data-scroll-target="#domain-constraint"><span class="header-section-number">5.8.1</span> Domain Constraint</a></li>
+  <li><a href="#entity-integrity-constraint" id="toc-entity-integrity-constraint" class="nav-link" data-scroll-target="#entity-integrity-constraint"><span class="header-section-number">5.8.2</span> Entity Integrity Constraint</a></li>
+  <li><a href="#referential-integrity-constraint" id="toc-referential-integrity-constraint" class="nav-link" data-scroll-target="#referential-integrity-constraint"><span class="header-section-number">5.8.3</span> Referential Integrity Constraint</a></li>
+  <li><a href="#key-uniqueness-constraint" id="toc-key-uniqueness-constraint" class="nav-link" data-scroll-target="#key-uniqueness-constraint"><span class="header-section-number">5.8.4</span> Key Uniqueness Constraint</a></li>
+  </ul></li>
+  <li><a href="#foreign-key-actions" id="toc-foreign-key-actions" class="nav-link" data-scroll-target="#foreign-key-actions"><span class="header-section-number">5.9</span> 5.9 Foreign Key Actions</a></li>
+  <li><a href="#null-values-and-three-valued-logic" id="toc-null-values-and-three-valued-logic" class="nav-link" data-scroll-target="#null-values-and-three-valued-logic"><span class="header-section-number">5.10</span> 5.10 NULL Values and Three-Valued Logic</a>
+  <ul class="collapse">
+  <li><a href="#three-valued-logic" id="toc-three-valued-logic" class="nav-link" data-scroll-target="#three-valued-logic"><span class="header-section-number">5.10.1</span> Three-Valued Logic</a></li>
+  </ul></li>
+  <li><a href="#business-rules-db-constraints-vs.-application-logic" id="toc-business-rules-db-constraints-vs.-application-logic" class="nav-link" data-scroll-target="#business-rules-db-constraints-vs.-application-logic"><span class="header-section-number">5.11</span> 5.11 Business Rules: DB Constraints vs.&nbsp;Application Logic</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.12</span> Summary</a></li>
+  <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">5.13</span> Review Questions</a>
+  <ul class="collapse">
+  <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">5.13.1</span> Conceptual</a></li>
+  <li><a href="#short-answer-compare" id="toc-short-answer-compare" class="nav-link" data-scroll-target="#short-answer-compare"><span class="header-section-number">5.13.2</span> Short-Answer / Compare</a></li>
+  <li><a href="#true-false-with-explanation" id="toc-true-false-with-explanation" class="nav-link" data-scroll-target="#true-false-with-explanation"><span class="header-section-number">5.13.3</span> True / False (with explanation)</a></li>
+  <li><a href="#multiple-choice" id="toc-multiple-choice" class="nav-link" data-scroll-target="#multiple-choice"><span class="header-section-number">5.13.4</span> Multiple Choice</a></li>
+  <li><a href="#design-exercise" id="toc-design-exercise" class="nav-link" data-scroll-target="#design-exercise"><span class="header-section-number">5.13.5</span> Design Exercise</a></li>
+  <li><a href="#sql-exercise" id="toc-sql-exercise" class="nav-link" data-scroll-target="#sql-exercise"><span class="header-section-number">5.13.6</span> SQL Exercise</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-03-relational-model/ch05-relational-model.html">Part III: The Relational Model</a></li><li class="breadcrumb-item"><a href="../part-03-relational-model/ch05-relational-model.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Relational Data Model</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Relational Data Model</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Chapter 5</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Chapters 3 and 4 produced an ER/EER diagram — a conceptual design that is deliberately free of implementation detail. This chapter makes the transition from concept to relational schema: the precise mathematical structure that underlies every SQL table you will ever write.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Design order matters.</strong> In this course, relational tables are derived from ER diagrams using the 7-step mapping covered at the end of Chapter 3. We do <strong>not</strong> design tables from scratch in this chapter. If you need to define a new table, first draw the ER diagram, then map. Skipping the ER step leads to schemas with redundancy and missing constraints.</p>
+</div>
+</div>
+<hr>
+<section id="mathematical-foundation" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="mathematical-foundation"><span class="header-section-number">5.1</span> 5.1 Mathematical Foundation</h2>
+<p>The relational model was proposed by <strong>E.F. Codd</strong> in 1970 and grounded in <strong>set theory</strong> and <strong>first-order predicate logic</strong>.</p>
+<p>A <strong>relation</strong> <span class="math inline">R</span> of degree <span class="math inline">n</span> is a subset of the Cartesian product of <span class="math inline">n</span> domains:</p>
+<p><span class="math display">R \subseteq D_1 \times D_2 \times \cdots \times D_n</span></p>
+<p>Each element of <span class="math inline">R</span> is a <strong>tuple</strong> <span class="math inline">t = (v_1, v_2, \ldots, v_n)</span> where <span class="math inline">v_i \in D_i</span>.</p>
+<p>A <strong>domain</strong> <span class="math inline">D_i</span> is a set of <strong>atomic</strong> (indivisible) values of the same type. For example: - <span class="math inline">D_{Salary} = \{x \in \mathbb{R} \;|\; x \geq 0\}</span> - <span class="math inline">D_{Gender} = \{`M', `F', `N'\}</span></p>
+<hr>
+</section>
+<section id="key-terminology" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="key-terminology"><span class="header-section-number">5.2</span> 5.2 Key Terminology</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Formal Term</th>
+<th>SQL Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Relation</strong></td>
+<td>Table</td>
+<td>A set of tuples; no duplicates</td>
+</tr>
+<tr class="even">
+<td><strong>Tuple</strong></td>
+<td>Row / Record</td>
+<td>One entity instance</td>
+</tr>
+<tr class="odd">
+<td><strong>Attribute</strong></td>
+<td>Column / Field</td>
+<td>A named domain variable</td>
+</tr>
+<tr class="even">
+<td><strong>Domain</strong></td>
+<td>Data type</td>
+<td>Allowed values for an attribute</td>
+</tr>
+<tr class="odd">
+<td><strong>Degree</strong></td>
+<td>Arity</td>
+<td>Number of attributes</td>
+</tr>
+<tr class="even">
+<td><strong>Cardinality</strong></td>
+<td>Row count</td>
+<td>Number of tuples</td>
+</tr>
+<tr class="odd">
+<td><strong>Relation schema</strong></td>
+<td>Table definition</td>
+<td><span class="math inline">R(A_1:D_1, \ldots, A_n:D_n)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Relation instance</strong></td>
+<td>Table contents</td>
+<td>The current set of tuples</td>
+</tr>
+<tr class="odd">
+<td><strong>Database schema</strong></td>
+<td>All table definitions</td>
+<td>Collection of all relation schemas</td>
+</tr>
+<tr class="even">
+<td><strong>Database state</strong></td>
+<td>All table contents</td>
+<td>Snapshot of all current tuples</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="properties-of-relations" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="properties-of-relations"><span class="header-section-number">5.3</span> 5.3 Properties of Relations</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 43%">
+<col style="width: 29%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Formal Relation</th>
+<th>SQL Table</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>No duplicate tuples</td>
+<td>Required by set theory</td>
+<td>Enforced only with PK or UNIQUE</td>
+</tr>
+<tr class="even">
+<td>Tuple ordering</td>
+<td>Irrelevant</td>
+<td>Undefined without ORDER BY</td>
+</tr>
+<tr class="odd">
+<td>Attribute ordering</td>
+<td>Irrelevant</td>
+<td>Fixed by column position</td>
+</tr>
+<tr class="even">
+<td>Atomic attribute values</td>
+<td>Required (<strong>1NF</strong>)</td>
+<td>Required in normalized tables</td>
+</tr>
+<tr class="odd">
+<td>NULL values</td>
+<td>Not allowed (formal model)</td>
+<td>Allowed in ANSI SQL</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SQL tables are <strong>multisets</strong> (bags), not sets. Without a primary key, SQL allows duplicate rows. The formal relational model does not. Always define a primary key.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="formal-schema-notation" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="formal-schema-notation"><span class="header-section-number">5.4</span> 5.4 Formal Schema Notation</h2>
+<p>Throughout this book we use the following notation for relational schemas:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Notation</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Underlined attribute</strong></td>
+<td>Primary key component</td>
+</tr>
+<tr class="even">
+<td><code>→ Table</code> after attribute</td>
+<td>Foreign key referencing <code>Table</code></td>
+</tr>
+<tr class="odd">
+<td><code>NN</code> after attribute</td>
+<td>NOT NULL constraint</td>
+</tr>
+<tr class="even">
+<td><code>U</code> after attribute</td>
+<td>UNIQUE constraint</td>
+</tr>
+<tr class="odd">
+<td><code>CK(pred)</code></td>
+<td>CHECK constraint with predicate</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Company Database schemas</strong> (derived from the ER mapping in Chapter 3):</p>
+<pre data-code-line-numbers=""><code>EMPLOYEE(Ssn, Fname NN, Minit, Lname NN, Bdate, Address, Gender,
+         Salary CK(Salary&gt;0), Super_ssn→EMPLOYEE, Dno NN→DEPARTMENT)
+
+DEPARTMENT(Dnumber, Dname NN U, Mgr_ssn NN→EMPLOYEE, Mgr_start_date)
+
+DEPT_LOCATIONS(Dnumber→DEPARTMENT, Dlocation)
+
+PROJECT(Pnumber, Pname NN U, Plocation, Dnum NN→DEPARTMENT)
+
+WORKS_ON(Essn→EMPLOYEE, Pno→PROJECT, Hours CK(Hours&gt;=0))
+
+DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)</code></pre>
+<p>Primary keys are underlined. Foreign keys show the referenced table. Constraints are annotated inline.</p>
+<hr>
+</section>
+<section id="complete-key-taxonomy" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="complete-key-taxonomy"><span class="header-section-number">5.5</span> 5.5 Complete Key Taxonomy</h2>
+<p>The word “key” is overloaded in database terminology. Here is the complete hierarchy:</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="ch05-relational-model_files/figure-html/mermaid-figure-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="ch05-relational-model_files/figure-html/mermaid-figure-1.png" style="width:12.52in;height:7.23in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<section id="definitions" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="definitions"><span class="header-section-number">5.5.1</span> Definitions</h3>
+<p><strong>Superkey</strong>: A set of one or more attributes <span class="math inline">\{A_1, \ldots, A_k\}</span> such that no two tuples in any valid relation instance share the same values for all <span class="math inline">k</span> attributes.</p>
+<p><strong>Candidate key</strong>: A <em>minimal</em> superkey — removing any attribute from the set destroys its uniqueness property.</p>
+<p><strong>Primary key</strong>: The candidate key chosen by the designer as the official identifier. The DBMS creates an <em>implicit</em> unique, not-null index for the PK.</p>
+<p><strong>Alternate key</strong>: Any candidate key that was not chosen as the PK. These should still be declared as <code>UNIQUE NOT NULL</code> (or <code>UNIQUE</code> if NULLs are possible) to prevent duplicate non-null values.</p>
+<p><strong>Foreign key (FK)</strong>: Attribute(s) in relation <span class="math inline">R_1</span> that reference the PK of relation <span class="math inline">R_2</span>. Enforces <strong>referential integrity</strong> between tables.</p>
+<p><strong>Natural key</strong>: A real-world attribute used as PK (SSN, passport number, ISBN). Pros: meaningful to users; Cons: changes in the real world break referential integrity.</p>
+<p><strong>Surrogate key</strong>: A system-generated integer (e.g., <code>id INT AUTO_INCREMENT</code>) used as PK. Pros: stable, compact, never changes; Cons: no business meaning.</p>
+<p><strong>Composite key</strong>: A PK made of two or more attributes. Required for M:N junction tables and weak entities.</p>
+<hr>
+</section>
+</section>
+<section id="fd-based-key-identification" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="fd-based-key-identification"><span class="header-section-number">5.6</span> 5.6 FD-Based Key Identification</h2>
+<section id="what-is-a-functional-dependency" class="level3" data-number="5.6.1">
+<h3 data-number="5.6.1" class="anchored" data-anchor-id="what-is-a-functional-dependency"><span class="header-section-number">5.6.1</span> What is a Functional Dependency?</h3>
+<p>A <strong>functional dependency (FD)</strong> <span class="math inline">X \to Y</span> on relation <span class="math inline">R</span> means: for every valid instance of <span class="math inline">R</span>, if two tuples agree on the value(s) of <span class="math inline">X</span>, they must also agree on the value(s) of <span class="math inline">Y</span>. In other words, <span class="math inline">X</span> <strong>determines</strong> <span class="math inline">Y</span>.</p>
+<p>Example from <code>EMPLOYEE</code>: - <code>Ssn → Fname, Lname, Salary, Dno</code> (SSN determines all other attributes) - <code>Dno → Dname</code> (dept number determines dept name — across tables via FK)</p>
+</section>
+<section id="identifying-candidate-keys-via-fds" class="level3" data-number="5.6.2">
+<h3 data-number="5.6.2" class="anchored" data-anchor-id="identifying-candidate-keys-via-fds"><span class="header-section-number">5.6.2</span> Identifying Candidate Keys via FDs</h3>
+<p>A set of attributes <span class="math inline">K</span> is a <strong>candidate key</strong> of <span class="math inline">R</span> if and only if:</p>
+<ol type="1">
+<li><span class="math inline">K \to \{A_1, A_2, \ldots, A_n\}</span> (K functionally determines <em>every</em> attribute in <span class="math inline">R</span>), <strong>and</strong></li>
+<li>No proper subset <span class="math inline">K' \subset K</span> satisfies condition 1 (K is minimal).</li>
+</ol>
+<p><strong>Algorithm:</strong></p>
+<ol type="1">
+<li>List all known FDs for the relation.</li>
+<li>Find all attribute sets whose closure (<span class="math inline">K^+</span>) equals the full set of attributes.</li>
+<li>Among those, pick the minimal ones — these are the <strong>candidate keys</strong>.</li>
+</ol>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Critical principle: Never infer keys from sample data.</strong></p>
+<p>If you look at a table instance and observe that no two rows share the same <code>Lname</code>, that does <em>not</em> mean <code>Lname</code> is a key. A key must be justified by a <strong>semantic rule</strong> (“by definition, no two employees can share the same SSN”) or a <strong>stated FD</strong> — not an accident of the current data.</p>
+</div>
+</div>
+</section>
+<section id="example-key-extraction" class="level3" data-number="5.6.3">
+<h3 data-number="5.6.3" class="anchored" data-anchor-id="example-key-extraction"><span class="header-section-number">5.6.3</span> Example: Key Extraction</h3>
+<p>Given WORKS_ON(Essn, Pno, Hours), the FDs are: - <code>Essn, Pno → Hours</code> (the number of hours is determined by the specific employee-project pair) - No FD exists from <code>Essn</code> alone or <code>Pno</code> alone to <code>Hours</code></p>
+<p>Therefore <code>{Essn, Pno}</code> is the candidate key (and is chosen as PK). This is a <strong>composite key</strong>.</p>
+<hr>
+</section>
+</section>
+<section id="choosing-a-primary-key" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="choosing-a-primary-key"><span class="header-section-number">5.7</span> 5.7 Choosing a Primary Key</h2>
+<p>When multiple candidate keys exist, use this guide:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 42%">
+<col style="width: 57%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Criterion</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Stability</strong></td>
+<td>Choose the candidate key most unlikely to change (SSNs change if government reassigns; <code>id</code> never changes)</td>
+</tr>
+<tr class="even">
+<td><strong>Compactness</strong></td>
+<td>Prefer fewer bytes — integer (4 bytes) over UUID (16 bytes) over long string; smaller PK = faster indexes</td>
+</tr>
+<tr class="odd">
+<td><strong>Natural vs.&nbsp;surrogate</strong></td>
+<td>Prefer surrogate for entities that are internal (orders, log entries); natural is acceptable for lookup tables (country code, ISO currency)</td>
+</tr>
+<tr class="even">
+<td><strong>Composite vs.&nbsp;single-column</strong></td>
+<td>Single-column PKs are easier to reference via FKs in multiple tables; composite is fine for junction tables</td>
+</tr>
+<tr class="odd">
+<td><strong>Uniqueness guarantee</strong></td>
+<td>If no real-world attribute reliably guarantees uniqueness (people can share names, addresses), use a surrogate</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Rule of Thumb
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use <code>id INT AUTO_INCREMENT</code> (or <code>BIGINT</code> for very large tables) as PK for most tables. Keep natural keys as <code>UNIQUE NOT NULL</code> alternate keys. This gives you: stability, compactness, and a meaningful constraint on the business attribute.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> Employee (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span>        <span class="dt">INT</span>          AUTO_INCREMENT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    Ssn       <span class="dt">CHAR</span>(<span class="dv">9</span>)      <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">UNIQUE</span>,   <span class="co">-- alternate key</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    Fname     <span class="dt">VARCHAR</span>(<span class="dv">15</span>)  <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    Salary    <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">2</span>) <span class="kw">CHECK</span> (Salary <span class="op">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    Dno       <span class="dt">INT</span>          <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> Department(<span class="kw">id</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<hr>
+</section>
+<section id="integrity-constraints" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="integrity-constraints"><span class="header-section-number">5.8</span> 5.8 Integrity Constraints</h2>
+<section id="domain-constraint" class="level3" data-number="5.8.1">
+<h3 data-number="5.8.1" class="anchored" data-anchor-id="domain-constraint"><span class="header-section-number">5.8.1</span> Domain Constraint</h3>
+<p>Every attribute value must belong to the attribute’s domain.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Gender  <span class="dt">CHAR</span>(<span class="dv">1</span>) <span class="kw">CHECK</span> (Gender <span class="kw">IN</span> (<span class="st">'M'</span>,<span class="st">'F'</span>,<span class="st">'N'</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Salary <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">2</span>) <span class="kw">CHECK</span> (Salary <span class="op">&gt;=</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="entity-integrity-constraint" class="level3" data-number="5.8.2">
+<h3 data-number="5.8.2" class="anchored" data-anchor-id="entity-integrity-constraint"><span class="header-section-number">5.8.2</span> Entity Integrity Constraint</h3>
+<blockquote class="blockquote">
+<p><strong>No component of a primary key may be NULL.</strong></p>
+</blockquote>
+<p>The PK is the tuple’s identifier. A NULL PK would mean “we don’t know which entity this is” — making the row unidentifiable and violating the relational model.</p>
+</section>
+<section id="referential-integrity-constraint" class="level3" data-number="5.8.3">
+<h3 data-number="5.8.3" class="anchored" data-anchor-id="referential-integrity-constraint"><span class="header-section-number">5.8.3</span> Referential Integrity Constraint</h3>
+<p>Let <span class="math inline">R_1</span> have a foreign key <span class="math inline">FK</span> referencing <span class="math inline">R_2</span>’s primary key <span class="math inline">PK</span>. The constraint is:</p>
+<p><span class="math display">\forall t_1 \in r_1: t_1[FK] = \text{NULL} \;\lor\; \exists t_2 \in r_2: t_2[PK] = t_1[FK]</span></p>
+<p><em>Plain English:</em> Every non-NULL FK value in <span class="math inline">R_1</span> must match an existing PK value in <span class="math inline">R_2</span>.</p>
+</section>
+<section id="key-uniqueness-constraint" class="level3" data-number="5.8.4">
+<h3 data-number="5.8.4" class="anchored" data-anchor-id="key-uniqueness-constraint"><span class="header-section-number">5.8.4</span> Key Uniqueness Constraint</h3>
+<p>Every candidate key must hold distinct non-NULL values across all tuples.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Constraint Violations — Quick Reference
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 31%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Constraint</th>
+<th>Violation example</th>
+<th>Error message type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Domain</td>
+<td><code>INSERT Salary = -5000</code></td>
+<td>CHECK constraint failed</td>
+</tr>
+<tr class="even">
+<td>Entity integrity</td>
+<td><code>INSERT INTO Employee (Ssn) VALUES (NULL)</code></td>
+<td>Column ‘Ssn’ cannot be null</td>
+</tr>
+<tr class="odd">
+<td>Referential integrity</td>
+<td><code>INSERT Employee Dno=99</code> where Dept 99 doesn’t exist</td>
+<td>Foreign key constraint failed</td>
+</tr>
+<tr class="even">
+<td>Key uniqueness</td>
+<td>Two rows with same Ssn</td>
+<td>Duplicate entry for key ‘Ssn’</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="foreign-key-actions" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="foreign-key-actions"><span class="header-section-number">5.9</span> 5.9 Foreign Key Actions</h2>
+<p>When a referenced PK is deleted or updated, the DBMS executes the declared <strong>referential action</strong>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 28%">
+<col style="width: 28%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Action</th>
+<th>On DELETE</th>
+<th>On UPDATE</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>RESTRICT</code> / <code>NO ACTION</code></td>
+<td>Default</td>
+<td>Default</td>
+<td>Reject the operation if matching FK rows exist</td>
+</tr>
+<tr class="even">
+<td><code>CASCADE</code></td>
+<td>Delete matching FK rows</td>
+<td>Update FK values to match new PK</td>
+<td>Propagate automatically</td>
+</tr>
+<tr class="odd">
+<td><code>SET NULL</code></td>
+<td>Set FK to NULL</td>
+<td>Set FK to NULL</td>
+<td>Detach the referencing rows</td>
+</tr>
+<tr class="even">
+<td><code>SET DEFAULT</code></td>
+<td>Set FK to default value</td>
+<td>Set FK to default</td>
+<td>Fill with a placeholder</td>
+</tr>
+</tbody>
+</table>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> Employee (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    Ssn   <span class="dt">CHAR</span>(<span class="dv">9</span>) <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    Dno   <span class="dt">INT</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (Dno) <span class="kw">REFERENCES</span> Department(Dnumber)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">NULL</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Choosing the right action:</strong> - <strong>CASCADE</strong> is appropriate for weak entity owners (deleting an employee deletes all their dependents). - <strong>SET NULL</strong> is appropriate when the relationship is optional (employee’s manager is deleted → employee gets no manager, not deleted). - <strong>RESTRICT</strong> is the safest default — it forces you to handle the dependency explicitly.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="null-values-and-three-valued-logic" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="null-values-and-three-valued-logic"><span class="header-section-number">5.10</span> 5.10 NULL Values and Three-Valued Logic</h2>
+<p><strong>NULL</strong> represents <em>unknown</em>, <em>missing</em>, or <em>not applicable</em>. Different NULLs express different real-world meanings:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Reason for NULL</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Unknown</td>
+<td><code>Bdate</code> of an employee not on record</td>
+</tr>
+<tr class="even">
+<td>Not applicable</td>
+<td><code>Super_ssn</code> for the CEO (no supervisor)</td>
+</tr>
+<tr class="odd">
+<td>Not yet known</td>
+<td><code>Mgr_start_date</code> during a transition period</td>
+</tr>
+</tbody>
+</table>
+<section id="three-valued-logic" class="level3" data-number="5.10.1">
+<h3 data-number="5.10.1" class="anchored" data-anchor-id="three-valued-logic"><span class="header-section-number">5.10.1</span> Three-Valued Logic</h3>
+<p>Standard two-valued logic (TRUE/FALSE) does not work with NULLs. SQL uses <strong>three-valued logic</strong> (TRUE / FALSE / UNKNOWN):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>P</th>
+<th>Q</th>
+<th>P AND Q</th>
+<th>P OR Q</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>T</td>
+<td>UNKNOWN</td>
+<td>UNKNOWN</td>
+<td>T</td>
+</tr>
+<tr class="even">
+<td>F</td>
+<td>UNKNOWN</td>
+<td>F</td>
+<td>UNKNOWN</td>
+</tr>
+<tr class="odd">
+<td>UNKNOWN</td>
+<td>UNKNOWN</td>
+<td>UNKNOWN</td>
+<td>UNKNOWN</td>
+</tr>
+</tbody>
+</table>
+<p>Comparisons involving NULL always yield UNKNOWN:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">NULL</span> <span class="op">=</span> <span class="kw">NULL</span>   → UNKNOWN  (<span class="kw">not</span> <span class="kw">TRUE</span>!)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">NULL</span> <span class="op">&lt;&gt;</span> <span class="kw">NULL</span>  → UNKNOWN</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">NULL</span> <span class="kw">IS</span> <span class="kw">NULL</span>  → <span class="kw">TRUE</span>     (<span class="kw">use</span> <span class="kw">IS</span> <span class="kw">NULL</span> <span class="op">/</span> <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Aggregate functions (<code>SUM</code>, <code>AVG</code>, <code>MAX</code>, <code>MIN</code>) <strong>ignore NULL values</strong>. <code>COUNT(*)</code> counts all rows; <code>COUNT(column)</code> counts only non-NULL values.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="business-rules-db-constraints-vs.-application-logic" class="level2" data-number="5.11">
+<h2 data-number="5.11" class="anchored" data-anchor-id="business-rules-db-constraints-vs.-application-logic"><span class="header-section-number">5.11</span> 5.11 Business Rules: DB Constraints vs.&nbsp;Application Logic</h2>
+<p>A <strong>business rule</strong> is a statement about the organization that must always be true.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 45%">
+<col style="width: 24%">
+<col style="width: 29%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Where to enforce</th>
+<th>Examples</th>
+<th>Mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Database (DBMS)</strong></td>
+<td>“Salary must be positive”; “Every employee must belong to a department”; “SSN is unique”</td>
+<td><code>CHECK</code>, <code>NOT NULL</code>, <code>FOREIGN KEY</code>, <code>UNIQUE</code></td>
+</tr>
+<tr class="even">
+<td><strong>Application code</strong></td>
+<td>“Managers must have 3 years experience”; “Enrollment requires prerequisite completion”</td>
+<td>Business logic layer, triggers</td>
+</tr>
+<tr class="odd">
+<td><strong>Both</strong></td>
+<td>“Age must be ≥ 18”</td>
+<td><code>CHECK</code> in DB + client-side validation</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Prefer DB-level constraints wherever possible.</strong> Application code changes frequently; different applications may access the same database and accidentally skip validation. A DB constraint cannot be bypassed from any application.</p>
+<p>The exception: complex rules that require multi-table logic or dynamic thresholds are better expressed in <strong>stored procedures</strong> or <strong>triggers</strong> (or at the business logic layer for maintainability).</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2" data-number="5.12">
+<h2 data-number="5.12" class="anchored" data-anchor-id="summary"><span class="header-section-number">5.12</span> Summary</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Chapter 5 — Key Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>A <strong>relation</strong> is a mathematical set of tuples. Properties: no duplicates, no ordering, atomic values (1NF).</li>
+<li><strong>Schema notation</strong>: underline = PK, <code>→Table</code> = FK, <code>NN</code> = NOT NULL, <code>U</code> = UNIQUE, <code>CK(pred)</code> = CHECK.</li>
+<li><strong>Key taxonomy</strong>: superkey → candidate key → {primary key, alternate key} → {natural / surrogate / composite}.</li>
+<li><strong>FD-based key identification</strong>: <span class="math inline">K</span> is a candidate key if <span class="math inline">K^+</span> = all attributes and <span class="math inline">K</span> is minimal. Never infer keys from sample data — use business rules.</li>
+<li><strong>PK selection guide</strong>: prefer surrogate integers for stability and compactness; keep natural attributes as <code>UNIQUE NOT NULL</code> alternate keys.</li>
+<li><strong>Four integrity constraints</strong>: domain, entity integrity (PK ≠ NULL), referential integrity (FK → PK), key uniqueness.</li>
+<li><strong>FK actions</strong>: RESTRICT (safe default), CASCADE (weak entities), SET NULL (optional relationships).</li>
+<li><strong>NULL</strong> uses three-valued logic (T/F/UNKNOWN); comparisons involving NULL yield UNKNOWN; aggregates ignore NULLs.</li>
+<li><strong>Business rules</strong> should be enforced at the DB level whenever possible.</li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="review-questions" class="level2" data-number="5.13">
+<h2 data-number="5.13" class="anchored" data-anchor-id="review-questions"><span class="header-section-number">5.13</span> Review Questions</h2>
+<section id="conceptual" class="level3" data-number="5.13.1">
+<h3 data-number="5.13.1" class="anchored" data-anchor-id="conceptual"><span class="header-section-number">5.13.1</span> Conceptual</h3>
+<ol type="1">
+<li>Define <strong>relation</strong>, <strong>tuple</strong>, <strong>attribute</strong>, and <strong>domain</strong> using set-theory language. Give a concrete example from the Company Database for each.</li>
+<li>Explain the difference between a <strong>candidate key</strong>, a <strong>primary key</strong>, and an <strong>alternate key</strong>. Can a relation have more than one candidate key? Give an example.</li>
+<li>What is the <strong>entity integrity constraint</strong>? Give a precise statement of why a NULL primary key violates it.</li>
+</ol>
+</section>
+<section id="short-answer-compare" class="level3" data-number="5.13.2">
+<h3 data-number="5.13.2" class="anchored" data-anchor-id="short-answer-compare"><span class="header-section-number">5.13.2</span> Short-Answer / Compare</h3>
+<ol start="4" type="1">
+<li>Compare <strong>natural keys</strong> and <strong>surrogate keys</strong>. For the <code>EMPLOYEE</code> table in the Company Database, which would you choose as PK? Justify using at least two of the criteria from §5.7.</li>
+<li>Explain the difference between <code>ON DELETE CASCADE</code> and <code>ON DELETE SET NULL</code>. For the <code>DEPENDENT</code> weak entity referenced by <code>EMPLOYEE</code>, which action is more appropriate? Why?</li>
+<li>The <code>WORKS_ON</code> table has a composite PK <code>(Essn, Pno)</code>. Explain why neither <code>Essn</code> alone nor <code>Pno</code> alone qualifies as a candidate key, using the concept of functional dependency.</li>
+</ol>
+</section>
+<section id="true-false-with-explanation" class="level3" data-number="5.13.3">
+<h3 data-number="5.13.3" class="anchored" data-anchor-id="true-false-with-explanation"><span class="header-section-number">5.13.3</span> True / False (with explanation)</h3>
+<ol start="7" type="1">
+<li><em>“If no two rows in the current <code>Employee</code> table have the same <code>Lname</code>, then <code>Lname</code> is a candidate key.”</em> — True or False? Explain the principle involved.</li>
+<li><em>“NULL = NULL evaluates to TRUE in SQL.”</em> — True or False? What expression should be used instead?</li>
+<li><em>“Foreign keys can always be NULL.”</em> — True or False? Explain when a FK must be NOT NULL.</li>
+<li><em>“The RESTRICT action on a foreign key prevents deleting a parent row that has matching children.”</em> — True or False? What is the alternative to CASCADE in this case?</li>
+</ol>
+</section>
+<section id="multiple-choice" class="level3" data-number="5.13.4">
+<h3 data-number="5.13.4" class="anchored" data-anchor-id="multiple-choice"><span class="header-section-number">5.13.4</span> Multiple Choice</h3>
+<ol start="11" type="1">
+<li>Which of the following is <strong>not</strong> a property of a formal mathematical relation?
+<ul>
+<li><ol type="a">
+<li>No duplicate tuples</li>
+</ol></li>
+<li><ol start="2" type="a">
+<li>Column order is irrelevant</li>
+</ol></li>
+<li><strong>(c) Rows are stored in insertion order</strong> ✓</li>
+<li><ol start="4" type="a">
+<li>All attribute values are atomic</li>
+</ol></li>
+</ul></li>
+<li>An alternate key is:
+<ul>
+<li><ol type="a">
+<li>A foreign key that references an alternate table</li>
+</ol></li>
+<li><strong>(b) A candidate key that was not chosen as the primary key</strong> ✓</li>
+<li><ol start="3" type="a">
+<li>A composite key with more than three attributes</li>
+</ol></li>
+<li><ol start="4" type="a">
+<li>A key that allows NULL values</li>
+</ol></li>
+</ul></li>
+</ol>
+</section>
+<section id="design-exercise" class="level3" data-number="5.13.5">
+<h3 data-number="5.13.5" class="anchored" data-anchor-id="design-exercise"><span class="header-section-number">5.13.5</span> Design Exercise</h3>
+<ol start="13" type="1">
+<li>Given the following business rules for a university course enrollment system:
+<ul>
+<li>A student is uniquely identified by their student number AND (separately) by their national ID.</li>
+<li>A student may enroll in many courses; a course may have many enrolled students.</li>
+<li>Every enrollment must record the semester, the grade (may be null if not yet graded), and the status (ENROLLED, WITHDRAWN, COMPLETED).</li>
+<li>Dropping a student from the system should set their enrollments to reflect the deletion but not delete the enrollment history.</li>
+</ul>
+<ol type="a">
+<li>Identify all candidate keys for the <code>Enrollment</code> relation.<br>
+</li>
+<li>Specify the FK action for the student’s deletion.<br>
+</li>
+<li>Write the formal schema notation for <code>Student</code> and <code>Enrollment</code> using the conventions in §5.4.</li>
+</ol></li>
+</ol>
+</section>
+<section id="sql-exercise" class="level3" data-number="5.13.6">
+<h3 data-number="5.13.6" class="anchored" data-anchor-id="sql-exercise"><span class="header-section-number">5.13.6</span> SQL Exercise</h3>
+<ol start="14" type="1">
+<li>Write the complete <code>CREATE TABLE</code> statements for <code>DEPARTMENT</code> and <code>EMPLOYEE</code> from the Company Database, enforcing:
+<ul>
+<li>All structural constraints from §5.4</li>
+<li><code>Salary &gt; 0</code></li>
+<li><code>Gender</code> restricted to <code>'M'</code>, <code>'F'</code>, or <code>'N'</code></li>
+<li><code>ON DELETE SET NULL ON UPDATE CASCADE</code> for the <code>Dno</code> FK</li>
+<li><code>ON DELETE CASCADE</code> for the <code>Super_ssn</code> FK (deleting an employee also removes direct reports — debate whether this is the right choice)</li>
+</ul></li>
+</ol>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../part-02-data-modeling/ch04-eer-modeling.html" class="pagination-link" aria-label="Enhanced Entity-Relationship (EER) Modeling">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../part-03-relational-model/ch06-relational-algebra.html" class="pagination-link" aria-label="Relational Algebra">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Relational Algebra</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" data-shortcodes="false" data-code-line-numbers=""><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "The Relational Data Model"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 5"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>Chapters 3 and 4 produced an ER/EER diagram — a conceptual design that is deliberately free of implementation detail. This chapter makes the transition from concept to relational schema: the precise mathematical structure that underlies every SQL table you will ever write.</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>**Design order matters.** In this course, relational tables are derived from ER diagrams using the 7-step mapping covered at the end of Chapter 3. We do **not** design tables from scratch in this chapter. If you need to define a new table, first draw the ER diagram, then map. Skipping the ER step leads to schemas with redundancy and missing constraints.</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.1 Mathematical Foundation</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>The relational model was proposed by **E.F. Codd** in 1970 and grounded in **set theory** and **first-order predicate logic**.</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>A **relation** $R$ of degree $n$ is a subset of the Cartesian product of $n$ domains:</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>$$R \subseteq D_1 \times D_2 \times \cdots \times D_n$$</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>Each element of $R$ is a **tuple** $t = (v_1, v_2, \ldots, v_n)$ where $v_i \in D_i$.</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>A **domain** $D_i$ is a set of **atomic** (indivisible) values of the same type. For example:</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$D_{Salary} = <span class="sc">\{</span>x \in \mathbb{R} \;|\; x \geq 0<span class="sc">\}</span>$</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$D_{Gender} = <span class="sc">\{</span><span class="in">`M', `</span>F', `N'<span class="sc">\}</span>$</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.2 Key Terminology</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Formal Term <span class="pp">|</span> SQL Term <span class="pp">|</span> Meaning <span class="pp">|</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|---------|---------|</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Relation** <span class="pp">|</span> Table <span class="pp">|</span> A set of tuples; no duplicates <span class="pp">|</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Tuple** <span class="pp">|</span> Row / Record <span class="pp">|</span> One entity instance <span class="pp">|</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Attribute** <span class="pp">|</span> Column / Field <span class="pp">|</span> A named domain variable <span class="pp">|</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Domain** <span class="pp">|</span> Data type <span class="pp">|</span> Allowed values for an attribute <span class="pp">|</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Degree** <span class="pp">|</span> Arity <span class="pp">|</span> Number of attributes <span class="pp">|</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Cardinality** <span class="pp">|</span> Row count <span class="pp">|</span> Number of tuples <span class="pp">|</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Relation schema** <span class="pp">|</span> Table definition <span class="pp">|</span> $R(A_1:D_1, \ldots, A_n:D_n)$ <span class="pp">|</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Relation instance** <span class="pp">|</span> Table contents <span class="pp">|</span> The current set of tuples <span class="pp">|</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Database schema** <span class="pp">|</span> All table definitions <span class="pp">|</span> Collection of all relation schemas <span class="pp">|</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Database state** <span class="pp">|</span> All table contents <span class="pp">|</span> Snapshot of all current tuples <span class="pp">|</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.3 Properties of Relations</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Formal Relation <span class="pp">|</span> SQL Table <span class="pp">|</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|----------------|-----------|</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> No duplicate tuples <span class="pp">|</span> Required by set theory <span class="pp">|</span> Enforced only with PK or UNIQUE <span class="pp">|</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tuple ordering <span class="pp">|</span> Irrelevant <span class="pp">|</span> Undefined without ORDER BY <span class="pp">|</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Attribute ordering <span class="pp">|</span> Irrelevant <span class="pp">|</span> Fixed by column position <span class="pp">|</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Atomic attribute values <span class="pp">|</span> Required (**1NF**) <span class="pp">|</span> Required in normalized tables <span class="pp">|</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NULL values <span class="pp">|</span> Not allowed (formal model) <span class="pp">|</span> Allowed in ANSI SQL <span class="pp">|</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>SQL tables are **multisets** (bags), not sets. Without a primary key, SQL allows duplicate rows. The formal relational model does not. Always define a primary key.</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.4 Formal Schema Notation</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>Throughout this book we use the following notation for relational schemas:</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Notation <span class="pp">|</span> Meaning <span class="pp">|</span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|---------|</span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Underlined attribute** <span class="pp">|</span> Primary key component <span class="pp">|</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`→ Table`</span> after attribute <span class="pp">|</span> Foreign key referencing <span class="in">`Table`</span> <span class="pp">|</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`NN`</span> after attribute <span class="pp">|</span> NOT NULL constraint <span class="pp">|</span></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`U`</span> after attribute <span class="pp">|</span> UNIQUE constraint <span class="pp">|</span></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`CK(pred)`</span> <span class="pp">|</span> CHECK constraint with predicate <span class="pp">|</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>**Company Database schemas** (derived from the ER mapping in Chapter 3):</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a><span class="in">EMPLOYEE(Ssn, Fname NN, Minit, Lname NN, Bdate, Address, Gender,</span></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a><span class="in">         Salary CK(Salary&gt;0), Super_ssn→EMPLOYEE, Dno NN→DEPARTMENT)</span></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a><span class="in">DEPARTMENT(Dnumber, Dname NN U, Mgr_ssn NN→EMPLOYEE, Mgr_start_date)</span></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a><span class="in">DEPT_LOCATIONS(Dnumber→DEPARTMENT, Dlocation)</span></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a><span class="in">PROJECT(Pnumber, Pname NN U, Plocation, Dnum NN→DEPARTMENT)</span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a><span class="in">WORKS_ON(Essn→EMPLOYEE, Pno→PROJECT, Hours CK(Hours&gt;=0))</span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a><span class="in">DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)</span></span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>Primary keys are underlined. Foreign keys show the referenced table. Constraints are annotated inline.</span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.5 Complete Key Taxonomy</span></span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>The word "key" is overloaded in database terminology. Here is the complete hierarchy:</span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>    SK[<span class="ot">"</span><span class="st">Superkey&lt;br/&gt;(any set of attributes&lt;br/&gt;that uniquely identifies a tuple)</span><span class="ot">"</span>]</span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>    CK[<span class="ot">"</span><span class="st">Candidate Key&lt;br/&gt;(minimal superkey —&lt;br/&gt;no proper subset is a superkey)</span><span class="ot">"</span>]</span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>    PK[<span class="ot">"</span><span class="st">Primary Key&lt;br/&gt;(chosen candidate key;&lt;br/&gt;NOT NULL + UNIQUE enforced by DBMS)</span><span class="ot">"</span>]</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>    AK[<span class="ot">"</span><span class="st">Alternate Key&lt;br/&gt;(any other candidate key;&lt;br/&gt;UNIQUE enforced, NULL may vary)</span><span class="ot">"</span>]</span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>    FK[<span class="ot">"</span><span class="st">Foreign Key&lt;br/&gt;(references PK of another relation)</span><span class="ot">"</span>]</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>    NK[<span class="ot">"</span><span class="st">Natural Key&lt;br/&gt;(PK is a real-world attribute:&lt;br/&gt;e.g., SSN, ISBN)</span><span class="ot">"</span>]</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>    SK2[<span class="ot">"</span><span class="st">Surrogate Key&lt;br/&gt;(system-generated integer:&lt;br/&gt;e.g., AUTO_INCREMENT id)</span><span class="ot">"</span>]</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>    COMP[<span class="ot">"</span><span class="st">Composite Key&lt;br/&gt;(PK made of two or more attributes)</span><span class="ot">"</span>]</span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>    SK --&gt; CK</span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>    CK --&gt; PK</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>    CK --&gt; AK</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>    PK --&gt; NK</span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>    PK --&gt; SK2</span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>    PK --&gt; COMP</span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>    PK -.-&gt;|<span class="ot">"</span><span class="st">can be referenced by</span><span class="ot">"</span>| FK</span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a><span class="fu">### Definitions</span></span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>**Superkey**: A set of one or more attributes $<span class="sc">\{</span>A_1, \ldots, A_k<span class="sc">\}</span>$ such that no two tuples in any valid relation instance share the same values for all $k$ attributes.</span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>**Candidate key**: A *minimal* superkey — removing any attribute from the set destroys its uniqueness property.</span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>**Primary key**: The candidate key chosen by the designer as the official identifier. The DBMS creates an *implicit* unique, not-null index for the PK.</span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>**Alternate key**: Any candidate key that was not chosen as the PK. These should still be declared as <span class="in">`UNIQUE NOT NULL`</span> (or <span class="in">`UNIQUE`</span> if NULLs are possible) to prevent duplicate non-null values.</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>**Foreign key (FK)**: Attribute(s) in relation $R_1$ that reference the PK of relation $R_2$. Enforces **referential integrity** between tables.</span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>**Natural key**: A real-world attribute used as PK (SSN, passport number, ISBN). Pros: meaningful to users; Cons: changes in the real world break referential integrity.</span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>**Surrogate key**: A system-generated integer (e.g., <span class="in">`id INT AUTO_INCREMENT`</span>) used as PK. Pros: stable, compact, never changes; Cons: no business meaning.</span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>**Composite key**: A PK made of two or more attributes. Required for M:N junction tables and weak entities.</span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.6 FD-Based Key Identification</span></span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a><span class="fu">### What is a Functional Dependency?</span></span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>A **functional dependency (FD)** $X \to Y$ on relation $R$ means: for every valid instance of $R$, if two tuples agree on the value(s) of $X$, they must also agree on the value(s) of $Y$. In other words, $X$ **determines** $Y$.</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>Example from <span class="in">`EMPLOYEE`</span>:</span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`Ssn → Fname, Lname, Salary, Dno`</span> (SSN determines all other attributes)</span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`Dno → Dname`</span> (dept number determines dept name — across tables via FK)</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a><span class="fu">### Identifying Candidate Keys via FDs</span></span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>A set of attributes $K$ is a **candidate key** of $R$ if and only if:</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>$K \to <span class="sc">\{</span>A_1, A_2, \ldots, A_n<span class="sc">\}</span>$ (K functionally determines *every* attribute in $R$), **and**</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>No proper subset $K' \subset K$ satisfies condition 1 (K is minimal).</span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>**Algorithm:**</span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>List all known FDs for the relation.</span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Find all attribute sets whose closure ($K^+$) equals the full set of attributes.</span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Among those, pick the minimal ones — these are the **candidate keys**.</span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>**Critical principle: Never infer keys from sample data.**</span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>If you look at a table instance and observe that no two rows share the same <span class="in">`Lname`</span>, that does *not* mean `Lname` is a key. A key must be justified by a **semantic rule** ("by definition, no two employees can share the same SSN") or a **stated FD** — not an accident of the current data.</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example: Key Extraction</span></span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>Given WORKS_ON(Essn, Pno, Hours), the FDs are:</span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`Essn, Pno → Hours`</span> (the number of hours is determined by the specific employee-project pair)</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No FD exists from <span class="in">`Essn`</span> alone or <span class="in">`Pno`</span> alone to <span class="in">`Hours`</span></span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>Therefore <span class="in">`{Essn, Pno}`</span> is the candidate key (and is chosen as PK). This is a **composite key**.</span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.7 Choosing a Primary Key</span></span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>When multiple candidate keys exist, use this guide:</span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Criterion <span class="pp">|</span> Recommendation <span class="pp">|</span></span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|---------------|</span></span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Stability** <span class="pp">|</span> Choose the candidate key most unlikely to change (SSNs change if government reassigns; <span class="in">`id`</span> never changes) <span class="pp">|</span></span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Compactness** <span class="pp">|</span> Prefer fewer bytes — integer (4 bytes) over UUID (16 bytes) over long string; smaller PK = faster indexes <span class="pp">|</span></span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Natural vs. surrogate** <span class="pp">|</span> Prefer surrogate for entities that are internal (orders, log entries); natural is acceptable for lookup tables (country code, ISO currency) <span class="pp">|</span></span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Composite vs. single-column** <span class="pp">|</span> Single-column PKs are easier to reference via FKs in multiple tables; composite is fine for junction tables <span class="pp">|</span></span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Uniqueness guarantee** <span class="pp">|</span> If no real-world attribute reliably guarantees uniqueness (people can share names, addresses), use a surrogate <span class="pp">|</span></span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rule of Thumb</span></span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>Use <span class="in">`id INT AUTO_INCREMENT`</span> (or <span class="in">`BIGINT`</span> for very large tables) as PK for most tables. Keep natural keys as <span class="in">`UNIQUE NOT NULL`</span> alternate keys. This gives you: stability, compactness, and a meaningful constraint on the business attribute.</span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> Employee (</span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>    id        <span class="dt">INT</span>          <span class="kw">AUTO_INCREMENT</span> <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a>    Ssn       <span class="fu">CHAR</span>(<span class="dv">9</span>)      <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">UNIQUE</span>,   <span class="co">-- alternate key</span></span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>    Fname     <span class="dt">VARCHAR</span>(<span class="dv">15</span>)  <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>    Salary    <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">2</span>) CHECK (Salary <span class="op">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a>    Dno       <span class="dt">INT</span>          <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">REFERENCES</span> Department(id)</span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.8 Integrity Constraints</span></span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a><span class="fu">### Domain Constraint</span></span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a>Every attribute value must belong to the attribute's domain.</span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
+<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a>Gender  <span class="fu">CHAR</span>(<span class="dv">1</span>) CHECK (Gender <span class="kw">IN</span> (<span class="st">'M'</span>,<span class="st">'F'</span>,<span class="st">'N'</span>))</span>
+<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a>Salary <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">2</span>) CHECK (Salary <span class="op">&gt;=</span> <span class="dv">0</span>)</span>
+<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-223"><a href="#cb6-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-224"><a href="#cb6-224" aria-hidden="true" tabindex="-1"></a><span class="fu">### Entity Integrity Constraint</span></span>
+<span id="cb6-225"><a href="#cb6-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-226"><a href="#cb6-226" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **No component of a primary key may be NULL.**</span></span>
+<span id="cb6-227"><a href="#cb6-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-228"><a href="#cb6-228" aria-hidden="true" tabindex="-1"></a>The PK is the tuple's identifier. A NULL PK would mean "we don't know which entity this is" — making the row unidentifiable and violating the relational model.</span>
+<span id="cb6-229"><a href="#cb6-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-230"><a href="#cb6-230" aria-hidden="true" tabindex="-1"></a><span class="fu">### Referential Integrity Constraint</span></span>
+<span id="cb6-231"><a href="#cb6-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-232"><a href="#cb6-232" aria-hidden="true" tabindex="-1"></a>Let $R_1$ have a foreign key $FK$ referencing $R_2$'s primary key $PK$. The constraint is:</span>
+<span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a>$$\forall t_1 \in r_1: t_1<span class="co">[</span><span class="ot">FK</span><span class="co">]</span> = \text{NULL} \;\lor\; \exists t_2 \in r_2: t_2<span class="co">[</span><span class="ot">PK</span><span class="co">]</span> = t_1<span class="co">[</span><span class="ot">FK</span><span class="co">]</span>$$</span>
+<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a>*Plain English:* Every non-NULL FK value in $R_1$ must match an existing PK value in $R_2$.</span>
+<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Uniqueness Constraint</span></span>
+<span id="cb6-239"><a href="#cb6-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-240"><a href="#cb6-240" aria-hidden="true" tabindex="-1"></a>Every candidate key must hold distinct non-NULL values across all tuples.</span>
+<span id="cb6-241"><a href="#cb6-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-242"><a href="#cb6-242" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb6-243"><a href="#cb6-243" aria-hidden="true" tabindex="-1"></a><span class="fu">## Constraint Violations — Quick Reference</span></span>
+<span id="cb6-244"><a href="#cb6-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-245"><a href="#cb6-245" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constraint <span class="pp">|</span> Violation example <span class="pp">|</span> Error message type <span class="pp">|</span></span>
+<span id="cb6-246"><a href="#cb6-246" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|---------|---------|</span></span>
+<span id="cb6-247"><a href="#cb6-247" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Domain <span class="pp">|</span> <span class="in">`INSERT Salary = -5000`</span> <span class="pp">|</span> CHECK constraint failed <span class="pp">|</span></span>
+<span id="cb6-248"><a href="#cb6-248" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Entity integrity <span class="pp">|</span> <span class="in">`INSERT INTO Employee (Ssn) VALUES (NULL)`</span> <span class="pp">|</span> Column 'Ssn' cannot be null <span class="pp">|</span></span>
+<span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Referential integrity <span class="pp">|</span> <span class="in">`INSERT Employee Dno=99`</span> where Dept 99 doesn't exist <span class="pp">|</span> Foreign key constraint failed <span class="pp">|</span></span>
+<span id="cb6-250"><a href="#cb6-250" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Key uniqueness <span class="pp">|</span> Two rows with same Ssn <span class="pp">|</span> Duplicate entry for key 'Ssn' <span class="pp">|</span></span>
+<span id="cb6-251"><a href="#cb6-251" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-253"><a href="#cb6-253" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-254"><a href="#cb6-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.9 Foreign Key Actions</span></span>
+<span id="cb6-256"><a href="#cb6-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-257"><a href="#cb6-257" aria-hidden="true" tabindex="-1"></a>When a referenced PK is deleted or updated, the DBMS executes the declared **referential action**:</span>
+<span id="cb6-258"><a href="#cb6-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-259"><a href="#cb6-259" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Action <span class="pp">|</span> On DELETE <span class="pp">|</span> On UPDATE <span class="pp">|</span> Meaning <span class="pp">|</span></span>
+<span id="cb6-260"><a href="#cb6-260" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|-----------|-----------|---------|</span></span>
+<span id="cb6-261"><a href="#cb6-261" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`RESTRICT`</span> / <span class="in">`NO ACTION`</span> <span class="pp">|</span> Default <span class="pp">|</span> Default <span class="pp">|</span> Reject the operation if matching FK rows exist <span class="pp">|</span></span>
+<span id="cb6-262"><a href="#cb6-262" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`CASCADE`</span> <span class="pp">|</span> Delete matching FK rows <span class="pp">|</span> Update FK values to match new PK <span class="pp">|</span> Propagate automatically <span class="pp">|</span></span>
+<span id="cb6-263"><a href="#cb6-263" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`SET NULL`</span> <span class="pp">|</span> Set FK to NULL <span class="pp">|</span> Set FK to NULL <span class="pp">|</span> Detach the referencing rows <span class="pp">|</span></span>
+<span id="cb6-264"><a href="#cb6-264" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`SET DEFAULT`</span> <span class="pp">|</span> Set FK to default value <span class="pp">|</span> Set FK to default <span class="pp">|</span> Fill with a placeholder <span class="pp">|</span></span>
+<span id="cb6-265"><a href="#cb6-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-266"><a href="#cb6-266" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
+<span id="cb6-267"><a href="#cb6-267" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> Employee (</span>
+<span id="cb6-268"><a href="#cb6-268" aria-hidden="true" tabindex="-1"></a>    Ssn   <span class="fu">CHAR</span>(<span class="dv">9</span>) <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb6-269"><a href="#cb6-269" aria-hidden="true" tabindex="-1"></a>    Dno   <span class="dt">INT</span>,</span>
+<span id="cb6-270"><a href="#cb6-270" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (Dno) <span class="kw">REFERENCES</span> Department(Dnumber)</span>
+<span id="cb6-271"><a href="#cb6-271" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">DELETE</span> <span class="kw">SET</span> <span class="kw">NULL</span></span>
+<span id="cb6-272"><a href="#cb6-272" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> <span class="kw">UPDATE</span> <span class="kw">CASCADE</span></span>
+<span id="cb6-273"><a href="#cb6-273" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb6-274"><a href="#cb6-274" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-275"><a href="#cb6-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-276"><a href="#cb6-276" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb6-277"><a href="#cb6-277" aria-hidden="true" tabindex="-1"></a>**Choosing the right action:**</span>
+<span id="cb6-278"><a href="#cb6-278" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CASCADE** is appropriate for weak entity owners (deleting an employee deletes all their dependents).</span>
+<span id="cb6-279"><a href="#cb6-279" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**SET NULL** is appropriate when the relationship is optional (employee's manager is deleted → employee gets no manager, not deleted).</span>
+<span id="cb6-280"><a href="#cb6-280" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RESTRICT** is the safest default — it forces you to handle the dependency explicitly.</span>
+<span id="cb6-281"><a href="#cb6-281" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-282"><a href="#cb6-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-283"><a href="#cb6-283" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-284"><a href="#cb6-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-285"><a href="#cb6-285" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.10 NULL Values and Three-Valued Logic</span></span>
+<span id="cb6-286"><a href="#cb6-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-287"><a href="#cb6-287" aria-hidden="true" tabindex="-1"></a>**NULL** represents *unknown*, *missing*, or *not applicable*. Different NULLs express different real-world meanings:</span>
+<span id="cb6-288"><a href="#cb6-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-289"><a href="#cb6-289" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Reason for NULL <span class="pp">|</span> Example <span class="pp">|</span></span>
+<span id="cb6-290"><a href="#cb6-290" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------------|---------|</span></span>
+<span id="cb6-291"><a href="#cb6-291" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Unknown <span class="pp">|</span> <span class="in">`Bdate`</span> of an employee not on record <span class="pp">|</span></span>
+<span id="cb6-292"><a href="#cb6-292" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Not applicable <span class="pp">|</span> <span class="in">`Super_ssn`</span> for the CEO (no supervisor) <span class="pp">|</span></span>
+<span id="cb6-293"><a href="#cb6-293" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Not yet known <span class="pp">|</span> <span class="in">`Mgr_start_date`</span> during a transition period <span class="pp">|</span></span>
+<span id="cb6-294"><a href="#cb6-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-295"><a href="#cb6-295" aria-hidden="true" tabindex="-1"></a><span class="fu">### Three-Valued Logic</span></span>
+<span id="cb6-296"><a href="#cb6-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-297"><a href="#cb6-297" aria-hidden="true" tabindex="-1"></a>Standard two-valued logic (TRUE/FALSE) does not work with NULLs. SQL uses **three-valued logic** (TRUE / FALSE / UNKNOWN):</span>
+<span id="cb6-298"><a href="#cb6-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-299"><a href="#cb6-299" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> P <span class="pp">|</span> Q <span class="pp">|</span> P AND Q <span class="pp">|</span> P OR Q <span class="pp">|</span></span>
+<span id="cb6-300"><a href="#cb6-300" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---------|--------|</span></span>
+<span id="cb6-301"><a href="#cb6-301" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> T <span class="pp">|</span> UNKNOWN <span class="pp">|</span> UNKNOWN <span class="pp">|</span> T <span class="pp">|</span></span>
+<span id="cb6-302"><a href="#cb6-302" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> F <span class="pp">|</span> UNKNOWN <span class="pp">|</span> F <span class="pp">|</span> UNKNOWN <span class="pp">|</span></span>
+<span id="cb6-303"><a href="#cb6-303" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> UNKNOWN <span class="pp">|</span> UNKNOWN <span class="pp">|</span> UNKNOWN <span class="pp">|</span> UNKNOWN <span class="pp">|</span></span>
+<span id="cb6-304"><a href="#cb6-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-305"><a href="#cb6-305" aria-hidden="true" tabindex="-1"></a>Comparisons involving NULL always yield UNKNOWN:</span>
+<span id="cb6-306"><a href="#cb6-306" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
+<span id="cb6-307"><a href="#cb6-307" aria-hidden="true" tabindex="-1"></a><span class="kw">NULL</span> <span class="op">=</span> <span class="kw">NULL</span>   → UNKNOWN  (<span class="kw">not</span> TRUE!)</span>
+<span id="cb6-308"><a href="#cb6-308" aria-hidden="true" tabindex="-1"></a><span class="kw">NULL</span> <span class="op">&lt;&gt;</span> <span class="kw">NULL</span>  → UNKNOWN</span>
+<span id="cb6-309"><a href="#cb6-309" aria-hidden="true" tabindex="-1"></a><span class="kw">NULL</span> <span class="kw">IS</span> <span class="kw">NULL</span>  → TRUE     (<span class="kw">use</span> <span class="kw">IS</span> <span class="kw">NULL</span> <span class="op">/</span> <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>)</span>
+<span id="cb6-310"><a href="#cb6-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-311"><a href="#cb6-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-312"><a href="#cb6-312" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb6-313"><a href="#cb6-313" aria-hidden="true" tabindex="-1"></a>Aggregate functions (<span class="in">`SUM`</span>, <span class="in">`AVG`</span>, <span class="in">`MAX`</span>, <span class="in">`MIN`</span>) **ignore NULL values**. <span class="in">`COUNT(*)`</span> counts all rows; <span class="in">`COUNT(column)`</span> counts only non-NULL values.</span>
+<span id="cb6-314"><a href="#cb6-314" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-315"><a href="#cb6-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-316"><a href="#cb6-316" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-317"><a href="#cb6-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-318"><a href="#cb6-318" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.11 Business Rules: DB Constraints vs. Application Logic</span></span>
+<span id="cb6-319"><a href="#cb6-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-320"><a href="#cb6-320" aria-hidden="true" tabindex="-1"></a>A **business rule** is a statement about the organization that must always be true.</span>
+<span id="cb6-321"><a href="#cb6-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-322"><a href="#cb6-322" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Where to enforce <span class="pp">|</span> Examples <span class="pp">|</span> Mechanism <span class="pp">|</span></span>
+<span id="cb6-323"><a href="#cb6-323" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------------|---------|-----------|</span></span>
+<span id="cb6-324"><a href="#cb6-324" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Database (DBMS)** <span class="pp">|</span> "Salary must be positive"; "Every employee must belong to a department"; "SSN is unique" <span class="pp">|</span> <span class="in">`CHECK`</span>, <span class="in">`NOT NULL`</span>, <span class="in">`FOREIGN KEY`</span>, <span class="in">`UNIQUE`</span> <span class="pp">|</span></span>
+<span id="cb6-325"><a href="#cb6-325" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Application code** <span class="pp">|</span> "Managers must have 3 years experience"; "Enrollment requires prerequisite completion" <span class="pp">|</span> Business logic layer, triggers <span class="pp">|</span></span>
+<span id="cb6-326"><a href="#cb6-326" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Both** <span class="pp">|</span> "Age must be ≥ 18" <span class="pp">|</span> <span class="in">`CHECK`</span> in DB + client-side validation <span class="pp">|</span></span>
+<span id="cb6-327"><a href="#cb6-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-328"><a href="#cb6-328" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb6-329"><a href="#cb6-329" aria-hidden="true" tabindex="-1"></a>**Prefer DB-level constraints wherever possible.** Application code changes frequently; different applications may access the same database and accidentally skip validation. A DB constraint cannot be bypassed from any application.</span>
+<span id="cb6-330"><a href="#cb6-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-331"><a href="#cb6-331" aria-hidden="true" tabindex="-1"></a>The exception: complex rules that require multi-table logic or dynamic thresholds are better expressed in **stored procedures** or **triggers** (or at the business logic layer for maintainability).</span>
+<span id="cb6-332"><a href="#cb6-332" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-333"><a href="#cb6-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-334"><a href="#cb6-334" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-335"><a href="#cb6-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-336"><a href="#cb6-336" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb6-337"><a href="#cb6-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-338"><a href="#cb6-338" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb6-339"><a href="#cb6-339" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter 5 — Key Takeaways</span></span>
+<span id="cb6-340"><a href="#cb6-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-341"><a href="#cb6-341" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A **relation** is a mathematical set of tuples. Properties: no duplicates, no ordering, atomic values (1NF).</span>
+<span id="cb6-342"><a href="#cb6-342" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Schema notation**: underline = PK, <span class="in">`→Table`</span> = FK, <span class="in">`NN`</span> = NOT NULL, <span class="in">`U`</span> = UNIQUE, <span class="in">`CK(pred)`</span> = CHECK.</span>
+<span id="cb6-343"><a href="#cb6-343" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Key taxonomy**: superkey → candidate key → {primary key, alternate key} → {natural / surrogate / composite}.</span>
+<span id="cb6-344"><a href="#cb6-344" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**FD-based key identification**: $K$ is a candidate key if $K^+$ = all attributes and $K$ is minimal. Never infer keys from sample data — use business rules.</span>
+<span id="cb6-345"><a href="#cb6-345" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**PK selection guide**: prefer surrogate integers for stability and compactness; keep natural attributes as <span class="in">`UNIQUE NOT NULL`</span> alternate keys.</span>
+<span id="cb6-346"><a href="#cb6-346" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Four integrity constraints**: domain, entity integrity (PK ≠ NULL), referential integrity (FK → PK), key uniqueness.</span>
+<span id="cb6-347"><a href="#cb6-347" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**FK actions**: RESTRICT (safe default), CASCADE (weak entities), SET NULL (optional relationships).</span>
+<span id="cb6-348"><a href="#cb6-348" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**NULL** uses three-valued logic (T/F/UNKNOWN); comparisons involving NULL yield UNKNOWN; aggregates ignore NULLs.</span>
+<span id="cb6-349"><a href="#cb6-349" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Business rules** should be enforced at the DB level whenever possible.</span>
+<span id="cb6-350"><a href="#cb6-350" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-351"><a href="#cb6-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-352"><a href="#cb6-352" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-353"><a href="#cb6-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-354"><a href="#cb6-354" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
+<span id="cb6-355"><a href="#cb6-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-356"><a href="#cb6-356" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
+<span id="cb6-357"><a href="#cb6-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-358"><a href="#cb6-358" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define **relation**, **tuple**, **attribute**, and **domain** using set-theory language. Give a concrete example from the Company Database for each.</span>
+<span id="cb6-359"><a href="#cb6-359" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Explain the difference between a **candidate key**, a **primary key**, and an **alternate key**. Can a relation have more than one candidate key? Give an example.</span>
+<span id="cb6-360"><a href="#cb6-360" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>What is the **entity integrity constraint**? Give a precise statement of why a NULL primary key violates it.</span>
+<span id="cb6-361"><a href="#cb6-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-362"><a href="#cb6-362" aria-hidden="true" tabindex="-1"></a><span class="fu">### Short-Answer / Compare</span></span>
+<span id="cb6-363"><a href="#cb6-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-364"><a href="#cb6-364" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Compare **natural keys** and **surrogate keys**. For the <span class="in">`EMPLOYEE`</span> table in the Company Database, which would you choose as PK? Justify using at least two of the criteria from §5.7.</span>
+<span id="cb6-365"><a href="#cb6-365" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Explain the difference between <span class="in">`ON DELETE CASCADE`</span> and <span class="in">`ON DELETE SET NULL`</span>. For the <span class="in">`DEPENDENT`</span> weak entity referenced by <span class="in">`EMPLOYEE`</span>, which action is more appropriate? Why?</span>
+<span id="cb6-366"><a href="#cb6-366" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>The <span class="in">`WORKS_ON`</span> table has a composite PK <span class="in">`(Essn, Pno)`</span>. Explain why neither <span class="in">`Essn`</span> alone nor <span class="in">`Pno`</span> alone qualifies as a candidate key, using the concept of functional dependency.</span>
+<span id="cb6-367"><a href="#cb6-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-368"><a href="#cb6-368" aria-hidden="true" tabindex="-1"></a><span class="fu">### True / False (with explanation)</span></span>
+<span id="cb6-369"><a href="#cb6-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-370"><a href="#cb6-370" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>*"If no two rows in the current `Employee` table have the same `Lname`, then `Lname` is a candidate key."* — True or False? Explain the principle involved.</span>
+<span id="cb6-371"><a href="#cb6-371" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>*"NULL = NULL evaluates to TRUE in SQL."* — True or False? What expression should be used instead?</span>
+<span id="cb6-372"><a href="#cb6-372" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>*"Foreign keys can always be NULL."* — True or False? Explain when a FK must be NOT NULL.</span>
+<span id="cb6-373"><a href="#cb6-373" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>*"The RESTRICT action on a foreign key prevents deleting a parent row that has matching children."* — True or False? What is the alternative to CASCADE in this case?</span>
+<span id="cb6-374"><a href="#cb6-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-375"><a href="#cb6-375" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiple Choice</span></span>
+<span id="cb6-376"><a href="#cb6-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-377"><a href="#cb6-377" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>Which of the following is **not** a property of a formal mathematical relation?</span>
+<span id="cb6-378"><a href="#cb6-378" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) No duplicate tuples</span>
+<span id="cb6-379"><a href="#cb6-379" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) Column order is irrelevant</span>
+<span id="cb6-380"><a href="#cb6-380" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>**(c) Rows are stored in insertion order** ✓</span>
+<span id="cb6-381"><a href="#cb6-381" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(d) All attribute values are atomic</span>
+<span id="cb6-382"><a href="#cb6-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-383"><a href="#cb6-383" aria-hidden="true" tabindex="-1"></a><span class="ss">12. </span>An alternate key is:</span>
+<span id="cb6-384"><a href="#cb6-384" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) A foreign key that references an alternate table</span>
+<span id="cb6-385"><a href="#cb6-385" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>**(b) A candidate key that was not chosen as the primary key** ✓</span>
+<span id="cb6-386"><a href="#cb6-386" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(c) A composite key with more than three attributes</span>
+<span id="cb6-387"><a href="#cb6-387" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(d) A key that allows NULL values</span>
+<span id="cb6-388"><a href="#cb6-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-389"><a href="#cb6-389" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design Exercise</span></span>
+<span id="cb6-390"><a href="#cb6-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-391"><a href="#cb6-391" aria-hidden="true" tabindex="-1"></a><span class="ss">13. </span>Given the following business rules for a university course enrollment system:</span>
+<span id="cb6-392"><a href="#cb6-392" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>A student is uniquely identified by their student number AND (separately) by their national ID.</span>
+<span id="cb6-393"><a href="#cb6-393" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>A student may enroll in many courses; a course may have many enrolled students.</span>
+<span id="cb6-394"><a href="#cb6-394" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Every enrollment must record the semester, the grade (may be null if not yet graded), and the status (ENROLLED, WITHDRAWN, COMPLETED).</span>
+<span id="cb6-395"><a href="#cb6-395" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Dropping a student from the system should set their enrollments to reflect the deletion but not delete the enrollment history.</span>
+<span id="cb6-396"><a href="#cb6-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-397"><a href="#cb6-397" aria-hidden="true" tabindex="-1"></a>    (a) Identify all candidate keys for the <span class="in">`Enrollment`</span> relation.  </span>
+<span id="cb6-398"><a href="#cb6-398" aria-hidden="true" tabindex="-1"></a>    (b) Specify the FK action for the student's deletion.  </span>
+<span id="cb6-399"><a href="#cb6-399" aria-hidden="true" tabindex="-1"></a>    (c) Write the formal schema notation for <span class="in">`Student`</span> and <span class="in">`Enrollment`</span> using the conventions in §5.4.</span>
+<span id="cb6-400"><a href="#cb6-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-401"><a href="#cb6-401" aria-hidden="true" tabindex="-1"></a><span class="fu">### SQL Exercise</span></span>
+<span id="cb6-402"><a href="#cb6-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-403"><a href="#cb6-403" aria-hidden="true" tabindex="-1"></a><span class="ss">14. </span>Write the complete <span class="in">`CREATE TABLE`</span> statements for <span class="in">`DEPARTMENT`</span> and <span class="in">`EMPLOYEE`</span> from the Company Database, enforcing:</span>
+<span id="cb6-404"><a href="#cb6-404" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>All structural constraints from §5.4</span>
+<span id="cb6-405"><a href="#cb6-405" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span><span class="in">`Salary &gt; 0`</span></span>
+<span id="cb6-406"><a href="#cb6-406" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span><span class="in">`Gender`</span> restricted to <span class="in">`'M'`</span>, <span class="in">`'F'`</span>, or <span class="in">`'N'`</span></span>
+<span id="cb6-407"><a href="#cb6-407" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span><span class="in">`ON DELETE SET NULL ON UPDATE CASCADE`</span> for the <span class="in">`Dno`</span> FK</span>
+<span id="cb6-408"><a href="#cb6-408" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span><span class="in">`ON DELETE CASCADE`</span> for the <span class="in">`Super_ssn`</span> FK (deleting an employee also removes direct reports — debate whether this is the right choice)</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+    <script type="text/javascript">
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let pseudocodeOptions = {
+          indentSize: el.dataset.indentSize,
+          commentDelimiter: " " + el.dataset.commentDelimiter + " ",
+          lineNumber: el.dataset.lineNumber.toLowerCase() === "true",
+          lineNumberPunc: el.dataset.lineNumberPunc,
+          noEnd: el.dataset.noEnd.toLowerCase() === "true",
+          titlePrefix: el.dataset.captionPrefix,
+        };
+        pseudocode.renderElement(el.querySelector(".pseudocode"), pseudocodeOptions);
+      });
+    })(document);
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let captionSpan = el.querySelector(".ps-root > .ps-algorithm > .ps-line > .ps-keyword")
+        if (captionSpan !== null) {
+          let captionPrefix = el.dataset.captionPrefix + " ";
+          let captionNumber = "";
+          if (el.dataset.pseudocodeNumber) {
+            captionNumber = el.dataset.pseudocodeNumber + " ";
+            if (el.dataset.chapterLevel) {
+              captionNumber = el.dataset.chapterLevel + "." + captionNumber;
+            }
+          }
+          captionSpan.innerHTML = captionPrefix + captionNumber;
+        }
+      });
+    })(document);
+    </script>
+  
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
+<script src="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.js"></script>
+</body></html>
