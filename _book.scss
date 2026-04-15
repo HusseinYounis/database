@@ -1,0 +1,295 @@
+/*-- scss:defaults --*/
+
+// ── Typography — loaded via Google Fonts (see _quarto.yml include-in-header)
+$font-family-sans-serif: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+$font-family-monospace:  "JetBrains Mono", "Fira Code", monospace;
+$headings-font-family:   "Plus Jakarta Sans", sans-serif;
+$headings-font-weight:   700;
+
+// ── Blue Brand Palette ────────────────────────────────────────────────────
+$blue-900:  #1B3D7B;
+$blue-700:  #1D4ED8;
+$blue-500:  #3B82F6;
+$blue-200:  #BFDBFE;
+$blue-50:   #EFF6FF;
+
+$primary:    $blue-700;
+$secondary:  #0EA5E9;   // sky blue
+$success:    #10B981;
+$warning:    #EAB308;
+$danger:     #EF4444;
+
+$body-color:  #1E293B;
+$body-bg:     #F8FAFF;
+$link-color:  $blue-700;
+
+// ── Quarto sidebar variables ──────────────────────────────────────────────
+$navbar-bg:   $blue-900;
+$navbar-fg:   #FFFFFF;
+$sidebar-bg:  #EEF2FF;
+$sidebar-fg:  #1E293B;
+
+// ── Spacing & shape ───────────────────────────────────────────────────────
+$border-radius: 8px;
+$h1-font-size:  2rem;
+$h2-font-size:  1.55rem;
+$h3-font-size:  1.25rem;
+
+/*-- scss:rules --*/
+
+// ── Base body ─────────────────────────────────────────────────────────────
+body {
+  font-weight: 400;
+  font-size: 1.025rem;
+  line-height: 1.78;
+  letter-spacing: -0.01em;
+}
+
+// ── Headings ──────────────────────────────────────────────────────────────
+h1, h2, h3, h4 {
+  color: #1B3D7B;
+  letter-spacing: -0.02em;
+}
+
+h1.title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1B3D7B 0%, #1D4ED8 60%, #0EA5E9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border-bottom: 3px solid #1D4ED8;
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  border-bottom: 2px solid #DBEAFE;
+  padding-bottom: 0.25rem;
+}
+
+.header-section-number {
+  color: #93C5FD;
+  font-weight: 600;
+}
+
+// ── Navbar ────────────────────────────────────────────────────────────────
+.navbar {
+  background: linear-gradient(135deg, #1B3D7B 0%, #1D4ED8 100%) !important;
+  box-shadow: 0 2px 20px rgba(29, 78, 216, 0.28);
+}
+
+.navbar-brand,
+.navbar .nav-link {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.navbar .nav-link:hover {
+  color: #BAE6FD !important;
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────
+.sidebar.sidebar-navigation {
+  background: #EEF2FF;
+  border-right: 1px solid #C7D2FE;
+}
+
+.sidebar .sidebar-section > .sidebar-item-text {
+  font-weight: 700;
+  color: #1B3D7B;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar .sidebar-item-text {
+  color: #334155;
+}
+
+.sidebar .active > .sidebar-item-text {
+  color: #1D4ED8;
+  font-weight: 600;
+}
+
+// ── TOC ───────────────────────────────────────────────────────────────────
+#TOC {
+  border-left: 3px solid #DBEAFE;
+  padding-left: 1rem;
+  font-size: 0.875rem;
+}
+
+#TOC .active {
+  color: #1D4ED8;
+  font-weight: 600;
+  border-left: 3px solid #1D4ED8;
+  margin-left: -1.07rem;
+  padding-left: calc(1rem - 0px);
+}
+
+// ── Links ─────────────────────────────────────────────────────────────────
+a {
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #0EA5E9;
+}
+
+// ── Code blocks ───────────────────────────────────────────────────────────
+pre.sourceCode {
+  background: #0F1729;
+  border: none;
+  border-radius: 10px;
+  border-left: 4px solid #1D4ED8;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14);
+  font-size: 0.87em;
+  padding: 1.25rem 1.5rem;
+  color: #E2E8F0;          // default text: light slate for readability on dark bg
+}
+
+// Syntax-highlight tokens are provided by highlight-style: github-dark in _quarto.yml
+
+code:not(pre > code) {
+  background: #DBEAFE;
+  color: #1D4ED8;
+  padding: 0.15em 0.45em;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+// ── Callouts ──────────────────────────────────────────────────────────────
+.callout {
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.callout-tip      { border-left-color: #10B981 !important; }
+.callout-note     { border-left-color: #1D4ED8 !important; }
+.callout-important{ border-left-color: #F97316 !important; }
+.callout-warning  { border-left-color: #EAB308 !important; }
+.callout-caution  { border-left-color: #EF4444 !important; }
+
+// ── Tables ────────────────────────────────────────────────────────────────
+table {
+  font-size: 0.92em;
+  border-collapse: collapse;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.07);
+}
+
+thead tr {
+  background: linear-gradient(135deg, #1B3D7B, #1D4ED8);
+  color: white;
+}
+
+thead th {
+  padding: 0.65rem 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: none;
+}
+
+tbody tr:nth-child(even) { background: #EFF6FF; }
+tbody tr:hover           { background: #DBEAFE; transition: background 0.15s ease; }
+
+td, th {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #BFDBFE;
+}
+
+// ── Math (KaTeX) ──────────────────────────────────────────────────────────
+.katex-display {
+  overflow-x: auto;
+  padding: 0.75rem 1rem;
+  background: #EFF6FF;
+  border-radius: 8px;
+  border: 1px solid #BFDBFE;
+}
+
+// ── Part title banner ─────────────────────────────────────────────────────
+.quarto-part-title {
+  background: linear-gradient(135deg, #EEF2FF, #DBEAFE);
+  border-left: 5px solid #1D4ED8;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 1.5rem;
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────
+.nav-footer {
+  background: #EEF2FF;
+  border-top: 1px solid #C7D2FE;
+  font-size: 0.85rem;
+  color: #64748B;
+}
+
+// ── Arabic / RTL ──────────────────────────────────────────────────────────
+[lang="ar"],
+.arabic,
+.rtl {
+  direction: rtl;
+  text-align: right;
+  font-family: "Cairo", "Noto Kufi Arabic", sans-serif;
+  font-size: 1.08em;
+  line-height: 2.1;
+  color: #1E293B;
+  padding: 0.75rem 1rem;
+  border-right: 4px solid #1D4ED8;
+  border-left: none;
+  background: rgba(29, 78, 216, 0.04);
+  border-radius: 0 8px 8px 0;
+  margin-block: 0.75rem;
+}
+
+// ── Dark-mode overrides ───────────────────────────────────────────────────
+.quarto-dark {
+  pre.sourceCode { border-left-color: #3B82F6; }
+  code:not(pre > code) {
+    background: rgba(59, 130, 246, 0.18);
+    color: #93C5FD;
+  }
+  .katex-display {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.25);
+  }
+  .callout { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25); }
+  thead tr { background: linear-gradient(135deg, #1E3A8A, #1D4ED8); }
+  tbody tr:nth-child(even) { background: rgba(59, 130, 246, 0.08); }
+  tbody tr:hover            { background: rgba(59, 130, 246, 0.15); }
+}
+thead tr {
+  background-color: $primary;
+  color: #fff;
+}
+tbody tr:nth-child(even) {
+  background-color: rgba(26, 82, 118, 0.05);
+}
+
+// ── Part divider pages ────────────────────────────────────────────────────
+.quarto-part-title {
+  color: $primary;
+  border-bottom: 2px solid $primary;
+}
+
+// ── Definition / key terms ────────────────────────────────────────────────
+.definition {
+  background: #eaf4f4;
+  border-left: 4px solid $secondary;
+  padding: 0.6rem 1rem;
+  border-radius: 0 6px 6px 0;
+  margin-block: 0.75rem;
+}
+.definition strong:first-child::after {
+  content: ":";
+}
+
+// ── Responsive figures ────────────────────────────────────────────────────
+figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}

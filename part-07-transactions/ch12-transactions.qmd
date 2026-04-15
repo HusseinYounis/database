@@ -1,0 +1,730 @@
+---
+title: "Transaction Processing"
+subtitle: "Chapter 12"
+---
+
+## §12.0 Why Transactions?
+
+Chapters 7–8 showed you *how* to read and write data with SQL.
+But two problems arise in any real system:
+
+1. **Multi-step operations** must either complete fully or not at all — a bank transfer that deducts
+   money but never credits the recipient would be catastrophic.
+2. **Concurrent access** by many users can corrupt data if writes interfere with reads — without
+   coordination, two users booking the last airline seat could both succeed.
+
+**Transactions** solve both problems: they provide an atomic, isolated unit of work with guaranteed
+durability after commit and recovery after failure.
+
+---
+
+## 12.1 What Is a Transaction?
+
+A **transaction** is a sequence of one or more SQL operations that the DBMS treats as a single,
+indivisible unit of work.
+
+**Example — Bank Transfer of $500 from Account A to Account B:**
+
+```sql
+BEGIN;                                                          -- start transaction
+    UPDATE Accounts SET Balance = Balance - 500 WHERE Id = 'A';
+    UPDATE Accounts SET Balance = Balance + 500 WHERE Id = 'B';
+COMMIT;                                                         -- make permanent
+```
+
+If the system crashes after the first `UPDATE` but before the second, the DBMS **rolls back** the
+first update automatically — money never disappears.
+
+---
+
+## 12.2 ACID Properties
+
+| Property | One-line definition |
+|---------|-------------------|
+| **Atomicity** | All-or-nothing: every operation in a transaction commits together or none do |
+| **Consistency** | A transaction moves the database from one *consistent* (valid) state to another |
+| **Isolation** | Concurrent transactions are invisible to each other; execute as if serial |
+| **Durability** | Once committed, changes survive crashes, power loss, and restarts |
+
+### Worked Examples — What Goes Wrong Without Each Property
+
+::: {.panel-tabset}
+
+## Without Atomicity
+
+```sql
+-- T1: Transfer $500 A → B
+UPDATE Accounts SET Balance = Balance - 500 WHERE Id = 'A';   -- success
+-- ** crash here ** — second update never runs
+UPDATE Accounts SET Balance = Balance + 500 WHERE Id = 'B';
+
+-- Result: $500 vanishes; A debited, B never credited
+-- Fix: atomicity guarantees the first update is undone too
+```
+
+## Without Consistency
+
+```sql
+-- Business rule: total balance across all accounts must remain constant
+-- T1 withdraws $500 from A and deposits $600 to B (bug in code)
+-- After commit: total balance increased by $100 — DB is inconsistent
+-- Fix: consistency ensures constraints and business rules hold post-commit
+```
+
+## Without Isolation
+
+```sql
+-- T1: Read A = 500, prepare to add 100
+-- T2: Read A = 500, prepare to add 200, commits: A = 700
+-- T1: commits: A = 600  ← T2's update is overwritten — lost update!
+-- Fix: isolation serialises T1 and T2 so one runs fully before the other reads
+```
+
+## Without Durability
+
+```sql
+-- T1 commits: "Salary updated"
+-- ** power failure 2 ms after response sent to client **
+-- System restarts: salary reverted to old value
+-- Fix: durability requires the committed write to survive any failure
+```
+
+:::
+
+---
+
+## 12.3 Transaction States
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+stateDiagram-v2
+    direction LR
+    [*] --> Active : BEGIN
+    Active --> PartiallyCommitted : last operation executes
+    Active --> Failed : error / ROLLBACK
+    PartiallyCommitted --> Committed : COMMIT (log flushed to disk)
+    PartiallyCommitted --> Failed : crash before log flush
+    Failed --> Aborted : undo all changes (rollback)
+    Aborted --> [*] : transaction ends
+    Committed --> [*] : transaction ends
+```
+
+| State | Description |
+|-------|-------------|
+| **Active** | Transaction is executing; reads/writes in progress |
+| **Partially Committed** | `COMMIT` issued; log record written but not yet flushed to stable storage |
+| **Committed** | Log flushed; changes durable; normal end |
+| **Failed** | Cannot proceed — error or explicit `ROLLBACK BEGIN` |
+| **Aborted** | All changes undone; database restored to pre-transaction state |
+
+---
+
+## 12.4 Concurrency Anomalies
+
+When multiple transactions run without coordination, four classes of anomaly can occur.
+
+### 12.4.1 Lost Update
+
+Two transactions both read a value, modify it independently, and write back — the second write overwrites the first.
+
+| Time | T1 | T2 | X value |
+|------|----|----|---------|
+| t1 | Read X | | 100 |
+| t2 | | Read X | 100 |
+| t3 | X ← X − 50; Write X=50 | | 50 |
+| t4 | | X ← X + 30; Write X=130 | **130** |
+
+Correct result should be 80. T1's update is *lost*.
+
+### 12.4.2 Dirty Read (Reading Uncommitted Data)
+
+```
+T1: Write(X = 200)    -- not yet committed
+T2:   Read(X) = 200   -- reads T1's uncommitted value
+T1: ROLLBACK          -- X reverts to 100
+T2: uses X = 200      -- now based on data that never officially existed
+```
+
+### 12.4.3 Non-Repeatable Read
+
+```
+T1: Read(X) = 100
+              T2: Write(X = 200), COMMIT
+T1: Read(X) = 200   -- same query, different result within same transaction
+```
+
+### 12.4.4 Phantom Read
+
+```
+T1: SELECT COUNT(*) WHERE Salary > 50000  →  10
+              T2: INSERT employee with Salary = 80000, COMMIT
+T1: SELECT COUNT(*) WHERE Salary > 50000  →  11  -- new row "appeared"
+```
+
+---
+
+## 12.5 Isolation Levels
+
+SQL:1992 defines four standard isolation levels, each preventing progressively more anomalies.
+
+| Isolation Level | Dirty Read | Non-Repeatable Read | Phantom Read |
+|----------------|-----------|--------------------|-----------
+| `READ UNCOMMITTED` | ✗ Possible | ✗ Possible | ✗ Possible |
+| `READ COMMITTED` | ✓ Prevented | ✗ Possible | ✗ Possible |
+| `REPEATABLE READ` | ✓ Prevented | ✓ Prevented | ✗ Possible (MySQL: ✓) |
+| `SERIALIZABLE` | ✓ Prevented | ✓ Prevented | ✓ Prevented |
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- View current level
+SELECT @@transaction_isolation;
+
+-- Change for the session
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+-- Change for next transaction only
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+BEGIN;
+    -- ...
+COMMIT;
+```
+
+MySQL InnoDB default: **REPEATABLE READ** (with MVCC preventing phantoms too)
+
+## PostgreSQL
+
+```sql
+SHOW transaction_isolation;
+
+-- Per-transaction
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    -- ...
+COMMIT;
+
+-- Or: SET at start of transaction
+BEGIN;
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+    -- ...
+COMMIT;
+```
+
+PostgreSQL default: **READ COMMITTED**
+
+## Oracle
+
+```sql
+-- Per-session
+ALTER SESSION SET ISOLATION_LEVEL = SERIALIZABLE;
+
+-- Per-transaction
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    -- ...
+COMMIT;
+```
+
+Oracle supports only **READ COMMITTED** and **SERIALIZABLE** (no READ UNCOMMITTED or REPEATABLE READ).
+:::
+
+---
+
+## 12.6 Write-Ahead Logging (WAL)
+
+WAL is the mechanism that implements both **Atomicity** (rollback) and **Durability** (recovery after crash).
+
+**Core WAL rule:**  
+> Before a modified data page is written to disk, its log record must reach stable storage first.
+
+### Log Record Format
+
+Each write operation appends a record to the sequential log:
+
+```
+LSN  |  TxnId  |  PageId  |  Before-Image  |  After-Image  |  PrevLSN
+```
+
+| Field | Meaning |
+|-------|---------|
+| LSN | Log Sequence Number — monotonically increasing ID |
+| TxnId | Which transaction performed this write |
+| PageId | Which data page was modified |
+| Before-Image | Value *before* the change (needed for UNDO) |
+| After-Image | Value *after* the change (needed for REDO) |
+| PrevLSN | Pointer back to previous log record of this transaction (forms a chain) |
+
+### Commit Flow with WAL
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    A["Transaction executes<br/>writes to buffer pool (not disk yet)"]
+    B["COMMIT issued"]
+    C["Write COMMIT log record to log buffer"]
+    D["Flush log buffer to disk<br/>(WAL — log must precede data)"]
+    E["✓ Transaction is durable<br/>(response sent to client)"]
+    F["Modified data pages written to disk<br/>(may happen later — deferred)"]
+
+    A --> B --> C --> D --> E --> F
+```
+
+::: callout-important
+## Steal / No-Force Policy
+
+Most modern DBMS use **Steal + No-Force**:
+
+| Policy | Meaning |
+|--------|---------|
+| **Steal** | Dirty (uncommitted) pages *can* be written to disk before commit — needed to free buffer space |
+| **No-Force** | Dirty pages are *not* forced to disk at commit time — better write performance |
+
+This maximises performance but requires recovery to handle both:
+- **UNDO**: steal means uncommitted data may be on disk → must undo after crash
+- **REDO**: no-force means committed data may still be in buffer → must redo after crash
+:::
+
+---
+
+## 12.7 Recovery: Undo and Redo
+
+After a crash, the recovery manager reads the log and restores a consistent state.
+
+### ARIES Recovery Algorithm (3 Phases)
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart LR
+    subgraph AN["Phase 1: Analysis"]
+        direction TB
+        a1["Scan log forward from last checkpoint"]
+        a2["Identify active (uncommitted) transactions<br/>at crash time"]
+        a3["Build dirty page table (pages modified<br/>but not yet flushed)"]
+    end
+    subgraph RE["Phase 2: Redo"]
+        direction TB
+        r1["Replay ALL log records from<br/>Redo LSN forward"]
+        r2["Restore database to exact<br/>state at crash time"]
+    end
+    subgraph UN["Phase 3: Undo"]
+        direction TB
+        u1["For each active transaction<br/>at crash time"]
+        u2["Apply before-images (undo)<br/>in reverse LSN order"]
+        u3["Write compensating log records (CLRs)"]
+    end
+    AN --> RE --> UN
+```
+
+| Phase | Direction | Purpose |
+|-------|----------|---------|
+| Analysis | Forward from checkpoint | Determine what needs REDO / UNDO |
+| Redo | Forward from earliest dirty page | Re-apply all operations (even of crashed txns) |
+| Undo | Backward for each loser transaction | Roll back uncommitted changes |
+
+### Checkpointing
+
+Checkpoints reduce recovery time by:
+1. Flushing all dirty pages to disk (fuzzy checkpoint: writes a checkpoint record without full flush)
+2. Writing a checkpoint log record noting which transactions were active
+
+After a crash, recovery only needs to examine log records from the last checkpoint — not the entire log.
+
+---
+
+## 12.8 Savepoints
+
+Savepoints allow partial rollback within a transaction without aborting the entire unit:
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+BEGIN;
+    UPDATE Employee SET Salary = 40000 WHERE Ssn = '123456789';
+    SAVEPOINT sp1;
+    UPDATE Employee SET Salary = 50000 WHERE Ssn = '333445555';
+    -- oops, second update was a mistake
+    ROLLBACK TO SAVEPOINT sp1;   -- undo only the second update
+    -- first update still in effect
+COMMIT;
+```
+
+## PostgreSQL
+
+```sql
+BEGIN;
+    UPDATE Employee SET Salary = 40000 WHERE Ssn = '123456789';
+    SAVEPOINT sp1;
+    UPDATE Employee SET Salary = 50000 WHERE Ssn = '333445555';
+    ROLLBACK TO SAVEPOINT sp1;
+    RELEASE SAVEPOINT sp1;       -- optional: free the savepoint
+COMMIT;
+```
+
+## Oracle
+
+```sql
+BEGIN
+    UPDATE Employee SET Salary = 40000 WHERE Ssn = '123456789';
+    SAVEPOINT sp1;
+    UPDATE Employee SET Salary = 50000 WHERE Ssn = '333445555';
+    ROLLBACK TO SAVEPOINT sp1;
+    COMMIT;
+END;
+```
+
+:::
+
+---
+
+## 12.9 Chapter Summary
+
+::: callout-important
+## Key Takeaways — Chapter 12
+
+1. A **transaction** is an atomic unit of work: all operations succeed together or all are undone.
+   SQL syntax: `BEGIN` → (operations) → `COMMIT` or `ROLLBACK`.
+
+2. **ACID** = Atomicity (all-or-nothing), Consistency (rules preserved), Isolation (concurrent txns appear serial), Durability (committed = permanent).
+
+3. **Four concurrency anomalies** —
+   Lost Update, Dirty Read, Non-Repeatable Read, Phantom Read —
+   caused by unsynchronised concurrent transactions.
+
+4. **Isolation levels** (weakest to strongest): READ UNCOMMITTED → READ COMMITTED → REPEATABLE READ → SERIALIZABLE.
+   Default: MySQL=REPEATABLE READ, PostgreSQL/Oracle=READ COMMITTED.
+
+5. **WAL (Write-Ahead Logging)**: log record flushed to stable storage before data page modified on disk.
+   Implements both undo (rollback/crash) and redo (ensure committed writes survive).
+
+6. **ARIES recovery**: three phases — Analysis (identify active txns) → Redo (replay log forward) → Undo (rollback losers backward).
+
+7. **Savepoints** allow partial rollback without aborting the full transaction.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. For each ACID property, describe a concrete scenario — using either the bank-transfer or the
+   Company DB context — where violating that property would cause incorrect results.
+
+2. Explain the difference between a **non-repeatable read** and a **phantom read**.
+   Both involve a transaction reading different data within the same transaction — why are they
+   classified as separate anomalies? At which isolation levels is each prevented?
+
+3. Explain the **Steal/No-Force** buffer policy. Why is it preferred despite requiring full ARIES recovery?
+
+### Applied
+
+4. Draw a timeline (like §12.4) showing a **lost update anomaly** involving two employees simultaneously
+   trying to use `UPDATE Employee SET Salary = Salary + 5000 WHERE Ssn = '123456789'`.
+   Annotate each step with the in-memory value each transaction sees.
+
+5. For each isolation level in MySQL, write the SQL to set it and then write a script with two
+   concurrent sessions (T1 and T2) that demonstrates the specific anomaly that level still allows.
+
+6. Using the WAL log record format from §12.6, write out the log records produced by:
+   ```sql
+   BEGIN;                                       -- TxnId = T42
+   UPDATE Employee SET Salary = 55000 WHERE Ssn = '123456789';   -- page P7, was 30000
+   UPDATE Employee SET Salary = 45000 WHERE Ssn = '333445555';   -- page P7, was 40000
+   COMMIT;
+   ```
+   Show the LSN, TxnId, PageId, before-image, after-image, and PrevLSN for each record.
+
+### Analysis
+
+7. A system crashes immediately after flushing the COMMIT log record to disk for transaction T1,
+   but before writing T1's modified page to disk. After restart:
+   - Does ARIES classify T1 as a winner or a loser?
+   - Which phase handles T1, and what does it do?
+   - What would happen if WAL were violated (data page written before log)?
+
+8. Transaction T2 is in the Partially Committed state when the system crashes. After recovery,
+   is T2 committed or aborted? Justify your answer using the transaction state diagram.
+
+### Diagram
+
+9. Draw the complete **wait-for graph** for the following scenario and identify whether a deadlock
+   exists. If it does, name one victim that can be aborted to break it:
+   - T1 holds lock on Employee row E1, waits for lock on Department row D1
+   - T2 holds lock on Department row D1, waits for lock on Works_On row W3
+   - T3 holds lock on Works_On row W3, waits for lock on Employee row E1
+
+### Design
+
+10. An e-commerce application processes 10 000 orders per second. Each order involves:
+    - `INSERT INTO Orders ...`
+    - `UPDATE Inventory SET Qty = Qty - n WHERE ProductId = ?`
+    - `INSERT INTO Payments ...`
+    
+    The DBA suggests using `READ UNCOMMITTED` to maximize throughput.
+    Identify the specific risks this creates for each of the three statements.
+    Propose the minimum isolation level that would be safe, and justify the trade-off.
+
+### Synthesis
+
+11. Compare how **WAL + ARIES** and **shadow paging** (an alternative recovery mechanism where
+    committed changes are written to a new page, then the page table atomically updated on commit)
+    handle each of the following:
+    - Crash before commit
+    - Crash after commit but before data page flush
+    - Sequential write performance
+    - Space overhead
+    
+    Which is better for a high-throughput OLTP system, and why?
+
+
+## 12.1 What Is a Transaction?
+
+A **transaction** is a logical unit of work that consists of one or more database operations that must be executed as an **indivisible whole** — either all succeed or none do.
+
+**Example:** Bank transfer of $500 from Account A to Account B:
+
+```sql
+BEGIN;
+    UPDATE accounts SET balance = balance - 500 WHERE account_id = 'A';
+    UPDATE accounts SET balance = balance + 500 WHERE account_id = 'B';
+COMMIT;
+```
+
+If the system crashes after the first UPDATE but before the second, the transfer **must be rolled back** — we cannot allow money to vanish.
+
+## 12.2 ACID Properties
+
+| Property | Definition |
+|---------|-----------|
+| **Atomicity** | All operations in a transaction succeed, or none do. No partial execution. |
+| **Consistency** | A transaction takes the database from one *consistent state* to another. Business rules preserved. |
+| **Isolation** | Concurrent transactions execute as if they were serial. Intermediate states not visible to others. |
+| **Durability** | Once a transaction is committed, its effects survive system failures (written to stable storage). |
+
+## 12.3 Transaction States
+
+```
+                ┌─────────────────────────────┐
+                │                             │
+   BEGIN        │                             │  COMMIT
+─────────►  ACTIVE ─────────────────► PARTIALLY_COMMITTED ──────► COMMITTED
+               │                             │
+     (error/   │                  (error/    │
+      ROLLBACK) │                   crash)   │
+               ▼                             ▼
+            FAILED ──────────────────────► ABORTED
+```
+
+| State | Description |
+|-------|-------------|
+| **Active** | Transaction is executing |
+| **Partially committed** | Final statement executed; awaiting commit |
+| **Committed** | Transaction successfully completed; changes made permanent |
+| **Failed** | Normal execution can no longer proceed |
+| **Aborted** | Transaction rolled back; database restored to pre-transaction state |
+| **Terminated** | Either committed or aborted; leaves the system |
+
+## 12.4 Concurrency Issues
+
+When multiple transactions run concurrently without control, several **anomalies** can arise:
+
+### 1. Lost Update
+
+```
+T1: Read(X=100)                     T2: Read(X=100)
+T1: X = X - 50 = 50
+T1: Write(X=50)
+                                    T2: X = X + 30 = 130
+                                    T2: Write(X=130)   ← T1's update is lost!
+Result: X=130 (should be X=80)
+```
+
+### 2. Dirty Read (Temporary Update)
+
+```
+T1: Write(X=200)                    T2: Read(X=200)   ← reads uncommitted data
+T1: ROLLBACK → X restored to 100
+                                    T2: uses X=200     ← wrong! dirty read
+```
+
+### 3. Unrepeatable Read
+
+```
+T1: Read(X=100)
+                                    T2: Write(X=200), COMMIT
+T1: Read(X=200)                     ← T1 reads different value same transaction!
+```
+
+### 4. Phantom Read
+
+```
+T1: SELECT COUNT(*) WHERE salary>50000  → 10
+                                    T2: INSERT new employee with salary=80000, COMMIT
+T1: SELECT COUNT(*) WHERE salary>50000  → 11  ← phantom row appeared!
+```
+
+## 12.5 Transaction Isolation Levels
+
+SQL defines four standard isolation levels:
+
+| Level | Dirty Read | Unrepeatable Read | Phantom Read |
+|-------|-----------|------------------|-------------|
+| `READ UNCOMMITTED` | Possible | Possible | Possible |
+| `READ COMMITTED` | Prevented | Possible | Possible |
+| `REPEATABLE READ` | Prevented | Prevented | Possible |
+| `SERIALIZABLE` | Prevented | Prevented | Prevented |
+
+```sql
+-- Set isolation level (PostgreSQL)
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+BEGIN;
+    -- your queries here
+COMMIT;
+```
+
+::: callout-tip
+**Default isolation levels:**
+- PostgreSQL: `READ COMMITTED`  
+- MySQL/InnoDB: `REPEATABLE READ`  
+- SQL Server: `READ COMMITTED`  
+- Oracle: `READ COMMITTED`
+:::
+
+## 12.6 Concurrency Control: Two-Phase Locking (2PL)
+
+**Two-Phase Locking** is the most widely used protocol for guaranteeing serializability.
+
+### Lock Types
+
+| Lock | Symbol | Compatibility |
+|------|--------|--------------|
+| **Shared (read) lock** | S | Multiple transactions can hold S simultaneously |
+| **Exclusive (write) lock** | X | Only one transaction; incompatible with all others |
+
+### Lock Compatibility Matrix
+
+| | S | X |
+|--|--|--|
+| **S** | ✓ (compatible) | ✗ |
+| **X** | ✗ | ✗ |
+
+### 2PL Protocol
+
+A transaction follows **two strict phases**:
+
+```
+Phase 1 — Growing Phase:    locks can be ACQUIRED; none released
+Phase 2 — Shrinking Phase:  locks can be RELEASED; none acquired
+
+                   Lock Point
+                      │
+Locks acquired ───────╯╲──────── Locks released
+(growing)                        (shrinking)
+```
+
+**Theorem**: Any schedule produced by 2PL transactions is **conflict-serializable** (guaranteed correct).
+
+### Strict 2PL
+
+A common variant: **all locks are held until COMMIT or ROLLBACK**.
+
+- Prevents cascading rollbacks (no dirty reads)
+- Used by most real DBMS implementations
+
+```sql
+-- Locks in practice (explicit locking in PostgreSQL)
+BEGIN;
+SELECT * FROM employee WHERE dept_no = 5 FOR UPDATE;  -- Acquires X lock
+-- ... process rows ...
+COMMIT;  -- Releases all locks
+```
+
+## 12.7 Deadlocks
+
+A **deadlock** occurs when two or more transactions wait for each other's locks indefinitely:
+
+```
+T1 holds X(A), waits for X(B)
+T2 holds X(B), waits for X(A)
+         ↕ circular wait → deadlock
+```
+
+### Deadlock Detection
+
+Build a **wait-for graph**:
+- Node per transaction
+- Edge $T_i \to T_j$ if $T_i$ is waiting for a lock held by $T_j$
+- A **cycle** in the graph means deadlock
+
+```
+T1 → T2 (T1 waits for T2)
+T2 → T3 (T2 waits for T3)
+T3 → T1 (T3 waits for T1) ← cycle! deadlock
+```
+
+**Resolution:** Abort one transaction in the cycle (the "victim") — choose by:
+- Youngest transaction (minimum work lost)
+- Transaction with fewest locks
+- Transaction that has not been a victim recently
+
+### Deadlock Prevention
+
+- **Wait-Die**: older transactions wait; younger ones die (rollback and restart)
+- **Wound-Wait**: older transactions wound (abort) younger ones; younger ones wait
+
+## 12.8 Recovery: Logging and ARIES
+
+### Why Recovery Is Needed
+
+- **System crash**: server power loss, OS failure
+- **Transaction abort**: application error, deadlock victim
+- **Media failure**: disk crash
+
+### Write-Ahead Logging (WAL)
+
+**WAL rule**: Before any data page is written to disk, the corresponding **log record must be written to stable storage first**.
+
+Every operation writes a log record:
+```
+(LSN, TransactionID, PageID, Before-Image, After-Image, PrevLSN)
+```
+
+### Commit Protocol
+
+```
+Transaction decides to COMMIT
+    ↓
+Write COMMIT log record to disk (WAL)
+    ↓
+Transaction is durable (even if crash occurs now)
+    ↓
+Write modified data pages to disk (may be deferred — "steal/no-force")
+```
+
+## Summary
+
+::: callout-important
+## Chapter 12 — Key Takeaways
+
+- A **transaction** is an atomic unit of work; it's the fundamental unit of DB reliability.
+- **ACID properties**: Atomicity, Consistency, Isolation, Durability — enforced by the DBMS.
+- **Concurrency anomalies**: Lost Update, Dirty Read, Unrepeatable Read, Phantom Read.
+- **Isolation levels** (weakest to strongest): READ UNCOMMITTED → READ COMMITTED → REPEATABLE READ → SERIALIZABLE.
+- **Two-Phase Locking (2PL)**: ensures conflict-serializability; Strict 2PL holds all locks until commit.
+- **Deadlocks** arise from circular lock waits; detected via wait-for graphs; resolved by aborting a victim.
+- **WAL (Write-Ahead Logging)**: log record written before data page — ensures durability.
+:::
+
+## Review Questions
+
+1. Explain each of the four **ACID properties** and give an example of what could go wrong if each property were violated.
+2. Draw a timeline showing a **dirty read anomaly** between two transactions T1 and T2.
+3. Explain the **Two-Phase Locking** protocol. Why does it guarantee serializability?
+4. What is a **deadlock**? Draw a wait-for graph showing a deadlock among three transactions.
+5. Compare **isolation levels**: at which level are each of the four anomalies prevented?
+6. Explain the **Write-Ahead Logging** rule and why it is needed for recovery.

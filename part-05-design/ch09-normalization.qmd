@@ -1,0 +1,768 @@
+---
+title: "Normalization & Functional Dependencies"
+subtitle: "Chapter 9"
+---
+
+## §9.0 The Problem: Everything in One Table
+
+Before diving into theory, start with a concrete problem.
+
+Imagine a small e-commerce database where someone created a single table to "keep things simple":
+
+```
+OrderLine(
+    OrderId,   CustomerId, CustomerName, CustomerCity,
+    ProductId, ProductName, Category,   Price,
+    Qty,       Discount,   TotalPrice
+)
+```
+
+Sample data:
+
+| OrderId | CustomerId | CustomerName | CustomerCity | ProductId | ProductName | Category | Price | Qty | Discount | TotalPrice |
+|--------|-----------|-------------|-------------|----------|------------|---------|-------|-----|---------|----------|
+| 1001 | C01 | Alice | Cairo | P10 | Laptop | Electronics | 1200 | 2 | 0.05 | 2280 |
+| 1001 | C01 | Alice | Cairo | P20 | Mouse | Peripherals | 25 | 3 | 0.00 | 75 |
+| 1002 | C02 | Bob | Alex | P10 | Laptop | Electronics | 1200 | 1 | 0.10 | 1080 |
+| 1003 | C01 | Alice | Cairo | P30 | Keyboard | Peripherals | 80 | 1 | 0.00 | 80 |
+
+This table has every fact about an order, customer, and product crammed into one row.
+Let us identify the **update anomalies** it creates and then systematically fix them.
+
+---
+
+## 9.1 Update Anomalies
+
+| Anomaly | What it means | Example in OrderLine |
+|---------|--------------|---------------------|
+| **Insertion** | Cannot record a fact without other unrelated facts | Cannot insert a new customer `C03` (Hany, Giza) until they place an order |
+| **Deletion** | Deleting a fact accidentally destroys other facts | Deleting Order 1002 (last order with `P10`) loses the fact that `P10` costs 1200 |
+| **Modification** | A single real-world fact must be updated in many rows | Renaming category "Electronics" to "Computers" requires updating every row containing that category |
+
+**Root cause:** a single row stores facts about *three separate entities* — orders, customers, and products — all mixed together.
+
+---
+
+## 9.2 Functional Dependencies
+
+A **functional dependency (FD)** $X \to Y$ states: whenever two rows have the same values for the attribute set $X$, they must have the same values for $Y$.
+
+$$
+X \to Y: \quad \forall t_1, t_2 \in R: \; t_1[X] = t_2[X] \;\Rightarrow\; t_1[Y] = t_2[Y]
+$$
+
+Reading: *"X functionally determines Y"* — knowing $X$ is enough to look up $Y$.
+
+### FDs in the OrderLine Table
+
+```
+ProductId → ProductName, Category, Price         -- product facts depend only on product
+CustomerId → CustomerName, CustomerCity           -- customer facts depend only on customer
+OrderId → CustomerId, Discount                    -- order header depends on order
+{OrderId, ProductId} → Qty, Discount, TotalPrice  -- line item facts need both
+```
+
+The *intended* primary key of `OrderLine` is the composite `{OrderId, ProductId}`.
+
+### Types of FDs
+
+| Type | Definition | Example from OrderLine |
+|------|-----------|----------------------|
+| **Full FD** | Y depends on the *entire* composite key | `{OrderId, ProductId} → Qty` |
+| **Partial FD** | Y depends on a *proper subset* of the key | `ProductId → ProductName` (only needs `ProductId`) |
+| **Transitive FD** | $X \to Y$ and $Y \to Z$, but $Y$ is not a key | `OrderId → CustomerId → CustomerName` |
+| **Trivial FD** | $Y \subseteq X$ | `{OrderId, ProductId} → OrderId` |
+
+---
+
+## 9.3 Armstrong's Axioms
+
+**Armstrong's Axioms** are a complete and sound set of inference rules — using only these three, you can derive every valid FD.
+
+| Axiom | Rule | Statement |
+|-------|------|-----------|
+| **Reflexivity** | If $Y \subseteq X$ then $X \to Y$ | Every set determines its own subsets |
+| **Augmentation** | If $X \to Y$ then $XZ \to YZ$ | Adding the same attribute to both sides preserves the FD |
+| **Transitivity** | If $X \to Y$ and $Y \to Z$ then $X \to Z$ | FD chains compose |
+
+### Derived Rules (from the axioms)
+
+| Rule | Derivation |
+|------|-----------|
+| **Union** | If $X \to Y$ and $X \to Z$ then $X \to YZ$ |
+| **Decomposition** | If $X \to YZ$ then $X \to Y$ and $X \to Z$ |
+| **Pseudotransitivity** | If $X \to Y$ and $WY \to Z$ then $WX \to Z$ |
+
+### Attribute Closure $X^+$
+
+The **closure** of $X$ under FD set $F$ is all attributes $X$ can determine (directly or transitively):
+
+$$
+X^+ = \{ A \mid F \vdash X \to A \}
+$$
+
+**Algorithm:**
+
+```
+closure ← X
+repeat:
+    for each FD (α → β) in F:
+        if α ⊆ closure:
+            closure ← closure ∪ β
+until closure unchanged
+return closure
+```
+
+**Worked example** — $F = \{ A \to B,\; BC \to D,\; A \to C,\; D \to E \}$, find $\{A\}^+$:
+
+| Iteration | Applied FD | Closure grows to |
+|-----------|-----------|-----------------|
+| Start | — | $\{A\}$ |
+| 1 | $A \to B$ | $\{A, B\}$ |
+| 2 | $A \to C$ | $\{A, B, C\}$ |
+| 3 | $BC \to D$ | $\{A, B, C, D\}$ |
+| 4 | $D \to E$ | $\{A, B, C, D, E\}$ |
+
+Since $\{A\}^+ = \{A,B,C,D,E\}$ covers all attributes, $A$ alone is a **candidate key**.
+
+---
+
+## 9.4 Keys from Closures
+
+| Concept | Definition |
+|---------|-----------|
+| **Superkey** | $X$ such that $X^+$ contains all attributes of $R$ |
+| **Candidate key** | A minimal superkey — no proper subset is also a superkey |
+| **Prime attribute** | Member of *any* candidate key |
+| **Non-prime attribute** | Not a member of any candidate key |
+
+In `OrderLine`:
+
+- $\{OrderId, ProductId\}^+$ = all columns → **candidate key**
+- $\{OrderId\}^+$ = $\{OrderId, CustomerId, CustomerName, CustomerCity, Discount\}$ → superkey but NOT for all cols → **not a superkey**
+- `ProductName` — determined by `ProductId` alone → **non-prime attribute**
+
+---
+
+## 9.5 Step-by-Step Normalization of OrderLine
+
+### Step 1 — Is OrderLine in 1NF?
+
+> **1NF**: Every attribute value is **atomic** (single-valued, indivisible).
+
+`OrderLine` is in 1NF — each cell holds one value.
+
+::: callout-note
+If `Category` had been stored as a comma-separated list (`"Electronics,Computers"`), the table would violate 1NF.
+The fix: extract a separate `ProductCategory(ProductId, Category)` table or hold one category per row.
+:::
+
+### Step 2 — Check for 2NF (Eliminate Partial Dependencies)
+
+> **2NF**: In 1NF, AND every non-prime attribute is **fully** functionally dependent on every candidate key.
+> (Relevant only when the key is composite.)
+
+**Violations found:**
+
+| FD | Problem |
+|----|---------|
+| `ProductId → ProductName, Category, Price` | Partial — `ProductId` alone determines these; `OrderId` is irrelevant |
+| `CustomerId → CustomerName, CustomerCity` | Partial — `CustomerId` alone determines these; `ProductId` is irrelevant |
+| `OrderId → CustomerId, Discount` | Partial — `OrderId` alone determines discount and customer; `ProductId` is irrelevant |
+
+**Anomalies caused by `ProductId → ProductName, Category, Price`:**
+
+- *Insert*: cannot record a product's price without first having an order for it
+- *Delete*: deleting the last order for a product destroys its price
+- *Update*: changing `Price` for `P10` requires updating every order line that contains `P10`
+
+**Fix — decompose into:**
+
+```
+Product(ProductId PK, ProductName, Category, Price)
+Customer(CustomerId PK, CustomerName, CustomerCity)
+Order(OrderId PK, CustomerId FK, Discount)
+OrderLine(OrderId FK, ProductId FK, Qty, TotalPrice)   -- PK = {OrderId, ProductId}
+```
+
+All four relations are now in **2NF** — no partial dependencies remain.
+
+### Step 3 — Check for 3NF (Eliminate Transitive Dependencies)
+
+> **3NF**: In 2NF, AND for every non-trivial FD $X \to A$:
+> - $X$ is a superkey, **OR**
+> - $A$ is a prime attribute
+
+**Violation found in `Order`:**
+
+```
+OrderId → CustomerId → CustomerName, CustomerCity
+```
+
+`CustomerId → CustomerName, CustomerCity` — `CustomerId` is NOT a superkey of `Order`.
+
+This **transitive dependency** means:
+
+- *Update*: changing Alice's city in two separate orders requires two `UPDATE` statements
+
+**Fix:** `CustomerName` and `CustomerCity` already moved to `Customer` in Step 2.
+`Order(OrderId, CustomerId, Discount)` — now in 3NF because `CustomerId` is an FK whose non-key attributes live in `Customer`.
+
+Let us check `Product(ProductId, ProductName, Category, Price)`:
+
+```
+ProductId → Category → Price?   -- is there a transitive FD here?
+```
+
+Answer: Not inherently — a single `Category` does not determine `Price` (different laptop brands have different prices). No transitive FD. `Product` is in 3NF.
+
+### Step 4 — Check for BCNF
+
+> **BCNF**: For *every* non-trivial FD $X \to Y$: **X must be a superkey**.
+
+BCNF is stricter than 3NF — it removes the "prime attribute" exception.
+
+**Current schema after 2NF/3NF normalization:**
+
+| Table | FDs | BCNF? |
+|-------|-----|-------|
+| `Product(ProductId, ProductName, Category, Price)` | `ProductId → all` | ✓ |
+| `Customer(CustomerId, CustomerName, CustomerCity)` | `CustomerId → all` | ✓ |
+| `Order(OrderId, CustomerId, Discount)` | `OrderId → all` | ✓ |
+| `OrderLine(OrderId, ProductId, Qty, TotalPrice)` | `{OrderId, ProductId} → all` | ✓ |
+
+All four tables are in **BCNF**.
+
+### Step 5 — Verify Lossless Decomposition
+
+A decomposition of $R$ into $(R_1, R_2)$ is **lossless** iff:
+
+$$
+(R_1 \cap R_2) \to R_1 \quad \text{or} \quad (R_1 \cap R_2) \to R_2
+$$
+
+**Check `OrderLine ∩ Order`:** shared attribute is `OrderId`.
+$\{OrderId\}^+$ in `Order` = all attributes of `Order` → lossless. ✓
+
+**Check `OrderLine ∩ Product`:** shared attribute is `ProductId`.  
+$\{ProductId\}^+$ in `Product` = all attributes of `Product` → lossless. ✓
+
+### Final Normalized Schema
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+erDiagram
+    Customer {
+        char(10)    CustomerId PK
+        varchar(50) CustomerName
+        varchar(50) CustomerCity
+    }
+    Order {
+        int         OrderId PK
+        char(10)    CustomerId FK
+        decimal     Discount
+    }
+    OrderLine {
+        int         OrderId FK
+        char(10)    ProductId FK
+        int         Qty
+        decimal     TotalPrice
+    }
+    Product {
+        char(10)    ProductId PK
+        varchar(100) ProductName
+        varchar(50) Category
+        decimal     Price
+    }
+    Customer ||--o{ Order : "places"
+    Order ||--|{ OrderLine : "contains"
+    Product ||--o{ OrderLine : "ordered in"
+```
+
+---
+
+## 9.6 Normal Form Summary
+
+| Normal Form | Condition | What it eliminates |
+|------------|-----------|-------------------|
+| **1NF** | All attributes atomic | Multi-valued / repeating groups |
+| **2NF** | 1NF + no partial FDs | Redundancy from composite-key partial deps |
+| **3NF** | 2NF + no transitive FDs (with prime-attr exception) | Transitive deps via non-key attributes |
+| **BCNF** | Every FD determinant is a superkey | All non-trivial FD redundancy |
+| **4NF** | BCNF + no non-trivial MVDs | Multi-valued dependency redundancy |
+| **5NF** | 4NF + no non-trivial join dependencies | Decomposition artifacts |
+
+::: callout-important
+## 3NF vs BCNF Trade-off
+
+| Property | 3NF | BCNF |
+|---------|-----|------|
+| Lossless decomposition | ✓ | ✓ |
+| Dependency preservation | ✓ (always) | ✗ (may lose some FDs) |
+| Eliminates all FD-based redundancy | Partial | Yes |
+
+Use BCNF when possible; fall back to 3NF when you must preserve a specific dependency.
+:::
+
+---
+
+## 9.7 BCNF Decomposition — A Case Where 3NF ≠ BCNF
+
+The BCNF and 3NF distinction matters when there are **multiple overlapping candidate keys**.
+
+**Classic example:**
+
+```
+Enrolment(Student, Course, Teacher)
+```
+
+FDs:
+- `{Student, Course} → Teacher` (a course has exactly one teacher per student)
+- `Teacher → Course` (a teacher teaches exactly one course)
+
+Candidate keys:
+- `{Student, Course}` — covers all columns
+- `{Student, Teacher}` — covers all columns (because `Teacher → Course`)
+
+Check for BCNF violations:
+- `Teacher → Course`: determinant `Teacher` is NOT a superkey → **BCNF violated**
+
+Check for 3NF violations:
+- `Teacher → Course`: `Course` is a prime attribute (member of candidate key `{Student, Course}`) → **3NF satisfied** (prime-attr exception)
+
+So `Enrolment` is in 3NF but **not** in BCNF.
+
+**BCNF decomposition:**
+
+```
+TeacherCourse(Teacher PK, Course)       -- FD: Teacher → Course
+StudentTeacher(Student, Teacher)        -- PK: {Student, Teacher}
+```
+
+Trade-off: the FD `{Student, Course} → Teacher` can no longer be checked in a single table — it requires a join.
+That is the dependency-preservation loss inherent to BCNF decomposition.
+
+---
+
+## 9.8 Multivalued Dependencies and 4NF
+
+A **multivalued dependency (MVD)** $X \twoheadrightarrow Y$ holds when, for each value of $X$,
+the set of $Y$ values is independent of the remaining attributes $Z$.
+
+**Example:**
+
+```
+EmployeeSkillHobby(Ssn, Skill, Hobby)
+```
+
+An employee has a set of skills and a set of hobbies, and these are independent of each other.
+MVDs: `Ssn ↠ Skill` and `Ssn ↠ Hobby`.
+
+This causes redundancy: each (Ssn, Skill) pair must be repeated for each Hobby.
+
+| Ssn | Skill | Hobby |
+|-----|-------|-------|
+| 111 | Java | Chess |
+| 111 | Java | Soccer |
+| 111 | SQL | Chess |
+| 111 | SQL | Soccer |
+
+**4NF** requires that every non-trivial MVD $X \twoheadrightarrow Y$ has $X$ as a superkey.
+
+**Fix:**
+
+```
+EmployeeSkill(Ssn, Skill)
+EmployeeHobby(Ssn, Hobby)
+```
+
+---
+
+## 9.9 Canonical Cover (Minimal Cover)
+
+The **canonical cover** $F_c$ of an FD set $F$ is an equivalent, minimal FD set:
+
+1. Every FD has a **single attribute on the right side** (decompose all compound RHS)
+2. No FD has a **redundant attribute on the left side** (check if dropping a LHS attribute leaves the FD derivable)
+3. No FD is **redundant overall** (check if removing the whole FD leaves it derivable from the rest)
+
+**Why compute $F_c$?** The 3NF synthesis algorithm uses $F_c$ to generate the minimal, dependency-preserving, lossless schema.
+
+---
+
+## 9.10 Dependency Preservation
+
+A decomposition $\{R_1, R_2, \ldots, R_k\}$ of $R$ is **dependency-preserving** iff every FD in $F^+$ can be verified in at least one $R_i$ without performing a join:
+
+$$
+\left(\bigcup_{i=1}^{k} F_i\right)^+ = F^+
+$$
+
+where $F_i$ = projection of $F$ onto $R_i$.
+
+BCNF decompositions may not be dependency-preserving (as shown in §9.7).
+The **3NF synthesis algorithm** always produces a lossless, dependency-preserving decomposition.
+
+---
+
+## 9.11 Chapter Summary
+
+::: callout-important
+## Key Takeaways — Chapter 9
+
+1. **Update anomalies** (insertion, deletion, modification) arise whenever a table stores facts about
+   multiple unrelated entities. Normalization eliminates the root cause.
+
+2. A **functional dependency** $X \to Y$ means knowing $X$ always determines $Y$.
+   Key types: full (depends on whole key), partial (depends on subset), transitive ($X \to Y \to Z$).
+
+3. **Armstrong's Axioms** (Reflexivity, Augmentation, Transitivity) are complete —
+   all valid FDs can be derived. Use **closure** $X^+$ to find keys and test derivability.
+
+4. **Normal forms** are a ladder: 1NF (atomic) → 2NF (no partial deps) → 3NF (no transitive deps)
+   → BCNF (every determinant is a superkey) → 4NF (no non-trivial MVDs).
+
+5. The **running OrderLine example** showed: partial deps caused product/customer data duplication in
+   each order row → fixed by decomposing into four tables (2NF), then confirmed 3NF/BCNF.
+
+6. **BCNF vs 3NF trade-off**: BCNF eliminates all FD-based redundancy but may not preserve dependencies;
+   3NF always allows a lossless, dependency-preserving decomposition (use 3NF synthesis algorithm).
+
+7. A decomposition is **lossless** iff shared attributes form a key in at least one sub-relation.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Define **functional dependency** and explain the difference between a full and a partial FD.
+   At what normal form does eliminating partial FDs become relevant?
+
+2. Why does Armstrong's **Augmentation** axiom hold? Give a counterexample showing that dropping
+   the augmented attributes from only one side would be wrong.
+
+3. What is the fundamental difference between **BCNF** and **3NF**?
+   Give an example of a relation that is in 3NF but not in BCNF.
+
+### Applied
+
+4. Given $F = \{ AB \to C, \; C \to D, \; D \to B \}$:
+   - Compute $\{A, B\}^+$ and $\{A, C\}^+$.
+   - Identify all candidate keys of $R(A, B, C, D)$.
+   - Identify which attributes are prime and which are non-prime.
+
+5. Normalize the following relation to BCNF, showing each decomposition step and the FDs that
+   triggered it:
+   ```
+   Invoice(InvoiceId, VendorId, VendorName, VendorCity, ItemId, ItemName, Qty, UnitPrice)
+   Assumed FDs:
+     InvoiceId → VendorId
+     VendorId → VendorName, VendorCity
+     ItemId → ItemName, UnitPrice
+     {InvoiceId, ItemId} → Qty
+   ```
+
+6. For each step in Question 5, describe the specific **update anomaly** that would occur if you
+   left the table at that lower normal form.
+
+### Analysis
+
+7. A classmate claims: *"Every table with a single-column primary key is automatically in 3NF."*
+   Is this claim true? If not, produce a counterexample.
+
+8. Prove or disprove: if a decomposition is lossless and dependency-preserving, then the union of
+   all sub-relations' FDs is equivalent to the original $F^+$.
+
+### Diagram / Visualization
+
+9. Draw the FD diagram (show attributes as nodes and dependencies as labelled arrows) for `OrderLine`
+   before normalization. Circle the primary key attributes. Highlight the partial and transitive FDs.
+
+10. Given the normalized schema from §9.5, write the SQL `CREATE TABLE` statements for all four
+    tables (`Product`, `Customer`, `Order`, `OrderLine`) with all appropriate constraints
+    (PK, FK, NOT NULL, CHECK). Include the referential actions `ON DELETE` and `ON UPDATE`.
+
+### Design
+
+11. Consider a university database where a **student** can enrol in multiple **courses**, each course
+    is taught by multiple **instructors**, but each student in a given course section has exactly one
+    instructor. Model this with:
+    - An ER diagram (or `erDiagram` in Mermaid)
+    - The relational schema
+    - Identify all FDs and determine the highest normal form the schema achieves
+
+### Synthesis
+
+12. The company DBA proposes storing the full employee hierarchy (employee → supervisor → their supervisor → …)
+    as a JSON column in PostgreSQL instead of the normalized `Employee.Super_ssn` foreign key pattern:
+    ```sql
+    ALTER TABLE Employee ADD COLUMN HierarchyChain JSONB;
+    -- e.g. [{"Ssn":"333445555","Name":"Franklin Wong"}, {"Ssn":"888665555","Name":"James Borg"}]
+    ```
+    Evaluate this design from a normalization perspective. What normal form guarantees does it violate?
+    What are the practical trade-offs? Under what query patterns might the denormalized JSON approach
+    be justified?
+
+
+## 9.1 Motivation: Problems with Bad Design
+
+Consider a poorly designed relation `EMP_DEPT`:
+
+```
+EMP_DEPT(SSN, EName, BDate, Addr, DeptNo, DName, MGRSSN)
+```
+
+This schema suffers from **update anomalies**:
+
+| Anomaly | Description | Example |
+|---------|-------------|---------|
+| **Insertion** | Cannot store department info without an employee | Can't add dept 6 with no employees yet |
+| **Deletion** | Deleting last employee loses department info | Delete last employee in dept 5 → dept 5 info gone |
+| **Modification** | Changing dept name requires multiple row updates | Rename dept 5 requires updating every row |
+
+**Root cause:** Multiple facts stored in one row (employee facts + department facts).
+
+**Solution:** **Decompose** the relation and normalize it.
+
+## 9.2 Functional Dependencies
+
+A **functional dependency (FD)** $X \to Y$ holds on relation $R$ if whenever two tuples agree on the attribute set $X$, they must agree on the attribute set $Y$.
+
+$$
+X \to Y: \; \forall t_1, t_2 \in R: \; t_1[X] = t_2[X] \;\Rightarrow\; t_1[Y] = t_2[Y]
+$$
+
+In English: "X **determines** Y" or "Y is **functionally dependent** on X."
+
+**Examples:**
+
+```
+SSN → {EName, BDate, Addr, DeptNo}    -- SSN determines employee details
+DeptNo → {DName, MGRSSN}              -- DeptNo determines department details
+{SSN, PNo} → Hours                    -- composite key determines hours
+```
+
+### Types of FDs
+
+| Type | Definition | Example |
+|------|-----------|---------|
+| **Full FD** | Y depends on *all* of X, not a proper subset | `{SSN, PNo} → Hours` |
+| **Partial FD** | Y depends on a *proper subset* of X | `{SSN, PNo} → EName` (SSN alone determines EName) |
+| **Trivial FD** | $X \to Y$ where $Y \subseteq X$ | `{SSN, Name} → SSN` |
+| **Transitive FD** | $X \to Z$ via $X \to Y \to Z$ where $Y$ is not a key | `SSN → DeptNo → DName` |
+
+## 9.3 Armstrong's Axioms
+
+**Armstrong's Axioms** are a complete and sound set of inference rules for FDs:
+
+| Axiom | Rule | Statement |
+|-------|------|-----------|
+| **Reflexivity** | If $Y \subseteq X$, then $X \to Y$ | Supersets determine subsets |
+| **Augmentation** | If $X \to Y$, then $XZ \to YZ$ | Adding same attributes to both sides |
+| **Transitivity** | If $X \to Y$ and $Y \to Z$, then $X \to Z$ | Chains compose |
+
+### Derived Rules
+
+| Rule | Derivation |
+|------|-----------|
+| **Union** | If $X \to Y$ and $X \to Z$, then $X \to YZ$ |
+| **Decomposition** | If $X \to YZ$, then $X \to Y$ and $X \to Z$ |
+| **Pseudotransitivity** | If $X \to Y$ and $WY \to Z$, then $WX \to Z$ |
+
+### Attribute Closure $X^+$
+
+The **closure** of attribute set $X$ under a set of FDs $F$ is the set of all attributes determined by $X$:
+
+$$
+X^+ = \{ A \mid X \to A \text{ using only } F \}
+$$
+
+**Algorithm to compute $X^+$:**
+
+```
+closure = X
+repeat:
+    for each FD (α → β) in F:
+        if α ⊆ closure:
+            closure = closure ∪ β
+until closure doesn't change
+return closure
+```
+
+**Example:** Given $F = \{A \to B, B \to C, A \to D\}$, compute $\{A\}^+$:
+
+$$
+\{A\}^+ = \{A\} \cup \{B\} \cup \{D\} \cup \{C\} = \{A, B, C, D\}
+$$
+
+## 9.4 Keys from FDs
+
+Using closure:
+
+- **Superkey**: $X$ is a superkey of $R$ iff $X^+ = R$ (all attributes)
+- **Candidate key**: a minimal superkey (no proper subset is a superkey)
+- **Primary key**: chosen candidate key
+
+## 9.5 Canonical Cover (Minimal Cover) $F_c$
+
+The **canonical cover** $F_c$ of an FD set $F$ is an equivalent set of FDs that is:
+
+1. Every FD has a single attribute on the right side
+2. No FD has a redundant attribute on the left side
+3. No FD is redundant (cannot be derived from the others)
+
+**Algorithm:**
+
+1. Decompose all RHS: $A \to BC$ becomes $A \to B, A \to C$
+2. Remove extraneous LHS attributes: check if $X \to A$ can be replaced by $X' \to A$ where $X' \subset X$
+3. Remove redundant FDs: remove $X \to A$ if it can be derived from remaining FDs
+
+## 9.6 Normal Forms
+
+### First Normal Form (1NF)
+
+> A relation is in **1NF** iff all attribute values are **atomic** (no multi-valued or composite attributes).
+
+```
+-- Violates 1NF (multi-valued Phone):
+EMPLOYEE(SSN, Name, Phone={555-1234, 555-5678})
+
+-- In 1NF:
+EMPLOYEE(SSN, Name)
+EMP_PHONE(SSN, Phone)
+```
+
+### Second Normal Form (2NF)
+
+> A relation is in **2NF** iff it is in 1NF **AND** every non-key attribute is **fully functionally dependent** on the primary key (no partial dependencies).
+
+2NF is only relevant when the PK is **composite**.
+
+```
+-- Violates 2NF:
+WORKS_ON(SSN, PNo, Hours, EName)
+-- FD: {SSN, PNo} → Hours  ← full (OK)
+-- FD: SSN → EName          ← partial (EName depends only on SSN, not PNo)
+
+-- Fix — decompose:
+WORKS_ON(SSN, PNo, Hours)
+EMPLOYEE(SSN, EName, ...)
+```
+
+### Third Normal Form (3NF)
+
+> A relation is in **3NF** iff for every non-trivial FD $X \to A$:
+> - **X is a superkey**, OR
+> - **A is a prime attribute** (member of some candidate key)
+
+3NF eliminates **transitive dependencies**.
+
+```
+-- Violates 3NF:
+EMP_DEPT(SSN, DeptNo, DName)
+-- FDs: SSN → DeptNo  (OK, SSN is PK)
+--       DeptNo → DName  (transitive! DeptNo is not a superkey)
+
+-- Fix:
+EMPLOYEE(SSN, ..., DeptNo)
+DEPARTMENT(DeptNo, DName, ...)
+```
+
+### Boyce-Codd Normal Form (BCNF)
+
+> A relation is in **BCNF** iff for every non-trivial FD $X \to Y$:
+> - **X is a superkey**
+
+BCNF is stricter than 3NF — it removes the "A is prime" exception.
+
+```
+-- Example violating BCNF (but in 3NF):
+TEACHES(Student, Course, Teacher)
+-- FDs: {Student, Course} → Teacher
+--       Teacher → Course
+-- Teacher is not a superkey! Violates BCNF.
+
+-- BCNF decomposition:
+TEACHER_COURSE(Teacher, Course)
+STUDENT_TEACHER(Student, Teacher)
+```
+
+::: callout-important
+## 3NF vs BCNF Trade-off
+
+| Property | 3NF | BCNF |
+|---------|-----|------|
+| Lossless decomposition | ✓ | ✓ (always achievable) |
+| Dependency preservation | ✓ (always) | ✗ (may lose some FDs) |
+| Eliminates all redundancy | Partial | Yes |
+
+**In practice:** Use BCNF when possible; fall back to 3NF when dependency preservation is required.
+:::
+
+### Fourth Normal Form (4NF)
+
+> A relation is in **4NF** iff for every non-trivial **multivalued dependency (MVD)** $X \twoheadrightarrow Y$:
+> - **X is a superkey**
+
+An MVD $X \twoheadrightarrow Y$ means: for each value of $X$, the set of $Y$ values is independent of $Z$ (the other attributes).
+
+```
+-- Violates 4NF:
+EMP_SKILLS_HOBBIES(SSN, Skill, Hobby)
+-- SSN ↠ Skill  (employee has many skills, independent of hobbies)
+-- SSN ↠ Hobby  (employee has many hobbies, independent of skills)
+
+-- Fix:
+EMP_SKILL(SSN, Skill)
+EMP_HOBBY(SSN, Hobby)
+```
+
+## 9.7 Lossless Decomposition
+
+A decomposition of $R$ into $(R_1, R_2)$ is **lossless** iff:
+
+$$
+R_1 \bowtie R_2 = R
+$$
+
+**Test:** The decomposition $\{R_1, R_2\}$ is lossless iff:
+$$
+(R_1 \cap R_2) \to R_1 \quad \text{or} \quad (R_1 \cap R_2) \to R_2
+$$
+i.e., the shared attributes form a key in at least one of the sub-relations.
+
+## 9.8 Dependency Preservation
+
+A decomposition preserves FDs if every FD in $F^+$ can be checked in some sub-relation without joining. Formally:
+
+$$
+(F_1 \cup F_2 \cup \cdots \cup F_k)^+ = F^+
+$$
+
+BCNF may not always preserve dependencies — a 3NF synthesis algorithm always produces a dependency-preserving, lossless decomposition.
+
+## Summary
+
+::: callout-important
+## Chapter 9 — Key Takeaways
+
+- **Update anomalies** (insertion, deletion, modification) arise from bad schema design.
+- An **FD** $X \to Y$ means X determines Y; important types: full, partial, transitive.
+- **Armstrong's axioms** (reflexivity, augmentation, transitivity) are complete for deriving all FDs.
+- **X⁺** (attribute closure) is used to find keys and check FD derivability.
+- **Normal forms**: 1NF (atomic) → 2NF (no partial) → 3NF (no transitive) → BCNF (every determinant is a key) → 4NF (no non-trivial MVDs).
+- **BCNF** is stronger than 3NF but may not preserve dependencies; 3NF always allows lossless, dependency-preserving decomposition.
+- **Lossless decomposition**: joining sub-relations recovers the original; guaranteed when shared attributes form a key in one sub-relation.
+:::
+
+## Review Questions
+
+1. Define **functional dependency**. Give three examples from a university database.
+2. Compute $\{A, B\}^+$ given $F = \{A \to C, BC \to D, A \to B, D \to E\}$.
+3. What is the **canonical cover**? Why do we compute it?
+4. Normalize `STUDENT_ADVISOR(StudentID, AdvisorID, AdvisorName, DeptID, DeptName)` to BCNF. Show each step.
+5. Explain why a BCNF decomposition may not be **dependency-preserving**. Give an example.
+6. What is a **multivalued dependency** and which normal form addresses it?

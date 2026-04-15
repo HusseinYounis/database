@@ -1,0 +1,132 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "Fundamentals of Database Systems"
+  subtitle: "A Comprehensive Course: Relational Databases & NoSQL"
+  author:
+    - name: "Course Instructor"
+      affiliation: "Computer Engineering Department"
+  date: "2026"
+  date-format: "YYYY"
+  cover-image: images/cover.png
+  favicon: images/cover.png
+  repo-url: ""
+  downloads: [pdf]
+  search: true
+  sidebar:
+    style: "docked"
+    search: true
+    collapse-level: 2
+
+  chapters:
+    - index.qmd
+
+    - part: "Part I: Foundations"
+      chapters:
+        - part-01-foundations/ch01-introduction.qmd
+        - part-01-foundations/ch02-concepts-architecture.qmd
+
+    - part: "Part II: Data Modeling"
+      chapters:
+        - part-02-data-modeling/ch03-er-modeling.qmd
+        - part-02-data-modeling/ch04-eer-modeling.qmd
+
+    - part: "Part III: The Relational Model"
+      chapters:
+        - part-03-relational-model/ch05-relational-model.qmd
+        - part-03-relational-model/ch06-relational-algebra.qmd
+
+    - part: "Part IV: Structured Query Language (SQL)"
+      chapters:
+        - part-04-sql/ch07-sql-basics.qmd
+        - part-04-sql/ch08-advanced-sql.qmd
+
+    - part: "Part V: Database Design Theory"
+      chapters:
+        - part-05-design/ch09-normalization.qmd
+
+    - part: "Part VI: Storage, Indexing & Query Processing"
+      chapters:
+        - part-06-storage-query/ch10-storage-indexing.qmd
+        - part-06-storage-query/ch11-query-processing.qmd
+
+    - part: "Part VII: Transaction Management"
+      chapters:
+        - part-07-transactions/ch12-transactions.qmd
+        - part-07-transactions/ch13-concurrency.qmd
+
+    - part: "Part VIII: NoSQL & Modern Databases"
+      chapters:
+        - part-08-nosql/ch14-nosql-intro.qmd
+        - part-08-nosql/ch15-mongodb.qmd
+
+  appendices:
+    - appendix/appendixA-apis.qmd
+
+  references: references.bib
+
+bibliography: references.bib
+csl: shared/ieee.csl
+
+format:
+  html:
+    theme: "cosmo"
+    filters:
+      - shafayetShafee/interactive-sql
+      - leovan/pseudocode
+      - shafayetShafee/line-highlight
+      - parmsam/quizdown
+      - mcanouil/highlight-text
+      - shafayetShafee/collapse-callout
+      - sun123zxy/callouty-theorem
+    include-in-header:
+      - text: |
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    lightbox: true
+    toc: true
+    toc-depth: 3
+    toc-title: "Contents"
+    number-sections: true
+    number-depth: 3
+    code-fold: false
+    code-tools: true
+    code-copy: true
+    highlight-style: github
+    html-math-method: katex
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    fig-align: center
+    callout-appearance: default
+    mermaid-format: png
+
+  pdf:
+    documentclass: scrbook
+    classoption: [oneside]
+    papersize: a4
+    fontsize: 11pt
+    linestretch: 1.25
+    margin-left: 2.5cm
+    margin-right: 2.5cm
+    margin-top: 2.5cm
+    margin-bottom: 2.5cm
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    colorlinks: true
+    linkcolor: "NavyBlue"
+    urlcolor: "NavyBlue"
+    citecolor: "DarkGreen"
+    include-in-header:
+      - shared/latex-header.tex
+    highlight-style: github
+
+execute:
+  echo: true
+  eval: false
+  warning: false
+  freeze: auto

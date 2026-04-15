@@ -1,0 +1,1302 @@
+---
+title: "Advanced SQL"
+subtitle: "Chapter 8"
+---
+
+## §8.0 Building on the Basics
+
+Chapter 7 covered the foundational SELECT–FROM–WHERE pipeline, joins, and aggregates.
+This chapter introduces the features that make SQL genuinely powerful for real-world applications:
+
+| Feature | Purpose |
+|---------|---------|
+| CTEs (`WITH`) | Name and reuse intermediate results; enable recursion |
+| Window functions (`OVER`) | Analytics without collapsing rows |
+| Views | Virtual named queries; security and abstraction |
+| Stored procedures & functions | Encapsulate reusable logic inside the database |
+| Triggers | Automatic event-driven actions |
+| JSON functions | Work with semi-structured data inline with relational data |
+
+---
+
+## 8.1 Common Table Expressions (CTEs)
+
+A **Common Table Expression** names a temporary result set scoped to a single query.
+It replaces deeply nested subqueries with readable, layered logic.
+
+```sql
+-- Basic CTE syntax
+WITH cte_name AS (
+    SELECT ...
+)
+SELECT ... FROM cte_name ...;
+```
+
+### 8.1.1 Single CTE — Readable Subquery
+
+```sql
+-- Employees earning more than the overall average salary
+WITH AvgSalary AS (
+    SELECT AVG(Salary) AS Avg FROM Employee
+)
+SELECT E.Fname, E.Lname, E.Salary, A.Avg
+FROM   Employee E, AvgSalary A
+WHERE  E.Salary > A.Avg
+ORDER  BY E.Salary DESC;
+```
+
+### 8.1.2 Multiple CTEs — Chained Steps
+
+```sql
+-- Step 1: department headcount
+-- Step 2: department total salary
+-- Step 3: combine and compute cost-per-head
+WITH Headcount AS (
+    SELECT Dno, COUNT(*) AS n
+    FROM   Employee
+    GROUP  BY Dno
+),
+TotalSal AS (
+    SELECT Dno, SUM(Salary) AS Total
+    FROM   Employee
+    GROUP  BY Dno
+)
+SELECT D.Dname,
+       H.n          AS Employees,
+       T.Total       AS PayrollTotal,
+       T.Total / H.n AS CostPerHead
+FROM   Department D
+       JOIN Headcount H ON D.Dnumber = H.Dno
+       JOIN TotalSal  T ON D.Dnumber = T.Dno
+ORDER  BY CostPerHead DESC;
+```
+
+### 8.1.3 Recursive CTE
+
+A recursive CTE has two parts joined by `UNION ALL`:
+
+| Part | Role |
+|------|------|
+| **Anchor member** | Base case — the starting row(s) |
+| **Recursive member** | References the CTE itself — adds one level per iteration |
+
+```sql
+-- Build the complete management chain above employee '123456789'
+```
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+WITH RECURSIVE OrgChain AS (
+    -- Anchor: start from the target employee
+    SELECT Ssn, Fname, Lname, Super_ssn, 0 AS Depth
+    FROM   Employee
+    WHERE  Ssn = '123456789'
+
+    UNION ALL
+
+    -- Recursive: walk up to each supervisor
+    SELECT E.Ssn, E.Fname, E.Lname, E.Super_ssn, OC.Depth + 1
+    FROM   Employee E
+           INNER JOIN OrgChain OC ON E.Ssn = OC.Super_ssn
+)
+SELECT Depth, Fname, Lname, Ssn
+FROM   OrgChain
+ORDER  BY Depth;
+```
+
+## PostgreSQL
+
+```sql
+WITH RECURSIVE OrgChain AS (
+    SELECT Ssn, Fname, Lname, Super_ssn, 0 AS Depth
+    FROM   Employee
+    WHERE  Ssn = '123456789'
+
+    UNION ALL
+
+    SELECT E.Ssn, E.Fname, E.Lname, E.Super_ssn, OC.Depth + 1
+    FROM   Employee E
+           INNER JOIN OrgChain OC ON E.Ssn = OC.Super_ssn
+)
+SELECT Depth, Fname, Lname, Ssn
+FROM   OrgChain
+ORDER  BY Depth;
+-- Identical syntax to MySQL 8; PostgreSQL has supported RECURSIVE CTEs since version 8.4
+```
+
+## Oracle
+
+```sql
+-- Oracle uses CONNECT BY for hierarchical queries (classic syntax)
+SELECT LEVEL - 1 AS Depth, Fname, Lname, Ssn
+FROM   Employee
+START  WITH Ssn = '123456789'
+CONNECT BY PRIOR Super_ssn = Ssn
+ORDER  BY Depth;
+
+-- Oracle 11g R2+ also supports the SQL:1999 recursive CTE:
+WITH OrgChain (Ssn, Fname, Lname, Super_ssn, Depth) AS (
+    SELECT Ssn, Fname, Lname, Super_ssn, 0
+    FROM   Employee
+    WHERE  Ssn = '123456789'
+    UNION ALL
+    SELECT E.Ssn, E.Fname, E.Lname, E.Super_ssn, OC.Depth + 1
+    FROM   Employee E
+           INNER JOIN OrgChain OC ON E.Ssn = OC.Super_ssn
+)
+SELECT Depth, Fname, Lname, Ssn FROM OrgChain ORDER BY Depth;
+-- Note: Oracle does NOT use the RECURSIVE keyword
+```
+
+:::
+
+::: callout-important
+## Recursive CTE Safety
+
+Always add a **termination condition** to prevent infinite recursion.
+The DBMS uses an implicit cycle-detection threshold (e.g., PostgreSQL's `cte_stack_limit`).
+Oracle's `CONNECT BY` automatically detects cycles when `NOCYCLE` is specified.
+:::
+
+---
+
+## 8.2 Window Functions
+
+Window functions compute values *across a set of rows related to the current row* **without collapsing** those rows into a single output row — unlike `GROUP BY`.
+
+```
+FUNCTION_NAME() OVER (
+    [PARTITION BY col, ...]   -- divide rows into groups (windows)
+    [ORDER BY col, ...]       -- order within each window
+    [ROWS/RANGE BETWEEN ...]  -- optional frame specification
+)
+```
+
+### 8.2.1 Ranking Functions
+
+```sql
+SELECT Fname, Lname, Dno, Salary,
+       ROW_NUMBER()  OVER (PARTITION BY Dno ORDER BY Salary DESC) AS RowNum,
+       RANK()        OVER (PARTITION BY Dno ORDER BY Salary DESC) AS Rnk,
+       DENSE_RANK()  OVER (PARTITION BY Dno ORDER BY Salary DESC) AS DenseRnk,
+       NTILE(3)      OVER (PARTITION BY Dno ORDER BY Salary DESC) AS Tercile
+FROM   Employee;
+```
+
+**Difference between RANK and DENSE_RANK** — when two employees share a salary:
+
+| Salary | ROW_NUMBER | RANK | DENSE_RANK |
+|--------|-----------|------|-----------|
+| 40 000 | 1 | 1 | 1 |
+| 38 000 | 2 | 2 | 2 |
+| 38 000 | 3 | 2 | 2 |
+| 35 000 | 4 | 4 *(gap!)* | 3 *(no gap)* |
+
+### 8.2.2 Analytic / Offset Functions
+
+```sql
+-- For each employee: show salary, the previous hire's salary, and next hire's salary
+-- (employees ordered by Bdate as a proxy for hire date)
+SELECT Fname, Lname, Bdate, Salary,
+       LAG (Salary, 1)  OVER (ORDER BY Bdate) AS PrevSalary,
+       LEAD(Salary, 1)  OVER (ORDER BY Bdate) AS NextSalary,
+       FIRST_VALUE(Fname) OVER (PARTITION BY Dno ORDER BY Salary DESC) AS TopEarnerInDept
+FROM   Employee;
+```
+
+### 8.2.3 Running Aggregates
+
+```sql
+-- Cumulative total salary spent, ordered by employee bdate
+SELECT Fname, Lname, Bdate, Salary,
+       SUM(Salary)  OVER (ORDER BY Bdate
+                         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                    ) AS RunningTotal,
+       AVG(Salary)  OVER (PARTITION BY Dno) AS DeptAvg,
+       Salary - AVG(Salary) OVER (PARTITION BY Dno) AS VsDeptAvg
+FROM   Employee
+ORDER  BY Bdate;
+```
+
+### 8.2.4 Frame Specification (ROWS vs RANGE)
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- MySQL 8.0 supports frames; default is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+SELECT Fname, Salary,
+       SUM(Salary) OVER (
+           ORDER BY Salary
+           ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING   -- 3-row sliding window
+       ) AS SlidingSum
+FROM Employee;
+```
+
+## PostgreSQL
+
+```sql
+SELECT Fname, Salary,
+       SUM(Salary) OVER (
+           ORDER BY Salary
+           ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+       ) AS SlidingSum,
+       -- RANGE uses value comparison; useful for date windows
+       SUM(Salary) OVER (
+           ORDER BY Salary
+           RANGE BETWEEN 5000 PRECEDING AND CURRENT ROW
+       ) AS SalaryRangeSum
+FROM Employee;
+```
+
+## Oracle
+
+```sql
+-- Oracle supports full frame specification since 8i
+SELECT Fname, Salary,
+       SUM(Salary) OVER (
+           ORDER BY Salary
+           ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING
+       ) AS SlidingSum
+FROM Employee;
+```
+
+:::
+
+### 8.2.5 Window Functions vs GROUP BY
+
+| Aspect | GROUP BY | Window Function |
+|--------|---------|----------------|
+| Output rows | One per group | Same count as input |
+| Access to non-group cols | No | Yes |
+| Access to aggregate result | Via HAVING | Via the window expression |
+| Typical use | Summarize | Compare each row to its group |
+
+---
+
+## 8.3 Views
+
+A **view** is a stored SELECT statement with a name — a virtual table.
+When you query a view, the DBMS substitutes its definition (called *view expansion*).
+
+### 8.3.1 Creating and Querying Views
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- Create a view of Research department employees
+CREATE VIEW ResearchEmployees AS
+SELECT E.Ssn, E.Fname, E.Lname, E.Salary, E.Bdate
+FROM   Employee E
+       JOIN Department D ON E.Dno = D.Dnumber
+WHERE  D.Dname = 'Research';
+
+-- Query the view like a table
+SELECT Fname, Lname, Salary
+FROM   ResearchEmployees
+WHERE  Salary > 35000;
+
+-- Replace / modify the view
+CREATE OR REPLACE VIEW ResearchEmployees AS
+SELECT E.Ssn, E.Fname, E.Lname, E.Salary, E.Bdate, E.Gender
+FROM   Employee E
+       JOIN Department D ON E.Dno = D.Dnumber
+WHERE  D.Dname = 'Research';
+
+DROP VIEW IF EXISTS ResearchEmployees;
+```
+
+## PostgreSQL
+
+```sql
+CREATE VIEW ResearchEmployees AS
+SELECT E.Ssn, E.Fname, E.Lname, E.Salary, E.Bdate
+FROM   Employee E
+       JOIN Department D ON E.Dno = D.Dnumber
+WHERE  D.Dname = 'Research';
+
+-- PG supports CREATE OR REPLACE VIEW with the same column list
+CREATE OR REPLACE VIEW ResearchEmployees AS
+SELECT E.Ssn, E.Fname, E.Lname, E.Salary, E.Bdate, E.Gender
+FROM   Employee E
+       JOIN Department D ON E.Dno = D.Dnumber
+WHERE  D.Dname = 'Research';
+
+-- MATERIALIZED VIEW (stores results physically — refreshed manually)
+CREATE MATERIALIZED VIEW ResearchSummary AS
+SELECT Dno, COUNT(*) AS n, AVG(Salary) AS avg_sal FROM Employee GROUP BY Dno;
+
+REFRESH MATERIALIZED VIEW ResearchSummary;
+```
+
+## Oracle
+
+```sql
+CREATE OR REPLACE VIEW ResearchEmployees AS
+SELECT E.Ssn, E.Fname, E.Lname, E.Salary, E.Bdate
+FROM   Employee E
+       JOIN Department D ON E.Dno = D.Dnumber
+WHERE  D.Dname = 'Research';
+
+-- Oracle Materialized Views (MVIEW)
+CREATE MATERIALIZED VIEW ResearchSummary
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT AS
+SELECT Dno, COUNT(*) AS n, AVG(Salary) AS avg_sal FROM Employee GROUP BY Dno;
+```
+
+:::
+
+### 8.3.2 Updatable vs Non-Updatable Views
+
+A view supports DML (INSERT/UPDATE/DELETE) only under strict conditions:
+
+| Condition | Updatable? |
+|-----------|-----------|
+| Single base table | ✓ |
+| No `DISTINCT` | ✓ |
+| No aggregate functions | ✓ |
+| No `GROUP BY` / `HAVING` | ✓ |
+| No set operators | ✓ |
+| No subqueries in SELECT | ✓ |
+| All NOT NULL columns included (for INSERT) | ✓ |
+| JOIN (multi-table) | ✗ in most DBMSs |
+
+```sql
+-- This simple view IS updatable
+CREATE VIEW EmpSalaries AS SELECT Ssn, Fname, Lname, Salary FROM Employee;
+
+UPDATE EmpSalaries SET Salary = 45000 WHERE Ssn = '123456789';
+-- DBMS translates this to: UPDATE Employee SET Salary = 45000 WHERE Ssn = '123456789'
+```
+
+::: callout-tip
+Use `WITH CHECK OPTION` to prevent a view update from making a row *invisible* from the view:
+
+```sql
+CREATE VIEW HighEarners AS
+SELECT * FROM Employee WHERE Salary > 50000
+WITH CHECK OPTION;
+
+-- This would reject a salary reduction below 50000 via the view:
+UPDATE HighEarners SET Salary = 30000 WHERE Ssn = '123456789';  -- ERROR
+```
+:::
+
+---
+
+## 8.4 Stored Procedures and Functions
+
+Stored programs run inside the database engine — they avoid round-trips and centralize business logic.
+
+### 8.4.1 Stored Procedures
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+DELIMITER $$
+
+CREATE PROCEDURE GiveRaise(
+    IN  p_dept   INT,
+    IN  p_pct    DECIMAL(5,2),
+    OUT p_count  INT
+)
+BEGIN
+    UPDATE Employee
+    SET    Salary = Salary * (1 + p_pct / 100)
+    WHERE  Dno = p_dept;
+
+    SET p_count = ROW_COUNT();
+    SELECT CONCAT('Raise applied to ', p_count, ' employees.') AS msg;
+END$$
+
+DELIMITER ;
+
+-- Call
+CALL GiveRaise(5, 10.0, @n);
+SELECT @n AS RowsUpdated;
+```
+
+## PostgreSQL
+
+```sql
+CREATE OR REPLACE PROCEDURE GiveRaise(
+    p_dept   INTEGER,
+    p_pct    NUMERIC
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    v_count INTEGER;
+BEGIN
+    UPDATE Employee
+    SET    Salary = Salary * (1 + p_pct / 100)
+    WHERE  Dno = p_dept;
+
+    GET DIAGNOSTICS v_count = ROW_COUNT;
+    RAISE NOTICE 'Raise applied to % employees.', v_count;
+END;
+$$;
+
+-- Call (PG 11+)
+CALL GiveRaise(5, 10.0);
+```
+
+## Oracle
+
+```sql
+CREATE OR REPLACE PROCEDURE GiveRaise(
+    p_dept   IN  NUMBER,
+    p_pct    IN  NUMBER,
+    p_count  OUT NUMBER
+) AS
+BEGIN
+    UPDATE Employee
+    SET    Salary = Salary * (1 + p_pct / 100)
+    WHERE  Dno = p_dept;
+
+    p_count := SQL%ROWCOUNT;
+    DBMS_OUTPUT.PUT_LINE('Raise applied to ' || p_count || ' employees.');
+END;
+/
+
+-- Call via anonymous block
+DECLARE
+    v_count NUMBER;
+BEGIN
+    GiveRaise(5, 10.0, v_count);
+    DBMS_OUTPUT.PUT_LINE('Updated: ' || v_count);
+END;
+/
+```
+
+:::
+
+### 8.4.2 Stored Functions
+
+Functions return a value and can be used inside SQL expressions.
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+DELIMITER $$
+CREATE FUNCTION DeptHeadcount(p_dept INT)
+RETURNS INT
+DETERMINISTIC READS SQL DATA
+BEGIN
+    DECLARE n INT;
+    SELECT COUNT(*) INTO n FROM Employee WHERE Dno = p_dept;
+    RETURN n;
+END$$
+DELIMITER ;
+
+-- Use in a query
+SELECT Dname, DeptHeadcount(Dnumber) AS Headcount FROM Department;
+```
+
+## PostgreSQL
+
+```sql
+CREATE OR REPLACE FUNCTION DeptHeadcount(p_dept INTEGER)
+RETURNS INTEGER
+LANGUAGE sql
+STABLE AS $$
+    SELECT COUNT(*)::INTEGER FROM Employee WHERE Dno = p_dept;
+$$;
+
+SELECT Dname, DeptHeadcount(Dnumber) AS Headcount FROM Department;
+```
+
+## Oracle
+
+```sql
+CREATE OR REPLACE FUNCTION DeptHeadcount(p_dept NUMBER)
+RETURN NUMBER
+AS
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count FROM Employee WHERE Dno = p_dept;
+    RETURN v_count;
+END;
+/
+
+SELECT Dname, DeptHeadcount(Dnumber) AS Headcount FROM Department;
+```
+
+:::
+
+### 8.4.3 Procedures vs Functions vs Triggers
+
+| | Stored Procedure | Stored Function | Trigger |
+|--|-----------------|----------------|---------|
+| Invoked by | `CALL` | SQL expression | DBMS automatically |
+| Returns | Nothing (or OUT params) | Exactly one value | N/A |
+| Commit/rollback inside | Yes (varies) | No (typically) | In same transaction |
+| Side effects OK? | Yes | Discouraged | Yes (but use carefully) |
+
+---
+
+## 8.5 Triggers
+
+A **trigger** is a named database object that fires automatically when a specified DML event occurs on a table.
+
+### 8.5.1 Trigger Anatomy
+
+```
+CREATE [OR REPLACE] TRIGGER trigger_name
+    { BEFORE | AFTER | INSTEAD OF }
+    { INSERT | UPDATE [OF col] | DELETE }
+    ON table_name
+    [FOR EACH ROW]
+    [WHEN condition]
+trigger_body
+```
+
+| Pseudo-record | Available in INSERT | Available in UPDATE | Available in DELETE |
+|--------------|-------|-------|--------|
+| `OLD` / `:OLD` | — (NULL) | Row before change | Row being deleted |
+| `NEW` / `:NEW` | Inserted row | Row after change | — (NULL) |
+
+### 8.5.2 Audit Trigger Example
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- First create an audit table
+CREATE TABLE SalaryAudit (
+    AuditId    INT AUTO_INCREMENT PRIMARY KEY,
+    Ssn        CHAR(9),
+    OldSalary  DECIMAL(10,2),
+    NewSalary  DECIMAL(10,2),
+    ChangedAt  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ChangedBy  VARCHAR(50) DEFAULT CURRENT_USER()
+);
+
+DELIMITER $$
+CREATE TRIGGER trg_salary_audit
+AFTER UPDATE ON Employee
+FOR EACH ROW
+BEGIN
+    IF OLD.Salary <> NEW.Salary THEN
+        INSERT INTO SalaryAudit (Ssn, OldSalary, NewSalary)
+        VALUES (OLD.Ssn, OLD.Salary, NEW.Salary);
+    END IF;
+END$$
+DELIMITER ;
+```
+
+## PostgreSQL
+
+```sql
+CREATE TABLE SalaryAudit (
+    AuditId   SERIAL PRIMARY KEY,
+    Ssn       CHAR(9),
+    OldSalary NUMERIC(10,2),
+    NewSalary NUMERIC(10,2),
+    ChangedAt TIMESTAMP DEFAULT NOW(),
+    ChangedBy TEXT      DEFAULT CURRENT_USER
+);
+
+-- Step 1: trigger function
+CREATE OR REPLACE FUNCTION fn_salary_audit()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+    IF OLD.Salary IS DISTINCT FROM NEW.Salary THEN
+        INSERT INTO SalaryAudit (Ssn, OldSalary, NewSalary)
+        VALUES (OLD.Ssn, OLD.Salary, NEW.Salary);
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+-- Step 2: bind trigger to table
+CREATE TRIGGER trg_salary_audit
+AFTER UPDATE ON Employee
+FOR EACH ROW EXECUTE FUNCTION fn_salary_audit();
+```
+
+## Oracle
+
+```sql
+CREATE TABLE SalaryAudit (
+    AuditId   NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Ssn       CHAR(9),
+    OldSalary NUMBER(10,2),
+    NewSalary NUMBER(10,2),
+    ChangedAt TIMESTAMP DEFAULT SYSTIMESTAMP,
+    ChangedBy VARCHAR2(50) DEFAULT SYS_CONTEXT('USERENV','SESSION_USER')
+);
+
+CREATE OR REPLACE TRIGGER trg_salary_audit
+AFTER UPDATE OF Salary ON Employee
+FOR EACH ROW
+WHEN (OLD.Salary <> NEW.Salary)
+BEGIN
+    INSERT INTO SalaryAudit (Ssn, OldSalary, NewSalary)
+    VALUES (:OLD.Ssn, :OLD.Salary, :NEW.Salary);
+END;
+/
+```
+
+:::
+
+### 8.5.3 Validation Trigger — Rejecting Bad Data
+
+```sql
+-- PostgreSQL: prevent salary reduction via trigger
+CREATE OR REPLACE FUNCTION fn_no_salary_cut()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+    IF NEW.Salary < OLD.Salary THEN
+        RAISE EXCEPTION 'Salary reduction not permitted: % → %',
+                        OLD.Salary, NEW.Salary;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_no_salary_cut
+BEFORE UPDATE ON Employee
+FOR EACH ROW EXECUTE FUNCTION fn_no_salary_cut();
+```
+
+::: callout-important
+## Trigger Design Principles
+
+1. **Keep triggers short** — complex logic belongs in stored procedures.
+2. **Avoid cascading triggers** — trigger A fires trigger B, which fires trigger A → infinite loop.
+3. **Use `INSTEAD OF` triggers on views** to implement DML on non-updatable views.
+4. **Document every trigger** — they are invisible to external callers and hard to debug.
+:::
+
+---
+
+## 8.6 JSON Functions
+
+Modern RDBMS supports querying and manipulating JSON data directly in SQL.
+
+### 8.6.1 JSON Storage
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+CREATE TABLE Products (
+    Id          INT AUTO_INCREMENT PRIMARY KEY,
+    Name        VARCHAR(100),
+    Attributes  JSON          -- MySQL validates JSON on INSERT
+);
+
+INSERT INTO Products (Name, Attributes)
+VALUES ('Laptop', '{"brand":"Dell","ram_gb":16,"tags":["work","portable"]}');
+```
+
+## PostgreSQL
+
+```sql
+CREATE TABLE Products (
+    Id          SERIAL PRIMARY KEY,
+    Name        VARCHAR(100),
+    Attributes  JSONB          -- JSONB: binary, indexed, preferred over JSON
+);
+
+INSERT INTO Products (Name, Attributes)
+VALUES ('Laptop', '{"brand":"Dell","ram_gb":16,"tags":["work","portable"]}');
+```
+
+## Oracle
+
+```sql
+CREATE TABLE Products (
+    Id          NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    Name        VARCHAR2(100),
+    Attributes  CLOB           -- store as CLOB with IS JSON constraint
+                CONSTRAINT chk_json CHECK (Attributes IS JSON)
+);
+
+INSERT INTO Products (Name, Attributes)
+VALUES ('Laptop', '{"brand":"Dell","ram_gb":16,"tags":["work","portable"]}');
+```
+
+:::
+
+### 8.6.2 Reading JSON Values
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- JSON_EXTRACT — returns JSON value
+SELECT Name,
+       JSON_EXTRACT(Attributes, '$.brand')  AS Brand,
+       JSON_EXTRACT(Attributes, '$.ram_gb') AS RAM
+FROM   Products;
+
+-- Shorthand operator ->>  (returns unquoted string)
+SELECT Name,
+       Attributes ->> '$.brand'  AS Brand,
+       Attributes ->> '$.ram_gb' AS RAM
+FROM   Products;
+
+-- Filter on a JSON field
+SELECT Name FROM Products
+WHERE  Attributes ->> '$.ram_gb' > 8;
+```
+
+## PostgreSQL
+
+```sql
+-- -> returns JSON; ->> returns text
+SELECT Name,
+       Attributes -> 'brand'   AS Brand_JSON,
+       Attributes ->> 'brand'  AS Brand_text,
+       Attributes ->> 'ram_gb' AS RAM
+FROM   Products;
+
+-- Nested path with #>>
+SELECT Attributes #>> '{tags,0}' AS FirstTag FROM Products;
+
+-- Filter
+SELECT Name FROM Products WHERE (Attributes ->> 'ram_gb')::INT > 8;
+
+-- JSONB index (GIN for arbitrary key search)
+CREATE INDEX idx_products_attrs ON Products USING GIN (Attributes);
+```
+
+## Oracle
+
+```sql
+-- JSON_VALUE — extract a scalar
+SELECT Name,
+       JSON_VALUE(Attributes, '$.brand')   AS Brand,
+       JSON_VALUE(Attributes, '$.ram_gb')  AS RAM
+FROM   Products;
+
+-- JSON_QUERY — extract an object or array
+SELECT JSON_QUERY(Attributes, '$.tags') AS Tags FROM Products;
+
+-- JSON_TABLE — shred JSON into relational rows
+SELECT P.Name, JT.Tag
+FROM   Products P,
+       JSON_TABLE(P.Attributes, '$.tags[*]'
+           COLUMNS (Tag VARCHAR2(50) PATH '$')
+       ) JT;
+```
+
+:::
+
+### 8.6.3 Modifying JSON
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- Set a field
+UPDATE Products
+SET    Attributes = JSON_SET(Attributes, '$.ram_gb', 32)
+WHERE  Id = 1;
+
+-- Add a field
+UPDATE Products
+SET    Attributes = JSON_INSERT(Attributes, '$.price_usd', 1299.99)
+WHERE  Id = 1;
+
+-- Remove a field
+UPDATE Products
+SET    Attributes = JSON_REMOVE(Attributes, '$.tags')
+WHERE  Id = 1;
+```
+
+## PostgreSQL
+
+```sql
+-- Replace a key (creates new JSONB)
+UPDATE Products
+SET    Attributes = Attributes || '{"ram_gb": 32}'
+WHERE  Id = 1;
+
+-- Remove a key with the - operator
+UPDATE Products
+SET    Attributes = Attributes - 'tags'
+WHERE  Id = 1;
+
+-- jsonb_set for nested paths
+UPDATE Products
+SET    Attributes = jsonb_set(Attributes, '{ram_gb}', '32')
+WHERE  Id = 1;
+```
+
+## Oracle
+
+```sql
+-- Oracle 21c JSON_MERGEPATCH — merge/update JSON document
+UPDATE Products
+SET    Attributes = JSON_MERGEPATCH(Attributes, '{"ram_gb": 32}')
+WHERE  Id = 1;
+```
+
+:::
+
+---
+
+## 8.7 Chapter Summary
+
+::: callout-important
+## Key Takeaways — Chapter 8
+
+1. **CTEs** (`WITH cte AS (...)`) name intermediate result sets, dramatically improving readability.
+   **Recursive CTEs** (`UNION ALL`) traverse hierarchies. Oracle omits the `RECURSIVE` keyword and also offers `CONNECT BY`.
+
+2. **Window functions** (`OVER (PARTITION BY ... ORDER BY ...)`) perform analytics without collapsing rows —
+   unlike `GROUP BY`. Key functions: `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `LAG`, `LEAD`, `SUM OVER`.
+
+3. **Views** are stored named queries — virtual tables. They can be updatable (single table, no aggregates)
+   or materialized (physical snapshot, refreshed). Use `WITH CHECK OPTION` to prevent rows from escaping the view filter.
+
+4. **Stored procedures** (`CALL`) encapsulate multi-statement operations.
+   **Stored functions** return a value usable in SQL expressions.
+   Syntax differs significantly: MySQL uses `DELIMITER $$`, PG uses `$$ LANGUAGE plpgsql`, Oracle uses `AS … END;`.
+
+5. **Triggers** fire automatically `BEFORE`, `AFTER`, or `INSTEAD OF` DML events.
+   `OLD`/`NEW` (`:OLD`/`:NEW` in Oracle) access row values before/after the change.
+   Keep trigger bodies minimal; avoid cascading trigger chains.
+
+6. **JSON functions** vary widely by dialect:
+   MySQL uses `JSON_EXTRACT`/`->>`, PostgreSQL uses `->>`/`#>>`/`GIN` indexes on `JSONB`,
+   Oracle uses `JSON_VALUE`/`JSON_QUERY`/`JSON_TABLE` on CLOBs.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Explain the difference between a CTE and a subquery. When would you choose one over the other?
+   Can every CTE be rewritten as a subquery? Can every subquery be rewritten as a CTE?
+
+2. What is a **materialized view**? How does it differ from a regular view in terms of data freshness and query performance?
+   Which of the three dialects supports materialized views? Which does not natively?
+
+3. Describe one scenario each where `BEFORE`, `AFTER`, and `INSTEAD OF` triggers are the appropriate choice.
+
+### Applied
+
+4. Using a recursive CTE, write a query that lists **all employees who report (directly or indirectly)
+   to the employee named 'Franklin Wong'** (Ssn `333445555`), showing each employee's depth in the
+   hierarchy and the full chain of supervisors.
+
+5. For each department, use window functions to assign a **rank** and a **dense rank** to employees
+   by salary (highest first). Also compute each employee's salary as a percentage of their department's
+   maximum salary. Show all output columns.
+
+6. Create a view `ProjectSummary(Pname, DeptName, WorkerCount, TotalHours)` that joins `Project`,
+   `Department`, and `Works_On`. Then write a query against the view that shows only projects with
+   more than 3 workers.
+
+### Analysis
+
+7. A trainee writes the following trigger:
+   ```sql
+   CREATE TRIGGER trg_prevent_delete
+   BEFORE DELETE ON Department
+   FOR EACH ROW
+   BEGIN
+       DELETE FROM Employee WHERE Dno = OLD.Dnumber;  -- remove employees first
+   END;
+   ```
+   Identify two potential problems with this trigger design, and suggest a better architectural approach.
+
+8. Compare `LAG(Salary, 1) OVER (ORDER BY Bdate)` with a self-join that achieves the same result.
+   What are the correctness risks and performance implications of the self-join approach?
+
+### Dialect Awareness
+
+9. Re-write the following PostgreSQL query for MySQL and Oracle:
+   ```sql
+   SELECT Name, Attributes ->> 'brand' AS Brand
+   FROM   Products
+   WHERE  (Attributes ->> 'ram_gb')::INT >= 16;
+   ```
+
+10. A stored function written in MySQL uses `DELIMITER $$` and `BEGIN...END$$`.
+    Explain why `DELIMITER` is needed in MySQL but not in PostgreSQL or Oracle.
+
+### Design
+
+11. An e-commerce application stores product attributes (color, size, weight, material) that differ
+    by product category. Should you use a JSON column, a separate `AttributeValue` table, or
+    database inheritance (via EER/table-per-type)? Justify your recommendation based on query patterns,
+    indexing, and schema evolution.
+
+### Synthesis
+
+12. Design a complete audit solution for the `Salary` column of the `Employee` table that:
+    - Logs every change with old value, new value, who made the change, and when
+    - Prevents any salary reduction greater than 20%
+    - Works in both MySQL and PostgreSQL
+    
+    Write the DDL for the audit table, the trigger function (or procedure), and the trigger binding
+    for **both** dialects.
+
+
+### LEFT OUTER JOIN
+
+Returns **all rows from the left table** plus matched rows from the right. Unmatched right rows produce NULLs.
+
+```sql
+-- Find all employees and their project (if any)
+SELECT e.fname, e.lname, p.project_name
+FROM employee e
+LEFT JOIN works_on wo  ON e.ssn = wo.essn
+LEFT JOIN project  p   ON wo.pno = p.pno;
+-- Employees with no project still appear (with NULLs for project columns)
+```
+
+### RIGHT OUTER JOIN
+
+```sql
+-- All departments, even those with no employees
+SELECT d.dept_name, e.fname, e.lname
+FROM employee e
+RIGHT JOIN department d ON e.dept_no = d.dept_no;
+```
+
+### FULL OUTER JOIN
+
+```sql
+-- All employees and all departments, matched where possible
+SELECT e.fname, d.dept_name
+FROM employee e
+FULL OUTER JOIN department d ON e.dept_no = d.dept_no;
+```
+
+## 8.2 Subqueries (Nested Queries)
+
+A **subquery** is a SELECT embedded within another SQL statement.
+
+### Scalar Subquery
+
+Returns exactly one value:
+
+```sql
+SELECT fname, lname, salary
+FROM employee
+WHERE salary > (SELECT AVG(salary) FROM employee);
+```
+
+### Subquery with IN / NOT IN
+
+```sql
+-- Employees who work on at least one project in Houston
+SELECT fname, lname
+FROM employee
+WHERE ssn IN (
+    SELECT essn
+    FROM works_on
+    WHERE pno IN (
+        SELECT pno FROM project WHERE plocation = 'Houston'
+    )
+);
+```
+
+### Subquery with EXISTS / NOT EXISTS
+
+`EXISTS` returns TRUE if the subquery produces *any* rows.
+
+```sql
+-- Employees who manage at least one other employee
+SELECT fname, lname
+FROM employee e
+WHERE EXISTS (
+    SELECT 1 FROM employee sub
+    WHERE sub.super_ssn = e.ssn
+);
+
+-- Employees who work on ALL projects (using double negation)
+SELECT fname, lname
+FROM employee e
+WHERE NOT EXISTS (
+    SELECT * FROM project p
+    WHERE NOT EXISTS (
+        SELECT * FROM works_on wo
+        WHERE wo.essn = e.ssn AND wo.pno = p.pno
+    )
+);
+```
+
+::: callout-tip
+**Rule of thumb:** Use `IN` for small, uncorrelated subqueries; use `EXISTS` for large, correlated subqueries — EXISTS short-circuits on the first match.
+:::
+
+### Correlated Subquery
+
+A subquery that references columns from the outer query (re-evaluated per row):
+
+```sql
+-- Find employees earning more than their department's average
+SELECT fname, lname, salary, dept_no
+FROM employee e
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM employee
+    WHERE dept_no = e.dept_no    -- ← correlated: references outer e.dept_no
+);
+```
+
+### ANY / ALL
+
+```sql
+-- Salary > at least one employee in dept 5
+SELECT fname, salary FROM employee
+WHERE salary > ANY (SELECT salary FROM employee WHERE dept_no = 5);
+
+-- Salary > all employees in dept 5
+SELECT fname, salary FROM employee
+WHERE salary > ALL (SELECT salary FROM employee WHERE dept_no = 5);
+```
+
+## 8.3 Common Table Expressions (CTE)
+
+CTEs make complex queries readable by naming intermediate results:
+
+```sql
+-- WITH clause (CTE)
+WITH high_earners AS (
+    SELECT ssn, fname, lname, salary, dept_no
+    FROM employee
+    WHERE salary > 60000
+),
+dept_stats AS (
+    SELECT dept_no, COUNT(*) AS cnt, AVG(salary) AS avg_sal
+    FROM employee
+    GROUP BY dept_no
+)
+SELECT he.fname, he.lname, he.salary, ds.avg_sal
+FROM high_earners he
+JOIN dept_stats ds ON he.dept_no = ds.dept_no;
+```
+
+### Recursive CTE
+
+Find all direct and indirect supervisors of an employee:
+
+```sql
+WITH RECURSIVE org_chart AS (
+    -- Base: the employee himself
+    SELECT ssn, fname, lname, super_ssn, 0 AS level
+    FROM employee
+    WHERE ssn = '123456789'
+
+    UNION ALL
+
+    -- Recursive: each supervisor
+    SELECT e.ssn, e.fname, e.lname, e.super_ssn, oc.level + 1
+    FROM employee e
+    JOIN org_chart oc ON e.ssn = oc.super_ssn
+)
+SELECT * FROM org_chart;
+```
+
+## 8.4 Views
+
+A **view** is a **named, saved SELECT statement** — a virtual table.
+
+### Creating a View
+
+```sql
+CREATE VIEW research_employees AS
+SELECT e.ssn, e.fname, e.lname, e.salary
+FROM employee e
+JOIN department d ON e.dept_no = d.dept_no
+WHERE d.dept_name = 'Research';
+```
+
+### Querying a View
+
+Views are queried exactly like tables:
+
+```sql
+SELECT * FROM research_employees WHERE salary > 55000;
+```
+
+### Modifying a View
+
+```sql
+CREATE OR REPLACE VIEW research_employees AS
+SELECT e.ssn, e.fname, e.lname, e.salary, e.bdate
+FROM employee e
+JOIN department d ON e.dept_no = d.dept_no
+WHERE d.dept_name = 'Research';
+```
+
+### Dropping a View
+
+```sql
+DROP VIEW research_employees;
+DROP VIEW IF EXISTS research_employees CASCADE;
+```
+
+### Updateable Views
+
+A view is **updateable** (allows INSERT/UPDATE/DELETE) if it:
+
+- References exactly one base table
+- Contains no `DISTINCT`, `GROUP BY`, `HAVING`, aggregates, or set operations
+- Contains all NOT NULL columns without defaults
+
+```sql
+UPDATE research_employees SET salary = 70000 WHERE ssn = '123456789';
+-- Allowed if the view is simple and updateable
+```
+
+## 8.5 Triggers
+
+A **trigger** is a stored procedure that automatically executes in response to a table event (`INSERT`, `UPDATE`, or `DELETE`).
+
+### Trigger Syntax (PostgreSQL)
+
+```sql
+-- Step 1: Create the function that the trigger will call
+CREATE OR REPLACE FUNCTION log_salary_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.salary <> NEW.salary THEN
+        INSERT INTO salary_audit (ssn, old_salary, new_salary, changed_at)
+        VALUES (OLD.ssn, OLD.salary, NEW.salary, NOW());
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Step 2: Bind the trigger to the table and event
+CREATE TRIGGER trg_salary_audit
+AFTER UPDATE ON employee
+FOR EACH ROW
+EXECUTE FUNCTION log_salary_change();
+```
+
+### Trigger Timing and Events
+
+| Timing | Event | Description |
+|--------|-------|-------------|
+| `BEFORE` | `INSERT` / `UPDATE` / `DELETE` | Fire before the row operation; can modify NEW |
+| `AFTER` | `INSERT` / `UPDATE` / `DELETE` | Fire after the row operation; can read OLD and NEW |
+| `INSTEAD OF` | `INSERT` / `UPDATE` / `DELETE` | On views; replace the default operation |
+
+### OLD and NEW pseudo-records
+
+| Context | `OLD` | `NEW` |
+|---------|-------|-------|
+| INSERT | NULL | Inserted row |
+| UPDATE | Row before update | Row after update |
+| DELETE | Deleted row | NULL |
+
+## 8.6 Stored Procedures and Functions
+
+### Stored Procedure (PostgreSQL)
+
+```sql
+-- Procedure: give a raise to all employees in a department
+CREATE OR REPLACE PROCEDURE give_raise(
+    p_dept_no  INTEGER,
+    p_percent  DECIMAL(5,2)
+)
+LANGUAGE plpgsql AS $$
+BEGIN
+    UPDATE employee
+    SET salary = salary * (1 + p_percent / 100)
+    WHERE dept_no = p_dept_no;
+
+    RAISE NOTICE 'Raise applied to dept %', p_dept_no;
+END;
+$$;
+
+-- Call a procedure
+CALL give_raise(5, 10.0);
+```
+
+### Function (returns a value)
+
+```sql
+CREATE OR REPLACE FUNCTION dept_headcount(p_dept_no INTEGER)
+RETURNS INTEGER
+LANGUAGE sql AS $$
+    SELECT COUNT(*)::INTEGER FROM employee WHERE dept_no = p_dept_no;
+$$;
+
+-- Use in a query
+SELECT dept_name, dept_headcount(dept_no) AS employees
+FROM department;
+```
+
+### Stored Procedures vs. Triggers vs. Functions
+
+| Feature | Stored Procedure | Function | Trigger |
+|---------|-----------------|---------|---------|
+| Called by | `CALL` statement | Inside SQL expression | DBMS automatically |
+| Returns value | No (output params) | Yes | Via RETURN NEW/OLD |
+| Can commit/rollback | Yes | No (usually) | Subject to transaction |
+| Use case | Business operations | Computed values | Automatic audit/validation |
+
+## 8.7 Window Functions
+
+Window functions compute values across *related* rows without collapsing them into groups:
+
+```sql
+-- Rank employees by salary within each department
+SELECT fname, lname, dept_no, salary,
+       RANK()         OVER (PARTITION BY dept_no ORDER BY salary DESC) AS dept_rank,
+       ROW_NUMBER()   OVER (PARTITION BY dept_no ORDER BY salary DESC) AS row_num,
+       AVG(salary)    OVER (PARTITION BY dept_no)                       AS dept_avg
+FROM employee;
+```
+
+### Common Window Functions
+
+| Function | Description |
+|---------|-------------|
+| `ROW_NUMBER()` | Sequential row number within partition |
+| `RANK()` | Rank; gaps for ties |
+| `DENSE_RANK()` | Rank; no gaps for ties |
+| `NTILE(n)` | Divide into n buckets |
+| `LAG(col, n)` | Value from n rows before |
+| `LEAD(col, n)` | Value from n rows ahead |
+| `SUM/AVG/MIN/MAX OVER (...)` | Running aggregate |
+
+## Summary
+
+::: callout-important
+## Chapter 8 — Key Takeaways
+
+- **Outer joins** (LEFT/RIGHT/FULL) preserve unmatched rows padded with NULLs.
+- **Subqueries** can return a scalar, a column (`IN`), or a boolean (`EXISTS`); correlated subqueries re-evaluate per row.
+- **CTEs** (`WITH`) improve readability; recursive CTEs handle hierarchical data.
+- **Views** are virtual tables; they can be updateable under strict conditions.
+- **Triggers** fire automatically on INSERT/UPDATE/DELETE — use for auditing and business rule enforcement.
+- **Stored procedures** encapsulate multi-statement operations; functions return values usable in queries.
+- **Window functions** (`OVER`) perform analytics on row groups without collapsing them.
+:::
+
+## Review Questions
+
+1. Write a query that finds all employees whose salary is **above the average salary of their own department** (use a correlated subquery).
+2. What is the difference between `EXISTS` and `IN`? When is `EXISTS` preferred?
+3. Create a view `vw_manager_summary` showing each manager's name and the number of employees they supervise.
+4. Write a trigger that prevents salary from being reduced (an UPDATE where `NEW.salary < OLD.salary` is rejected).
+5. Rank all employees by salary within their department using a window function. Show rank 1 as the highest earner.
+6. Explain the difference between `RANK()` and `DENSE_RANK()` with an example.

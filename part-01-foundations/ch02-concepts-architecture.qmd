@@ -1,0 +1,403 @@
+---
+title: "Database System Concepts & Architecture"
+subtitle: "Chapter 2"
+---
+
+Chapter 1 answered *why* we use a database. This chapter answers *how* we build and structure one — tracing the full journey from a blank page to a running system, and then examining the internal machinery that makes that system work reliably.
+
+---
+
+## 2.1 The Database Design Lifecycle
+
+No database should be designed from thin air. A well-established **design lifecycle** guides the process from understanding what users need to deploying a production system.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    R["① Requirements Collection & Analysis<br/>Interviews · documents · use cases"]
+    C["② Conceptual Design<br/>ER Diagram — entities · attributes · relationships"]
+    L["③ Logical Design<br/>Relational Schema — tables · columns · foreign keys"]
+    P["④ Physical Design<br/>Storage layout · indexes · partitioning"]
+    I["⑤ Implementation<br/>SQL DDL · data loading"]
+    M["⑥ Operation & Maintenance<br/>Monitoring · tuning · schema evolution"]
+
+    R --> C --> L --> P --> I --> M
+    M -.->|"changing requirements"| R
+```
+
+Notice the feedback arrow: maintenance often uncovers new requirements, restarting the cycle.
+
+### Phase Deliverables
+
+| Phase | Key Questions | Deliverable |
+|-------|--------------|-------------|
+| Requirements | What data must be stored? What queries must be answered? | Data requirements document |
+| Conceptual | What entities and relationships exist in the domain? | ER diagram (Chapters 3–4) |
+| Logical | How do entities translate to tables? Are they normalized? | Relational schema (Chapters 5, 9) |
+| Physical | Which indexes? What storage engine? How to partition? | Annotated schema + storage spec (Chapter 10) |
+| Implementation | Create the tables; load the initial data | Running database with SQL DDL |
+| Maintenance | Is performance degrading? Do new fields need to be added? | Tuning reports; migration scripts |
+
+::: callout-note
+This book follows the lifecycle order: Chapters 3–4 cover conceptual design (ER), Chapters 5–6 cover logical design (relational model and algebra), Chapters 7–8 cover SQL (implementation language), Chapter 9 covers normalization (logical refinement), and Chapters 10–13 cover the physical and operational layers.
+:::
+
+With the lifecycle established, we now look more closely at one of its most important concepts: the three levels of abstraction that make databases manageable.
+
+---
+
+## 2.2 Data Abstraction Levels
+
+The three-schema architecture from Chapter 1 described *what* the three levels are. Here we go one level deeper and explain *how* each level is realized in a real DBMS.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    UA["User A<br/>grade portal"]
+    UB["User B<br/>payroll app"]
+    UC["User C<br/>BI dashboard"]
+
+    E["External Level — Views<br/>SQL: CREATE VIEW, column subsets, row filters"]
+    C["Conceptual Level — Tables & Constraints<br/>SQL: CREATE TABLE, PRIMARY KEY, FOREIGN KEY"]
+    I["Internal Level — Physical Storage<br/>B+ tree indexes · heap files · sort-merge joins · buffer pages"]
+
+    UA & UB & UC --> E
+    E <-->|"view definition<br/>mapping"| C
+    C <-->|"storage<br/>mapping"| I
+```
+
+### Physical Level (Internal)
+Describes *how* data is physically stored: file organizations, record formats, access paths. The storage team (or the DBMS itself for automated systems) decides on heap files vs. clustered indexes, page sizes, and compression. Users never see this level.
+
+### Logical Level (Conceptual)
+Describes *what* data is stored and their relationships, without physical detail. This is where table definitions, foreign keys, and constraints live. DBAs and application developers work here.
+
+### View Level (External)
+A projection of the logical level tailored to a user group. A grade-entry view shows only the student's own rows; a payroll view shows only salary-related columns. Multiple views can coexist over the same conceptual schema.
+
+::: callout-tip
+**Why views matter beyond simplicity**: Views are the main mechanism for implementing **column-level access control**. By granting `SELECT` on a view but not on the base table, you can share a salary report that omits the `Ssn` (social security number) column entirely.
+:::
+
+The abstraction levels are defined in the *design* of the database. When the database is actually *deployed*, it runs inside a larger **system architecture** that determines how clients connect to it.
+
+---
+
+## 2.3 DBMS Deployment Architecture — Practical Considerations
+
+Chapter 1 (Section 1.8) introduced the 1-tier, 2-tier, and 3-tier deployment architectures conceptually. Here we examine the engineering trade-offs each tier imposes and how modern systems extend beyond the basic three tiers.
+
+### Why Tier Count Matters
+
+Every tier boundary you add provides three benefits and one cost:
+
+| What a tier boundary adds | Effect |
+|--------------------------|--------|
+| A **network hop** | Latency — but also decoupling |
+| An **authentication checkpoint** | Security layer between Internet and your data |
+| An **independent scaling unit** | You can scale the app tier without touching the DB |
+| **Deployment complexity** | More services to deploy, monitor, and debug |
+
+This trade-off is why enterprise applications almost universally choose 3-tier despite its complexity: the security and scalability gains far outweigh the operational overhead at scale.
+
+---
+
+### Connection Pooling — A Critical Optimisation for 2-Tier and 3-Tier
+
+Opening a database connection is expensive: it requires a TCP handshake, authentication, and session initialisation. In any multi-user deployment, re-opening a connection for every request would dominate query execution time.
+
+**Connection pooling** solves this: the application server maintains a **pool** of pre-opened, reusable connections to the DBMS. Incoming requests borrow a connection, use it, and return it.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart LR
+    R1["Request 1"]
+    R2["Request 2"]
+    R3["Request 3"]
+    POOL["Connection Pool<br/>(HikariCP · SQLAlchemy · pgBouncer)<br/>min = 5, max = 20 connections"]
+    DB["🗄️ DB Server"]
+    R1 & R2 & R3 -->|"borrow connection"| POOL
+    POOL <-->|"persistent<br/>connections"| DB
+    style POOL fill:#eafaf1,stroke:#27ae60,stroke-width:2px
+    style DB fill:#fdf2e9,stroke:#e67e22,stroke-width:2px
+```
+
+Without pooling, 1 000 web requests = 1 000 connection open/close cycles — often slower than the queries themselves. Most modern frameworks configure pooling by default.
+
+---
+
+### Beyond 3-Tier: Distributed and Cloud Deployments
+
+Real-world systems at scale often add further tiers or distribute the data tier itself:
+
+| Deployment type | Description | Example |
+|----------------|-------------|---------|
+| **Distributed DBMS** | Data spread across multiple servers globally; appears to applications as a single DB | Google Spanner, CockroachDB |
+| **Federated DB** | Separate autonomous databases cooperate via a shared query interface | Legacy enterprise integration |
+| **Cloud DB (DBaaS)** | Fully managed DBMS — no server to provision, pay per query or storage | AWS RDS, Azure SQL Database, Google Cloud SQL |
+| **Serverless DB** | Scales to zero when idle; provisions capacity on demand per request | AWS Aurora Serverless, PlanetScale |
+
+::: callout-tip
+**Cloud databases are still 3-tier.** The cloud provider simply manages the data tier on your behalf. Your application tier (running in containers or VMs) still communicates via JDBC/ODBC to an endpoint that happens to be managed by AWS or Azure instead of a server in your own rack.
+:::
+
+---
+
+### Choosing the Right Architecture
+
+| Scenario | Recommended tier |
+|----------|-----------------|
+| Learning SQL / prototype on a laptop | 1-tier (SQLite) |
+| Internal company tool, ≤ 50 users | 2-tier |
+| Public web application, any user count | 3-tier |
+| Global service, high availability required | 3-tier + distributed data tier |
+| No ops team, variable load | 3-tier + DBaaS / serverless |
+
+Understanding *where* the DBMS runs in the deployment topology clarifies *what* must be inside the DBMS itself — the subject of the next section.
+
+---
+
+## 2.4 DBMS Component Architecture (Detailed)
+
+A DBMS is a layered system of cooperating subsystems. Every SQL statement you write passes through each layer below:
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    Q["SQL Query or DDL Statement<br/>from application or SQL client"]
+
+    subgraph QP["Query Processor"]
+        DDL["DDL Compiler<br/>CREATE/ALTER/DROP → catalog"]
+        DML["DML Compiler<br/>SELECT/INSERT/… → query plan"]
+        OPT["Query Optimizer<br/>chooses cheapest plan"]
+        ENG["Execution Engine<br/>runs the chosen plan"]
+    end
+
+    subgraph SM["Storage Manager"]
+        AUTH["Authorization Manager<br/>checks privileges"]
+        TXN["Transaction Manager<br/>ACID guarantees"]
+        BUF["Buffer Manager<br/>page cache (memory ↔ disk)"]
+        FILE["File Manager<br/>physical read/write"]
+    end
+
+    subgraph DISK["Disk Storage"]
+        DF["Data Files"]
+        CAT["System Catalog"]
+        IDX["Indexes"]
+        LOG["Write-Ahead Log"]
+        STAT["Optimizer Statistics"]
+    end
+
+    Q --> DDL
+    Q --> DML --> OPT --> ENG
+    DDL --> CAT
+    ENG --> AUTH --> TXN --> BUF --> FILE
+    FILE --> DISK
+```
+
+### Key Sub-Components
+
+| Component | Input | Output |
+|-----------|-------|--------|
+| **DDL Compiler** | `CREATE TABLE …` | Updates system catalog |
+| **DML Compiler** | `SELECT … FROM … WHERE …` | Relational algebra expression tree |
+| **Query Optimizer** | Algebra expression + catalog stats | Chosen execution plan (cheapest cost) |
+| **Execution Engine** | Execution plan | Tuples / result set |
+| **Transaction Manager** | `BEGIN`, `COMMIT`, `ROLLBACK` | ACID-compliant state transitions |
+| **Buffer Manager** | Page requests from execution engine | Pages loaded from disk or found in cache |
+| **Authorization Manager** | Operation + user identity | Allow or deny |
+
+### A Single SELECT — The Full Journey
+
+When you run:
+```sql
+SELECT Fname, Salary FROM Employee WHERE Dno = 5;
+```
+this is what happens internally:
+
+1. **Parser**: Checks syntax; verifies that `Employee`, `Fname`, `Salary`, `Dno` exist in the catalog.
+2. **Authorization Manager**: Confirms your account has `SELECT` privilege on `Employee`.
+3. **DML Compiler**: Translates this to a relational algebra expression: $\pi_{Fname,Salary}(\sigma_{Dno=5}(Employee))$.
+4. **Query Optimizer**: Checks catalog statistics. If an index on `Dno` exists, uses index scan (Chapter 10); otherwise, full table scan.
+5. **Execution Engine**: Executes the chosen plan, retrieving pages via the Buffer Manager.
+6. **Buffer Manager**: Returns cached pages directly; fetches uncached pages from disk.
+7. **Result**: Rows are assembled and returned to the client.
+
+::: callout-note
+The optimizer's switch between *index scan* and *full table scan* is entirely transparent to you. The same SQL statement produces the same answer regardless of which physical plan is chosen — that is physical data independence in action.
+:::
+
+All of these components rely on metadata stored in the system catalog.
+
+---
+
+## 2.5 The System Catalog (Data Dictionary)
+
+The **system catalog** is a special database-within-the-database that stores metadata about every object in the system. It is the backbone of the query optimizer and the DDL compiler.
+
+### What the Catalog Stores
+
+| Metadata category | Examples |
+|------------------|---------|
+| **Schema objects** | Table names, column names, data types, NOT NULL constraints |
+| **Integrity constraints** | Primary keys, foreign keys, unique constraints, check constraints |
+| **Index definitions** | Which columns are indexed, index type (B+ tree, hash) |
+| **User accounts & privileges** | Usernames, roles, granted permissions |
+| **Optimizer statistics** | Row counts, column cardinalities, histogram data |
+| **View definitions** | SQL text of each `CREATE VIEW` statement |
+
+::: callout-note
+In MySQL, the catalog is accessible through the `information_schema` virtual database:
+```sql
+-- List all tables in the current schema
+SELECT table_name, table_rows
+FROM information_schema.tables
+WHERE table_schema = 'company_db';
+
+-- Inspect columns of Employee
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'Employee'
+ORDER BY ordinal_position;
+```
+:::
+
+### Why Catalog Statistics Matter
+
+The query optimizer does not execute every possible plan to find the fastest one — that would take longer than the query itself. Instead, it uses **cost formulas** driven by catalog statistics:
+
+- $|R|$ = number of rows in table $R$ (stored in `table_rows`)
+- $|distinct(R.A)|$ = number of distinct values in column $A$
+- Selectivity of a predicate = fraction of rows that satisfy it
+
+For `WHERE Dno = 5`, if the catalog says `Dno` has 8 distinct values over 30,000 rows, the selectivity is approximately $\frac{1}{8}$ and the estimated result is ~3,750 rows — cheap enough to justify an index scan. Without catalog statistics, the optimizer is effectively blind.
+
+---
+
+## 2.6 Types of Database Systems
+
+### By Data Model
+
+| Category | Examples | Covered |
+|----------|---------|---------|
+| Relational | MySQL, PostgreSQL, Oracle, SQL Server | Ch 5–13 |
+| Document | MongoDB, CouchDB | Ch 15 |
+| Key-Value | Redis, DynamoDB | Ch 14 |
+| Wide-column | Apache Cassandra, HBase | Ch 14 |
+| Graph | Neo4j, Amazon Neptune | Ch 14 |
+| Search | Elasticsearch | Ch 14 |
+
+### By Deployment Location
+
+| Type | Description | When to use |
+|------|-------------|------------|
+| **Centralized** | One physical site | Small to medium applications |
+| **Distributed** | Data spread across sites; appears as one DB | High availability, geographic distribution |
+| **Federated** | Autonomous DBs cooperate via a common interface | Legacy integration |
+| **Cloud** | Fully managed by a cloud provider (RDS, Cloud SQL) | On-demand scaling, reduced operational cost |
+
+### By Number of Users
+
+| Type | Users | Typical product |
+|------|-------|----------------|
+| Single-user | 1 desktop | SQLite |
+| Workgroup | A few dozen | MySQL Community |
+| Enterprise | Thousands concurrent | Oracle, SQL Server Enterprise |
+
+---
+
+## 2.7 Requirements Collection and Analysis
+
+Before a single table can be designed, the analyst must understand exactly what the system must do. Skipping this phase is the single most common cause of costly database redesigns six months into a project.
+
+### What to Gather
+
+1. **Entities and attributes**: What real-world objects must be represented? What properties do they have?
+2. **Relationships**: How do entities relate to one another? What are the cardinalities?
+3. **Functional requirements**: What queries, reports, and updates must the system support?
+4. **Constraints and business rules**: What rules must always be true? (e.g., "A student cannot enroll in a course they have already passed.")
+5. **Non-functional requirements**: Performance targets, availability, security classification.
+
+### Techniques
+
+| Technique | Best for |
+|-----------|---------|
+| Structured interviews | Eliciting hidden requirements from domain experts |
+| Reviewing existing documents | Discovering implicit constraints in forms and reports |
+| Observation | Understanding manual workflows to automate |
+| Use-case analysis | Translating processes into data operations |
+| Prototyping | Validating understanding with stakeholders early |
+
+### Worked Example: University Registration System
+
+After a series of interviews with the Registrar, you capture the following requirements:
+
+- The university offers **courses**, each with a course code, title, and number of credit hours.
+- **Students** have a student ID, name, date of birth, and declared major.
+- A student may **enroll** in many courses per semester, and each course may have many enrolled students.
+- A course may have **prerequisites**: other courses that must be completed first.
+- Each course section is **taught by** one faculty member in a given room at a given time.
+- A student can only be enrolled in a course once per semester.
+
+From this paragraph, a trained analyst identifies: 4 entities (*Student*, *Course*, *Section*, *Faculty*), at least 3 relationships (*enrolls-in*, *teaches*, *has-prerequisite*), and several integrity constraints (*unique enrollment per semester*, *prerequisite completion*). The conceptual design phase (Chapter 3) translates these into an ER diagram.
+
+---
+
+## Summary
+
+::: callout-important
+## Chapter 2 — Key Takeaways
+
+- The **database design lifecycle** has six phases: requirements → conceptual → logical → physical → implementation → maintenance. It is iterative, not linear.
+- The three **abstraction levels** (physical, logical, view) hide complexity; the view level is implemented via SQL views and is the primary mechanism for column-level access control.
+- Modern applications use a **three-tier architecture** (presentation → application → data) for security, scalability, and maintainability.
+- The DBMS internally consists of a **query processor** (DDL compiler, DML compiler, optimizer, execution engine) and a **storage manager** (transaction, buffer, file, authorization managers).
+- A single `SELECT` passes through at least 7 internal steps before a result is returned.
+- The **system catalog** stores all metadata; optimizer statistics in the catalog determine which execution plan is chosen.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Name the six phases of the database design lifecycle and identify the *deliverable* produced at the end of each phase.
+2. Explain in detail what happens inside a DBMS when you execute the query `SELECT * FROM Employee WHERE Salary > 70000`. Name each internal component involved, in order.
+
+### Short-Answer / Compare
+
+3. Compare **two-tier** and **three-tier** client-server architectures. Under what circumstances would a team choose two-tier despite its limitations?
+4. Explain the difference between **logical data independence** and **physical data independence** using the following scenario: a DBA adds a B+ tree index on the `Salary` column of `Employee`. Which type of independence does this change demonstrate? Why?
+
+### True / False (with explanation)
+
+5. *"The system catalog is separate from the database it describes — it lives in a special OS file that user queries cannot read."* — True or False? Explain.
+6. *"The query optimizer always chooses the plan with the lowest number of disk reads."* — True or False? Explain what cost model it actually uses.
+7. *"In a three-tier architecture, the application tier connects directly to the Internet without going through the data tier."* — True or False? Explain the security implication.
+
+### Multiple Choice
+
+8. Which DBMS component is responsible for ensuring that two concurrent transactions do not leave the database in an inconsistent state?
+   - (a) Buffer Manager
+   - (b) Query Optimizer
+   - **(c) Transaction Manager** ✓
+   - (d) DDL Compiler
+
+9. Which of the following is **not** stored in the system catalog?
+   - (a) Column names and data types
+   - (b) Number of rows in each table
+   - (c) User privilege grants
+   - **(d) The actual row data of each table** ✓
+
+### Design Exercise
+
+10. You are hired to build a database for a hospital that tracks patients, doctors, wards, and appointments. List **five specific data requirements** you would gather from the hospital staff, and for each, explain whether it is a functional requirement, a data requirement, or a constraint.
+
+### SQL / Query Exercise
+
+11. Using `information_schema.columns` in MySQL (syntax shown in §2.5), write a SQL query that lists the column names and data types of the `Department` table in the `company_db` schema. Does this query access *data* or *metadata*? Explain the difference.

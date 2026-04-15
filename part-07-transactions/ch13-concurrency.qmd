@@ -1,0 +1,690 @@
+---
+title: "Concurrency Control & Scheduling"
+subtitle: "Chapter 13"
+---
+
+## §13.0 From Problem to Protocol
+
+Chapter 12 identified four concurrency anomalies (lost update, dirty read, non-repeatable read,
+phantom read) and four isolation levels that prevent them.
+This chapter explains *how* DBMS implementations actually achieve isolation:
+by controlling the schedule in which operations execute.
+
+---
+
+## 13.1 Schedules
+
+A **schedule** (or *history*) $S$ is a total ordering of all operations from a set of concurrent
+transactions that preserves the intra-transaction order within each transaction.
+
+### Notation
+
+| Symbol | Meaning |
+|--------|---------|
+| $r_i(X)$ | Transaction $T_i$ reads item $X$ |
+| $w_i(X)$ | Transaction $T_i$ writes item $X$ |
+| $c_i$ | Transaction $T_i$ commits |
+| $a_i$ | Transaction $T_i$ aborts |
+
+### Serial vs Concurrent
+
+$$
+S_{\text{serial}}: \quad r_1(A)\; w_1(A)\; c_1 \;\mid\; r_2(A)\; w_2(A)\; c_2
+$$
+
+$$
+S_{\text{concurrent}}: \quad r_1(A)\; r_2(A)\; w_1(A)\; w_2(A)\; c_1\; c_2
+$$
+
+A serial schedule is always **correct** by definition (no interference) but gives zero concurrency.
+The goal of concurrency control is to allow non-serial schedules that are still *equivalent* to some serial schedule.
+
+---
+
+## 13.2 Conflict Serializability
+
+### Conflicting Operations
+
+Two operations **conflict** iff:
+1. They belong to **different** transactions
+2. They access the **same data item** $X$
+3. At least **one is a write**
+
+| Pair | Type | Conflict? |
+|------|------|----------|
+| $r_i(X), r_j(X)$ | Read-Read | No — both only read |
+| $r_i(X), w_j(X)$ | Read-Write | **Yes** |
+| $w_i(X), r_j(X)$ | Write-Read | **Yes** |
+| $w_i(X), w_j(X)$ | Write-Write | **Yes** |
+
+### Conflict-Equivalent Schedules
+
+Schedules $S$ and $S'$ are conflict-equivalent iff one can be transformed into the other by swapping
+adjacent **non-conflicting** operations.
+
+A schedule is **conflict-serializable** iff it is conflict-equivalent to some serial schedule.
+
+### Precedence (Serialization) Graph
+
+Build a directed graph from schedule $S$:
+- One **node** per transaction
+- Add **edge** $T_i \to T_j$ if $T_i$ has a conflicting operation that *precedes* an operation of $T_j$
+
+**Theorem:** $S$ is conflict-serializable $\iff$ its precedence graph is **acyclic** (contains no cycle).
+
+### Worked Example
+
+$$
+S: r_1(A)\;\; w_2(A)\;\; w_1(A)\;\; r_2(B)\;\; w_2(B)\;\; c_1\;\; c_2
+$$
+
+Identify conflicts:
+- $r_1(A)$ before $w_2(A)$: Read-Write → edge $T_1 \to T_2$
+- $w_2(A)$ before $w_1(A)$: Write-Write → edge $T_2 \to T_1$
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+graph LR
+    T1 -->|"r₁(A) before w₂(A)"| T2
+    T2 -->|"w₂(A) before w₁(A)"| T1
+```
+
+The graph has a **cycle** ($T_1 \to T_2 \to T_1$) → $S$ is **NOT conflict-serializable**.
+
+::: callout-tip
+If the graph were acyclic, the topological sort of the graph gives the equivalent serial order.
+:::
+
+---
+
+## 13.3 View Serializability
+
+**View serializability** is a weaker (more permissive) criterion than conflict serializability.
+Two schedules are **view-equivalent** iff:
+
+1. If $T_i$ reads the **initial value** of $X$ in $S$, it also does so in $S'$
+2. If $T_i$ reads a value of $X$ **written by $T_j$** in $S$, same in $S'$
+3. If $T_i$ performs the **final write** of $X$ in $S$, same in $S'$
+
+```
+Every conflict-serializable schedule is view-serializable.
+Not every view-serializable schedule is conflict-serializable.
+View serializability is NP-complete to test → not used in practice.
+```
+
+---
+
+## 13.4 Recoverability
+
+### Recoverable Schedules
+
+A schedule is **recoverable** iff: if $T_j$ reads data written by $T_i$, then $T_i$ must commit before $T_j$ commits.
+
+**Non-recoverable example:**
+
+| Time | T1 | T2 |
+|------|----|----|
+| t1 | $w_1(X)$=200 | |
+| t2 | | $r_2(X)$=200 *(dirty read)* |
+| t3 | | $c_2$ ←** T2 commits based on T1's data** |
+| t4 | $a_1$ ←** T1 aborts** | |
+
+T2 committed based on data that T1 never committed. **Irrecoverable** — we cannot undo T2.
+
+### Cascading Rollback
+
+If T1 aborts and T2 has read T1's data, T2 must also abort — this cascades to T3 if T3 read T2's data:
+
+```
+T1 aborts → T2 must abort → T3 must abort → ...
+```
+
+### Cascadeless Schedules
+
+In a **cascadeless** schedule, no transaction reads uncommitted data:
+
+$$
+\text{If } T_j \text{ reads } X \text{ written by } T_i, \text{ then } T_i \text{ commits before that read}
+$$
+
+Cascadeless $\supset$ strict (no reading OR writing uncommitted data).
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart LR
+    A["All Schedules"]
+    B["Recoverable"]
+    C["Cascadeless<br/>(avoid cascading rollback)"]
+    D["Strict<br/>(no read/write uncommitted)"]
+    E["Serial<br/>(always correct)"]
+    A --> B --> C --> D --> E
+```
+
+---
+
+## 13.5 Two-Phase Locking (2PL) — Full Protocol
+
+### Lock Types
+
+| Lock | Notation | Compatibility |
+|------|---------|-------------|
+| Shared (read) | $S$ | Multiple transactions can hold $S$ simultaneously |
+| Exclusive (write) | $X$ | Only one transaction; blocks all other $S$ and $X$ |
+
+**Lock Compatibility Matrix:**
+
+| Request \ Held | S | X |
+|---------------|---|---|
+| S | ✓ | ✗ |
+| X | ✗ | ✗ |
+
+### The Two Phases
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart LR
+    subgraph Phase1["Phase 1 — Growing"]
+        direction TB
+        G1["Acquire S/X locks<br/>as needed"]
+        G2["Cannot release<br/>any lock"]
+    end
+    subgraph LockPoint["Lock Point"]
+        LP["Maximum<br/>lock set<br/>reached"]
+    end
+    subgraph Phase2["Phase 2 — Shrinking"]
+        direction TB
+        S1["Release locks<br/>as no longer needed"]
+        S2["Cannot acquire<br/>new locks"]
+    end
+    Phase1 --> LockPoint --> Phase2
+```
+
+**Theorem:** Any schedule produced by 2PL transactions is **conflict-serializable**.
+
+### 2PL Variants
+
+| Variant | Rule | Prevents |
+|---------|------|---------|
+| **Basic 2PL** | Two phases as above | Non-serializable schedules |
+| **Strict 2PL** | Hold all X locks until commit/abort | Dirty reads + cascading rollback |
+| **Rigorous 2PL** | Hold ALL locks (S and X) until commit/abort | Strictest; simplest to reason about |
+| **Conservative 2PL** | Acquire ALL needed locks before any operation | Deadlock-free (pre-declaration required) |
+
+Most databases implement **Strict 2PL** — release all locks only at commit or rollback.
+
+```sql
+-- Explicit locking in PostgreSQL (Strict 2PL semantics by default)
+BEGIN;
+SELECT * FROM Employee WHERE Ssn = '123456789' FOR UPDATE;   -- X lock
+-- ... process row ...
+COMMIT;   -- releases all locks
+
+-- Shared lock (no wait; fail if cannot acquire immediately)
+SELECT * FROM Employee FOR SHARE NOWAIT;
+```
+
+---
+
+## 13.6 Deadlocks
+
+A **deadlock** is a circular wait where each transaction holds a lock that another transaction is waiting for.
+
+### Wait-For Graph
+
+Build a directed graph where edge $T_i \to T_j$ means "$T_i$ is waiting for $T_j$ to release a lock."
+
+**Deadlock iff the wait-for graph contains a cycle.**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+graph LR
+    T1 -->|"waits for lock<br/>held by"| T2
+    T2 -->|"waits for lock<br/>held by"| T3
+    T3 -->|"waits for lock<br/>held by"| T1
+```
+
+This three-way cycle is a deadlock. The DBMS detects it by running cycle detection on the wait-for graph (periodically or immediately on lock request).
+
+### Deadlock Resolution
+
+Once detected, abort one transaction (the **victim**). Selection criteria:
+
+| Criterion | Strategy |
+|-----------|---------|
+| Minimum work done | Abort the youngest transaction |
+| Minimum cost to restart | Abort the one with fewest locks |
+| Starvation prevention | Never choose the same victim twice |
+
+::: callout-important
+After aborting a victim, the DBMS **restarts** the transaction automatically (usually).
+The application must be prepared to retry its transaction on deadlock.
+:::
+
+### Deadlock Prevention Strategies
+
+Instead of detection + abort, prevent cycles from forming:
+
+| Strategy | Rule | Characteristic |
+|---------|------|---------------|
+| **Wait-Die** | Old waits for young; young dies (aborts, restarts) | Non-preemptive victim choice |
+| **Wound-Wait** | Old wounds (preempts) young; young waits | Fewer aborts for old transactions |
+| **No-Wait** | Never wait; abort immediately if lock unavailable | Low deadlock overhead; high abort rate |
+
+---
+
+## 13.7 Timestamp-Based Concurrency Control
+
+Every transaction receives a timestamp $TS(T)$ at start. Two additional timestamps are maintained per data item $X$:
+
+- $R\_TS(X)$: timestamp of the last transaction that successfully **read** $X$
+- $W\_TS(X)$: timestamp of the last transaction that successfully **wrote** $X$
+
+### Rules
+
+| Operation | Condition | Action |
+|-----------|----------|--------|
+| $r_i(X)$ | $TS(T_i) < W\_TS(X)$ | Abort $T_i$ — it would read a future-written value |
+| $r_i(X)$ | $TS(T_i) \geq W\_TS(X)$ | OK; set $R\_TS(X) = \max(R\_TS(X), TS(T_i))$ |
+| $w_i(X)$ | $TS(T_i) < R\_TS(X)$ | Abort $T_i$ — its write would overwrite data already read by a newer transaction |
+| $w_i(X)$ | $TS(T_i) < W\_TS(X)$ | **Thomas Write Rule**: skip this write (it's already obsolete, no abort needed) |
+| $w_i(X)$ | otherwise | OK; set $W\_TS(X) = TS(T_i)$ |
+
+**Advantage:** No deadlocks (no waiting for locks).  
+**Disadvantage:** Long-running transactions may repeatedly abort and restart (starvation).
+
+---
+
+## 13.8 Multiversion Concurrency Control (MVCC)
+
+MVCC is used by the majority of modern DBMS (PostgreSQL, MySQL InnoDB, Oracle, CockroachDB).
+
+### Core Idea
+
+Each **write** creates a new **version** of the item; old versions are retained for a period.
+Each **read** sees the snapshot of the database as of its transaction's start time — a read never blocks a write and a write never blocks a read.
+
+```
+Item X versions:
+  v1: value=100,  created by T1 (TS=1),  expired by T5 (TS=5)
+  v2: value=150,  created by T5 (TS=5),  active (never expired)
+```
+
+- Transaction $T_3$ (TS=3): reads $v1$ (the version valid at TS=3)
+- Transaction $T_7$ (TS=7): reads $v2$ (the version valid at TS=7)
+
+### MVCC and Isolation Levels
+
+| Level | MVCC snapshot point | Blocks on writes? |
+|-------|--------------------|--------------------|
+| `READ COMMITTED` | Beginning of each SQL statement | No |
+| `REPEATABLE READ` | Beginning of the transaction | No |
+| `SERIALIZABLE` (PG SSI) | Beginning + conflict detection | Only on detected write-write conflict |
+
+PostgreSQL's **Serializable Snapshot Isolation (SSI)** extends MVCC with anti-dependency detection, achieving true serializable isolation with minimal blocking overhead.
+
+---
+
+## 13.9 Optimistic Concurrency Control (OCC)
+
+OCC assumes conflicts are **rare** — so validate only at commit time rather than locking proactively.
+
+### Three Phases
+
+| Phase | Activity |
+|-------|---------|
+| **Read** | Execute transaction in a local workspace; read from DB, write to workspace; no locks |
+| **Validate** | Check if any conflict exists between this transaction's reads/writes and concurrently committed transactions |
+| **Write** | If valid: apply workspace changes to DB; if invalid: abort and restart |
+
+OCC is ideal for **read-heavy, low-conflict** workloads. It can cause high abort rates under write-heavy contention.
+
+---
+
+## 13.10 Interactive: Isolation Level Anomaly Explorer
+
+```{ojs}
+//| echo: false
+//| label: fig-isolation-explorer
+//| fig-cap: "Which anomalies are possible at each isolation level?"
+
+viewof level = Inputs.select(
+  ["READ UNCOMMITTED", "READ COMMITTED", "REPEATABLE READ", "SERIALIZABLE"],
+  {value: "READ COMMITTED", label: "Isolation Level"}
+)
+
+{
+  const data = {
+    "READ UNCOMMITTED": {dirty: true,  nonrep: true,  phantom: true},
+    "READ COMMITTED":   {dirty: false, nonrep: true,  phantom: true},
+    "REPEATABLE READ":  {dirty: false, nonrep: false, phantom: true},
+    "SERIALIZABLE":     {dirty: false, nonrep: false, phantom: false}
+  };
+  const row = data[level];
+  const icon = (b) => b ? "⚠️ Possible" : "✅ Prevented";
+
+  return htl.html`
+    <div style="font-family:sans-serif; padding:1rem; background:#f8f8f8; border-radius:8px; line-height:2">
+      <b>${level}</b><br/>
+      Dirty Read:          ${icon(row.dirty)}<br/>
+      Non-Repeatable Read: ${icon(row.nonrep)}<br/>
+      Phantom Read:        ${icon(row.phantom)}<br/>
+    </div>`;
+}
+```
+
+---
+
+## 13.11 Chapter Summary
+
+::: callout-important
+## Key Takeaways — Chapter 13
+
+1. A **schedule** is a total ordering of operations from concurrent transactions.
+   **Serial schedules** are always correct; **concurrent schedules** need validation.
+
+2. **Conflict serializability** (the practical standard): a schedule is correct iff its **precedence graph is acyclic**.
+   An acyclic graph's topological sort gives the equivalent serial order.
+
+3. **Recoverable schedules**: $T_j$ commits only after all $T_i$ whose data it read.
+   **Cascadeless** schedules: no dirty reads at all — prevents cascading rollback.
+
+4. **Two-Phase Locking (2PL)**: acquire all locks in the growing phase; release in the shrinking phase.
+   **Strict 2PL** (hold X locks until commit) is what real DBMS implement.
+   Produces conflict-serializable, cascadeless schedules.
+
+5. **Deadlocks**: circular lock-wait chains; detected via **wait-for graph** cycles.
+   Resolved by aborting a victim; prevented by Wait-Die or Wound-Wait timestamp ordering.
+
+6. **MVCC**: readers never block writers, writers never block readers.
+   Each transaction reads a snapshot valid at its start time.
+   Used by PostgreSQL (with SSI for `SERIALIZABLE`), MySQL InnoDB, Oracle.
+
+7. **OCC**: validate at commit, not during execution — best for low-conflict, read-heavy workloads.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Define a **conflicting operation pair**. Using the operations $r_1(X)$, $w_1(X)$, $r_2(X)$, $w_2(X)$,
+   list all four pairs and classify each as conflicting or non-conflicting.
+
+2. Explain the difference between **conflict-serializability** and **view-serializability**.
+   Why does practice rely on conflict-serializability even though view-serializability is more permissive?
+
+3. Explain how **MVCC** allows readers and writers to coexist without blocking each other.
+   What happens to old versions over time, and who is responsible for cleaning them up?
+
+### Applied
+
+4. For the following schedule, identify all conflicting operations, draw the precedence graph,
+   and determine whether the schedule is conflict-serializable. If yes, state the equivalent serial order.
+   
+   $$S: w_1(A)\;\; r_2(A)\;\; r_1(B)\;\; w_2(B)\;\; c_1\;\; c_2$$
+
+5. Explain why the following schedule is **not recoverable**, and modify it minimally to make it recoverable:
+   
+   $$S: w_1(X)\;\; r_2(X)\;\; c_2\;\; a_1$$
+
+6. A database uses **Strict 2PL**. Transaction T1 holds an `X` lock on row `R7`.
+   Transaction T2 requests an `S` lock on `R7`, then T3 requests an `X` lock on `R7`.
+   Draw the lock request queue and show what happens when T1 commits.
+   Will T2 and T3 both proceed? In what order?
+
+### Analysis
+
+7. Show the wait-for graph for the following deadlock scenario and identify the minimal set of
+   victims that, when aborted, breaks all cycles:
+   - T1 holds X(A), waiting for X(B)
+   - T2 holds X(B), waiting for X(C)
+   - T3 holds X(C), waiting for X(A)
+   - T4 holds X(D), waiting for X(E)
+   - T5 holds X(E), waiting for X(D)
+
+8. In the **Timestamp Protocol**, transaction T1 (TS=5) tries to write $X$ where $R\_TS(X)=8$.
+   What happens? Why is this the correct behavior?
+
+### Diagram
+
+9. Draw a timeline diagram (with two rows: T1 and T2) showing:
+   - A **non-repeatable read** anomaly at `READ COMMITTED` level
+   - How `REPEATABLE READ` prevents the same scenario (using MVCC or locking)
+
+### Design
+
+10. An online banking system runs thousands of concurrent transactions per second.
+    Most transactions are balance reads; 10% involve writes (transfers, deposits).
+    A DBA debates between `SERIALIZABLE` isolation (maximum safety) and `READ COMMITTED` (maximum throughput).
+    - Describe a specific sequence of events in which `READ COMMITTED` would produce an incorrect bank balance.
+    - Describe whether PostgreSQL's `SERIALIZABLE` (SSI) or `REPEATABLE READ` (MVCC snapshot) would catch this. 
+    - What is the performance cost of each approach?
+
+### Synthesis
+
+11. Compare **Two-Phase Locking** and **MVCC** across the following dimensions:
+    | Dimension | 2PL | MVCC |
+    |-----------|-----|------|
+    | Readers block writers? | | |
+    | Writers block readers? | | |
+    | Deadlock possible? | | |
+    | Stale read possible? | | |
+    | Write skew anomaly possible? | | |
+    | Storage overhead? | | |
+    
+    Complete the table and then justify which mechanism you would choose for: (a) a high-concurrency web app (mostly reads), (b) a financial ledger system (strict correctness required).
+
+**Notation:**
+
+- $r_i(X)$: transaction $T_i$ reads item $X$
+- $w_i(X)$: transaction $T_i$ writes item $X$
+- $c_i$: transaction $T_i$ commits
+- $a_i$: transaction $T_i$ aborts
+
+**Serial schedule:** All operations of one transaction complete before the next starts — always correct, but low concurrency:
+
+$$
+S_1: r_1(X)\; w_1(X)\; c_1\; r_2(X)\; w_2(X)\; c_2
+$$
+
+**Concurrent (non-serial) schedule:** Operations interleaved:
+
+$$
+S_2: r_1(X)\; r_2(X)\; w_1(X)\; w_2(X)\; c_1\; c_2
+$$
+
+## 13.2 Serializability
+
+### Conflict Serializability
+
+Two operations **conflict** if they:
+1. Belong to **different** transactions
+2. Access the **same data item** $X$
+3. At least **one is a write**
+
+Conflicting operation pairs:
+- $r_i(X)$ and $w_j(X)$ — read-write conflict
+- $w_i(X)$ and $r_j(X)$ — write-read conflict
+- $w_i(X)$ and $w_j(X)$ — write-write conflict
+
+A schedule $S$ is **conflict-serializable** iff it is conflict-equivalent to some serial schedule — i.e., we can transform $S$ to a serial schedule by swapping **non-conflicting** adjacent operations.
+
+### Precedence Graph (Serialization Graph)
+
+Given a schedule $S$ over transactions $T_1, \ldots, T_n$:
+
+- One node per transaction
+- Add edge $T_i \to T_j$ if $T_i$ has an operation that **conflicts with and precedes** an operation of $T_j$
+
+**Theorem:** $S$ is conflict-serializable iff its precedence graph is **acyclic** (no cycles).
+
+**Example:**
+
+$$
+S: r_1(A)\; w_2(A)\; r_1(B)\; w_2(B)\; c_1\; c_2
+$$
+
+Conflicts:
+- $r_1(A)$ before $w_2(A)$ → edge $T_1 \to T_2$
+- $r_1(B)$ before $w_2(B)$ → edge $T_1 \to T_2$ (redundant)
+
+Graph: $T_1 \to T_2$ — no cycle → **conflict-serializable** (equivalent to serial order $T_1, T_2$).
+
+## 13.3 View Serializability
+
+**View serializability** is a weaker (more permissive) notion:
+
+Two schedules $S$ and $S'$ are **view-equivalent** iff for each data item $X$:
+
+1. **Initial reads**: if $T_i$ reads the initial value of $X$ in $S$, it does so in $S'$
+2. **Updated reads**: if $T_i$ reads $X$ written by $T_j$ in $S$, it does so in $S'$
+3. **Final writes**: if $T_i$ performs the last write of $X$ in $S$, it does so in $S'$
+
+**Relationship**: Every conflict-serializable schedule is view-serializable. The converse is **not** always true.
+
+::: callout-note
+View serializability is NP-complete to check, so most DBMS use conflict-serializability (which is polynomial via precedence graphs).
+:::
+
+## 13.4 Recoverability
+
+A schedule is **recoverable** iff no transaction $T_i$ commits before all transactions $T_j$ that wrote data read by $T_i$ have committed.
+
+**Non-recoverable example:**
+
+```
+T1: w(X)
+T2: r(X) ← reads T1's uncommitted write (dirty read)
+T2: c    ← T2 commits
+T1: a    ← T1 aborts! But T2 already committed based on T1's data → non-recoverable
+```
+
+### Cascading Rollback
+
+If $T_1$ aborts and other transactions read data written by $T_1$, they must also abort — cascading effect:
+
+```
+T1: w(X)           T2: r(X)                  T3: r(X)
+                                              T1 aborts → T2 must abort → T3 must abort
+```
+
+### Cascadeless Schedules
+
+A **cascadeless schedule** ensures no transaction reads uncommitted data:
+
+$$
+\text{If } T_j \text{ reads } X \text{ written by } T_i, \text{ then } T_i \text{ must commit before that read}
+$$
+
+**Hierarchy:**
+
+$$
+\text{Serial} \subset \text{Cascadeless} \subset \text{Recoverable} \subset \text{All schedules}
+$$
+
+All practical DBMS implement (at minimum) recoverable, cascadeless schedules.
+
+## 13.5 Concurrency Control Protocols
+
+### 2PL Variants (Review and Extension)
+
+| Variant | Rule | Guarantees |
+|---------|------|-----------|
+| **Basic 2PL** | Two-phase; locks released in shrinking phase | Conflict-serializability |
+| **Strict 2PL** | Hold all locks until commit/abort | Conflict-serializable + no dirty reads |
+| **Rigorous 2PL** | Even shared locks held until commit | Equivalent to basic serial ordering |
+| **Conservative 2PL** | Acquire all locks before starting | No deadlocks, but low throughput |
+
+### Timestamp-Based Concurrency Control
+
+Each transaction receives a **timestamp** $TS(T)$ at start. Operations are validated against timestamps:
+
+**Rules:**
+
+- $r_i(X)$: if $TS(T_i) < W\_TS(X)$ → $T_i$ tries to read a value overwritten by a newer transaction → **abort** $T_i$ and restart with a new timestamp
+- $w_i(X)$: if $TS(T_i) < R\_TS(X)$ → abort $T_i$; if $TS(T_i) < W\_TS(X)$ → skip write (Thomas Write Rule)
+
+**Advantage:** No deadlocks; lock-free  
+**Disadvantage:** Starvation if a transaction is always restarted; long-running transactions may repeatedly abort
+
+### Multiversion Concurrency Control (MVCC)
+
+Used by PostgreSQL, MySQL InnoDB, Oracle:
+
+- Each write creates a **new version** of the data item
+- Readers never block writers; writers never block readers
+- Each transaction sees a **snapshot** of the database at a fixed point in time
+
+```
+Item X: 
+  Version 1: value=100, created_by=T1, expires_at=T5
+  Version 2: value=150, created_by=T5, expires_at=∞
+```
+
+- Transaction $T_3$ (timestamp between T1 and T5) reads Version 1
+- Transaction $T_7$ (after T5) reads Version 2
+
+### Optimistic Concurrency Control (OCC)
+
+Assumes conflicts are rare. Three phases per transaction:
+
+| Phase | Activity |
+|-------|---------|
+| **Read** | Read from DB; store in local workspace; no locks |
+| **Validate** | Check if transaction's reads/writes conflict with committed transactions |
+| **Write** | If valid: write changes; if invalid: abort and restart |
+
+**Good for** read-heavy workloads with few conflicts.
+
+## 13.6 Summary: Isolation Implementations
+
+| Approach | Mechanism | Used By |
+|----------|-----------|---------|
+| Locking (2PL) | Shared/exclusive locks | SQL Server, older MySQL |
+| MVCC | Snapshots and versions | PostgreSQL, MySQL InnoDB, Oracle |
+| Optimistic | Validate before commit | In-memory DBs, some NoSQL |
+| Serializable Snapshot Isolation (SSI) | MVCC + conflict detection | PostgreSQL ≥9.1, serializable level |
+
+## 13.7 Timestamp Protocol Example
+
+```
+Transactions: T1 (TS=1), T2 (TS=2)
+Initial state: R_TS(X)=0, W_TS(X)=0
+
+T1: w(X)  → TS(T1)=1 ≥ R_TS(X)=0 and W_TS(X)=0 → OK; W_TS(X)=1
+T2: r(X)  → TS(T2)=2 ≥ W_TS(X)=1 → OK; R_TS(X)=2
+T2: w(X)  → TS(T2)=2 ≥ R_TS(X)=2 and W_TS(X)=1 → OK; W_TS(X)=2
+T1: r(X)  → TS(T1)=1 < W_TS(X)=2 → ABORT T1, restart with new TS
+```
+
+## Summary
+
+::: callout-important
+## Chapter 13 — Key Takeaways
+
+- A **schedule** interleaves operations from multiple transactions; it must ensure correct results.
+- **Conflict-serializability**: a schedule is correct if it's equivalent to a serial one — checked via the **precedence graph** (acyclic = serializable).
+- **View serializability** is less restrictive but NP-complete to check.
+- A **recoverable** schedule never commits before its dirty-read sources commit; **cascadeless** schedules prohibit dirty reads entirely.
+- **Strict 2PL** (lock everything until commit) is the dominant practical protocol.
+- **Timestamp ordering** avoids deadlocks but may cause starvation.
+- **MVCC** allows readers and writers to not block each other — used in PostgreSQL, InnoDB.
+- **OCC** (optimistic) validates at commit time — good for low-conflict workloads.
+:::
+
+## Review Questions
+
+1. Define a **schedule**. What is the difference between a serial and a concurrent schedule?
+2. For the schedule $S: r_1(A)\; w_2(A)\; w_1(A)\; r_2(B)\; w_2(B)\; c_1\; c_2$:
+   - Identify all conflicting operations
+   - Draw the precedence graph
+   - Is $S$ conflict-serializable? If so, what is the equivalent serial order?
+3. Explain the difference between **conflict-serializable** and **view-serializable** schedules.
+4. What is a **cascading rollback**? How does Strict 2PL prevent it?
+5. Explain how **MVCC** allows readers and writers to not block each other.
+6. When would you choose **optimistic concurrency control** over locking?

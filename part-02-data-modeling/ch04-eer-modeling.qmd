@@ -1,0 +1,331 @@
+---
+title: "Enhanced Entity-Relationship (EER) Modeling"
+subtitle: "Chapter 4"
+---
+
+The ER model of Chapter 3 handles most real-world data structures, but it lacks one critical capability: **type hierarchies**. When some employees are engineers, some are managers, and a few are engineer-managers, the basic ER model forces you to bundle everything into one bloated entity type or fragment the design artificially. The Enhanced ER (EER) model adds three mechanisms — *specialization/generalization*, *aggregation*, and *union types* — to handle these situations cleanly.
+
+---
+
+## 4.1 Subclasses, Superclasses, and Inheritance
+
+An entity type $S$ is a **subclass** of entity type $C$ if:
+- Every entity instance of $S$ is *also* an instance of $C$
+- $S$ has attributes or relationships that are not meaningful for all of $C$
+
+$C$ is called the **superclass** of $S$, and the pair forms a **superclass/subclass (IS-A) relationship**.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    EMP["EMPLOYEE<br/>(superclass)<br/>Ssn, Fname, Lname, Salary"]
+    SEC["SECRETARY<br/>TypingSpeed"]
+    ENG["ENGINEER<br/>EngType"]
+    MGR["MANAGER<br/>MgrBonus"]
+
+    EMP --> SEC
+    EMP --> ENG
+    EMP --> MGR
+```
+
+### Type Inheritance
+
+A subclass entity **inherits** all attributes and participation in relationships of its superclass. It additionally has its own **specific attributes** and may participate in its own **specific relationships**.
+
+::: callout-note
+Inheritance is *implicit* in the EER model — you do not explicitly copy attributes from superclass to subclass in the diagram. When you map to relational tables (§4.7), you choose how to physically represent shared attributes.
+:::
+
+With the IS-A relationship established, we can now distinguish between two design processes that produce it.
+
+---
+
+## 4.2 Specialization
+
+**Specialization** is a **top-down** design process: starting with a superclass, the designer defines subclasses that represent better-defined subsets of the superclass.
+
+*Rationale:* Some entities in `EMPLOYEE` have attributes irrelevant to others — not every employee has a `TypingSpeed`, but every secretary does. Specializing `EMPLOYEE` into `SECRETARY` keeps the schema clean.
+
+### Constraints on Specialization
+
+A specialization carries two independent constraints, each with two options:
+
+#### 1. Disjointness Constraint
+
+| Constraint | Symbol | Meaning |
+|-----------|--------|---------|
+| **Disjoint (d)** | Circle with `d` | Each entity belongs to **at most one** subclass |
+| **Overlapping (o)** | Circle with `o` | An entity may belong to **multiple** subclasses simultaneously |
+
+**Disjoint example:** An employee is either `HOURLY_EMPLOYEE` or `SALARIED_EMPLOYEE` — never both. Payroll would not compute correctly if an employee appeared in both.
+
+**Overlapping example:** A university `PERSON` can simultaneously be a `STUDENT` and an `EMPLOYEE` (e.g., a teaching assistant). Excluding one membership would lose data.
+
+#### 2. Completeness Constraint
+
+| Constraint | Notation | Meaning |
+|-----------|----------|---------|
+| **Total** | Double line from superclass to circle | Every superclass entity **must** belong to at least one subclass |
+| **Partial** | Single line from superclass to circle | A superclass entity **may** belong to no subclass |
+
+**Total example:** Every `SHAPE` must be either a `CIRCLE`, `RECTANGLE`, or `TRIANGLE` — there are no "generic shapes" stored.
+
+**Partial example:** Not every `EMPLOYEE` is a manager — most employees have no subclass membership.
+
+### Combining the Two Constraints
+
+| Combination | Practical meaning | Example |
+|------------|------------------|---------|
+| **Total + Disjoint** | Every superclass entity is in exactly one subclass | EMPLOYEE → {HOURLY, SALARIED} |
+| **Total + Overlapping** | Every entity is in at least one, possibly many subclasses | PERSON → {STUDENT, EMPLOYEE} |
+| **Partial + Disjoint** | Some entities are in no subclass; those that are fall in at most one | VEHICLE → {CAR, TRUCK} (a bicycle doesn't fit) |
+| **Partial + Overlapping** | Some entities are in no subclass; some are in multiple | PRODUCT → {DIGITAL, PHYSICAL} (can be both for a bundled product) |
+
+---
+
+## 4.3 Generalization
+
+**Generalization** is the **bottom-up** process: the designer observes that several entity types share common attributes and abstracts those into a new superclass.
+
+*Example:* Designing independently, you create `CAR`, `TRUCK`, and `MOTORCYCLE` all with `LicensePlate`, `Make`, `Model`, `Year`. Noticing the overlap, you generalize them into `VEHICLE`, extracting the shared attributes:
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart BT
+    CAR["CAR<br/>+ NumDoors"] --> VEH
+    TRUCK["TRUCK<br/>+ PayloadTons"] --> VEH
+    MOTO["MOTORCYCLE<br/>+ HasSidecar"] --> VEH
+    VEH["VEHICLE<br/>LicensePlate<br/>Make · Model · Year"]
+```
+
+::: callout-tip
+**Specialization vs. Generalization** produce identical EER diagrams. The distinction is purely in the *decision process* (top-down design vs. bottom-up abstraction). In practice, real designs mix both: you may generalize two existing entities and then specialize the resulting superclass further.
+:::
+
+With hierarchies defined, the next structural concept addresses how entities organize into trees versus networks.
+
+---
+
+## 4.4 Specialization Hierarchies and Lattices
+
+| Structure | Description | Constraint |
+|-----------|-------------|-----------|
+| **Specialization hierarchy** | Each subclass has exactly one direct superclass | Produces a tree |
+| **Specialization lattice** | A subclass can have more than one direct superclass | Produces a DAG (directed acyclic graph) |
+
+In a **lattice**, a subclass inherits from **all** its superclasses — this is **multiple inheritance**.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    EMP["EMPLOYEE<br/>Ssn, Salary"]
+    STU["STUDENT<br/>StudentId, Gpa"]
+    STUDEMP["STUDENT_EMPLOYEE<br/>(inherits Ssn, Salary, StudentId, Gpa)"]
+
+    EMP --> STUDEMP
+    STU --> STUDEMP
+```
+
+::: callout-important
+A `STUDENT_EMPLOYEE` entity must simultaneously be an instance of both `EMPLOYEE` *and* `STUDENT`. This is the key distinction between a lattice node (shared subclass) and a union type (§4.6), where membership in *only one* superclass is required.
+:::
+
+---
+
+## 4.5 Aggregation
+
+**Aggregation** promotes an existing *relationship type* to a higher-level entity, allowing that relationship to participate in another relationship.
+
+### Why Aggregation?
+
+Consider: "An `EMPLOYEE` **Works_On** a `PROJECT`. For some assignments, a specific `MACHINE` is **Used** during that assignment."
+
+You might try to add `MACHINE` as a third participant in `Works_On` (making it ternary). But that implies that every combination of (Employee, Project, Machine) is an assignment — whereas the real constraint is: *given an existing (Employee, Project) assignment*, a machine may be used. Aggregation captures this:
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    subgraph AGG["Aggregated entity: ASSIGNMENT"]
+        EMP["EMPLOYEE"] -- Works_On --> PROJ["PROJECT"]
+    end
+    AGG -- Uses --> MACH["MACHINE<br/>MachineId, Type"]
+```
+
+The aggregated entity (`ASSIGNMENT`) is a *virtual entity* made from the `Works_On` relationship. It can now participate in `Uses` with `MACHINE`.
+
+::: callout-note
+When mapped to relational tables, the aggregation maps to its junction table (`WORKS_ON`) plus an additional `USES` table that references `WORKS_ON`'s primary key.
+:::
+
+---
+
+## 4.6 Category (UNION) Types
+
+A **category** (or *Union type*) is a subclass that can come from **different, unrelated superclass types**. The key difference from a lattice node:
+
+| Feature | Lattice node (shared subclass) | Category (Union) |
+|---------|-------------------------------|-----------------|
+| Superclasses | Multiple, related IS-A hierarchy | Multiple, different types |
+| Membership | Entity must be in **all** superclasses | Entity is in **exactly one** superclass |
+| Symbol | Arrows from multiple parents | `U` circle |
+
+**Example:** A `VEHICLE_OWNER` can be either a `PERSON` or a `COMPANY`. A `VEHICLE_OWNER` instance is exactly one of these — not both.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    PER["PERSON<br/>Ssn, Name, Bdate"]
+    COMP["COMPANY<br/>CompanyId, CompanyName"]
+    CIRC["⊂ U ⊃"]
+    OWN["VEHICLE_OWNER<br/>OwnerId"]
+
+    PER --> CIRC
+    COMP --> CIRC
+    CIRC --> OWN
+```
+
+::: callout-tip
+Categories require a **surrogate key** (`OwnerId`) because the natural keys of different superclasses are incompatible types (e.g., `Ssn` vs. `CompanyId`).
+:::
+
+---
+
+## 4.7 EER-to-Relational Mapping
+
+### Mapping Specialization — Four Options
+
+Given a superclass $C$ with subclasses $S_1, S_2, \ldots, S_k$:
+
+| Option | Schema design | Best when |
+|--------|--------------|-----------|
+| **A — Single table** | One table for all subclasses; NULL for inapplicable columns; add a `Type` discriminator column | Few subclasses, few subclass-specific attributes. Simple queries but wastes space with NULLs. |
+| **B — Subclass tables only** | One table per subclass; each table includes *all inherited* superclass attributes (no shared superclass table) | Total **and** disjoint. Fast subclass-only queries; no joins needed. But super-class-wide queries require UNION. |
+| **C — Superclass + subclass tables** | Table for superclass with its attributes; each subclass table stores only subclass-specific attributes + FK to superclass | **Most common**. Works for overlapping or partial. Superclass-wide query uses superclass table alone; subclass-specific query joins two tables. |
+| **D — Superclass table with all attributes** | Single table, same as Option A but no separate subclass tables at all | Legacy or read-only schemas; maximum NULL tolerance. |
+
+::: callout-tip
+**Default choice: Option C.**
+
+```
+EMPLOYEE(Ssn PK, Fname, Lname, Salary)
+SECRETARY(Ssn FK→EMPLOYEE, TypingSpeed)
+ENGINEER(Ssn FK→EMPLOYEE, EngType)
+MANAGER(Ssn FK→EMPLOYEE, MgrBonus)
+```
+
+A query asking for all engineers joins `EMPLOYEE` with `ENGINEER`. A query asking for all employees' names goes to `EMPLOYEE` alone.
+:::
+
+### Mapping Aggregation
+
+1. Map the aggregated relationship to a junction table (Step 5 from Ch 3).
+2. Add a new table for the outer relationship that includes the junction table's PK as a foreign key.
+
+**Example:**
+
+```
+WORKS_ON(Essn, Pno, Hours)           -- from aggregated Works_On
+USES(Essn, Pno, MachineId, StartTime) -- new table; (Essn,Pno) FK→WORKS_ON
+```
+
+### Mapping Categories
+
+1. Assign a **surrogate key** to the category that is type-neutral.
+2. Create the category table using only the surrogate key plus category-specific attributes.
+3. Add the surrogate key as a FK to each superclass table.
+
+**Example:**
+
+```
+VEHICLE_OWNER(OwnerId PK, LicenseCount)
+PERSON(Ssn PK, Name, Bdate, OwnerId FK→VEHICLE_OWNER)
+COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)
+```
+
+---
+
+## 4.8 EER vs. Object-Oriented Mapping
+
+The EER specialization/generalization hierarchy closely resembles inheritance in object-oriented languages. The correspondences are:
+
+| OOP concept | EER concept |
+|-------------|-------------|
+| Superclass / parent class | Superclass entity type |
+| Subclass / child class | Subclass entity type |
+| Single inheritance | Specialization hierarchy (tree) |
+| Multiple inheritance | Specialization lattice |
+| Abstract class | Total specialization superclass (no bare instances) |
+| Concrete class | Partial specialization superclass (bare instances allowed) |
+
+The critical difference: OOP inheritance is about *behavior* (methods); EER inheritance is about *data* (attributes and relationships only).
+
+---
+
+## Summary
+
+::: callout-important
+## Chapter 4 — Key Takeaways
+
+- **EER** extends ER with superclass/subclass type hierarchies, enabling **type inheritance**.
+- **Specialization** (top-down) divides a superclass into subclasses. **Generalization** (bottom-up) abstracts common attributes into a new superclass. Both produce the same diagram.
+- Two constraints must be declared for every specialization: **disjointness** (d/o) and **completeness** (total/partial).
+- **Specialization hierarchy**: each subclass has exactly one superclass (tree). **Specialization lattice**: a subclass can have multiple superclasses (DAG) — multiple inheritance.
+- **Aggregation** promotes a relationship to an entity so that it can itself participate in a further relationship.
+- **Category (union type)**: a subclass whose instances can come from *different* superclass types (union); contrast with lattice nodes (intersection).
+- Mapping to relational: four options for specialization; **Option C** (superclass table + subclass tables with FK) is the standard default.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Define the **IS-A relationship** in EER modeling. Why is it fundamentally different from a regular ER relationship?
+2. What is **type inheritance** in the context of EER? If `ENGINEER` is a subclass of `EMPLOYEE`, what attributes does an `ENGINEER` entity have?
+3. Explain the difference between a **specialization hierarchy** and a **specialization lattice**. When does a lattice arise?
+
+### Short-Answer / Compare
+
+4. Compare **total** and **partial** completeness constraints with **disjoint** and **overlapping** disjointness constraints. Give one real-world example for each of the four possible combinations.
+5. Why is **aggregation** needed? Can the same modeling objective always be achieved with a ternary relationship instead? Give a scenario where aggregation is strictly necessary.
+6. Compare a **category (union type)** to a **lattice node (shared subclass)**. Which requires a surrogate key, and why?
+
+### True / False (with explanation)
+
+7. *"In a total, disjoint specialization, a superclass entity may exist without belonging to any subclass."* — True or False? Explain.
+8. *"Type inheritance means that subclass tables in Option C must repeat all superclass attribute definitions."* — True or False? Explain.
+9. *"An overlapping specialization means every entity must belong to multiple subclasses."* — True or False? Explain.
+10. *"Aggregation and ternary relationships always model the same information, just with different notation."* — True or False? Explain.
+
+### Multiple Choice
+
+11. Which mapping option for specialization is best when the specialization is **total and disjoint** and queries almost always target individual subclasses?
+    - (a) Option A  **(b) Option B** ✓  (c) Option C  (d) Option D
+
+12. A `STUDENT_EMPLOYEE` that inherits from both `STUDENT` and `EMPLOYEE` is an example of:
+    - (a) A union type
+    - (b) A category
+    - **(c) A shared subclass in a specialization lattice** ✓
+    - (d) An aggregation
+
+### Design Exercise
+
+13. A hospital manages three kinds of patients: **Inpatients** (admitted, have a bed number and ward), **Outpatients** (have scheduled appointments), and some patients who are both inpatients and outpatients (continuity-of-care cases).
+    - (a) Model this using EER notation: superclass, subclasses, disjointness constraint, completeness constraint.
+    - (b) Is the disjointness constraint **disjoint** or **overlapping**? Is the completeness **total** or **partial**? Justify.
+    - (c) Map the EER model to relational tables using Option C. Write the table schemas with primary and foreign keys.
+
+### SQL / Query Exercise
+
+14. Using Option C mapping for `EMPLOYEE → {SECRETARY, ENGINEER, MANAGER}`:
+    ```sql
+    EMPLOYEE(Ssn, Fname, Lname, Salary)
+    ENGINEER(Ssn, EngType, LicenseNum)
+    ```
+    Write a SQL query that retrieves the full name, salary, and engineering type for all engineers. Then write a second query that returns *all* employees including non-engineers (NULLs where engineering data is absent). Which SQL keyword enables the second result?

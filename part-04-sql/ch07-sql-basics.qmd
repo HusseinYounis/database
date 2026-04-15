@@ -1,0 +1,1077 @@
+---
+title: "SQL Basics"
+subtitle: "Chapter 7"
+---
+
+## §7.0 From Algebra to Executable Queries
+
+In Chapter 6 you wrote relational algebra expressions — precise mathematical statements like
+$\pi_{\text{Fname,Lname}}(\sigma_{\text{Salary}>60000}(\text{Employee}))$.
+Relational algebra is *procedural*: it specifies an exact sequence of operators.
+
+**SQL is the executable, declarative counterpart.**
+You tell the database *what* you want; the query optimizer translates your SQL into an algebra expression tree (Chapter 11), picks the cheapest execution plan, and returns the result.
+
+| Algebra concept | SQL keyword |
+|----------------|------------|
+| $\sigma$ (selection) | `WHERE` |
+| $\pi$ (projection) | `SELECT col1, col2` |
+| $\times$ (Cartesian product) | `CROSS JOIN` |
+| $\bowtie_\theta$ (theta join) | `JOIN … ON …` |
+| $\bowtie$ (natural join) | `NATURAL JOIN` *(use with caution)* |
+| $\rho$ (rename) | `AS alias` |
+| $\cup$ / $\cap$ / $-$ | `UNION` / `INTERSECT` / `EXCEPT` |
+
+::: callout-note
+## SQL Standards and Dialects
+
+The ANSI/ISO SQL standard evolves continuously (SQL-92, SQL:1999, SQL:2003, SQL:2016).
+All major systems conform to the core but differ in extensions.
+This chapter shows examples in three dialects:
+
+- **MySQL 8+** — widely used in web development and coursework
+- **PostgreSQL 16** — closest to the standard; used in data engineering
+- **Oracle 21c** — common in enterprise environments
+
+Tabs labelled **MySQL | PostgreSQL | Oracle** appear wherever syntax diverges significantly.
+:::
+
+
+
+## 7.1 SQL Overview
+
+**SQL** (Structured Query Language) was originally developed at IBM (SEQUEL, 1974) and standardized by ANSI/ISO. It is:
+
+- **Declarative**: You specify *what* you want, not *how* to get it
+- **Set-based**: Operates on whole relations, not row-by-row
+- **Nearly universal**: All major RDBMS support SQL-92 core and SQL:2016+
+
+### SQL Sub-languages
+
+| Sub-language | Abbreviation | Statements | Role |
+|-------------|-------------|-----------|------|
+| Data Definition | DDL | `CREATE`, `ALTER`, `DROP`, `TRUNCATE` | Schema structure |
+| Data Manipulation | DML | `INSERT`, `UPDATE`, `DELETE` | Modify data |
+| Data Query | DQL | `SELECT` | Retrieve data |
+| Data Control | DCL | `GRANT`, `REVOKE` | Permissions |
+| Transaction Control | TCL | `COMMIT`, `ROLLBACK`, `SAVEPOINT` | Atomicity |
+
+## 7.2 Data Types
+
+Choosing the right type affects storage, performance, and data integrity. The table below compares the three target dialects.
+
+| Category | MySQL 8 | PostgreSQL 16 | Oracle 21c |
+|---------|---------|--------------|-----------|
+| Integer | `INT`, `BIGINT`, `TINYINT` | `INTEGER`, `BIGINT`, `SMALLINT` | `NUMBER(10)`, `NUMBER(19)` |
+| Exact decimal | `DECIMAL(p,s)` | `NUMERIC(p,s)` | `NUMBER(p,s)` |
+| Floating point | `FLOAT`, `DOUBLE` | `REAL`, `DOUBLE PRECISION` | `BINARY_FLOAT`, `BINARY_DOUBLE` |
+| Auto-increment | `INT AUTO_INCREMENT` | `SERIAL` or `GENERATED ALWAYS AS IDENTITY` | `NUMBER` + `SEQUENCE` |
+| Fixed string | `CHAR(n)` | `CHAR(n)` | `CHAR(n)` |
+| Variable string | `VARCHAR(n)` | `VARCHAR(n)` | `VARCHAR2(n)` |
+| Unlimited text | `TEXT` | `TEXT` | `CLOB` |
+| Date | `DATE` | `DATE` | `DATE` *(includes time)* |
+| Date + time | `DATETIME`, `TIMESTAMP` | `TIMESTAMP` | `TIMESTAMP` |
+| Boolean | `TINYINT(1)` *(no native bool)* | `BOOLEAN` | No native bool — use `NUMBER(1)` |
+| Binary | `BLOB` | `BYTEA` | `BLOB` |
+| JSON | `JSON` | `JSON`, `JSONB` | `JSON` |
+| UUID | `CHAR(36)` / `UUID` (8+) | `UUID` | `VARCHAR2(36)` |
+
+::: callout-tip
+## Prefer `VARCHAR2` in Oracle, `TEXT` in PostgreSQL
+
+Oracle's `VARCHAR` is technically reserved; always use `VARCHAR2`.
+PostgreSQL's `TEXT` is unlimited and identical in performance to `VARCHAR(n)` without a length limit.
+:::
+
+## 7.3 DDL — Data Definition Language
+
+DDL commands define or modify the *structure* of the database (schema objects).
+They implicitly commit any open transaction.
+
+### 7.3.1 CREATE TABLE
+
+The Company DB will be our running example. Below is the `Employee` table written in all three dialects, illustrating the most important syntactic differences.
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+CREATE TABLE Department (
+    Dnumber        INT            PRIMARY KEY,
+    Dname          VARCHAR(15)    NOT NULL UNIQUE,
+    Mgr_ssn        CHAR(9),
+    Mgr_start_date DATE
+);
+
+CREATE TABLE Employee (
+    Ssn            CHAR(9)        PRIMARY KEY,
+    Fname          VARCHAR(15)    NOT NULL,
+    Minit          CHAR(1),
+    Lname          VARCHAR(15)    NOT NULL,
+    Bdate          DATE,
+    Address        VARCHAR(50),
+    Gender            CHAR(1)        CHECK (Gender IN ('M','F')),
+    Salary         DECIMAL(10,2)  CHECK (Salary >= 0),
+    Super_ssn      CHAR(9),
+    Dno            INT            NOT NULL DEFAULT 1,
+    CONSTRAINT fk_emp_dept   FOREIGN KEY (Dno)       REFERENCES Department(Dnumber)
+                                            ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_emp_super  FOREIGN KEY (Super_ssn) REFERENCES Employee(Ssn)
+                                            ON DELETE SET NULL
+);
+```
+
+## PostgreSQL
+
+```sql
+CREATE TABLE Department (
+    Dnumber        INTEGER        PRIMARY KEY,
+    Dname          VARCHAR(15)    NOT NULL UNIQUE,
+    Mgr_ssn        CHAR(9),
+    Mgr_start_date DATE
+);
+
+CREATE TABLE Employee (
+    Ssn            CHAR(9)        PRIMARY KEY,
+    Fname          VARCHAR(15)    NOT NULL,
+    Minit          CHAR(1),
+    Lname          VARCHAR(15)    NOT NULL,
+    Bdate          DATE,
+    Address        VARCHAR(50),
+    Gender            CHAR(1)        CHECK (Gender IN ('M','F')),
+    Salary         NUMERIC(10,2)  CHECK (Salary >= 0),
+    Super_ssn      CHAR(9),
+    Dno            INTEGER        NOT NULL DEFAULT 1,
+    CONSTRAINT fk_emp_dept   FOREIGN KEY (Dno)       REFERENCES Department(Dnumber)
+                                            ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_emp_super  FOREIGN KEY (Super_ssn) REFERENCES Employee(Ssn)
+                                            ON DELETE SET NULL
+);
+```
+
+## Oracle
+
+```sql
+CREATE TABLE Department (
+    Dnumber        NUMBER(4)      PRIMARY KEY,
+    Dname          VARCHAR2(15)   NOT NULL UNIQUE,
+    Mgr_ssn        CHAR(9),
+    Mgr_start_date DATE
+);
+
+CREATE TABLE Employee (
+    Ssn            CHAR(9)        PRIMARY KEY,
+    Fname          VARCHAR2(15)   NOT NULL,
+    Minit          CHAR(1),
+    Lname          VARCHAR2(15)   NOT NULL,
+    Bdate          DATE,
+    Address        VARCHAR2(50),
+    Gender            CHAR(1)        CONSTRAINT chk_sex CHECK (Gender IN ('M','F')),
+    Salary         NUMBER(10,2)   CONSTRAINT chk_sal CHECK (Salary >= 0),
+    Super_ssn      CHAR(9),
+    Dno            NUMBER(4)      DEFAULT 1 NOT NULL,
+    CONSTRAINT fk_emp_dept   FOREIGN KEY (Dno)       REFERENCES Department(Dnumber)
+                                            ON DELETE SET NULL,
+    CONSTRAINT fk_emp_super  FOREIGN KEY (Super_ssn) REFERENCES Employee(Ssn)
+                                            ON DELETE SET NULL
+);
+-- Oracle does not support ON UPDATE CASCADE for FK constraints
+```
+
+:::
+
+### 7.3.2 Constraint Summary
+
+| Constraint | Column-level example | Table-level example |
+|-----------|---------------------|-------------------|
+| `NOT NULL` | `Fname VARCHAR(15) NOT NULL` | *(inline only)* |
+| `UNIQUE` | `Email VARCHAR(100) UNIQUE` | `UNIQUE (LastName, FirstName)` |
+| `PRIMARY KEY` | `Id INT PRIMARY KEY` | `PRIMARY KEY (OrderId, ItemNo)` |
+| `FOREIGN KEY` | `DeptId INT REFERENCES Dept(Id)` | `FOREIGN KEY (DeptId) REFERENCES Dept(Id)` |
+| `CHECK` | `Salary DECIMAL CHECK (Salary >= 0)` | `CHECK (StartDate < EndDate)` |
+| `DEFAULT` | `Status CHAR(1) DEFAULT 'A'` | *(inline only)* |
+
+::: callout-important
+## Foreign Key Referential Actions
+
+When a referenced row is deleted or updated, three actions are available:
+
+| Action | `ON DELETE` | `ON UPDATE` |
+|--------|------------|------------|
+| `CASCADE` | Delete child rows too | Update FK values to match |
+| `SET NULL` | Set FK columns to NULL | Set FK columns to NULL |
+| `RESTRICT` | Block the parent delete/update | Block the parent update |
+| `NO ACTION` | Like RESTRICT but deferred | Like RESTRICT but deferred |
+
+Oracle only supports `ON DELETE CASCADE` and `ON DELETE SET NULL` — no `ON UPDATE` referential actions.
+:::
+
+### 7.3.3 Auto-Increment / Identity Columns
+
+Auto-generated surrogate keys are handled differently across dialects.
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+CREATE TABLE Orders (
+    OrderId   INT           AUTO_INCREMENT PRIMARY KEY,
+    OrderDate DATE          NOT NULL,
+    CustomerId INT          NOT NULL
+);
+
+INSERT INTO Orders (OrderDate, CustomerId) VALUES ('2026-04-06', 42);
+-- OrderId is assigned automatically: 1, 2, 3, …
+```
+
+## PostgreSQL
+
+```sql
+-- Option 1: SERIAL shorthand (implicit sequence)
+CREATE TABLE Orders (
+    OrderId   SERIAL        PRIMARY KEY,
+    OrderDate DATE          NOT NULL,
+    CustomerId INT          NOT NULL
+);
+
+-- Option 2: SQL:2003 IDENTITY (preferred in PG 10+)
+CREATE TABLE Orders (
+    OrderId   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    OrderDate DATE NOT NULL,
+    CustomerId INT NOT NULL
+);
+```
+
+## Oracle
+
+```sql
+-- Option 1: Sequence + trigger (classic Oracle)
+CREATE SEQUENCE orders_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE Orders (
+    OrderId    NUMBER       PRIMARY KEY,
+    OrderDate  DATE         NOT NULL,
+    CustomerId NUMBER       NOT NULL
+);
+
+CREATE OR REPLACE TRIGGER orders_bir
+    BEFORE INSERT ON Orders FOR EACH ROW
+BEGIN
+    :NEW.OrderId := orders_seq.NEXTVAL;
+END;
+
+-- Option 2: IDENTITY column (Oracle 12c+, simpler)
+CREATE TABLE Orders (
+    OrderId    NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    OrderDate  DATE          NOT NULL,
+    CustomerId NUMBER        NOT NULL
+);
+```
+
+:::
+
+### 7.3.4 ALTER TABLE
+
+```sql
+-- Add a column
+ALTER TABLE Employee ADD COLUMN Email VARCHAR(100);         -- MySQL/PG
+ALTER TABLE Employee ADD Email VARCHAR2(100);               -- Oracle
+
+-- Drop a column
+ALTER TABLE Employee DROP COLUMN Email;                     -- MySQL/PG
+ALTER TABLE Employee DROP COLUMN Email;                     -- Oracle
+
+-- Add a constraint
+ALTER TABLE Employee ADD CONSTRAINT chk_salary CHECK (Salary > 0);
+
+-- Drop a constraint
+ALTER TABLE Employee DROP CONSTRAINT chk_salary;
+
+-- Rename a column (MySQL 8+ / PG / Oracle)
+ALTER TABLE Employee RENAME COLUMN Fname TO FirstName;      -- PG / Oracle
+ALTER TABLE Employee CHANGE Fname FirstName VARCHAR(15);    -- MySQL
+```
+
+### 7.3.5 DROP and TRUNCATE
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- Remove table completely (structure + data)
+DROP TABLE IF EXISTS Employee;
+
+-- Remove all rows; reset AUTO_INCREMENT; keep structure
+TRUNCATE TABLE Employee;
+
+-- Drop multiple tables (respect FK order or disable checks temporarily)
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE Works_On, Dependent, Employee, Department, Project, Dept_Locations;
+SET FOREIGN_KEY_CHECKS = 1;
+```
+
+## PostgreSQL
+
+```sql
+DROP TABLE IF EXISTS Employee;
+
+-- CASCADE also drops dependent views and FK constraints
+DROP TABLE Employee CASCADE;
+
+TRUNCATE TABLE Employee RESTART IDENTITY CASCADE;
+```
+
+## Oracle
+
+```sql
+DROP TABLE Employee;
+
+-- PURGE skips the recycle bin (immediate permanent deletion)
+DROP TABLE Employee PURGE;
+
+TRUNCATE TABLE Employee;
+```
+
+:::
+
+| Feature | `DELETE` | `TRUNCATE` |
+|---------|---------|-----------|
+| Removes rows | ✓ | ✓ |
+| WHERE clause | ✓ | ✗ |
+| Fires row-level triggers | ✓ | ✗ (varies) |
+| Can be rolled back | ✓ | Depends on DBMS |
+| Resets identity/auto-incr | ✗ | ✓ (with option) |
+| Performance | Slower — logged per row | Faster — deallocates pages |
+
+---
+
+## 7.4 DML — Manipulating Data
+
+### 7.4.1 INSERT
+
+```sql
+-- Single row
+INSERT INTO Department (Dnumber, Dname, Mgr_ssn)
+VALUES (5, 'Research', '333445555');
+
+-- Multiple rows (MySQL / PostgreSQL)
+INSERT INTO Employee (Ssn, Fname, Lname, Salary, Dno) VALUES
+    ('123456789', 'John',  'Smith', 30000, 5),
+    ('333445555', 'Frank', 'Wong',  40000, 5),
+    ('999887777', 'Alicia','Zelaya',25000, 4);
+
+-- Insert from SELECT
+INSERT INTO Department_Backup
+SELECT * FROM Department WHERE Dnumber IN (1, 4, 5);
+
+-- Oracle — multi-row INSERT syntax differs
+INSERT ALL
+    INTO Employee (Ssn, Fname, Lname, Salary, Dno) VALUES ('123456789','John','Smith',30000,5)
+    INTO Employee (Ssn, Fname, Lname, Salary, Dno) VALUES ('333445555','Frank','Wong',40000,5)
+SELECT 1 FROM DUAL;
+```
+
+### 7.4.2 UPDATE
+
+```sql
+-- 10 % raise for all Research department employees
+UPDATE Employee
+SET    Salary = Salary * 1.10
+WHERE  Dno = (SELECT Dnumber FROM Department WHERE Dname = 'Research');
+
+-- Update multiple columns at once
+UPDATE Employee
+SET    Address = '731 Fondren, Houston TX',
+       Salary  = 43000
+WHERE  Ssn = '123456789';
+```
+
+### 7.4.3 DELETE
+
+```sql
+-- Remove a specific employee
+DELETE FROM Employee
+WHERE  Ssn = '123456789';
+
+-- Remove all employees in a department (check FK constraints first)
+DELETE FROM Employee
+WHERE  Dno = (SELECT Dnumber FROM Department WHERE Dname = 'Headquarters');
+```
+
+---
+
+## 7.5 SELECT — Querying Data
+
+### 7.5.1 Logical Evaluation Order
+
+SQL is *written* in SELECT–FROM–WHERE order but *evaluated* in a different order:
+
+```
+① FROM / JOIN   — identify source rows (and join)
+② WHERE         — filter rows before grouping
+③ GROUP BY      — group remaining rows
+④ HAVING        — filter groups
+⑤ SELECT        — compute output columns and aliases
+⑥ DISTINCT      — eliminate duplicates
+⑦ ORDER BY      — sort (can reference SELECT aliases)
+⑧ LIMIT / FETCH — restrict output count
+```
+
+::: callout-important
+## Why You Cannot Use a SELECT Alias in WHERE
+
+`WHERE` is evaluated before `SELECT`, so any column alias defined in `SELECT` does not yet exist when `WHERE` runs.
+This is a frequent beginner mistake:
+
+```sql
+-- WRONG — alias 'annual' does not exist in WHERE
+SELECT Salary * 12 AS annual FROM Employee WHERE annual > 600000;
+
+-- CORRECT — repeat the expression
+SELECT Salary * 12 AS annual FROM Employee WHERE Salary * 12 > 600000;
+-- OR use a subquery / CTE (Chapter 8)
+```
+:::
+
+### 7.5.2 Basic SELECT
+
+```sql
+-- All columns
+SELECT * FROM Employee;
+
+-- Specific columns
+SELECT Fname, Lname, Salary FROM Employee;
+
+-- Column alias + expression
+SELECT Fname AS "First", Lname AS "Last",
+       Salary * 12 AS AnnualSalary
+FROM Employee;
+
+-- Eliminate duplicates
+SELECT DISTINCT Dno FROM Employee;
+
+-- Literal expression (no table needed in MySQL/PG)
+SELECT 1 + 1;                       -- MySQL / PostgreSQL
+SELECT 1 + 1 FROM DUAL;             -- Oracle requires FROM DUAL for scalar queries
+```
+
+### 7.5.3 WHERE — Filtering Rows
+
+| Operator | Example | Notes |
+|---------|---------|-------|
+| Comparison | `Salary > 50000` | `=`, `<>`, `!=`, `<`, `<=`, `>`, `>=` |
+| `BETWEEN … AND` | `Salary BETWEEN 40000 AND 60000` | Inclusive on both ends |
+| `IN (…)` | `Dno IN (1, 4, 5)` | Membership test |
+| `LIKE` | `Lname LIKE 'S%'` | `%` = any chars; `_` = one char |
+| `IS NULL` | `Super_ssn IS NULL` | Never use `= NULL` |
+| `AND`, `OR`, `NOT` | `Dno = 5 AND Salary > 40000` | AND binds tighter than OR |
+
+```sql
+-- Find all female employees with salary above 30 000 in dept 4 or 5
+SELECT Fname, Lname, Salary
+FROM   Employee
+WHERE  Gender = 'F'
+  AND  Salary > 30000
+  AND  Dno IN (4, 5);
+
+-- Find employees whose last name contains 'a' as second character
+SELECT Fname, Lname FROM Employee WHERE Lname LIKE '_a%';
+
+-- Find employees with no supervisor (top-level)
+SELECT Fname, Lname FROM Employee WHERE Super_ssn IS NULL;
+```
+
+### 7.5.4 ORDER BY
+
+```sql
+-- Sort by salary descending, then last name ascending (tie-breaker)
+SELECT Fname, Lname, Salary
+FROM   Employee
+ORDER  BY Salary DESC, Lname ASC;
+```
+
+### 7.5.5 Limiting Rows / Pagination
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- Top 5 highest-paid employees
+SELECT Fname, Lname, Salary
+FROM   Employee
+ORDER  BY Salary DESC
+LIMIT  5;
+
+-- Pagination: skip first 10 rows, return next 5 (0-based offset)
+SELECT Fname, Lname, Salary
+FROM   Employee
+ORDER  BY Salary DESC
+LIMIT  5 OFFSET 10;
+```
+
+## PostgreSQL
+
+```sql
+-- Top 5 highest-paid employees
+SELECT Fname, Lname, Salary
+FROM   Employee
+ORDER  BY Salary DESC
+LIMIT  5;
+
+-- Pagination
+SELECT Fname, Lname, Salary
+FROM   Employee
+ORDER  BY Salary DESC
+LIMIT  5 OFFSET 10;
+
+-- SQL standard syntax also works in PG
+SELECT Fname, Lname, Salary
+FROM   Employee
+ORDER  BY Salary DESC
+FETCH FIRST 5 ROWS ONLY;
+```
+
+## Oracle
+
+```sql
+-- Oracle 12c+ — SQL standard FETCH FIRST
+SELECT Fname, Lname, Salary
+FROM   Employee
+ORDER  BY Salary DESC
+FETCH FIRST 5 ROWS ONLY;
+
+-- Pagination with OFFSET
+SELECT Fname, Lname, Salary
+FROM   Employee
+ORDER  BY Salary DESC
+OFFSET 10 ROWS FETCH NEXT 5 ROWS ONLY;
+
+-- Classic Oracle (pre-12c) — ROWNUM subquery pattern
+SELECT * FROM (
+    SELECT Fname, Lname, Salary,
+           ROWNUM rn
+    FROM   (SELECT Fname, Lname, Salary FROM Employee ORDER BY Salary DESC)
+    WHERE  ROWNUM <= 15
+)
+WHERE rn > 10;
+```
+
+:::
+
+---
+
+## 7.6 Aggregate Functions
+
+Aggregate functions collapse a set of rows into a single value.
+
+| Function | Description | Ignores NULLs? |
+|---------|-------------|---------------|
+| `COUNT(*)` | Total number of rows | No |
+| `COUNT(col)` | Non-NULL values in a column | Yes |
+| `COUNT(DISTINCT col)` | Distinct non-NULL values | Yes |
+| `SUM(col)` | Sum of values | Yes |
+| `AVG(col)` | Mean of values | Yes |
+| `MIN(col)` | Minimum value | Yes |
+| `MAX(col)` | Maximum value | Yes |
+
+::: callout-tip
+`AVG(Salary)` divides the **sum of non-NULL salaries** by the **count of non-NULL rows**, not by total rows.
+If some employees have a NULL salary, `AVG` quietly excludes them — use `COUNT(*) vs COUNT(Salary)` to detect this.
+:::
+
+### 7.6.1 GROUP BY and HAVING
+
+```sql
+-- Number of employees and average salary per department
+SELECT   Dno,
+         COUNT(*)         AS Headcount,
+         ROUND(AVG(Salary), 2) AS AvgSalary,
+         MAX(Salary)      AS MaxSalary
+FROM     Employee
+GROUP BY Dno
+ORDER BY AvgSalary DESC;
+```
+
+**Result** (using Company DB values):
+
+| Dno | Headcount | AvgSalary | MaxSalary |
+|-----|----------|----------|----------|
+| 5 | 4 | 33 250 | 40 000 |
+| 4 | 3 | 31 000 | 43 000 |
+| 1 | 1 | 55 000 | 55 000 |
+
+```sql
+-- HAVING — filter on groups, not individual rows
+-- Find departments where average salary exceeds 32 000
+SELECT   Dno, AVG(Salary) AS AvgSalary
+FROM     Employee
+GROUP BY Dno
+HAVING   AVG(Salary) > 32000;
+```
+
+::: callout-important
+## WHERE vs HAVING
+
+| | WHERE | HAVING |
+|--|-------|--------|
+| Filters | Individual rows | Entire groups |
+| Evaluated | Before GROUP BY | After GROUP BY |
+| Can reference | Column values | Aggregate results |
+| Example | `WHERE Salary > 30000` | `HAVING COUNT(*) > 2` |
+
+You can use both in the same query:
+```sql
+SELECT Dno, COUNT(*) AS n
+FROM   Employee
+WHERE  Gender = 'F'        -- first filter rows (only female)
+GROUP  BY Dno
+HAVING COUNT(*) >= 2;   -- then filter groups (≥ 2 female employees)
+```
+:::
+
+---
+
+## 7.7 Joins
+
+A join combines rows from two or more tables based on a related column.
+All examples use the Company DB.
+
+### 7.7.1 CROSS JOIN (Cartesian Product)
+
+```sql
+SELECT E.Fname, D.Dname
+FROM   Employee E CROSS JOIN Department D;
+-- Produces |Employee| × |Department| rows — every employee ↔ every dept
+-- Useful only for generating test data or combinatorial problems
+```
+
+### 7.7.2 INNER JOIN
+
+Returns only rows where the join condition is satisfied in **both** tables.
+
+```sql
+-- Algebra: Employee ⋈_{Dno=Dnumber} Department
+
+-- Implicit syntax (old-style — avoid in new code)
+SELECT E.Fname, E.Lname, D.Dname
+FROM   Employee E, Department D
+WHERE  E.Dno = D.Dnumber;
+
+-- Explicit syntax (preferred)
+SELECT E.Fname, E.Lname, D.Dname
+FROM   Employee E
+       INNER JOIN Department D ON E.Dno = D.Dnumber;
+```
+
+Multi-table join — all three levels of the Company DB:
+
+```sql
+SELECT E.Fname, E.Lname, P.Pname, WO.Hours
+FROM   Employee   E
+       INNER JOIN Works_On   WO ON E.Ssn     = WO.Essn
+       INNER JOIN Project    P  ON WO.Pno    = P.Pnumber
+       INNER JOIN Department D  ON P.Dnum    = D.Dnumber
+WHERE  D.Dname = 'Research'
+ORDER  BY E.Lname, P.Pname;
+```
+
+### 7.7.3 OUTER JOINs
+
+An outer join preserves rows from one (or both) sides that have **no match**.
+
+```
+LEFT OUTER JOIN         — keep all rows from LEFT table
+RIGHT OUTER JOIN        — keep all rows from RIGHT table
+FULL OUTER JOIN         — keep unmatched rows from BOTH tables
+```
+
+```sql
+-- LEFT JOIN: list every employee and their supervisor's name (NULL if no supervisor)
+SELECT E.Fname  AS Emp,
+       S.Fname  AS Supervisor
+FROM   Employee E
+       LEFT JOIN Employee S ON E.Super_ssn = S.Ssn;
+
+-- RIGHT JOIN: list every department and its manager (NULL if no manager yet)
+SELECT D.Dname, E.Fname, E.Lname
+FROM   Employee E
+       RIGHT JOIN Department D ON E.Ssn = D.Mgr_ssn;
+```
+
+**FULL OUTER JOIN** — employees without a department AND departments without any employee:
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- MySQL has NO native FULL OUTER JOIN — emulate with UNION:
+SELECT E.Fname, E.Lname, D.Dname
+FROM   Employee E LEFT  JOIN Department D ON E.Dno = D.Dnumber
+UNION
+SELECT E.Fname, E.Lname, D.Dname
+FROM   Employee E RIGHT JOIN Department D ON E.Dno = D.Dnumber;
+-- UNION removes duplicates; use UNION ALL if you want to keep them
+```
+
+## PostgreSQL
+
+```sql
+SELECT E.Fname, E.Lname, D.Dname
+FROM   Employee E
+       FULL OUTER JOIN Department D ON E.Dno = D.Dnumber;
+```
+
+## Oracle
+
+```sql
+SELECT E.Fname, E.Lname, D.Dname
+FROM   Employee E
+       FULL OUTER JOIN Department D ON E.Dno = D.Dnumber;
+-- Oracle supports FULL OUTER JOIN natively since version 9i
+```
+
+:::
+
+### 7.7.4 SELF JOIN
+
+A table joined to itself using different aliases — useful for hierarchical data.
+
+```sql
+-- Find each employee and their direct supervisor
+SELECT E.Fname  || ' ' || E.Lname  AS Employee,
+       S.Fname  || ' ' || S.Lname  AS Supervisor
+FROM   Employee E
+       LEFT JOIN Employee S ON E.Super_ssn = S.Ssn
+ORDER  BY Supervisor, Employee;
+```
+
+::: callout-tip
+String concatenation syntax varies:
+
+| Dialect | Operator | Example |
+|---------|---------|---------|
+| MySQL | `CONCAT()` | `CONCAT(Fname, ' ', Lname)` |
+| PostgreSQL | `||` | `Fname \|\| ' ' \|\| Lname` |
+| Oracle | `||` | `Fname \|\| ' ' \|\| Lname` |
+
+MySQL also supports `||` when `PIPES_AS_CONCAT` SQL mode is enabled.
+:::
+
+### 7.7.5 Join Type Visual Summary
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart LR
+    subgraph INNER["INNER JOIN"]
+      direction LR
+      A1(( )) --- I1(( )) --- B1(( ))
+    end
+    subgraph LEFT["LEFT JOIN"]
+      direction LR
+      A2(( )) === I2(( )) --- B2(( ))
+    end
+    subgraph RIGHT["RIGHT JOIN"]
+      direction LR
+      A3(( )) --- I3(( )) === B3(( ))
+    end
+    subgraph FULL["FULL OUTER JOIN"]
+      direction LR
+      A4(( )) === I4(( )) === B4(( ))
+    end
+```
+
+*Bold (===) edges indicate rows that appear in the result even when the other side has no match.*
+
+---
+
+## 7.8 Subqueries
+
+A **subquery** (nested query) is a `SELECT` statement inside another SQL statement.
+
+### 7.8.1 Scalar Subquery
+
+Returns exactly one row and one column; can be used wherever a single value is expected.
+
+```sql
+-- Employees earning more than the company average salary
+SELECT Fname, Lname, Salary
+FROM   Employee
+WHERE  Salary > (SELECT AVG(Salary) FROM Employee);
+```
+
+### 7.8.2 Row / Table Subquery in WHERE
+
+```sql
+-- Employees who work in the same department as 'John Smith'
+SELECT Fname, Lname
+FROM   Employee
+WHERE  Dno = (SELECT Dno FROM Employee WHERE Fname = 'John' AND Lname = 'Smith');
+
+-- Employees in departments located in 'Houston'
+SELECT Fname, Lname
+FROM   Employee
+WHERE  Dno IN (SELECT Dnumber FROM Department
+               WHERE  Dnumber IN (SELECT Dnumber FROM Dept_Locations
+                                  WHERE  Dlocation = 'Houston'));
+```
+
+### 7.8.3 Correlated Subquery
+
+A subquery that references a column from the outer query — re-evaluated once per outer row.
+
+```sql
+-- For each employee, show their salary relative to their own department's average
+SELECT E.Fname, E.Lname, E.Salary,
+       (SELECT AVG(E2.Salary)
+        FROM   Employee E2
+        WHERE  E2.Dno = E.Dno) AS DeptAvg,
+       E.Salary - (SELECT AVG(E2.Salary)
+                   FROM   Employee E2
+                   WHERE  E2.Dno = E.Dno) AS VsAvg
+FROM   Employee E
+ORDER  BY E.Dno, VsAvg DESC;
+```
+
+::: callout-note
+Correlated subqueries are conceptually clear but can be slow on large tables because the inner query runs once per outer row.
+Chapter 8 introduces **Common Table Expressions (CTEs)** and **window functions** — more efficient alternatives for the pattern above.
+:::
+
+### 7.8.4 EXISTS and NOT EXISTS
+
+`EXISTS(subquery)` is `TRUE` if the subquery returns **at least one row**.
+It is typically faster than `IN` when the subquery result set is large, because it short-circuits at the first match.
+
+```sql
+-- Employees who are supervising at least one other employee
+SELECT DISTINCT S.Fname, S.Lname
+FROM   Employee S
+WHERE  EXISTS (SELECT 1 FROM Employee E WHERE E.Super_ssn = S.Ssn);
+
+-- Employees who have NO dependents registered
+SELECT E.Fname, E.Lname
+FROM   Employee E
+WHERE  NOT EXISTS (SELECT 1 FROM Dependent D WHERE D.Essn = E.Ssn);
+
+-- Projects that have at least one worker logging > 20 hours
+SELECT P.Pname
+FROM   Project P
+WHERE  EXISTS (SELECT 1 FROM Works_On W
+               WHERE  W.Pno = P.Pnumber AND W.Hours > 20);
+```
+
+### 7.8.5 Set Operators: UNION, INTERSECT, EXCEPT
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+-- UNION: employees in dept 5 OR who supervise someone
+SELECT Ssn, Fname, Lname FROM Employee WHERE Dno = 5
+UNION
+SELECT DISTINCT S.Ssn, S.Fname, S.Lname
+FROM   Employee S INNER JOIN Employee E ON E.Super_ssn = S.Ssn;
+
+-- MySQL 8.0.31+ supports INTERSECT and EXCEPT:
+SELECT Ssn FROM Employee WHERE Dno = 5
+INTERSECT
+SELECT Essn FROM Works_On WHERE Pno = 1;
+```
+
+## PostgreSQL
+
+```sql
+-- UNION ALL (keep duplicates), UNION (remove duplicates)
+SELECT Ssn FROM Employee WHERE Dno = 5
+UNION ALL
+SELECT Essn FROM Works_On WHERE Pno = 1;
+
+-- INTERSECT: SSNs of dept 5 employees also working on Project 1
+SELECT Ssn FROM Employee WHERE Dno = 5
+INTERSECT
+SELECT Essn FROM Works_On WHERE Pno = 1;
+
+-- EXCEPT: dept 5 employees NOT working on Project 1
+SELECT Ssn FROM Employee WHERE Dno = 5
+EXCEPT
+SELECT Essn FROM Works_On WHERE Pno = 1;
+```
+
+## Oracle
+
+```sql
+-- Oracle uses MINUS instead of EXCEPT
+SELECT Ssn FROM Employee WHERE Dno = 5
+MINUS
+SELECT Essn FROM Works_On WHERE Pno = 1;
+
+-- INTERSECT works the same
+SELECT Ssn FROM Employee WHERE Dno = 5
+INTERSECT
+SELECT Essn FROM Works_On WHERE Pno = 1;
+```
+
+:::
+
+::: callout-important
+## Set Operator Compatibility Rules
+
+1. Both queries must return the **same number of columns**.
+2. Corresponding columns must have **compatible data types**.
+3. The result column **names and order come from the first query**.
+4. `UNION` (without ALL) eliminates duplicate rows — equivalent to $R \cup S$ in algebra.
+5. `UNION ALL` keeps all duplicates (faster — no dedup step).
+:::
+
+---
+
+## 7.9 Interactive: Join Type Explorer
+
+```{ojs}
+//| echo: false
+//| label: fig-join-explorer
+//| fig-cap: "Explore how different JOIN types affect the result set size."
+
+// Sliders
+viewof leftSize  = Inputs.range([1, 20], {value: 8,  step: 1, label: "Left table rows"})
+viewof rightSize = Inputs.range([1, 20], {value: 6,  step: 1, label: "Right table rows"})
+viewof matchPct  = Inputs.range([0, 100], {value: 50, step: 5, label: "% rows with a match"})
+viewof joinType  = Inputs.select(
+  ["INNER JOIN", "LEFT OUTER JOIN", "RIGHT OUTER JOIN", "FULL OUTER JOIN", "CROSS JOIN"],
+  {value: "INNER JOIN", label: "Join type"}
+)
+
+// Compute result sizes
+{
+  const matched  = Math.round(Math.min(leftSize, rightSize) * matchPct / 100);
+  const leftOnly = leftSize  - matched;
+  const rightOnly= rightSize - matched;
+
+  let resultRows;
+  if      (joinType === "INNER JOIN")       resultRows = matched;
+  else if (joinType === "LEFT OUTER JOIN")  resultRows = matched + leftOnly;
+  else if (joinType === "RIGHT OUTER JOIN") resultRows = matched + rightOnly;
+  else if (joinType === "FULL OUTER JOIN")  resultRows = matched + leftOnly + rightOnly;
+  else                                      resultRows = leftSize * rightSize;  // CROSS
+
+  const breakdown = joinType === "CROSS JOIN"
+    ? `${leftSize} × ${rightSize} = ${resultRows}`
+    : `Matched: ${matched}  |  Left-only: ${leftOnly}  |  Right-only: ${rightOnly}`;
+
+  return htl.html`
+    <div style="font-family:monospace; background:#f4f4f4; padding:1rem; border-radius:8px;">
+      <b>${joinType}</b><br/>
+      Left table: <b>${leftSize}</b> rows &nbsp;|&nbsp;
+      Right table: <b>${rightSize}</b> rows &nbsp;|&nbsp;
+      Match rate: <b>${matchPct}%</b><br/>
+      ${breakdown}<br/><br/>
+      <b style="font-size:1.4em;">Result set: ${resultRows} rows</b>
+    </div>`;
+}
+```
+
+---
+
+## 7.10 Chapter Summary
+
+::: callout-important
+## Key Takeaways — Chapter 7
+
+1. **SQL is declarative**; the optimizer maps it to a relational algebra expression tree.
+   The logical evaluation order (FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT)
+   explains why `SELECT` aliases cannot appear in `WHERE`.
+
+2. **DDL**: `CREATE TABLE` with six constraint types (PK, FK, NOT NULL, UNIQUE, CHECK, DEFAULT);
+   `ALTER TABLE`; `DROP TABLE`; `TRUNCATE`.
+   Auto-increment syntax differs: `AUTO_INCREMENT` (MySQL), `SERIAL`/`IDENTITY` (PostgreSQL), `SEQUENCE` (Oracle).
+
+3. **DML**: `INSERT` (single/multi-row/from-SELECT), `UPDATE` (with WHERE and subquery), `DELETE`.
+   Prefer `DELETE` when you need filtering or rollback; prefer `TRUNCATE` for wiping entire tables.
+
+4. **SELECT pipeline**: filter with WHERE, group with GROUP BY, filter groups with HAVING,
+   sort with ORDER BY, paginate with LIMIT/FETCH FIRST/ROWNUM.
+
+5. **Aggregate functions** (`COUNT`, `SUM`, `AVG`, `MIN`, `MAX`) ignore NULLs except `COUNT(*)`.
+
+6. **Joins**: INNER removes non-matching rows; LEFT/RIGHT/FULL OUTER preserve unmatched rows;
+   SELF JOIN handles hierarchies; CROSS JOIN produces the Cartesian product.
+   MySQL lacks native `FULL OUTER JOIN` — emulate with `LEFT JOIN UNION RIGHT JOIN`.
+
+7. **Subqueries**: scalar (one value), correlated (per outer row), `EXISTS`/`NOT EXISTS`
+   (short-circuit, often faster than `IN` for large sets).
+
+8. **Set operators**: `UNION`/`INTERSECT`/`EXCEPT` (Oracle: `MINUS`) — require column-count and type compatibility.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Why does SQL evaluate `FROM` before `SELECT`? Give one practical consequence of this evaluation order.
+2. Explain the difference between `DELETE`, `TRUNCATE`, and `DROP`.
+   Which ones can be rolled back? Which ones fire triggers?
+3. What is referential integrity, and how do `ON DELETE CASCADE` and `ON DELETE SET NULL` differ?
+   Give a concrete example for each using the Employee–Department scenario.
+
+### Applied
+
+4. Write SQL to create the `Works_On(Essn CHAR(9), Pno INT, Hours DECIMAL(5,2))` table with:
+   - A composite primary key on `(Essn, Pno)`
+   - `Essn` as a foreign key referencing `Employee(Ssn)`
+   - `Pno` as a foreign key referencing `Project(Pnumber)`
+   - `Hours` as NOT NULL with a CHECK that `Hours >= 0`
+
+5. Using the Company DB, write a single SQL query to list the **full name** and **total hours worked**
+   for every employee who has ever worked on a project in the Research department.
+   Include only employees whose total hours exceed 30.
+
+6. Write a query that returns each project name along with the number of distinct employees
+   working on it. Include projects with **zero workers** (use an appropriate outer join).
+
+### Analysis
+
+7. Predict the output of the following query:
+   ```sql
+   SELECT COUNT(*), COUNT(Super_ssn), COUNT(DISTINCT Dno)
+   FROM Employee;
+   ```
+   Given that the Company DB has 8 employees, 1 has no supervisor, and they span 3 departments.
+
+8. A trainee writes:
+   ```sql
+   SELECT Dno, AVG(Salary) AS AvgSal
+   FROM Employee
+   WHERE AvgSal > 35000
+   GROUP BY Dno;
+   ```
+   Identify the error and write the corrected query.
+
+### Dialect Awareness
+
+9. A query written for PostgreSQL uses `EXCEPT` to find SSNs in one table but not another.
+   Rewrite it for Oracle, and note any limitations of MySQL 8.0.30 with `EXCEPT`.
+
+10. Your production database is Oracle 11g (pre-12c). You need a surrogate key on a `Customer` table.
+    Write the complete DDL including the sequence, the table, and the trigger.
+
+### Design
+
+11. The `Employee` table has `Salary DECIMAL(10,2)`. A business rule states that no employee
+    may earn less than 20 000 or more than 500 000. Where should this constraint be enforced —
+    as a `CHECK` constraint, in the application layer, or both? Justify your answer.
+
+### Synthesis
+
+12. Using `INNER JOIN`, `LEFT JOIN`, and `NOT EXISTS`, write **three different** SQL queries
+    that all return: *employees who have no dependents registered in the Dependent table*.
+    Which approach do you consider most readable? Which is likely most efficient, and why?
+

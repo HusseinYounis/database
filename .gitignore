@@ -1,0 +1,11 @@
+/.quarto/
+/_book/
+*_files/
+*.rdb
+*.rdx
+.Rproj.user
+.Rhistory
+.RData
+__pycache__/
+*.py[cod]
+.DS_Store

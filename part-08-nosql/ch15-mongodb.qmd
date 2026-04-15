@@ -1,0 +1,618 @@
+---
+title: "MongoDB — Document Databases"
+subtitle: "Chapter 15"
+---
+
+## §15.0 From Concepts to Queries
+
+Chapter 14 introduced the four NoSQL data models and positioned document stores as the right choice
+for flexible-schema, nested-data workloads.
+This chapter drills into **MongoDB** — the world's most popular document database — covering the full
+lifecycle: document structure, CRUD operations, the aggregation pipeline, indexing, schema design
+patterns, and multi-document ACID transactions.
+
+## 15.1 MongoDB Architecture
+
+### Core Concepts
+
+| MongoDB Term | Description | RDBMS Equivalent |
+|-------------|------------|-----------------|
+| **Database** | Container for collections | Database |
+| **Collection** | Group of documents | Table |
+| **Document** | JSON-like record | Row |
+| **Field** | Key-value pair in a document | Column |
+| **`_id`** | Auto-generated unique identifier | Primary Key |
+| **Index** | B-tree or other structure on a field | Index |
+| **Aggregation Pipeline** | Multi-stage data transformation | JOINs + GROUP BY + HAVING |
+
+### BSON — Binary JSON
+
+MongoDB stores documents in **BSON** (Binary JSON):
+- Extends JSON with additional types: `ObjectId`, `Date`, `BinData`, `NumberDecimal`, `NumberLong`, `Timestamp`
+- Efficient for encoding/decoding; supports rich type system
+
+```json
+{
+  "_id":       { "$oid": "507f191e810c19729de860ea" },
+  "name":      "Ahmad Hassan",
+  "age":       28,
+  "gpa":       3.75,
+  "enrolled":  { "$date": "2024-09-01T00:00:00Z" },
+  "courses":   ["DB Systems", "Networks", "OS"],
+  "address": {
+    "city":    "Alexandria",
+    "country": "Egypt"
+  }
+}
+```
+
+## 15.2 Getting Started with MongoDB Shell
+
+```javascript
+// Show all databases
+show dbs
+
+// Switch to (or create) a database
+use university_db
+
+// Show all collections
+show collections
+
+// Check current database
+db.getName()
+```
+
+## 15.3 CRUD Operations
+
+### Create — Inserting Documents
+
+```javascript
+// Insert one document
+db.students.insertOne({
+  name: "Sara Ali",
+  age: 21,
+  major: "Computer Engineering",
+  gpa: 3.8,
+  courses: ["Databases", "Algorithms"],
+  address: { city: "Cairo", country: "Egypt" }
+})
+
+// Insert many documents
+db.students.insertMany([
+  { name: "Omar Hassan", age: 22, major: "CS",   gpa: 3.5 },
+  { name: "Layla Ahmed", age: 20, major: "IT",   gpa: 3.9 },
+  { name: "Khaled Nour", age: 23, major: "CE",   gpa: 2.7 }
+])
+```
+
+### Read — Querying Documents
+
+```javascript
+// Find all documents in collection
+db.students.find()
+
+// Find with a filter (equality)
+db.students.find({ major: "Computer Engineering" })
+
+// Find with multiple conditions (implicit AND)
+db.students.find({ major: "CS", gpa: { $gt: 3.5 } })
+
+// Projection: include only name and gpa fields (1=include, 0=exclude)
+db.students.find(
+  { major: "CS" },
+  { name: 1, gpa: 1, _id: 0 }
+)
+
+// Find one document
+db.students.findOne({ name: "Sara Ali" })
+
+// Count matching documents
+db.students.countDocuments({ gpa: { $gte: 3.5 } })
+```
+
+### Comparison Query Operators
+
+| Operator | Meaning | SQL Equivalent |
+|----------|---------|---------------|
+| `$eq` | Equal to | `= value` |
+| `$ne` | Not equal | `<> value` |
+| `$gt` | Greater than | `> value` |
+| `$gte` | Greater or equal | `>= value` |
+| `$lt` | Less than | `< value` |
+| `$lte` | Less or equal | `<= value` |
+| `$in` | In a list | `IN (a, b, c)` |
+| `$nin` | Not in a list | `NOT IN (a, b, c)` |
+
+### Logical Query Operators
+
+```javascript
+// OR: find CS or CE students
+db.students.find({
+  $or: [ { major: "CS" }, { major: "CE" } ]
+})
+
+// AND (explicit — use when same field needs multiple tests)
+db.students.find({
+  $and: [
+    { gpa: { $gte: 3.0 } },
+    { gpa: { $lt: 3.5 } }
+  ]
+})
+
+// NOT
+db.students.find({ gpa: { $not: { $lt: 3.0 } } })
+```
+
+### Querying Arrays and Nested Documents
+
+```javascript
+// Array contains a value
+db.students.find({ courses: "Databases" })
+
+// All elements in array match (exact match with $all)
+db.students.find({ courses: { $all: ["Databases", "Algorithms"] } })
+
+// Array size
+db.students.find({ courses: { $size: 2 } })
+
+// Nested document field (dot notation)
+db.students.find({ "address.city": "Cairo" })
+```
+
+### Update — Modifying Documents
+
+```javascript
+// Update one document
+db.students.updateOne(
+  { name: "Sara Ali" },                       // filter
+  { $set: { gpa: 3.9, year: 3 } }            // update operator
+)
+
+// Update many documents
+db.students.updateMany(
+  { major: "CS" },
+  { $inc: { age: 0 } }        // $inc increments a field
+)
+
+// Common update operators
+// $set    — set a field to a value
+// $unset  — remove a field
+// $inc    — increment a numeric field
+// $push   — append to an array
+// $pull   — remove from an array
+// $addToSet — add to array only if not present
+
+// Add a course to a student's courses array
+db.students.updateOne(
+  { name: "Sara Ali" },
+  { $push: { courses: "Distributed Systems" } }
+)
+
+// Replace entire document (use with caution)
+db.students.replaceOne(
+  { name: "Sara Ali" },
+  { name: "Sara Ali Mohamed", age: 21, major: "CE", gpa: 3.9 }
+)
+
+// Upsert: update if exists, insert if not
+db.students.updateOne(
+  { name: "New Student" },
+  { $set: { gpa: 3.0 } },
+  { upsert: true }
+)
+```
+
+### Delete — Removing Documents
+
+```javascript
+// Delete one document
+db.students.deleteOne({ name: "Khaled Nour" })
+
+// Delete many documents
+db.students.deleteMany({ gpa: { $lt: 2.0 } })
+
+// Delete all documents in a collection (keep the collection)
+db.students.deleteMany({})
+
+// Drop the entire collection
+db.students.drop()
+```
+
+## 15.4 Aggregation Pipeline
+
+The **aggregation pipeline** is MongoDB's most powerful feature — a sequence of **stages** that transform documents, similar to a Unix pipe:
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart LR
+    COL["Collection<br/>documents"]
+    M["$match<br/>filter rows"]
+    P["$project<br/>reshape fields"]
+    G["$group<br/>aggregate"]
+    S["$sort<br/>order"]
+    L["$limit<br/>top N"]
+    OUT["Result<br/>documents"]
+    COL --> M --> P --> G --> S --> L --> OUT
+```
+
+Each stage receives the output of the previous stage; stages can be reordered, repeated, or omitted.
+
+### Common Pipeline Stages
+
+| Stage | Purpose | SQL Equivalent |
+|-------|---------|---------------|
+| `$match` | Filter documents | `WHERE` |
+| `$project` | Select / reshape fields | `SELECT` |
+| `$group` | Group + aggregate | `GROUP BY` + aggregates |
+| `$sort` | Sort results | `ORDER BY` |
+| `$limit` | Limit result count | `LIMIT` |
+| `$skip` | Skip N documents | `OFFSET` |
+| `$lookup` | Join with another collection | `JOIN` |
+| `$unwind` | Deconstruct an array field | Normalize 1→N |
+| `$addFields` | Add computed fields | Computed columns |
+| `$count` | Count documents in this stage | `COUNT(*)` |
+
+### Aggregation Examples
+
+```javascript
+// Average GPA per major (GROUP BY equivalent)
+db.students.aggregate([
+  {
+    $group: {
+      _id: "$major",
+      avg_gpa:  { $avg: "$gpa" },
+      count:    { $sum: 1 },
+      max_gpa:  { $max: "$gpa" }
+    }
+  },
+  { $sort: { avg_gpa: -1 } }
+])
+
+// Full pipeline: filter → project → group → sort → limit
+db.students.aggregate([
+  { $match: { gpa: { $gte: 3.0 } } },           // Stage 1: filter
+  { $addFields: {
+      gpa_rounded: { $round: ["$gpa", 1] }       // Stage 2: add field
+  }},
+  { $group: {
+      _id: "$major",
+      total:   { $sum: 1 },
+      avg_gpa: { $avg: "$gpa_rounded" }
+  }},                                             // Stage 3: group
+  { $match: { total: { $gt: 5 } } },             // Stage 4: HAVING
+  { $sort: { avg_gpa: -1 } },                    // Stage 5: sort
+  { $limit: 5 }                                  // Stage 6: top 5
+])
+```
+
+### $lookup — Join Between Collections
+
+```javascript
+// "Join" orders with customers (like LEFT JOIN)
+db.orders.aggregate([
+  {
+    $lookup: {
+      from:         "customers",      // foreign collection
+      localField:   "customer_id",    // field in orders
+      foreignField: "_id",            // field in customers
+      as:           "customer_info"   // output array field
+    }
+  },
+  { $unwind: "$customer_info" },       // flatten array (INNER JOIN effect)
+  { $project: {
+      order_date: 1,
+      total:      1,
+      "customer_info.name":  1,
+      "customer_info.email": 1
+  }}
+])
+```
+
+::: callout-warning
+`$lookup` is expensive — it performs a cross-collection join at query time.
+If you frequently join the same collections, consider **embedding** related data instead.
+:::
+
+### $unwind — Deconstructing Arrays
+
+```javascript
+// Count enrolments per course
+db.students.aggregate([
+  { $unwind: "$courses" },              // one doc per (student, course) pair
+  { $group: {
+      _id: "$courses",
+      enrolled_count: { $sum: 1 }
+  }},
+  { $sort: { enrolled_count: -1 } }
+])
+```
+```
+
+## 15.5 Indexing in MongoDB
+
+### Creating Indexes
+
+```javascript
+// Single-field ascending index
+db.students.createIndex({ gpa: 1 })   // 1=ascending, -1=descending
+
+// Compound index
+db.students.createIndex({ major: 1, gpa: -1 })
+
+// Unique index (like UNIQUE in SQL)
+db.students.createIndex({ email: 1 }, { unique: true })
+
+// Text index (for full-text search)
+db.students.createIndex({ name: "text", major: "text" })
+
+// TTL index (auto-delete after N seconds — for session/log data)
+db.sessions.createIndex({ createdAt: 1 }, { expireAfterSeconds: 3600 })
+```
+
+### Viewing and Removing Indexes
+
+```javascript
+// List all indexes on a collection
+db.students.getIndexes()
+
+// Drop a specific index
+db.students.dropIndex({ gpa: 1 })
+
+// Drop all indexes except _id
+db.students.dropIndexes()
+```
+
+### EXPLAIN in MongoDB
+
+```javascript
+db.students.find({ gpa: { $gte: 3.5 } }).explain("executionStats")
+// Shows: IXSCAN (index scan) vs. COLLSCAN (full collection scan)
+// winningPlan.stage == "IXSCAN" → good!
+```
+
+## 15.6 Schema Design Patterns
+
+Unlike SQL, MongoDB documents can **embed** related data. The key design decision: **embed vs. reference**.
+
+### Embedding (Denormalization)
+
+```json
+{
+  "_id": "order_001",
+  "customer": {
+    "name": "Ahmed Ali",
+    "email": "ahmed@example.com"
+  },
+  "items": [
+    { "product": "Laptop", "qty": 1, "price": 1200 },
+    { "product": "Mouse",  "qty": 2, "price": 25   }
+  ],
+  "total": 1250,
+  "date":  "2026-04-06"
+}
+```
+
+**Embed when:**
+- Data is always accessed together (one-to-one or one-to-few)
+- The embedded data doesn't change frequently
+- You need the best read performance (one document = one disk read)
+
+### Referencing (Normalization)
+
+```json
+// orders collection
+{ "_id": "order_001", "customer_id": { "$oid": "abc123" }, "total": 1250 }
+
+// customers collection
+{ "_id": { "$oid": "abc123" }, "name": "Ahmed Ali", "email": "ahmed@example.com" }
+```
+
+**Reference when:**
+- Data is shared by many documents (one-to-many or many-to-many)
+- The referenced data changes frequently
+- Document size would grow unboundedly (e.g., a product with thousands of reviews)
+
+### Common Patterns
+
+| Pattern | Description | Example |
+|---------|-------------|---------|
+| **Bucket** | Group data by time period | IoT sensor readings per hour |
+| **Subset** | Keep only most recent/popular items embedded | Last 10 reviews in product doc |
+| **Computed** | Cache computed values to avoid repeated aggregation | `total_orders` field on customer |
+| **Extended Reference** | Copy frequently-read fields from referenced doc | Embed `product_name` in order items |
+
+## 15.7 MongoDB vs. SQL — Side-by-Side
+
+```javascript
+// SQL: SELECT * FROM students WHERE gpa > 3.5 ORDER BY name ASC LIMIT 10
+db.students.find(
+  { gpa: { $gt: 3.5 } }
+).sort({ name: 1 }).limit(10)
+
+// SQL: SELECT major, COUNT(*), AVG(gpa) FROM students GROUP BY major HAVING COUNT(*) > 5
+db.students.aggregate([
+  { $group: { _id: "$major", count: { $sum: 1 }, avg_gpa: { $avg: "$gpa" } } },
+  { $match: { count: { $gt: 5 } } }
+])
+
+// SQL: UPDATE students SET gpa = 4.0 WHERE name = 'Sara'
+db.students.updateOne({ name: "Sara Ali" }, { $set: { gpa: 4.0 } })
+
+// SQL: DELETE FROM students WHERE gpa < 2.0
+db.students.deleteMany({ gpa: { $lt: 2.0 } })
+```
+
+## 15.8 Transactions in MongoDB
+
+Since MongoDB 4.0, **multi-document ACID transactions** are supported:
+
+```javascript
+const session = client.startSession()
+session.startTransaction()
+try {
+  await db.collection("accounts").updateOne(
+    { _id: "A" }, { $inc: { balance: -500 } }, { session }
+  )
+  await db.collection("accounts").updateOne(
+    { _id: "B" }, { $inc: { balance: +500 } }, { session }
+  )
+  await session.commitTransaction()
+} catch (err) {
+  await session.abortTransaction()
+} finally {
+  session.endSession()
+}
+```
+
+## 15.8 Chapter Summary
+
+::: callout-important
+## Key Takeaways — Chapter 15
+
+1. MongoDB stores data as **BSON documents** in **collections**; every document has a unique `_id`.
+
+2. **CRUD commands**: `insertOne`/`insertMany`, `find` (with query operators: `$gt`, `$in`, `$and`,
+   `$elemMatch`, dot-notation), `updateOne`/`updateMany` (`$set`, `$inc`, `$push`, `$pull`, `$addToSet`),
+   `deleteOne`/`deleteMany`.
+
+3. The **aggregation pipeline** is the core analytics tool: a sequence of stages (`$match`, `$group`,
+   `$project`, `$sort`, `$lookup`, `$unwind`, `$addFields`) transforms documents in order.
+
+4. **Indexing** uses B-trees. `createIndex()` creates single, compound, unique, text, or TTL indexes.
+   Always verify with `.explain("executionStats")` and check for `IXSCAN` vs `COLLSCAN`.
+
+5. **Schema design**: choose **embedding** when data is always read together (fast reads);
+   choose **referencing** when data is shared or grows unboundedly (avoids large documents).
+
+6. **Multi-document ACID transactions** (MongoDB 4.0+) require a replica set and are used for
+   critical operations that span multiple collections.
+
+7. `$lookup` is MongoDB's JOIN — use it when referencing, but avoid it in hot paths; embed frequently
+   co-accessed data for best performance.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Explain the difference between a MongoDB **collection** and a **document**.
+   How do these correspond to (and differ from) a relational table and a row?
+   Specifically, what constraint on rows does MongoDB collections **not** enforce?
+
+2. Why does MongoDB allow documents in the same collection to have different fields?
+   Give one scenario where this flexibility is genuinely useful and one where it causes problems.
+
+3. Explain when you would use a **TTL index** in MongoDB. What underlying piece of MongoDB infrastructure
+   removes the expired documents? Could you replicate this behaviour with a relational DB? How?
+
+### Applied
+
+4. Write MongoDB JavaScript commands to:
+
+   (a) Find all employees with salary between 50,000 and 80,000 whose department is `"Research"`,
+       returning only `name`, `salary`, and `department` (omit `_id`).
+
+   (b) Find employees whose `skills` array contains **both** `"Python"` and `"SQL"`.
+
+   (c) Find employees who have at least one project with `status: "active"` and `hours: {$gt: 10}`.
+       *(Hint: use `$elemMatch`.)*
+
+5. Write a MongoDB update command to:
+
+   (a) Add `"Docker"` to the `skills` array of employee `"Sara Ali"` **only if it isn't already there**.
+
+   (b) Remove `"COBOL"` from the `skills` array of **all** employees who have it.
+
+   (c) Increment the salary of all employees in department `"Research"` by 5,000.
+
+6. Write an aggregation pipeline that produces a report:
+   *"For each department, show the department name, number of employees, average salary,
+   and the name of the highest-paid employee."*
+   
+   The pipeline should:
+   - Filter out employees with salary `null` or missing
+   - Group by department
+   - Use `$first`, `$avg`, `$sum`, `$max` accumulators
+   - Sort by average salary descending
+
+### Analysis
+
+7. Analyse the following schema decision for a blog platform:
+
+   **Option A — Embedded:**
+   ```json
+   { "_id": "post1", "title": "...", "comments": [
+       { "author": "Ali", "text": "Great!" },
+       { "author": "Sara", "text": "Nice!" }
+   ]}
+   ```
+   
+   **Option B — Referenced:**
+   ```json
+   // posts: { "_id": "post1", "title": "..." }
+   // comments: { "_id": "c1", "post_id": "post1", "author": "Ali", "text": "Great!" }
+   ```
+   
+   Under which conditions does Option A outperform Option B? Under which conditions does Option B
+   become necessary? What happens to Option A when a post has 50,000 comments?
+
+8. Explain MongoDB's **$lookup** stage. Write a $lookup aggregation that joins an `orders` collection
+   with a `products` collection to compute the total revenue per product name (product name comes from
+   the products collection; quantity and price come from the order line items array).
+
+### Diagram
+
+9. Draw a **Mermaid flowchart** (or describe) the five stages of an aggregation pipeline that answers:
+   *"Find the top 5 cities by total order value, for orders placed in 2025, where at least 3 items
+   were ordered."*
+   Label each stage with its MongoDB stage name and what transformation it performs.
+
+### Design
+
+10. A ride-sharing app stores trips. Each trip has:
+    - A fixed set of fields: `_id`, `driver_id`, `rider_id`, `status` (active/completed/cancelled),
+      `start_time`, `end_time`, `fare`
+    - A `route` field with an array of GPS coordinates (can have hundreds of entries)
+    - A `rating` object: `{driver: 4.5, rider: 4.0}` (optional, added after completion)
+
+    (a) Write the MongoDB document structure for a completed trip.
+    (b) Should the GPS coordinates be embedded or referenced? Justify using document size limits.
+    (c) Which indexes would you create to support: (i) finding all active trips for a driver,
+        (ii) finding all trips in the last 7 days, (iii) full-text search on a `notes` field?
+
+### Synthesis
+
+11. Translate the following normalized SQL schema and query into a MongoDB document design
+    and equivalent aggregation pipeline:
+
+    **SQL Schema:**
+    ```sql
+    Employee(Ssn PK, Name, Salary, Dno FK→Department)
+    Department(Dnumber PK, Dname)
+    Works_On(Essn FK→Employee, Pno FK→Project, Hours)
+    Project(Pnumber PK, Pname, Plocation)
+    ```
+
+    **SQL Query:**
+    ```sql
+    SELECT E.Name, D.Dname, SUM(W.Hours) AS total_hours
+    FROM Employee E
+    JOIN Department D ON E.Dno = D.Dnumber
+    JOIN Works_On W   ON E.Ssn = W.Essn
+    GROUP BY E.Name, D.Dname
+    HAVING total_hours > 20
+    ORDER BY total_hours DESC;
+    ```
+
+    - Propose **two** possible MongoDB document designs (embedding vs referencing) for this schema.
+    - For each design, write the aggregation pipeline to produce the same output.
+    - Which design is more efficient for this specific query? Why?
+
+12. A DBA argues: *"MongoDB supports ACID transactions now, so we can use it for financial systems
+    instead of PostgreSQL."* Write a 3-paragraph response that:
+    - Acknowledges what MongoDB ACID transactions do support
+    - Identifies the limitations compared to a relational DBMS
+    - Concludes with a clear recommendation

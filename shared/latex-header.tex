@@ -1,0 +1,48 @@
+% LaTeX header for PDF output
+% Arabic support + custom styling
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+
+\setmainlanguage{english}
+\setotherlanguage{arabic}
+
+% Arabic font
+\newfontfamily\arabicfont[Script=Arabic,RawFeature={+rtla}]{Amiri}
+
+% Latin fonts
+\setmainfont{TeX Gyre Termes}
+\setmonofont[Scale=0.88]{Liberation Mono}
+
+% Hyperref colours
+\usepackage{xcolor}
+\definecolor{NavyBlue}{RGB}{26,82,118}
+\definecolor{DarkGreen}{RGB}{17,122,101}
+
+% Nicer headings (KOMA-Script native, compatible with scrbook)
+\addtokomafont{chapter}{\color{NavyBlue}}
+\addtokomafont{section}{\color{NavyBlue}}
+\addtokomafont{subsection}{\color{NavyBlue}}
+
+% Code listings
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  backgroundcolor=\color{gray!5},
+  keywordstyle=\color{NavyBlue}\bfseries,
+  commentstyle=\color{DarkGreen},
+  stringstyle=\color{orange!80!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+}
+
+% Booktabs for tables
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}

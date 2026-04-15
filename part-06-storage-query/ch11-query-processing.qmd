@@ -1,0 +1,769 @@
+---
+title: "Query Processing & Optimization"
+subtitle: "Chapter 11"
+---
+
+## §11.0 The Journey of a SELECT
+
+In Chapter 10 you learned *where* data lives (pages, B+ trees, bitmap bitmaps).
+In Chapter 6 you learned *what* operations transform data (relational algebra).
+This chapter connects them: how does a DBMS take your `SELECT` and produce a result *efficiently*?
+
+The answer is a four-stage pipeline that every major RDBMS follows.
+
+---
+
+## 11.1 Query Processing Pipeline
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    SQL["SQL Query<br/>(text string)"]
+    P["Parser<br/>• Syntax check<br/>• Build parse tree"]
+    RW["Rewriter<br/>• Expand views<br/>• Semantic analysis<br/>• Simplify predicates"]
+    OPT["Optimizer<br/>• Generate equivalent algebra expressions<br/>• Estimate cost per plan<br/>• Choose cheapest plan"]
+    EX["Execution Engine<br/>• Fetch pages via buffer manager<br/>• Apply operators<br/>• Pipeline / materialize"]
+    RS["Result Set"]
+
+    SQL --> P --> RW --> OPT --> EX --> RS
+```
+
+### Stage 1 — Parser
+
+Verifies syntax; produces a **parse tree**.
+
+```
+SELECT E.Fname FROM Employee E WHERE E.Salary > 50000
+→ parse tree: Project(Filter(Scan(Employee), Salary>50000), [Fname])
+```
+
+### Stage 2 — Rewriter
+
+- Replaces **view references** with the view's stored SELECT
+- Applies **semantic simplifications** (e.g., `NOT (x > 5)` → `x <= 5`)
+- Produces the initial **relational algebra expression**
+
+### Stage 3 — Optimizer
+
+The core of this chapter. Given the algebra expression, the optimizer:
+
+1. Applies **equivalence rules** to generate alternative expressions (logical optimization)
+2. Selects physical algorithms for each operator (physical optimization)
+3. Estimates the **cost** of each candidate plan using statistics from the system catalog
+4. Returns the plan with the lowest estimated total cost
+
+### Stage 4 — Execution Engine
+
+Executes the physical plan:
+- Fetches pages via the **buffer manager**
+- Applies operators using **pipelining** or **materialization**
+- Returns rows to the client
+
+---
+
+## 11.2 Translation to Relational Algebra
+
+```sql
+SELECT E.Fname, D.Dname
+FROM   Employee E
+       JOIN Department D ON E.Dno = D.Dnumber
+WHERE  E.Salary > 50000;
+```
+
+Initial (naive) algebra expression:
+
+$$
+\pi_{\text{Fname, Dname}}\bigl(\sigma_{\text{Salary}>50000}(\text{Employee} \times \text{Department})\bigr)
+$$
+
+After **pushing the selection down** and converting to a join:
+
+$$
+\pi_{\text{Fname, Dname}}\bigl(\sigma_{\text{Salary}>50000}(\text{Employee}) \bowtie_{\text{Dno=Dnumber}} \text{Department}\bigr)
+$$
+
+This is better — the filter reduces Employee rows *before* the join (fewer rows to join).
+
+---
+
+## 11.3 Logical Optimization: Equivalence Rules
+
+The optimizer systematically applies these rules to push work closer to the leaves:
+
+| Rule | Description | Benefit |
+|------|-------------|---------|
+| **R1** — Selection commutativity | $\sigma_c(R) = \sigma_c(R)$ | Trivially true |
+| **R2** — Selection cascade | $\sigma_{c_1 \wedge c_2}(R) = \sigma_{c_1}(\sigma_{c_2}(R))$ | Split complex condition |
+| **R3** — Selection push-down (join) | $\sigma_c(R \bowtie S) = \sigma_c(R) \bowtie S$ when $c$ only involves $R$ | Reduce R early |
+| **R4** — Projection push-down | Keep only needed columns early | Reduce row width |
+| **R5** — Join commutativity | $R \bowtie S = S \bowtie R$ | Choose smaller outer |
+| **R6** — Join associativity | $(R \bowtie S) \bowtie T = R \bowtie (S \bowtie T)$ | Reorder joins freely |
+
+**Before vs After optimization** (expression trees):
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    subgraph before["Before (naive)"]
+        pi1["π Fname, Dname"]
+        sig1["σ Salary > 50000"]
+        cp1["× (Cartesian)"]
+        e1["Employee"]
+        d1["Department"]
+        pi1 --> sig1 --> cp1
+        cp1 --> e1
+        cp1 --> d1
+    end
+
+    subgraph after["After (optimised)"]
+        pi2["π Fname, Dname"]
+        join2["⋈ Dno=Dnumber"]
+        sig2["σ Salary > 50000"]
+        e2["Employee"]
+        d2["Department"]
+        pi2 --> join2
+        join2 --> sig2 --> e2
+        join2 --> d2
+    end
+```
+
+---
+
+## 11.4 Cost Model
+
+The optimizer estimates every operator's I/O cost using **catalog statistics**.
+
+### Key Statistics
+
+| Statistic | Symbol | Meaning |
+|-----------|--------|---------|
+| Pages | $B(R)$ | Number of disk pages in relation $R$ |
+| Tuples | $T(R)$ | Number of rows |
+| Distinct values | $V(A,R)$ | Number of distinct values of attribute $A$ |
+| Selectivity | $\text{sel}(A=v)$ | Fraction of rows matching $A=v$ — assumed $1/V(A,R)$ |
+
+### Operator Cost Estimates
+
+| Operator | I/O cost estimate |
+|---------|------------------|
+| Sequential scan | $B(R)$ |
+| Equality with clustered B+ tree | $\lceil B(R) / V(A,R) \rceil$ |
+| Equality with unclustered index | up to $T(R) / V(A,R)$ |
+| Sort ($M$ buffer pages) | $2 B(R) \cdot (1 + \lceil \log_{M-1}(\lceil B(R)/M \rceil) \rceil)$ |
+| Hash join | $3\,(B(R) + B(S))$ |
+| Block nested-loop join ($M$ buffers) | $\lceil B(R)/(M-2) \rceil \cdot B(S) + B(R)$ |
+
+::: callout-tip
+**Total cost = I/O cost + CPU cost**. In most systems with spinning disks, I/O dominates.
+On NVMe SSDs, CPU cost becomes more relevant — some modern optimizers model both.
+:::
+
+---
+
+## 11.5 Selection Algorithms
+
+### Sequential Scan
+
+Read every page of $R$: cost = $B(R)$.
+
+Use when: no index, or the filter is not selective enough to justify random I/O.
+
+**Turning point**: an unclustered index becomes *worse* than a full scan when the selectivity is above ~5–10% (because random I/Os exceed the savings).
+
+### Binary Search (Sorted File)
+
+$\lceil \log_2 B(R) \rceil$ page reads. Rarely used standalone — only when file is sorted on the search key.
+
+### B+ Tree Index Scan
+
+```
+σ_{Salary = 55000}(Employee)
+  → Clustered B+ tree on Salary
+  → h page reads (path) + ⌈B(R)/V(Salary, Employee)⌉ pages at leaf level
+```
+
+Range query `σ_{Salary > 50000}(Employee)`:
+- Clustered: traverse leaf chain — sequential I/O, very efficient
+- Unclustered: each record may require a separate random I/O — potentially worse than a full scan for high selectivity
+
+---
+
+## 11.6 Join Algorithms
+
+Joins are the most expensive operation. Three fundamental algorithms:
+
+### 11.6.1 Nested-Loop Join
+
+```
+for each tuple r in R (outer):
+    for each tuple s in S (inner):
+        if r.key = s.key: output (r, s)
+```
+
+| Variant | Cost | Notes |
+|---------|------|-------|
+| Naïve NLJ | $T(R) \cdot B(S) + B(R)$ | Inner scanned once per outer *tuple* |
+| Block NLJ ($M$ buffers) | $\lceil B(R)/(M-2) \rceil \cdot B(S) + B(R)$ | Inner scanned once per outer *block* |
+| Index NLJ | $B(R) + T(R) \cdot C_{idx}$ | Uses index on inner; $C_{idx}$ ≈ 3–5 for B+ tree |
+
+### 11.6.2 Sort-Merge Join
+
+```
+Phase 1: External sort R on join key → R'   (cost: 2 B(R) per pass)
+Phase 2: External sort S on join key → S'   (cost: 2 B(S) per pass)
+Phase 3: Merge R' and S' once              (cost: B(R) + B(S))
+```
+
+Total cost ≈ $3(B(R) + B(S))$ for the common two-pass case.
+
+Benefits: excellent when data is already sorted, or when the output needs to be sorted (avoids a second sort).
+
+### 11.6.3 Hash Join
+
+```
+Build phase:   partition R into h buckets via h1(key)
+Partition:     partition S into same h buckets via h1(key)
+Probe phase:   for each bucket i:
+                   load R_i into memory hash table
+                   probe with every s in S_i
+```
+
+Cost = $3(B(R) + B(S))$ (two passes over each relation: read/write partitions, then probe).
+
+SQL: two records $r, s$ can only match if $h_1(r.k) = h_1(s.k)$ — only matching buckets need to be compared.
+
+### Algorithm Selection Guide
+
+| Algorithm | Best When |
+|-----------|----------|
+| Index NLJ | One relation small; other has index on join key |
+| Block NLJ | Small outer relation; inner has no index |
+| Sort-Merge | Data already sorted; output needs to be sorted; both large |
+| Hash Join | Large unsorted equijoins; no useful sort or index |
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    Q{"Join query"}
+    idx{"Index on<br/>inner join key?"}
+    size{"Outer fits<br/>in memory?"}
+    sorted{"Data already<br/>sorted / sort needed?"}
+    NLJ["Index NLJ<br/>(fast)"]
+    BNLJ["Block NLJ"]
+    SMJ["Sort-Merge Join"]
+    HJ["Hash Join<br/>(default for large equijoins)"]
+
+    Q --> idx
+    idx -->|Yes| NLJ
+    idx -->|No| size
+    size -->|Yes| BNLJ
+    size -->|No| sorted
+    sorted -->|Yes| SMJ
+    sorted -->|No| HJ
+```
+
+---
+
+## 11.7 Pipeline vs Materialization
+
+When executing a multi-operator plan, the engine can transmit rows between operators in two ways:
+
+| Strategy | Description | Memory | Speed |
+|---------|-------------|--------|-------|
+| **Pipelining** | Operator passes a row immediately to the parent as soon as it produces it | Low — one row at a time | Faster — no intermediate writes |
+| **Materialization** | Operator writes its entire result to a temp table; parent then reads it | High — full intermediate | Slower — extra I/O, but sometimes required |
+
+**Materialisation is required when:**
+- The operator needs the full input before producing output (e.g., external sort, hash-build phase, `DISTINCT`, `GROUP BY`)
+- The result is used multiple times (e.g., an inner relation in a nested-loop join)
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    subgraph pipe["Pipelining"]
+        A1["Scan Employee<br/>(row by row)"] -->|"one row"| F1["σ Salary>50k<br/>(filter on-the-fly)"] -->|"one filtered row"| P1["π Fname<br/>(project on-the-fly)"] --> R1["Client"]
+    end
+    subgraph mat["Materialization"]
+        A2["Scan Employee"] -->|"all rows"| Tmp["Temp file<br/>on disk"] -->|"all rows"| F2["σ Salary>50k"] --> R2["Client"]
+    end
+```
+
+---
+
+## 11.8 EXPLAIN and EXPLAIN ANALYZE
+
+`EXPLAIN` shows the optimizer's chosen plan without executing the query.
+`EXPLAIN ANALYZE` executes the query and reports both estimated and actual statistics.
+
+::: {.panel-tabset}
+
+## MySQL
+
+```sql
+EXPLAIN FORMAT=TREE
+SELECT E.Fname, D.Dname
+FROM   Employee E
+       JOIN Department D ON E.Dno = D.Dnumber
+WHERE  E.Salary > 50000;
+```
+
+Sample output:
+```
+-> Nested loop inner join
+   -> Filter: (e.Salary > 50000)  (cost=2.75 rows=4)
+       -> Index range scan on e using idx_emp_salary  (cost=2.75 rows=4)
+   -> Single-row index lookup on d using PRIMARY (Dnumber=e.Dno)  (cost=0.25 rows=1)
+```
+
+```sql
+-- EXPLAIN ANALYZE — adds actual rows and execution time
+EXPLAIN ANALYZE
+SELECT E.Fname, D.Dname
+FROM   Employee E JOIN Department D ON E.Dno = D.Dnumber
+WHERE  E.Salary > 50000;
+```
+
+## PostgreSQL
+
+```sql
+EXPLAIN (FORMAT TEXT, ANALYZE, BUFFERS)
+SELECT E.Fname, D.Dname
+FROM   Employee E
+       JOIN Department D ON E.Dno = D.Dnumber
+WHERE  E.Salary > 50000;
+```
+
+Sample output:
+```
+Hash Join  (cost=12.50..98.75 rows=150 width=64)
+            (actual time=0.542..1.203 rows=4 loops=1)
+  Hash Cond: (e.dno = d.dnumber)
+  Buffers: shared hit=8
+  ->  Index Scan using idx_emp_salary on employee e
+        (cost=0.43..85.00 rows=200 width=40)
+        (actual time=0.124..0.311 rows=4 loops=1)
+        Index Cond: (salary > 50000)
+  ->  Hash  (cost=8.00..8.00 rows=360 width=24)
+            (actual time=0.287..0.287 rows=3 loops=1)
+        ->  Seq Scan on department d  (cost=0.00..8.00 rows=360 width=24)
+                                      (actual time=0.019..0.047 rows=3 loops=1)
+Planning Time: 0.312 ms
+Execution Time: 1.421 ms
+```
+
+:::
+
+### Reading an EXPLAIN Output
+
+1. **Bottom-up**: leaf nodes (scans) execute first; their output feeds parent joins
+2. `cost=start..total`: estimated startup and total cost in arbitrary optimizer units
+3. `rows=n`: estimated output rows (compare with `actual rows=` to spot bad estimates)
+4. `actual time=x..y ms`: wall-clock time for first/last row (`loops=n` means the node repeated $n$ times)
+5. `Buffers: shared hit=n` (PostgreSQL): pages served from buffer cache (no disk I/O)
+
+::: callout-important
+## When Estimates ≠ Actuals
+
+If `rows=200` but `actual rows=4`, the optimizer had stale or missing statistics.
+Fix: run `ANALYZE Employee;` (PostgreSQL) or `ANALYZE TABLE Employee;` (MySQL) to refresh statistics.
+:::
+
+---
+
+## 11.9 Putting It All Together: A Worked Plan
+
+```sql
+-- Q: Names + total hours for Research dept employees working > 20 h
+SELECT   E.Fname, E.Lname, SUM(WO.Hours) AS TotalHours
+FROM     Employee E
+         JOIN Works_On   WO ON E.Ssn     = WO.Essn
+         JOIN Project    P  ON WO.Pno    = P.Pnumber
+         JOIN Department D  ON P.Dnum    = D.Dnumber
+WHERE    D.Dname = 'Research'
+GROUP BY E.Ssn, E.Fname, E.Lname
+HAVING   SUM(WO.Hours) > 20;
+```
+
+**Optimized plan** (conceptual):
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart BT
+    E["Scan Employee"]
+    D["σ Dname='Research'<br/>(Department)"]
+    P["Scan Project"]
+    WO["Scan Works_On"]
+    j1["⋈ P.Dnum=D.Dnumber"]
+    j2["⋈ WO.Pno=P.Pnumber"]
+    j3["⋈ E.Ssn=WO.Essn"]
+    grp["GROUP BY E.Ssn<br/>SUM(Hours)"]
+    hav["HAVING SUM > 20"]
+    proj["π Fname,Lname,TotalHours"]
+
+    D --> j1
+    P --> j1
+    j1 --> j2
+    WO --> j2
+    j2 --> j3
+    E --> j3
+    j3 --> grp --> hav --> proj
+```
+
+Key optimization choices:
+1. **Selection on Department pushed down** (only 1 row matches `Dname='Research'`) — eliminates 3 of 4 departments before any join  
+2. **Join order**: small filter result joined first; large `Employee` table joined last  
+3. **GROUP BY after all joins** — only grouped once, not per-join  
+
+---
+
+## 11.10 Chapter Summary
+
+::: callout-important
+## Key Takeaways — Chapter 11
+
+1. **Pipeline**: SQL → Parser (parse tree) → Rewriter (algebra) → Optimizer (physical plan) → Execution Engine (result).
+
+2. **Logical optimization** applies equivalence rules to push selections/projections toward leaves,
+   reorder joins, and reduce intermediate result sizes before choosing algorithms.
+
+3. **Cost model** uses catalog statistics ($B(R)$, $T(R)$, $V(A,R)$) to estimate I/O.
+   Refresh with `ANALYZE` when estimates diverge from actuals.
+
+4. **Three join algorithms**:
+   - *Nested-loop*: simple; best with a small outer + index on inner
+   - *Sort-merge*: best when data is sorted or output needs to be sorted
+   - *Hash join*: default for large unsorted equijoins; cost ≈ $3(B(R)+B(S))$
+
+5. **Pipelining** passes rows between operators on-the-fly (low memory, faster);
+   **materialization** writes full intermediate results to disk (required for sort, GROUP BY, DISTINCT).
+
+6. `EXPLAIN ANALYZE` shows the actual plan, estimated vs actual rows, and execution time.
+   A large discrepancy between estimated and actual rows signals stale statistics.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Walk through all four stages of the query processing pipeline for the query:
+   ```sql
+   SELECT Pname FROM Project WHERE Plocation = 'Houston';
+   ```
+   Describe what each stage produces.
+
+2. Explain why **pushing selections down** the expression tree is almost always beneficial.
+   Is there ever a case where it is NOT beneficial?
+
+3. Compare **pipelining** and **materialization**. For each of the following operators, state which
+   strategy must be used and why: (a) hash join build phase, (b) sort for ORDER BY,
+   (c) simple selection filter `σ_c(R)`, (d) `DISTINCT`.
+
+### Applied
+
+4. Given: $B(\text{Employee}) = 500$, $B(\text{Works\_On}) = 200$, $T(\text{Employee}) = 40000$,
+   $T(\text{Works\_On}) = 80000$, $M = 50$ buffer pages.
+   Compute the cost of:
+   - Block nested-loop join (Employee outer, Works_On inner)
+   - Hash join
+   - Sort-merge join (assume neither relation is pre-sorted; 2-pass sort)
+
+5. Write the optimized relational algebra expression for:
+   ```sql
+   SELECT E.Fname, P.Pname
+   FROM   Employee E, Works_On W, Project P
+   WHERE  E.Ssn = W.Essn AND W.Pno = P.Pnumber
+     AND  P.Plocation = 'Stafford' AND E.Salary < 30000;
+   ```
+   Show the **unoptimized** expression first, then apply pushdown rules step by step.
+
+6. Run `EXPLAIN ANALYZE` on the above query in MySQL or PostgreSQL with the Company DB data.
+   Report the chosen join algorithm, the estimated vs actual row counts at each node,
+   and propose one index change that would improve the plan.
+
+### Analysis
+
+7. An optimizer estimates `rows=5000` for a filter, but `EXPLAIN ANALYZE` shows `actual rows=1`.
+   - What caused this discrepancy?
+   - What command fixes it?
+   - What does a bad row estimate do to subsequent join cost estimates?
+
+8. A query joins four tables: `Employee (500 pages)`, `Works_On (200 pages)`, `Project (50 pages)`,
+   `Department (10 pages)`. Without considering indexes, which join order minimizes the total data
+   read in a left-deep plan using hash join at each step? Show your reasoning.
+
+### Diagram
+
+9. Draw the **optimized expression tree** for:
+   ```sql
+   SELECT D.Dname, COUNT(*) AS n
+   FROM   Employee E JOIN Department D ON E.Dno = D.Dnumber
+   WHERE  E.Salary > 40000
+   GROUP  BY D.Dname
+   HAVING COUNT(*) >= 2;
+   ```
+   Label each node with the relational algebra operator and its estimated output cardinality.
+
+### Design / Synthesis
+
+10. The DBA notices that the following query runs in 8 seconds on a 2-million-row `Sales` table:
+    ```sql
+    SELECT ProductId, SUM(Amount) FROM Sales
+    WHERE Region = 'North' AND SaleDate BETWEEN '2024-01-01' AND '2024-12-31'
+    GROUP BY ProductId;
+    ```
+    `EXPLAIN ANALYZE` shows: `Seq Scan on Sales (actual rows=2000000)` at the base.
+    - Propose two indexes (with justification) that would improve this query.
+    - After adding the indexes, predict the new plan structure (index scan, filter, group).
+    - What cardinality statistic would the optimizer need to correctly estimate the benefit?
+
+
+## 11.1 Query Processing Pipeline
+
+```
+SQL Query (text)
+      │
+  ┌───▼─────────┐
+  │   Parser    │  → Syntax check, build parse tree
+  └───┬─────────┘
+      │ Parse tree
+  ┌───▼──────────────┐
+  │  Query Rewriter  │  → View substitution, semantic analysis
+  └───┬──────────────┘
+      │ Relational algebra expression
+  ┌───▼────────────────┐
+  │ Query Optimizer    │  → Enumerate plans, estimate cost, choose cheapest
+  └───┬────────────────┘
+      │ Physical query plan
+  ┌───▼──────────────┐
+  │ Execution Engine │  → Actually fetch pages, apply operators
+  └───┬──────────────┘
+      │
+   Result set
+```
+
+## 11.2 Parsing and Translation
+
+The parser checks SQL syntax and builds a **parse tree**. The translator converts it to an initial **relational algebra (RA) expression**:
+
+```sql
+SELECT e.fname, d.dept_name
+FROM employee e JOIN department d ON e.dept_no = d.dept_no
+WHERE e.salary > 50000;
+```
+
+Translates to:
+
+$$
+\pi_{\text{fname, dept\_name}}\bigl(\sigma_{\text{salary} > 50000}(\text{employee} \bowtie_{\text{dept\_no}} \text{department})\bigr)
+$$
+
+## 11.3 Query Optimization Overview
+
+The optimizer's job: find the **cheapest execution plan** from the many equivalent RA expressions.
+
+### Why Optimization Is Hard
+
+- A join of $n$ tables has $O(n!)$ possible orderings (actually more, counting bushy trees)
+- For 5 tables: 5! = 120 plans; for 10 tables: 10! = 3,628,800 plans
+- Cost depends on: table sizes, selectivities, index availability, memory
+
+### Two Phases of Optimization
+
+1. **Logical optimization**: Apply algebraic equivalences to improve the RA tree (push selections down, push projections)
+2. **Physical optimization**: Choose algorithms for each logical operator (which join algorithm? which access path?)
+
+## 11.4 Cost Model
+
+The optimizer uses a **cost model** to estimate the cost of each plan:
+
+$$
+\text{Total Cost} = \text{I/O cost} + \text{CPU cost} + \text{Communication cost}
+$$
+
+In most systems: I/O cost dominates (disk access >> CPU).
+
+**Cost factors per operator:**
+
+| Operator | Key cost factor |
+|---------|----------------|
+| **Sequential scan** | $B(R)$ pages |
+| **Index scan (clustered)** | $B(R) / V(A, R)$ pages |
+| **Index scan (unclustered)** | Up to $T(R) / V(A, R)$ page I/Os |
+| **Sort** | $2 B(R) \cdot (1 + \lceil \log_M B(R) \rceil)$ |
+| **Hash join** | $3 (B(R) + B(S))$ |
+| **Nested loop join** | $B(R) + T(R) \cdot B(S)$ (worst case) |
+
+Where:
+- $B(R)$ = number of pages in relation $R$
+- $T(R)$ = number of tuples in $R$
+- $V(A, R)$ = number of distinct values of attribute $A$ in $R$
+- $M$ = number of buffer pages available
+
+### Statistics in the System Catalog
+
+The optimizer reads statistics to estimate costs:
+- $B(R)$: page count
+- $T(R)$: tuple count
+- $V(A, R)$: domain cardinality (distinct values)
+- Histogram: distribution of attribute values
+
+## 11.5 Selection Algorithms
+
+### Linear Scan (Sequential Scan)
+
+Read every page of the table: cost = $B(R)$.
+
+Use when: no usable index exists.
+
+### Binary Search
+
+On sorted file: cost = $\lceil \log_2 B(R) \rceil$.
+
+### Index-Based Selection
+
+```
+Equality: σ_{A = v}(R)
+├── Clustered B+ tree: cost ≈ height + B(R)/V(A,R) pages
+└── Unclustered B+ tree: cost ≈ height + T(R)/V(A,R) page I/Os (potentially many)
+
+Range: σ_{A ≥ v}(R)
+├── Clustered B+ tree: height + fraction of pages  (efficient)
+└── Unclustered B+ tree: may be slower than full scan if many matches
+```
+
+## 11.6 Join Algorithms
+
+Joins are the most expensive operations. Three fundamental algorithms:
+
+### 1. Nested-Loop Join (NLJ)
+
+```
+for each tuple r in R:           ← outer relation
+    for each tuple s in S:       ← inner relation
+        if r[join_attr] = s[join_attr]: output (r, s)
+```
+
+- **Cost**: $T(R) \cdot B(S) + B(R)$ page I/Os (inner scanned once per outer tuple)
+- Choose the **smaller relation as outer** to minimize cost
+- Improved by **block nested loop**: read a block of outer relation at a time
+
+### 2. Sort-Merge Join (SMJ)
+
+```
+Phase 1: Sort R on join attribute → R'
+Phase 2: Sort S on join attribute → S'
+Phase 3: Merge R' and S' (like merge sort)
+```
+
+- **Cost**: $2 B(R) + 2 B(S) + B(R) + B(S)$ = sort costs + merge cost
+- Excellent when both relations are already sorted, or when the output also needs to be sorted
+- Only scans each relation **once** during merge
+
+### 3. Hash Join
+
+```
+Phase 1 (Build):   Partition R into h buckets using hash function h1
+Phase 2 (Partition): Partition S into same h buckets using h1
+Phase 3 (Probe):   For each bucket i, build in-memory hash table on R_i,
+                   then probe with every tuple in S_i
+```
+
+- **Cost**: $3(B(R) + B(S))$ for the standard case
+- Best when at least one relation fits in memory after partitioning
+- Most efficient for large unsorted equijoins
+
+### Algorithm Comparison
+
+| Algorithm | Best Case | Worst Case | Good When |
+|-----------|----------|----------|-----------|
+| Nested Loop | One relation fits in mem: $B(R) + B(S)$ | $T(R) \cdot B(S)$ | Small tables, inner has index |
+| Sort-Merge | $B(R) + B(S)$ (pre-sorted) | Sort cost + merge | Data pre-sorted, output sorted |
+| Hash Join | $B(R) + B(S)$ (build fits in mem) | $3(B(R)+B(S))$ | Large unsorted equijoins |
+
+## 11.7 Join Ordering and Plan Enumeration
+
+### Left-Deep vs. Right-Deep vs. Bushy Trees
+
+```
+Left-deep:          Right-deep:          Bushy:
+    ⋈                   ⋈                    ⋈
+   / \                 / \                  / \
+  ⋈   D             A    ⋈                ⋈    ⋈
+ / \                     / \              / \  / \
+⋈   C                   B    ⋈           A  B  C  D
+/ \                          / \
+A   B                       C   D
+```
+
+Most optimizers enumerate only **left-deep** trees (n-1 levels deep) — this reduces the search space from $(2n-2)! / (n-1)!$ to $n!$.
+
+### Dynamic Programming Optimization
+
+For each subset of relations $S$:
+1. Find the optimal plan for accessing each single relation
+2. For each pair, find optimal join order
+3. Build up bottom-up
+
+This finds the global optimum in $O(3^n)$ time instead of $O(n!)$.
+
+## 11.8 Query Plan Reading (EXPLAIN)
+
+```sql
+EXPLAIN ANALYZE
+SELECT e.fname, d.dept_name
+FROM employee e
+JOIN department d ON e.dept_no = d.dept_no
+WHERE e.salary > 50000;
+```
+
+Sample output:
+```
+Hash Join  (cost=12.50..98.75 rows=150 width=64)
+  Hash Cond: (e.dept_no = d.dept_no)
+  ->  Index Scan using idx_emp_salary on employee e
+        (cost=0.43..85.00 rows=200 width=40)
+        Index Cond: (salary > 50000)
+  ->  Hash  (cost=8.00..8.00 rows=360 width=24)
+        ->  Seq Scan on department d  (cost=0.00..8.00 rows=360 width=24)
+```
+
+**Reading the plan:**
+- The tree is read **bottom-up** — innermost operations happen first
+- `cost=start..total`: estimated startup and total cost (in page I/Os)
+- `rows=n`: estimated number of output rows
+- `->` denotes a child operator feeding into its parent
+
+::: callout-tip
+Always run `EXPLAIN ANALYZE` (not just `EXPLAIN`) to see *actual* rows and execution times as well as estimates.
+:::
+
+## Summary
+
+::: callout-important
+## Chapter 11 — Key Takeaways
+
+- **Query pipeline**: Parse → Rewrite → Optimize → Execute.
+- The **optimizer** applies algebraic equivalences (push σ down, reorder joins) and selects physical algorithms.
+- **Cost model** relies on catalog statistics ($B(R)$, $T(R)$, $V(A,R)$) to estimate I/O.
+- **Three join algorithms**: Nested-Loop (simple, good with index), Sort-Merge (sorted data/output), Hash Join (large unsorted equijoins).
+- **Left-deep trees** reduce the plan search space; dynamic programming finds the optimal join order.
+- `EXPLAIN ANALYZE` shows the actual execution plan and can guide index creation decisions.
+:::
+
+## Review Questions
+
+1. Sketch the **query processing pipeline** and describe what happens at each stage.
+2. Compare **Nested-Loop Join**, **Sort-Merge Join**, and **Hash Join** in terms of cost and best-use scenarios.
+3. Given $B(R) = 1000$ pages, $B(S) = 500$ pages, $T(R) = 80000$, $T(S) = 50000$, compute the cost of:
+   - Block Nested-Loop Join (100 buffer pages)
+   - Hash Join
+4. Why does the optimizer prefer **left-deep join trees** over bushy trees?
+5. What information does the DBMS store in the **system catalog** that the optimizer uses?
+6. How does `EXPLAIN ANALYZE` help a DBA optimize a slow query?

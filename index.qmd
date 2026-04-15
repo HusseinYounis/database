@@ -1,0 +1,58 @@
+---
+number-sections: false
+---
+
+# Preface {.unnumbered}
+
+---
+
+This book serves as the primary reference for the **Database Systems** course in the Computer Engineering curriculum. It bridges classical relational database theory with modern NoSQL technologies, equipping students with both the conceptual foundations and practical skills demanded by today's software industry.
+
+## How to Use This Book
+
+The book is organized into **eight parts** spanning 15 chapters plus one appendix, designed for a **14–16 week semester**:
+
+| Part | Chapters | Weeks | Theme |
+|------|----------|-------|-------|
+| I — Foundations | 1–2 | 1–2 | What databases are and how they work |
+| II — Data Modeling | 3–4 | 3–4 | Designing with ER and EER diagrams |
+| III — Relational Model | 5–6 | 5–6 | Formal relational theory and algebra |
+| IV — SQL | 7–8 | 7–8 | The universal database language |
+| V — Database Design | 9 | 9–10 | Normalization and functional dependencies |
+| VI — Storage & Query | 10–11 | 11–12 | How databases store data and execute queries |
+| VII — Transactions | 12–13 | 13–14 | Reliability, ACID, and concurrency |
+| VIII — NoSQL | 14–15 | 15–16 | NoSQL landscape and MongoDB |
+
+## Primary Reference
+
+The theoretical foundations follow **Elmasri & Navathe, *Fundamentals of Database Systems*, 7th Edition** [@elmasri2015fundamentals]. MongoDB content follows the official MongoDB documentation [@mongodb-docs] and [@bradshaw2019mongodb].
+
+## Prerequisites
+
+Students are expected to have:
+
+- Proficiency in at least one programming language (C, Python, or Java)
+- Basic data structures knowledge (lists, trees, hash tables)
+- Familiarity with set theory and propositional logic
+
+## Conventions Used
+
+| Convention | Meaning |
+|-----------|---------|
+| `monospace` | SQL keywords, code, identifiers |
+| **Bold** | Key term introduced for the first time |
+| $\sigma, \pi, \bowtie$ | Relational algebra operators |
+| `::: callout-note` | Definition, analogy, or supplementary information |
+| `::: callout-tip` | Best practice, practical hint, or fun fact |
+| `::: callout-important` | Common mistake or exam alert |
+| `{.panel-tabset}` | SQL code shown in three tabs: **MySQL**, **PostgreSQL**, **Oracle** |
+| `{ojs}` code block | Interactive widget — drag sliders or pick from dropdowns |
+| NoSQL examples | MongoDB shell syntax (`mongosh`) |
+
+## Running Example
+
+All chapters from Part II onward use a single database — the **Enhanced Company Database** — as the running example. It contains six tables: `Employee`, `Department`, `Project`, `Dept_Locations`, `Works_On`, and `Dependent`. This consistency lets you trace every concept (ER diagram → relational schema → SQL → relational algebra → normalization → indexes) against the same familiar data.
+
+## Acknowledgements
+
+All rights to cited works belong to their respective authors and publishers.

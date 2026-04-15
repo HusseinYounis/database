@@ -1,0 +1,532 @@
+---
+title: "Database APIs and Connectivity"
+subtitle: "Appendix A"
+---
+
+# Database APIs and Connectivity {#sec-appA}
+
+## §A.0 Connecting Applications to Databases
+
+Chapters 7–8 taught SQL; Chapters 14–15 taught MongoDB query syntax.
+In production, however, no query runs in isolation inside a database shell.
+Every real application — a web server, a mobile backend, an analytics job — must
+**connect to a database, issue queries, handle errors, and close connections** through a programmatic API.
+
+This appendix covers the standard layers in that connectivity stack:
+drivers (JDBC/ODBC), Python DB-API libraries, REST APIs, connection pooling, and ORMs.
+
+---
+
+## A.1 Database Connectivity Standards
+
+### The Connectivity Stack
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    APP["Application Code<br/>(Java, Python, Node.js, C#...)"]
+    DM["Driver Manager<br/>(DriverManager / pyodbc DSN)"]
+    DR["Native Driver<br/>(JDBC .jar / psycopg2 / mysql-connector)"]
+    DB["Database Server<br/>(PostgreSQL / MySQL / Oracle / MongoDB)"]
+
+    APP --> DM --> DR --> DB
+```
+
+**ODBC (Open Database Connectivity)**
+
+- Microsoft standard (1992); language-neutral C interface
+- Available on Windows, Linux (unixODBC), macOS
+- Configure a **DSN** (Data Source Name) in the OS
+- Used from C/C++, Python (`pyodbc`), R, Excel
+
+**JDBC (Java Database Connectivity)**
+
+- Sun/Oracle standard for Java (1997)
+- All major DBs ship JDBC drivers (`.jar` files)
+- 4 driver types; Type 4 (pure Java TCP) is the modern standard
+- URL format: `jdbc:postgresql://host:5432/dbname`
+
+## A.2 JDBC — Java Database Connectivity
+
+### Connection Lifecycle
+
+```java
+import java.sql.*;
+
+// 1. Load the driver (automatic in JDBC 4.0+)
+// Class.forName("org.postgresql.Driver"); // no longer needed
+
+// 2. Establish connection
+String url  = "jdbc:postgresql://localhost:5432/university";
+String user = "db_user";
+String pass = System.getenv("DB_PASS"); // NEVER hardcode passwords!
+
+try (Connection conn = DriverManager.getConnection(url, user, pass)) {
+
+    // 3. Create a statement
+    Statement stmt = conn.createStatement();
+    ResultSet rs   = stmt.executeQuery("SELECT name, gpa FROM students");
+
+    // 4. Iterate the result set
+    while (rs.next()) {
+        String name = rs.getString("name");
+        double gpa  = rs.getDouble("gpa");
+        System.out.printf("%-20s %.2f%n", name, gpa);
+    }
+
+} catch (SQLException e) {
+    e.printStackTrace();
+}
+// Connection auto-closed by try-with-resources
+```
+
+### PreparedStatement — Preventing SQL Injection
+
+::: callout-warning
+## SQL Injection Risk
+**Never** concatenate user input into SQL strings!
+
+```java
+// VULNERABLE — DO NOT USE
+String query = "SELECT * FROM students WHERE name = '" + input + "'";
+// An attacker can input:  ' OR '1'='1  — returns all rows
+```
+:::
+
+```java
+// SAFE: PreparedStatement uses parameterised queries
+String sql = "SELECT * FROM students WHERE major = ? AND gpa > ?";
+
+try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    pstmt.setString(1, majorInput);
+    pstmt.setDouble(2, minGpa);
+    ResultSet rs = pstmt.executeQuery();
+    // process rs...
+}
+```
+
+### Transaction Control in JDBC
+
+```java
+conn.setAutoCommit(false);          // Begin transaction
+try {
+    pstmt1.executeUpdate();
+    pstmt2.executeUpdate();
+    conn.commit();                  // Commit
+} catch (SQLException e) {
+    conn.rollback();                // Rollback on error
+}
+```
+
+## A.3 Python Database Connectivity
+
+### psycopg2 — PostgreSQL from Python
+
+```python
+import psycopg2
+import os
+
+# Connect — never hardcode credentials; use env vars
+conn = psycopg2.connect(
+    host=     "localhost",
+    port=     5432,
+    dbname=   "university",
+    user=     "db_user",
+    password= os.environ["DB_PASS"]
+)
+
+# Parameterized query (safe against SQL injection)
+cur = conn.cursor()
+cur.execute(
+    "SELECT name, gpa FROM students WHERE major = %s AND gpa > %s",
+    ("CS", 3.5)                     # Note: tuple, not f-string
+)
+
+rows = cur.fetchall()
+for name, gpa in rows:
+    print(f"{name:<20}  GPA: {gpa:.2f}")
+
+conn.commit()
+cur.close()
+conn.close()
+```
+
+```python
+# Insert with transaction
+try:
+    cur.execute(
+        "INSERT INTO students (name, major, gpa) VALUES (%s, %s, %s)",
+        ("Nour Khaled", "CE", 3.7)
+    )
+    conn.commit()
+except psycopg2.Error as e:
+    conn.rollback()
+    print(f"Error: {e}")
+```
+
+### pymongo — MongoDB from Python
+
+```python
+from pymongo import MongoClient
+import os
+
+# Connect to MongoDB
+client = MongoClient(os.environ["MONGO_URI"])  # e.g. "mongodb://localhost:27017"
+db     = client["university_db"]
+col    = db["students"]
+
+# Insert
+col.insert_one({ "name": "Sara Ali", "major": "CS", "gpa": 3.8 })
+
+# Query — parameterized automatically (no injection risk in pymongo)
+cursor = col.find({"major": "CS", "gpa": {"$gte": 3.5}}, {"name": 1, "gpa": 1})
+for doc in cursor:
+    print(doc["name"], doc["gpa"])
+
+# Update
+col.update_one({"name": "Sara Ali"}, {"$set": {"gpa": 3.9}})
+
+# Aggregation
+pipeline = [
+    {"$match":  {"gpa": {"$gte": 3.0}}},
+    {"$group":  {"_id": "$major", "avg_gpa": {"$avg": "$gpa"}}},
+    {"$sort":   {"avg_gpa": -1}}
+]
+for result in col.aggregate(pipeline):
+    print(result)
+
+client.close()
+```
+
+## A.4 REST APIs and Databases
+
+Modern web applications expose database operations via **REST APIs** over HTTP.
+
+### HTTP Verbs to CRUD Mapping
+
+| HTTP Method | SQL Operation | MongoDB Operation | URL Example |
+|------------|--------------|-------------------|-------------|
+| `GET` | `SELECT` | `find()` | `GET /api/students` |
+| `GET` (by id) | `SELECT WHERE id=?` | `findOne()` | `GET /api/students/42` |
+| `POST` | `INSERT` | `insertOne()` | `POST /api/students` |
+| `PUT` | `UPDATE` (full) | `replaceOne()` | `PUT /api/students/42` |
+| `PATCH` | `UPDATE` (partial) | `updateOne()` | `PATCH /api/students/42` |
+| `DELETE` | `DELETE` | `deleteOne()` | `DELETE /api/students/42` |
+
+### Minimal Flask REST API (Python)
+
+```python
+from flask import Flask, request, jsonify
+import psycopg2
+import os
+
+app = Flask(__name__)
+
+def get_conn():
+    return psycopg2.connect(
+        host=os.environ["DB_HOST"], dbname=os.environ["DB_NAME"],
+        user=os.environ["DB_USER"],  password=os.environ["DB_PASS"]
+    )
+
+@app.route("/api/students", methods=["GET"])
+def list_students():
+    conn = get_conn()
+    cur  = conn.cursor()
+    cur.execute("SELECT id, name, major, gpa FROM students ORDER BY name")
+    rows = cur.fetchall()
+    cur.close(); conn.close()
+    return jsonify([
+        {"id": r[0], "name": r[1], "major": r[2], "gpa": r[3]} for r in rows
+    ])
+
+@app.route("/api/students", methods=["POST"])
+def create_student():
+    data = request.get_json()
+    conn = get_conn()
+    cur  = conn.cursor()
+    cur.execute(
+        "INSERT INTO students (name, major, gpa) VALUES (%s, %s, %s) RETURNING id",
+        (data["name"], data["major"], data["gpa"])
+    )
+    new_id = cur.fetchone()[0]
+    conn.commit(); cur.close(); conn.close()
+    return jsonify({"id": new_id}), 201
+```
+
+### REST API — JSON Response Examples
+
+```json
+// GET /api/students/42
+{
+  "id": 42,
+  "name": "Sara Ali",
+  "major": "Computer Engineering",
+  "gpa": 3.8
+}
+
+// POST /api/students  (response: 201 Created)
+{ "id": 43 }
+
+// Error response (4xx)
+{ "error": "Student not found", "code": 404 }
+```
+
+## A.5 Connection Pooling
+
+Opening a new database connection for every query is expensive — each connection involves a TCP handshake, authentication, and memory allocation on the server.
+**Connection pooling** maintains a pool of pre-opened connections that are reused by application threads.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart LR
+    T1["Thread 1"]
+    T2["Thread 2"]
+    T3["Thread 3"]
+    POOL["Connection Pool<br/>(e.g., HikariCP / SQLAlchemy Pool)<br/>min=5, max=20"]
+    C1["DB Conn 1"]
+    C2["DB Conn 2"]
+    C3["DB Conn 3"]
+
+    T1 -->|acquire| POOL
+    T2 -->|acquire| POOL
+    T3 -->|wait if full| POOL
+    POOL --- C1
+    POOL --- C2
+    POOL --- C3
+```
+
+::: {.panel-tabset}
+## Java (HikariCP)
+
+```java
+HikariConfig config = new HikariConfig();
+config.setJdbcUrl("jdbc:postgresql://localhost:5432/university");
+config.setUsername(System.getenv("DB_USER"));
+config.setPassword(System.getenv("DB_PASS"));
+config.setMaximumPoolSize(20);          // max concurrent connections
+config.setMinimumIdle(5);              // keep 5 warm at all times
+config.setConnectionTimeout(3000);     // ms to wait for a connection
+
+HikariDataSource ds = new HikariDataSource(config);
+
+// Use like a normal connection — returned to pool on close
+try (Connection conn = ds.getConnection()) {
+    // ...
+}
+```
+
+## Python (SQLAlchemy)
+
+```python
+from sqlalchemy import create_engine
+import os
+
+engine = create_engine(
+    os.environ["DATABASE_URL"],
+    pool_size=10,         # persistent connections
+    max_overflow=20,      # extra connections under burst load
+    pool_timeout=30,      # seconds to wait before raising PoolTimeout
+    pool_recycle=1800     # close connections older than 30 min (avoids server-side timeout)
+)
+# Each `with engine.connect() as conn` borrows from the pool
+```
+
+## psycopg2 (ThreadedConnectionPool)
+
+```python
+import psycopg2.pool, os
+
+pool = psycopg2.pool.ThreadedConnectionPool(
+    minconn=2, maxconn=10,
+    host=os.environ["DB_HOST"],
+    dbname=os.environ["DB_NAME"],
+    user=os.environ["DB_USER"],
+    password=os.environ["DB_PASS"]
+)
+
+conn = pool.getconn()
+try:
+    cur = conn.cursor()
+    cur.execute("SELECT 1")
+    conn.commit()
+finally:
+    pool.putconn(conn)    # return to pool
+```
+:::
+
+---
+
+## A.6 ORM — Object Relational Mapping
+
+An **ORM** maps database tables ↔ Python classes automatically, eliminating raw SQL for common operations.
+
+### SQLAlchemy — Python ORM
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.orm import DeclarativeBase, Session
+import os
+
+engine = create_engine(os.environ["DATABASE_URL"])  # e.g. postgresql+psycopg2://...
+
+class Base(DeclarativeBase):
+    pass
+
+# Define a model (maps to a table)
+class Student(Base):
+    __tablename__ = "students"
+
+    id    = Column(Integer, primary_key=True)
+    name  = Column(String(100), nullable=False)
+    major = Column(String(50))
+    gpa   = Column(Float)
+
+    def __repr__(self):
+        return f"<Student {self.name}, GPA={self.gpa}>"
+
+# Create tables if they don't exist
+Base.metadata.create_all(engine)
+```
+
+### ORM CRUD Operations
+
+```python
+with Session(engine) as session:
+
+    # Create (INSERT)
+    new_student = Student(name="Ahmad Hassan", major="CS", gpa=3.6)
+    session.add(new_student)
+    session.commit()
+
+    # Read (SELECT)
+    students = session.query(Student).filter(Student.gpa >= 3.5).all()
+    top_cs   = session.query(Student)\
+                      .filter(Student.major == "CS")\
+                      .order_by(Student.gpa.desc())\
+                      .limit(5).all()
+
+    # Update
+    student = session.get(Student, 1)
+    student.gpa = 3.9
+    session.commit()
+
+    # Delete
+    session.delete(student)
+    session.commit()
+```
+
+### ORM vs Raw SQL
+
+| | Raw SQL (psycopg2) | ORM (SQLAlchemy) |
+|---|---|---|
+| **Boilerplate** | More setup/parsing code | Minimal once model defined |
+| **Type safety** | Manual | Automatic via model |
+| **Flexibility** | Full SQL power | Limited for complex queries |
+| **Performance** | Potentially faster | Slight overhead |
+| **Portability** | DB-specific SQL | Mostly DB-agnostic |
+| **Best for** | High-performance bulk ops | CRUD-heavy app logic |
+
+## Summary
+
+::: callout-important
+## Appendix A — Key Takeaways
+
+- **ODBC/JDBC** are standard interfaces allowing applications to connect to any database via a driver.
+- **JDBC** uses `Connection → PreparedStatement → ResultSet`; always use `PreparedStatement` to prevent SQL injection.
+- **psycopg2** connects Python to PostgreSQL; **pymongo** connects Python to MongoDB. Both use parameterized operations to avoid injection.
+- **REST APIs** map HTTP verbs to database CRUD and return JSON — the dominant pattern for web + mobile apps.
+- **ORM** (SQLAlchemy) maps DB tables to Python classes; great for app development, but raw SQL is preferred for complex analytics.
+- **Never hardcode credentials** — always use environment variables or a secrets manager.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Explain the difference between **ODBC** and **JDBC**. In what situations would you use each?
+   What is the role of the *driver manager* in the JDBC connectivity model?
+
+2. Why does `Statement.executeQuery("SELECT ... WHERE name = '" + input + "'")` create a
+   **SQL injection vulnerability**? Demonstrate with an example attacker input that would
+   (a) return all rows and (b) delete all rows from the `students` table.
+
+3. Explain the difference between `conn.commit()` and `conn.rollback()` in the context of JDBC.
+   What happens if `conn.setAutoCommit(false)` is set and the program exits without committing?
+
+### Applied
+
+4. A Java application issues 10,000 short SQL queries per second.
+   Each query currently opens a new JDBC `Connection` and closes it immediately.
+   
+   (a) What is the performance problem with this approach?
+   (b) How does a **connection pool** (e.g., HikariCP) solve it?
+   (c) What two parameters would you tune first and why?
+
+5. Rewrite the following **vulnerable** Python code to be safe:
+   ```python
+   def get_student(name):
+       conn = psycopg2.connect(...)
+       cur = conn.cursor()
+       cur.execute(f"SELECT * FROM students WHERE name = '{name}'")
+       return cur.fetchall()
+   ```
+   
+   Your solution must:
+   - Use parameterized queries
+   - Use `with` statements (context managers) for the connection and cursor
+   - Read the database password from an environment variable
+
+6. Write a minimal Python Flask endpoint `PATCH /api/students/<int:student_id>` that:
+   - Accepts a JSON body with optional fields `name`, `major`, `gpa`
+   - Updates only the provided fields (ignores absent fields)
+   - Returns `404` with `{"error": "Not found"}` if the student doesn't exist
+   - Uses a parameterized `UPDATE` statement
+
+### Analysis
+
+7. A web application is designed so that the backend constructs SQL queries using string
+   formatting with user-provided data. The application passes a security scan because all
+   inputs are checked for the characters `'`, `"`, and `;`.
+   
+   (a) Explain why this character-blacklist approach is **insufficient** for SQL injection prevention.
+   (b) Name the one technique that completely prevents SQL injection at the query level.
+   (c) Name two additional layers of defence in depth that complement parameterized queries.
+
+8. Explain the **ORM vs. Raw SQL** trade-off in the following scenarios:
+   
+   (a) A CRUD-heavy REST API for a student registration system (each request touches 1–3 rows)
+   
+   (b) A monthly batch job that must aggregate 50 million order rows with complex window functions
+   
+   (c) A startup prototype where the schema changes weekly
+   
+   For each, state whether you would prefer ORM, raw SQL, or a hybrid, and why.
+
+### Design
+
+9. Design the database connectivity architecture for a web application with these requirements:
+   - Backend: Python (FastAPI)
+   - Primary database: PostgreSQL (transactional data)
+   - Cache: Redis (session tokens, rate limiting)
+   - Document store: MongoDB (product catalog)
+   - Peak load: 5,000 concurrent users
+   
+   Describe: (a) which Python library you would use for each database, (b) how you would manage
+   connection pools for each, (c) how credentials would be stored and injected into the application.
+
+10. A junior developer writes the following code to handle a user login:
+    ```python
+    username = request.form["username"]
+    password = request.form["password"]
+    cur.execute(f"SELECT * FROM users WHERE username='{username}' AND password='{password}'")
+    user = cur.fetchone()
+    if user:
+        login_user(user)
+    ```
+    
+    Identify **every** security vulnerability in this code (there are at least three beyond SQL injection).
+    Rewrite it securely using best practices.

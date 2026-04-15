@@ -1,0 +1,406 @@
+---
+title: "The Relational Data Model"
+subtitle: "Chapter 5"
+---
+
+Chapters 3 and 4 produced an ER/EER diagram — a conceptual design that is deliberately free of implementation detail. This chapter makes the transition from concept to relational schema: the precise mathematical structure that underlies every SQL table you will ever write.
+
+::: callout-important
+**Design order matters.** In this course, relational tables are derived from ER diagrams using the 7-step mapping covered at the end of Chapter 3. We do **not** design tables from scratch in this chapter. If you need to define a new table, first draw the ER diagram, then map. Skipping the ER step leads to schemas with redundancy and missing constraints.
+:::
+
+---
+
+## 5.1 Mathematical Foundation
+
+The relational model was proposed by **E.F. Codd** in 1970 and grounded in **set theory** and **first-order predicate logic**.
+
+A **relation** $R$ of degree $n$ is a subset of the Cartesian product of $n$ domains:
+
+$$R \subseteq D_1 \times D_2 \times \cdots \times D_n$$
+
+Each element of $R$ is a **tuple** $t = (v_1, v_2, \ldots, v_n)$ where $v_i \in D_i$.
+
+A **domain** $D_i$ is a set of **atomic** (indivisible) values of the same type. For example:
+- $D_{Salary} = \{x \in \mathbb{R} \;|\; x \geq 0\}$
+- $D_{Gender} = \{`M', `F', `N'\}$
+
+---
+
+## 5.2 Key Terminology
+
+| Formal Term | SQL Term | Meaning |
+|------------|---------|---------|
+| **Relation** | Table | A set of tuples; no duplicates |
+| **Tuple** | Row / Record | One entity instance |
+| **Attribute** | Column / Field | A named domain variable |
+| **Domain** | Data type | Allowed values for an attribute |
+| **Degree** | Arity | Number of attributes |
+| **Cardinality** | Row count | Number of tuples |
+| **Relation schema** | Table definition | $R(A_1:D_1, \ldots, A_n:D_n)$ |
+| **Relation instance** | Table contents | The current set of tuples |
+| **Database schema** | All table definitions | Collection of all relation schemas |
+| **Database state** | All table contents | Snapshot of all current tuples |
+
+---
+
+## 5.3 Properties of Relations
+
+| Property | Formal Relation | SQL Table |
+|----------|----------------|-----------|
+| No duplicate tuples | Required by set theory | Enforced only with PK or UNIQUE |
+| Tuple ordering | Irrelevant | Undefined without ORDER BY |
+| Attribute ordering | Irrelevant | Fixed by column position |
+| Atomic attribute values | Required (**1NF**) | Required in normalized tables |
+| NULL values | Not allowed (formal model) | Allowed in ANSI SQL |
+
+::: callout-note
+SQL tables are **multisets** (bags), not sets. Without a primary key, SQL allows duplicate rows. The formal relational model does not. Always define a primary key.
+:::
+
+---
+
+## 5.4 Formal Schema Notation
+
+Throughout this book we use the following notation for relational schemas:
+
+| Notation | Meaning |
+|----------|---------|
+| **Underlined attribute** | Primary key component |
+| `→ Table` after attribute | Foreign key referencing `Table` |
+| `NN` after attribute | NOT NULL constraint |
+| `U` after attribute | UNIQUE constraint |
+| `CK(pred)` | CHECK constraint with predicate |
+
+**Company Database schemas** (derived from the ER mapping in Chapter 3):
+
+```
+EMPLOYEE(Ssn, Fname NN, Minit, Lname NN, Bdate, Address, Gender,
+         Salary CK(Salary>0), Super_ssn→EMPLOYEE, Dno NN→DEPARTMENT)
+
+DEPARTMENT(Dnumber, Dname NN U, Mgr_ssn NN→EMPLOYEE, Mgr_start_date)
+
+DEPT_LOCATIONS(Dnumber→DEPARTMENT, Dlocation)
+
+PROJECT(Pnumber, Pname NN U, Plocation, Dnum NN→DEPARTMENT)
+
+WORKS_ON(Essn→EMPLOYEE, Pno→PROJECT, Hours CK(Hours>=0))
+
+DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)
+```
+
+Primary keys are underlined. Foreign keys show the referenced table. Constraints are annotated inline.
+
+---
+
+## 5.5 Complete Key Taxonomy
+
+The word "key" is overloaded in database terminology. Here is the complete hierarchy:
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    SK["Superkey<br/>(any set of attributes<br/>that uniquely identifies a tuple)"]
+    CK["Candidate Key<br/>(minimal superkey —<br/>no proper subset is a superkey)"]
+    PK["Primary Key<br/>(chosen candidate key;<br/>NOT NULL + UNIQUE enforced by DBMS)"]
+    AK["Alternate Key<br/>(any other candidate key;<br/>UNIQUE enforced, NULL may vary)"]
+    FK["Foreign Key<br/>(references PK of another relation)"]
+    NK["Natural Key<br/>(PK is a real-world attribute:<br/>e.g., SSN, ISBN)"]
+    SK2["Surrogate Key<br/>(system-generated integer:<br/>e.g., AUTO_INCREMENT id)"]
+    COMP["Composite Key<br/>(PK made of two or more attributes)"]
+
+    SK --> CK
+    CK --> PK
+    CK --> AK
+    PK --> NK
+    PK --> SK2
+    PK --> COMP
+    PK -.->|"can be referenced by"| FK
+```
+
+### Definitions
+
+**Superkey**: A set of one or more attributes $\{A_1, \ldots, A_k\}$ such that no two tuples in any valid relation instance share the same values for all $k$ attributes.
+
+**Candidate key**: A *minimal* superkey — removing any attribute from the set destroys its uniqueness property.
+
+**Primary key**: The candidate key chosen by the designer as the official identifier. The DBMS creates an *implicit* unique, not-null index for the PK.
+
+**Alternate key**: Any candidate key that was not chosen as the PK. These should still be declared as `UNIQUE NOT NULL` (or `UNIQUE` if NULLs are possible) to prevent duplicate non-null values.
+
+**Foreign key (FK)**: Attribute(s) in relation $R_1$ that reference the PK of relation $R_2$. Enforces **referential integrity** between tables.
+
+**Natural key**: A real-world attribute used as PK (SSN, passport number, ISBN). Pros: meaningful to users; Cons: changes in the real world break referential integrity.
+
+**Surrogate key**: A system-generated integer (e.g., `id INT AUTO_INCREMENT`) used as PK. Pros: stable, compact, never changes; Cons: no business meaning.
+
+**Composite key**: A PK made of two or more attributes. Required for M:N junction tables and weak entities.
+
+---
+
+## 5.6 FD-Based Key Identification
+
+### What is a Functional Dependency?
+
+A **functional dependency (FD)** $X \to Y$ on relation $R$ means: for every valid instance of $R$, if two tuples agree on the value(s) of $X$, they must also agree on the value(s) of $Y$. In other words, $X$ **determines** $Y$.
+
+Example from `EMPLOYEE`:
+- `Ssn → Fname, Lname, Salary, Dno` (SSN determines all other attributes)
+- `Dno → Dname` (dept number determines dept name — across tables via FK)
+
+### Identifying Candidate Keys via FDs
+
+A set of attributes $K$ is a **candidate key** of $R$ if and only if:
+
+1. $K \to \{A_1, A_2, \ldots, A_n\}$ (K functionally determines *every* attribute in $R$), **and**
+2. No proper subset $K' \subset K$ satisfies condition 1 (K is minimal).
+
+**Algorithm:**
+
+1. List all known FDs for the relation.
+2. Find all attribute sets whose closure ($K^+$) equals the full set of attributes.
+3. Among those, pick the minimal ones — these are the **candidate keys**.
+
+::: callout-important
+**Critical principle: Never infer keys from sample data.**
+
+If you look at a table instance and observe that no two rows share the same `Lname`, that does *not* mean `Lname` is a key. A key must be justified by a **semantic rule** ("by definition, no two employees can share the same SSN") or a **stated FD** — not an accident of the current data.
+:::
+
+### Example: Key Extraction
+
+Given WORKS_ON(Essn, Pno, Hours), the FDs are:
+- `Essn, Pno → Hours` (the number of hours is determined by the specific employee-project pair)
+- No FD exists from `Essn` alone or `Pno` alone to `Hours`
+
+Therefore `{Essn, Pno}` is the candidate key (and is chosen as PK). This is a **composite key**.
+
+---
+
+## 5.7 Choosing a Primary Key
+
+When multiple candidate keys exist, use this guide:
+
+| Criterion | Recommendation |
+|-----------|---------------|
+| **Stability** | Choose the candidate key most unlikely to change (SSNs change if government reassigns; `id` never changes) |
+| **Compactness** | Prefer fewer bytes — integer (4 bytes) over UUID (16 bytes) over long string; smaller PK = faster indexes |
+| **Natural vs. surrogate** | Prefer surrogate for entities that are internal (orders, log entries); natural is acceptable for lookup tables (country code, ISO currency) |
+| **Composite vs. single-column** | Single-column PKs are easier to reference via FKs in multiple tables; composite is fine for junction tables |
+| **Uniqueness guarantee** | If no real-world attribute reliably guarantees uniqueness (people can share names, addresses), use a surrogate |
+
+::: callout-note
+## Rule of Thumb
+
+Use `id INT AUTO_INCREMENT` (or `BIGINT` for very large tables) as PK for most tables. Keep natural keys as `UNIQUE NOT NULL` alternate keys. This gives you: stability, compactness, and a meaningful constraint on the business attribute.
+
+```sql
+CREATE TABLE Employee (
+    id        INT          AUTO_INCREMENT PRIMARY KEY,
+    Ssn       CHAR(9)      NOT NULL UNIQUE,   -- alternate key
+    Fname     VARCHAR(15)  NOT NULL,
+    Salary    DECIMAL(10,2) CHECK (Salary > 0),
+    Dno       INT          NOT NULL REFERENCES Department(id)
+);
+```
+:::
+
+---
+
+## 5.8 Integrity Constraints
+
+### Domain Constraint
+
+Every attribute value must belong to the attribute's domain.
+
+```sql
+Gender  CHAR(1) CHECK (Gender IN ('M','F','N'))
+Salary DECIMAL(10,2) CHECK (Salary >= 0)
+```
+
+### Entity Integrity Constraint
+
+> **No component of a primary key may be NULL.**
+
+The PK is the tuple's identifier. A NULL PK would mean "we don't know which entity this is" — making the row unidentifiable and violating the relational model.
+
+### Referential Integrity Constraint
+
+Let $R_1$ have a foreign key $FK$ referencing $R_2$'s primary key $PK$. The constraint is:
+
+$$\forall t_1 \in r_1: t_1[FK] = \text{NULL} \;\lor\; \exists t_2 \in r_2: t_2[PK] = t_1[FK]$$
+
+*Plain English:* Every non-NULL FK value in $R_1$ must match an existing PK value in $R_2$.
+
+### Key Uniqueness Constraint
+
+Every candidate key must hold distinct non-NULL values across all tuples.
+
+::: callout-important
+## Constraint Violations — Quick Reference
+
+| Constraint | Violation example | Error message type |
+|-----------|---------|---------|
+| Domain | `INSERT Salary = -5000` | CHECK constraint failed |
+| Entity integrity | `INSERT INTO Employee (Ssn) VALUES (NULL)` | Column 'Ssn' cannot be null |
+| Referential integrity | `INSERT Employee Dno=99` where Dept 99 doesn't exist | Foreign key constraint failed |
+| Key uniqueness | Two rows with same Ssn | Duplicate entry for key 'Ssn' |
+:::
+
+---
+
+## 5.9 Foreign Key Actions
+
+When a referenced PK is deleted or updated, the DBMS executes the declared **referential action**:
+
+| Action | On DELETE | On UPDATE | Meaning |
+|--------|-----------|-----------|---------|
+| `RESTRICT` / `NO ACTION` | Default | Default | Reject the operation if matching FK rows exist |
+| `CASCADE` | Delete matching FK rows | Update FK values to match new PK | Propagate automatically |
+| `SET NULL` | Set FK to NULL | Set FK to NULL | Detach the referencing rows |
+| `SET DEFAULT` | Set FK to default value | Set FK to default | Fill with a placeholder |
+
+```sql
+CREATE TABLE Employee (
+    Ssn   CHAR(9) PRIMARY KEY,
+    Dno   INT,
+    FOREIGN KEY (Dno) REFERENCES Department(Dnumber)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+```
+
+::: callout-tip
+**Choosing the right action:**
+- **CASCADE** is appropriate for weak entity owners (deleting an employee deletes all their dependents).
+- **SET NULL** is appropriate when the relationship is optional (employee's manager is deleted → employee gets no manager, not deleted).
+- **RESTRICT** is the safest default — it forces you to handle the dependency explicitly.
+:::
+
+---
+
+## 5.10 NULL Values and Three-Valued Logic
+
+**NULL** represents *unknown*, *missing*, or *not applicable*. Different NULLs express different real-world meanings:
+
+| Reason for NULL | Example |
+|----------------|---------|
+| Unknown | `Bdate` of an employee not on record |
+| Not applicable | `Super_ssn` for the CEO (no supervisor) |
+| Not yet known | `Mgr_start_date` during a transition period |
+
+### Three-Valued Logic
+
+Standard two-valued logic (TRUE/FALSE) does not work with NULLs. SQL uses **three-valued logic** (TRUE / FALSE / UNKNOWN):
+
+| P | Q | P AND Q | P OR Q |
+|---|---|---------|--------|
+| T | UNKNOWN | UNKNOWN | T |
+| F | UNKNOWN | F | UNKNOWN |
+| UNKNOWN | UNKNOWN | UNKNOWN | UNKNOWN |
+
+Comparisons involving NULL always yield UNKNOWN:
+```sql
+NULL = NULL   → UNKNOWN  (not TRUE!)
+NULL <> NULL  → UNKNOWN
+NULL IS NULL  → TRUE     (use IS NULL / IS NOT NULL)
+```
+
+::: callout-important
+Aggregate functions (`SUM`, `AVG`, `MAX`, `MIN`) **ignore NULL values**. `COUNT(*)` counts all rows; `COUNT(column)` counts only non-NULL values.
+:::
+
+---
+
+## 5.11 Business Rules: DB Constraints vs. Application Logic
+
+A **business rule** is a statement about the organization that must always be true.
+
+| Where to enforce | Examples | Mechanism |
+|-----------------|---------|-----------|
+| **Database (DBMS)** | "Salary must be positive"; "Every employee must belong to a department"; "SSN is unique" | `CHECK`, `NOT NULL`, `FOREIGN KEY`, `UNIQUE` |
+| **Application code** | "Managers must have 3 years experience"; "Enrollment requires prerequisite completion" | Business logic layer, triggers |
+| **Both** | "Age must be ≥ 18" | `CHECK` in DB + client-side validation |
+
+::: callout-tip
+**Prefer DB-level constraints wherever possible.** Application code changes frequently; different applications may access the same database and accidentally skip validation. A DB constraint cannot be bypassed from any application.
+
+The exception: complex rules that require multi-table logic or dynamic thresholds are better expressed in **stored procedures** or **triggers** (or at the business logic layer for maintainability).
+:::
+
+---
+
+## Summary
+
+::: callout-important
+## Chapter 5 — Key Takeaways
+
+- A **relation** is a mathematical set of tuples. Properties: no duplicates, no ordering, atomic values (1NF).
+- **Schema notation**: underline = PK, `→Table` = FK, `NN` = NOT NULL, `U` = UNIQUE, `CK(pred)` = CHECK.
+- **Key taxonomy**: superkey → candidate key → {primary key, alternate key} → {natural / surrogate / composite}.
+- **FD-based key identification**: $K$ is a candidate key if $K^+$ = all attributes and $K$ is minimal. Never infer keys from sample data — use business rules.
+- **PK selection guide**: prefer surrogate integers for stability and compactness; keep natural attributes as `UNIQUE NOT NULL` alternate keys.
+- **Four integrity constraints**: domain, entity integrity (PK ≠ NULL), referential integrity (FK → PK), key uniqueness.
+- **FK actions**: RESTRICT (safe default), CASCADE (weak entities), SET NULL (optional relationships).
+- **NULL** uses three-valued logic (T/F/UNKNOWN); comparisons involving NULL yield UNKNOWN; aggregates ignore NULLs.
+- **Business rules** should be enforced at the DB level whenever possible.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Define **relation**, **tuple**, **attribute**, and **domain** using set-theory language. Give a concrete example from the Company Database for each.
+2. Explain the difference between a **candidate key**, a **primary key**, and an **alternate key**. Can a relation have more than one candidate key? Give an example.
+3. What is the **entity integrity constraint**? Give a precise statement of why a NULL primary key violates it.
+
+### Short-Answer / Compare
+
+4. Compare **natural keys** and **surrogate keys**. For the `EMPLOYEE` table in the Company Database, which would you choose as PK? Justify using at least two of the criteria from §5.7.
+5. Explain the difference between `ON DELETE CASCADE` and `ON DELETE SET NULL`. For the `DEPENDENT` weak entity referenced by `EMPLOYEE`, which action is more appropriate? Why?
+6. The `WORKS_ON` table has a composite PK `(Essn, Pno)`. Explain why neither `Essn` alone nor `Pno` alone qualifies as a candidate key, using the concept of functional dependency.
+
+### True / False (with explanation)
+
+7. *"If no two rows in the current `Employee` table have the same `Lname`, then `Lname` is a candidate key."* — True or False? Explain the principle involved.
+8. *"NULL = NULL evaluates to TRUE in SQL."* — True or False? What expression should be used instead?
+9. *"Foreign keys can always be NULL."* — True or False? Explain when a FK must be NOT NULL.
+10. *"The RESTRICT action on a foreign key prevents deleting a parent row that has matching children."* — True or False? What is the alternative to CASCADE in this case?
+
+### Multiple Choice
+
+11. Which of the following is **not** a property of a formal mathematical relation?
+    - (a) No duplicate tuples
+    - (b) Column order is irrelevant
+    - **(c) Rows are stored in insertion order** ✓
+    - (d) All attribute values are atomic
+
+12. An alternate key is:
+    - (a) A foreign key that references an alternate table
+    - **(b) A candidate key that was not chosen as the primary key** ✓
+    - (c) A composite key with more than three attributes
+    - (d) A key that allows NULL values
+
+### Design Exercise
+
+13. Given the following business rules for a university course enrollment system:
+    - A student is uniquely identified by their student number AND (separately) by their national ID.
+    - A student may enroll in many courses; a course may have many enrolled students.
+    - Every enrollment must record the semester, the grade (may be null if not yet graded), and the status (ENROLLED, WITHDRAWN, COMPLETED).
+    - Dropping a student from the system should set their enrollments to reflect the deletion but not delete the enrollment history.
+
+    (a) Identify all candidate keys for the `Enrollment` relation.  
+    (b) Specify the FK action for the student's deletion.  
+    (c) Write the formal schema notation for `Student` and `Enrollment` using the conventions in §5.4.
+
+### SQL Exercise
+
+14. Write the complete `CREATE TABLE` statements for `DEPARTMENT` and `EMPLOYEE` from the Company Database, enforcing:
+    - All structural constraints from §5.4
+    - `Salary > 0`
+    - `Gender` restricted to `'M'`, `'F'`, or `'N'`
+    - `ON DELETE SET NULL ON UPDATE CASCADE` for the `Dno` FK
+    - `ON DELETE CASCADE` for the `Super_ssn` FK (deleting an employee also removes direct reports — debate whether this is the right choice)

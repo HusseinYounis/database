@@ -1,0 +1,587 @@
+---
+title: "Entity-Relationship (ER) Modeling"
+subtitle: "Chapter 3"
+---
+
+Chapter 2 placed ER modeling in the design lifecycle as the **conceptual design** step — the phase where we translate a written problem description into a precise graphical model, before touching any SQL. This chapter teaches you to do exactly that: read a requirements paragraph and systematically extract every entity, attribute, and relationship it contains.
+
+---
+
+## 3.0 From Requirements to a Diagram: The Extraction Process
+
+Every ER diagram starts life as a paragraph of prose written by a human. Learning to read that paragraph with a trained eye is the most practical skill in this chapter.
+
+### The Extraction Algorithm
+
+When reading a requirements description:
+
+1. **Circle nouns** — they are candidates for *entity types* or *attributes*.
+2. **Circle verbs / verb phrases** — they are candidates for *relationship types*.
+3. **For each noun**, decide: Is it a standalone object (entity) or a property of another object (attribute)?
+4. **Identify keys**: Which noun uniquely identifies each entity instance?
+5. **Identify cardinalities**: How many of A can relate to how many of B?
+6. **Identify participation**: Must every instance of A participate, or only some?
+
+::: callout-note
+## Worked Example — Extract from Prose
+
+> *"The company has several **departments**. Each department has a unique **name** and a **number**. A department is managed by exactly one **employee** who is called the **manager**. Each manager has a start date for their position. A department may have several **locations**.*
+>
+> *Each employee has a **social security number**, **first name**, **last name**, **birth date**, **address**, and **salary**. Each employee works in exactly one department but may work on several **projects**. We track the number of **hours** per week each employee works on each project.*
+>
+> *Each project has a **name**, **number**, and a single **location**. Each project is controlled by one department.*
+>
+> *Employees may have **dependents**. Each dependent has a **name**, **gender**, **birth date**, and **relationship** to the employee."*
+
+**Extraction result:**
+
+| Noun | Entity or Attribute? | Notes |
+|------|--------------------|-------|
+| Department | **Entity** | Has independent existence |
+| Name (dept) | Attribute of Department | Key attribute |
+| Number (dept) | Attribute of Department | Candidate key |
+| Employee | **Entity** | Has independent existence |
+| Manager | Role of Employee, not a separate entity | |
+| SSN | Attribute of Employee | Key attribute |
+| Hours | Attribute of **relationship** Works_On | Not an attribute of Employee or Project |
+| Project | **Entity** | Has independent existence |
+| Dependent | **Weak Entity** | No key of own; identified via Employee |
+| Location (dept) | **Multivalued attribute** of Department | "several locations" |
+| Location (proj) | Simple attribute of Project | Only one |
+
+**Verb phrase → Relationship:**
+
+| Verb phrase | Entities involved | Cardinality |
+|------------|------------------|-------------|
+| "works in" | Employee ↔ Department | N:1 |
+| "works on" | Employee ↔ Project | M:N (has Hours attribute) |
+| "managed by" | Department ↔ Employee | 1:1 |
+| "controlled by" | Project ↔ Department | N:1 |
+| "has dependents" | Employee ↔ Dependent | 1:N (identifying) |
+| "supervises" | Employee ↔ Employee | 1:N (recursive) |
+:::
+
+This extracted structure becomes the Company Database — the running example used throughout Chapters 3–8.
+
+---
+
+## 3.1 Basic ER Concepts
+
+### Entity
+
+An **entity** is a "thing" or object in the real world with an independent existence that deserves to be represented in the database.
+
+- **Entity type**: a template/class (e.g., `EMPLOYEE`, `DEPARTMENT`)
+- **Entity instance**: a specific occurrence (e.g., employee Ahmed Khalidi with SSN 001)
+
+::: callout-tip
+**Rule of thumb**: If you would want to store multiple facts *about* it, and multiple instances of it can exist independently, it is probably an entity — not an attribute.
+:::
+
+### Attribute Types
+
+| Type | Description | Notation | Example |
+|------|-------------|----------|---------|
+| **Simple** | Atomic, indivisible | Single oval | `Salary`, `Gender` |
+| **Composite** | Made of sub-attributes | Nested ovals | `Name` → `(Fname, Minit, Lname)` |
+| **Multivalued** | Can hold multiple values per instance | Double oval | `Dept_Locations` |
+| **Derived** | Computed from another attribute | Dashed oval | `Age` derived from `Bdate` |
+| **Stored** | Permanently stored (source for derived) | Oval | `Bdate` |
+| **NULL** | Value is unknown or not applicable | — | `Super_ssn` for top-level manager |
+| **Complex** | Composite + multivalued | Nested double oval | `{Address(Street, City, Zip)}` |
+
+**Shape Notation — Visual Reference**
+
+The diagram below maps each attribute type to its ER shape, drawn on the `EMPLOYEE` entity.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-cap: "ER Attribute Types — Shape Notation on EMPLOYEE Entity"
+graph LR
+    E["EMPLOYEE"]
+
+    E --- K(["<u>Ssn</u>"])
+    E --- S1(["Salary"])
+    E --- S2(["Gender"])
+    E --- C(["Name"])
+    C --- C1(["Fname"])
+    C --- C2(["Minit"])
+    C --- C3(["Lname"])
+    E --- MV(("Phone_Nos"))
+    E --- D(["Age"])
+    E --- ST(["Bdate"])
+
+    style E fill:#1e40af,color:#fff,stroke:#1e3a8a,stroke-width:2px
+    style K fill:#fef9c3,stroke:#b45309,stroke-width:2px
+    style S1 fill:#f8fafc,stroke:#475569,stroke-width:1.5px
+    style S2 fill:#f8fafc,stroke:#475569,stroke-width:1.5px
+    style C fill:#f8fafc,stroke:#475569,stroke-width:1.5px
+    style C1 fill:#f0f4ff,stroke:#374151,stroke-width:1px
+    style C2 fill:#f0f4ff,stroke:#374151,stroke-width:1px
+    style C3 fill:#f0f4ff,stroke:#374151,stroke-width:1px
+    style MV fill:#f8fafc,stroke:#475569,stroke-width:4px
+    style D fill:#f8fafc,stroke:#94a3b8,stroke-dasharray:6 3,stroke-width:2px
+    style ST fill:#f8fafc,stroke:#475569,stroke-width:1.5px
+```
+
+::: {.callout-note}
+**Shape Legend**
+
+| ER Shape | Renders As | Attribute Type |
+|---|---|---|
+| Plain oval, thin border | `Salary`, `Gender`, `Bdate` | **Simple** / **Stored** |
+| Oval with <u>underlined</u> text, amber border | `Ssn` | **Key** |
+| Oval feeding child ovals | `Name → Fname, Minit, Lname` | **Composite** |
+| Circle with thick (4 px) border | `Phone_Nos` | **Multivalued** (double oval) |
+| Oval with dashed border | `Age` | **Derived** |
+| Blue rectangle | `EMPLOYEE` | **Entity Type** |
+:::
+
+### Key Attribute
+
+A **key attribute** uniquely identifies each entity instance within an entity type. It is underlined in the ER diagram.
+
+- If multiple attributes together form a unique identifier, the combination is a **composite key** (each component is underlined).
+- An entity type can have several **candidate keys**; the designer chooses one as the **primary key**.
+
+---
+
+## 3.2 Relationships
+
+A **relationship type** defines an association among two or more entity types. A **relationship instance** is one specific association among entity instances.
+
+### Degree
+
+| Degree | Name | Example |
+|--------|------|---------|
+| 1 | Unary (recursive) | `EMPLOYEE` **Supervises** `EMPLOYEE` |
+| 2 | Binary | `EMPLOYEE` **Works_In** `DEPARTMENT` |
+| 3 | Ternary | `EMPLOYEE` **Supplies** `PROJECT` using `PART` |
+
+Most real-world relationships are binary. Ternary relationships should only be used if a set of three entities is not decomposable into two binary relationships without losing information.
+
+### Relationship Attributes
+
+Attributes belong to a relationship when their value depends on the **combination** of the participating entities, not on either entity alone.
+
+::: callout-important
+`Hours` in *Works_On* is a relationship attribute — it is the number of hours *this employee* spends on *this project*. It makes no sense to store it with `Employee` (hours on which project?) or with `Project` (hours by which employee?). It belongs to the pairing.
+:::
+
+### Bidirectional Reading
+
+Every relationship should be readable in both directions as a natural English sentence. This is the best check that the relationship is correctly named and the cardinalities are set right.
+
+| Relationship | Forward reading | Reverse reading |
+|-------------|----------------|----------------|
+| EMPLOYEE Works_For DEPARTMENT | "Each employee works for one department." | "Each department employs one or more employees." |
+| EMPLOYEE Works_On PROJECT | "Each employee works on one or more projects." | "Each project has one or more employees working on it." |
+| DEPARTMENT Controls PROJECT | "Each department controls zero or more projects." | "Each project is controlled by exactly one department." |
+| EMPLOYEE Supervises EMPLOYEE | "Each employee is supervised by at most one other employee." | "Each employee supervises zero or more employees." |
+
+---
+
+## 3.3 Cardinality and Participation
+
+### Cardinality Ratios
+
+For binary relationships, the cardinality ratio specifies how many instances of one entity can be associated with one instance of the other:
+
+| Ratio | Symbol | Example |
+|-------|--------|---------|
+| One-to-one | 1:1 | Employee **Manages** Department |
+| One-to-many | 1:N | Department **Has** Employee |
+| Many-to-many | M:N | Employee **Works_On** Project |
+
+### Participation Constraints
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| Single line `─` | **Partial** participation | An entity *may* but does not *have to* participate — some instances are not involved |
+| Double line `═` | **Total** participation | *Every* instance of the entity must participate in at least one relationship instance |
+
+Total participation can be remembered as: the entity **cannot exist** in the database without being connected.
+
+**Example:**
+- Every `EMPLOYEE` must work for a department → *total* participation of EMPLOYEE in Works_For
+- Not every `EMPLOYEE` manages a department → *partial* participation of EMPLOYEE in Manages
+
+### Min-Max Notation
+
+The $(min, max)$ notation is more precise than cardinality ratio alone. It is written on the side of the entity it constrains:
+
+$$\text{EMPLOYEE} \xrightarrow{(1,1)} \text{Works\_For} \xrightarrow{(4,\infty)} \text{DEPARTMENT}$$
+
+- An employee works for **exactly one** department — min=1, max=1
+- A department has **at least 4** employees — min=4, max=∞
+
+| $(min,max)$ | English | Participation |
+|-------------|---------|--------------|
+| $(0,1)$ | "zero or one" | Partial |
+| $(1,1)$ | "exactly one" | Total |
+| $(0,N)$ | "zero or more" | Partial |
+| $(1,N)$ | "one or more" | Total |
+
+### Crow's Foot Notation (Alternative)
+
+Many tools (MySQL Workbench, Lucidchart, ERD editors) use **crow's foot** notation instead of the Elmasri (min,max) notation. Both convey the same information:
+
+| Crow's foot | Meaning | (min,max) equivalent |
+|-------------|---------|---------------------|
+| `──|o──` | Zero or one | (0,1) |
+| `──||──` | Exactly one | (1,1) |
+| `──|>──` | One or many | (1,N) |
+| `──o>──` | Zero or many | (0,N) |
+
+The crow's foot marks go on the *far* end from the entity they describe (the end nearest the related entity).
+
+::: callout-note
+**Crow's foot reading rule:** Read the symbols closest to an entity on both sides:
+- Inner symbol (next to entity): minimum (straight line = 1, circle = 0)
+- Outer symbol (far from entity): maximum (straight line = 1, crow foot = many)
+:::
+
+---
+
+## 3.4 Weak Entity Types
+
+A **weak entity type** has no sufficient key attribute of its own. It is identifiable only in combination with the key of its **owner (identifying) entity type**, through an **identifying relationship**.
+
+| Feature | Strong (regular) entity | Weak entity |
+|---------|------------------------|-------------|
+| Has own key? | Yes | No |
+| Identified by | Own primary key | Owner's key + **partial key** |
+| Notation (rectangle) | Single | Double |
+| Identifying relationship | Single diamond | Double diamond |
+| Participation in identifying rel. | May be partial | Always **total** |
+
+**Example:** `DEPENDENT` is weak under `EMPLOYEE`.
+
+- The partial key of `DEPENDENT` is `Dependent_Name` (shown with dashed underline)
+- Two dependents of *different* employees may share the same name — that is fine
+- Two dependents of *the same* employee may not share the same name
+- Full identifier: `(Ssn, Dependent_Name)` — composite
+
+::: callout-tip
+`DEPENDENT` always participates totally in the identifying relationship because a dependent record makes no sense without its associated employee. If the employee is deleted, all their dependents are deleted too (CASCADE rule).
+:::
+
+---
+
+## 3.5 The Company Database — ER Diagram
+
+The following Mermaid diagram uses **crow's foot notation**, which is the standard in most modern tools. The Company Database is the running example for Chapters 3–8.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+erDiagram
+    EMPLOYEE {
+        string Ssn PK
+        string Fname
+        string Minit
+        string Lname
+        date   Bdate
+        string Address
+        char   Gender
+        decimal Salary
+        string Super_ssn FK
+        int    Dno FK
+    }
+    DEPARTMENT {
+        int    Dnumber PK
+        string Dname
+        string Mgr_ssn FK
+        date   Mgr_start_date
+    }
+    PROJECT {
+        int    Pnumber PK
+        string Pname
+        string Plocation
+        int    Dnum FK
+    }
+    DEPENDENT {
+        string Essn PK
+        string Dependent_name PK
+        char   Gender
+        date   Bdate
+        string Relationship
+    }
+    DEPT_LOCATIONS {
+        int    Dnumber PK
+        string Dlocation PK
+    }
+    WORKS_ON {
+        string Essn PK
+        int    Pno PK
+        decimal Hours
+    }
+
+    EMPLOYEE ||--o{ EMPLOYEE        : "supervises (recursive)"
+    EMPLOYEE }o--|| DEPARTMENT      : "works for"
+    DEPARTMENT ||--|| EMPLOYEE      : "managed by"
+    DEPARTMENT ||--o{ DEPT_LOCATIONS : "located at"
+    DEPARTMENT ||--o{ PROJECT       : "controls"
+    EMPLOYEE ||--o{ WORKS_ON        : "works on"
+    PROJECT  ||--o{ WORKS_ON        : "assigned to"
+    EMPLOYEE ||--o{ DEPENDENT       : "has"
+```
+
+::: callout-note
+Mermaid's `erDiagram` renders in crow's foot notation. `||--o{` means "exactly one to zero or many". This diagram maps directly to the six relational tables used in Chapters 5–8.
+:::
+
+---
+
+## 3.6 Full ER Constraint Summary — Company DB
+
+| Relationship | Entities | Cardinality | Employee side | Dept/Project side |
+|-------------|---------|------------|--------------|-----------------|
+| Works_For | EMPLOYEE – DEPARTMENT | N:1 | (1,1) total | (4,∞) total |
+| Manages | EMPLOYEE – DEPARTMENT | 1:1 | (0,1) partial | (1,1) total |
+| Controls | PROJECT – DEPARTMENT | N:1 | — | (1,1) total (proj) |
+| Works_On | EMPLOYEE – PROJECT | M:N | (1,N) total | (1,N) total |
+| Supervises | EMPLOYEE – EMPLOYEE | 1:N | (0,1) partial (supervisee) | (0,N) partial (supervisor) |
+| Has | EMPLOYEE – DEPENDENT | 1:N | (0,N) partial | (1,1) total (dep) |
+| Located_At | DEPARTMENT – DEPT_LOCATIONS | 1:N | — | (1,1) total (loc) |
+
+---
+
+## 3.7 Special Relationship Cases
+
+### Recursive (Unary) Relationships
+
+A relationship whose participating entity types are the same entity. The two roles must be given distinct names:
+
+*Supervises*: the **supervisor** role and the **supervisee** role are both filled by `EMPLOYEE` instances.
+
+- A supervisor may supervise many employees → (0,N) on supervisor role
+- An employee has at most one supervisor → (0,1) on supervisee role
+- Top-level manager has no supervisor → min = 0
+
+### Ternary Relationships
+
+Involve three entity types simultaneously. The classic example: a `SUPPLIER` **supplies** a `PART` to a `PROJECT`. The cardinality of a ternary relationship is described differently — for each two participating entities, how many of the third can be associated?
+
+::: callout-note
+Most ternary relationships can be decomposed into two binary relationships if one of the entities plays an "intersection" role. Before using a ternary, ask: "Does this relationship carry information that cannot be expressed by any pair of these entities?" If not, decompose.
+:::
+
+### Relationship Promotion (Associative Entities)
+
+If a relationship has many attributes, or if it participates in other relationships, the relationship is best **promoted to an entity type**. For example, `WORKS_ON` carrying `Hours` is conceptually a valid relationship-with-attribute; however, when mapped to the relational model it becomes its own table — which you can think of as an associative (junction) entity.
+
+---
+
+## 3.8 ER-to-Relational Mapping
+
+This section presents the seven-step mapping algorithm. Chapter 5 formalizes the resulting relational schema with full notation. Each step below is illustrated with the Company Database.
+
+### Step 1 — Strong Entity Types
+
+For each **strong entity type** $E$ in the ER diagram, create a relation $R$:
+- Include all simple attributes of $E$
+- For a composite attribute, include only its simple sub-attributes (flatten it)
+- Choose a *primary key* from the key attributes
+
+**Result:**
+
+```
+EMPLOYEE(Ssn, Fname, Minit, Lname, Bdate, Address, Gender, Salary, Super_ssn, Dno)
+DEPARTMENT(Dnumber, Dname, Mgr_ssn, Mgr_start_date)
+PROJECT(Pnumber, Pname, Plocation, Dnum)
+```
+
+*(Derived attributes like `Age` are not stored; multivalued attributes handled in Step 4.)*
+
+### Step 2 — Weak Entity Types
+
+For each **weak entity type** $W$ with identifying owner $E$:
+- Create a relation $R$ for $W$
+- Include all simple attributes of $W$
+- Include as **foreign key** the primary key of $E$
+- Primary key of $R$ = PK of owner + partial key of $W$
+
+**Result:**
+
+```
+DEPENDENT(Essn, Dependent_name, Gender, Bdate, Relationship)
+  PK: (Essn, Dependent_name)
+  FK: Essn → EMPLOYEE.Ssn
+```
+
+### Step 3 — Binary 1:1 Relationships
+
+For each binary **1:1** relationship $R$ between $E_1$ and $E_2$:
+- Choose one participation side (prefer the *total* participation side)
+- Add the foreign key plus any relationship attributes to that side's table
+
+**Manages** (EMPLOYEE manages DEPARTMENT; DEPARTMENT must have a manager → total on DEPARTMENT):
+
+```
+DEPARTMENT: add  Mgr_ssn FK → EMPLOYEE.Ssn
+            add  Mgr_start_date (relationship attribute)
+```
+
+**NULL analysis:** `Mgr_ssn` is NOT NULL (every department must have a manager). If the relationship had partial participation on both sides, some FKs would be NULL.
+
+### Step 4 — Binary 1:N Relationships
+
+For each binary **1:N** relationship $R$ between $E_1$ (1-side) and $E_2$ (N-side):
+- Add the primary key of $E_1$ as a foreign key to $E_2$'s relation
+- Add any relationship attributes to $E_2$'s relation
+
+**Works_For** (DEPARTMENT 1 ←→ N EMPLOYEE):
+
+```
+EMPLOYEE: add  Dno FK → DEPARTMENT.Dnumber
+```
+
+**NULL analysis:** `Dno` is NOT NULL (every employee must work for exactly one department — total participation).
+
+### Step 5 — Binary M:N Relationships
+
+For each binary **M:N** relationship $R$ between $E_1$ and $E_2$:
+- Create a new **junction relation** $S$
+- Include as foreign keys the primary keys of $E_1$ and $E_2$
+- The PK of $S$ is the combination of those two foreign keys
+- Include any relationship attributes
+
+**Works_On** (EMPLOYEE M ←→ N PROJECT, attribute: Hours):
+
+```
+WORKS_ON(Essn, Pno, Hours)
+  PK: (Essn, Pno)
+  FK: Essn → EMPLOYEE.Ssn
+  FK: Pno  → PROJECT.Pnumber
+```
+
+**NULL analysis:** Neither FK is NULL (both are part of the primary key).
+
+### Step 6 — Multivalued Attributes
+
+For each **multivalued attribute** $A$ of entity $E$:
+- Create a new relation $R$
+- Include $A$ as an attribute
+- Include the primary key of $E$ as a foreign key
+- PK = (FK + A value)
+
+**Dept_Locations** (multivalued attribute of DEPARTMENT):
+
+```
+DEPT_LOCATIONS(Dnumber, Dlocation)
+  PK: (Dnumber, Dlocation)
+  FK: Dnumber → DEPARTMENT.Dnumber
+```
+
+**NULL analysis:** Neither attribute is NULL (both are part of the primary key).
+
+### Step 7 — N-ary Relationships (n > 2)
+
+For each **n-ary relationship** ($n > 2$) $R$ among $E_1, E_2, \ldots, E_n$:
+- Create a new relation $S$
+- Include as foreign keys the primary keys of all participating entities
+- PK = combination of all FKs (or a surrogate key if the combination is too wide)
+- Include any relationship attributes
+
+There are no ternary relationships in the Company Database.
+
+### Partial Participation and NULL Values — Summary
+
+| Situation | FK nullable? |
+|-----------|------------|
+| N-side of 1:N, total participation | NOT NULL |
+| N-side of 1:N, partial participation | NULL allowed |
+| 1-side FK from a 1:1 where entity may not manage | NULL allowed |
+| M:N junction table FKs | NOT NULL (part of PK) |
+| Weak entity FK to owner | NOT NULL (part of PK) |
+
+---
+
+## 3.9 Final Company Database Schema (After Mapping)
+
+```
+EMPLOYEE(Ssn, Fname, Minit, Lname, Bdate, Address, Gender, Salary,
+         Super_ssn→EMPLOYEE, Dno→DEPARTMENT)
+
+DEPARTMENT(Dnumber, Dname, Mgr_ssn→EMPLOYEE, Mgr_start_date)
+
+DEPT_LOCATIONS(Dnumber→DEPARTMENT, Dlocation)
+
+PROJECT(Pnumber, Pname, Plocation, Dnum→DEPARTMENT)
+
+WORKS_ON(Essn→EMPLOYEE, Pno→PROJECT, Hours)
+
+DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)
+```
+
+Primary keys are underlined in formal notation (Chapter 5). Foreign key arrows show the referenced table.
+
+---
+
+## Summary
+
+::: callout-important
+## Chapter 3 — Key Takeaways
+
+- Start with **prose extraction**: circle nouns (→ entities/attributes) and verb phrases (→ relationships). Decide for each noun whether it has independent existence.
+- **Attributes** have seven types: simple, composite, multivalued, derived, stored, NULL, complex. Flatten composites; store multivalued attributes in a separate table.
+- **Cardinality ratios** (1:1, 1:N, M:N) combined with **participation constraints** (total/partial) form the full structural constraint on a relationship. Use **$(min,max)$** notation for precision.
+- **Crow's foot notation** is the industry standard: read the symbols closest to each entity for the minimum and maximum.
+- Always read every relationship **in both directions** as a natural sentence to verify cardinalities.
+- **Weak entities** have no key of their own; identified by owner's PK + partial key via an identifying relationship. They always have total participation.
+- **7-step mapping** translates every ER construct to a relational table: strong entity → table (Step 1), weak entity → table with composite PK (Step 2), 1:1 → FK on total-participation side (Step 3), 1:N → FK on N-side (Step 4), M:N → junction table (Step 5), multivalued → new table (Step 6), n-ary → new table (Step 7).
+- **NULL analysis**: FK is NOT NULL when participation is total; NULL allowed when partial.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. Define **entity type**, **entity instance**, and **key attribute**. Give a concrete example of each using the Company Database.
+2. Explain the difference between a **composite attribute** and a **multivalued attribute**. How does each affect the mapping to a relational schema?
+3. What is a **weak entity type**? What two notational changes distinguish it from a strong entity? Give a real-world example other than DEPENDENT.
+
+### Short-Answer / Compare
+
+4. Compare **cardinality ratio** notation and **$(min,max)$** notation. Write the $(min,max)$ constraint for the *Works_For* relationship from the Company Database and explain each value.
+5. Explain what **total participation** means for the EMPLOYEE entity in the *Works_For* relationship. What happens in the database if you try to insert an employee without a department?
+6. Describe the difference between a **relationship attribute** and an **entity attribute**. Why does `Hours` belong to the *Works_On* relationship and not to `EMPLOYEE` or `PROJECT`?
+
+### True / False (with explanation)
+
+7. *"A many-to-many relationship can always be safely represented by adding a foreign key to one of the two entities."* — True or False? Explain.
+8. *"Derived attributes must always be stored in the database to avoid recomputing them."* — True or False? Explain.
+9. *"In the 7-step mapping, a multivalued attribute of a strong entity becomes a separate table."* — True or False? Explain.
+10. *"A weak entity can have total participation in a non-identifying relationship."* — True or False? Explain.
+
+### Multiple Choice
+
+11. Which step of the 7-step ER-to-relational mapping handles M:N relationships?
+    - (a) Step 3   (b) Step 4   **(c) Step 5** ✓   (d) Step 6
+
+12. In crow's foot notation, what does the symbol `──o{──` represent?
+    - (a) Exactly one
+    - (b) One or many
+    - **(c) Zero or many** ✓
+    - (d) Zero or one
+
+13. For the *Manages* (1:1) relationship, the FK is placed in the `DEPARTMENT` table rather than the `EMPLOYEE` table because:
+    - (a) DEPARTMENT has more rows
+    - (b) Departments are more important
+    - **(c) Every DEPARTMENT must have a manager (total participation), minimizing NULLs** ✓
+    - (d) SQL does not allow 1:1 keys in EMPLOYEE
+
+### Design Exercise
+
+14. A car rental company stores: **Vehicles** (plate number, make, model, year, mileage), **Customers** (customer ID, name, driving licence number), and **Rentals** (return date, total cost). Each rental involves exactly one vehicle and one customer. A vehicle can be rented many times (but not by multiple customers simultaneously).
+    - (a) Draw a complete ER diagram with entity types, attributes, key attributes, relationship types, cardinalities, and participation constraints.
+    - (b) Apply the 7-step mapping to produce a relational schema.
+    - (c) Identify which foreign keys may be NULL and which must be NOT NULL. Justify each.
+
+### SQL / Query Preview
+
+15. After mapping the Company Database to relational tables, write the SQL `CREATE TABLE` statement for the `WORKS_ON` table, including the primary key and both foreign keys. Which SQL feature enforces the NOT NULL constraint on the foreign keys?

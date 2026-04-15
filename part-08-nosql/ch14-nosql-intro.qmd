@@ -1,0 +1,432 @@
+---
+title: "Introduction to NoSQL Databases"
+subtitle: "Chapter 14"
+---
+
+## §14.0 Beyond the Relational Model
+
+Chapters 5–13 showed how relational databases guarantee ACID transactions, enforce declarative
+constraints, and answer ad-hoc queries through SQL.
+These properties assume a clean, stable schema that fits well on one server.
+From roughly 2005 onward, companies like Google, Amazon, and Facebook discovered that these assumptions
+break down at internet scale: billions of users, petabytes of data, and millisecond latency requirements
+across globally distributed data centres.
+
+This chapter introduces the *NoSQL* family of databases that emerged to address those scale constraints.
+
+---
+
+## 14.1 Motivation: Challenges at Internet Scale
+
+| Challenge | Relational Model's Weakness |
+|-----------|-----------------------------|
+| **Horizontal scale-out** | Adding servers is hard — a single RDBMS enforces ACID across all rows, requiring distributed coordination |
+| **Schema evolution** | `ALTER TABLE` on billions of rows is expensive; zero-downtime schema changes require elaborate migrations |
+| **Impedance mismatch** | Object-oriented and document-centric data don't map cleanly to flat rows and columns |
+| **Write throughput** | Millions of inserts/sec saturate locks and WAL on a single RDBMS server |
+| **Diverse data shapes** | Social graphs, JSON events, time-series sensor readings fit poorly in normalized tables |
+| **Cost** | Enterprise RDBMS licences (Oracle, SQL Server) are prohibitive at hyperscale |
+
+**NoSQL** (Not Only SQL) systems trade some ACID guarantees for **horizontal scalability**,
+**schema flexibility**, and **high availability under network partitions**.
+
+---
+
+## 14.2 The CAP Theorem
+
+Proposed by Eric Brewer (PODC 2000) and formally proved by Gilbert & Lynch (2002):
+
+> A distributed data store can simultaneously provide at most **two** of the following three guarantees.
+
+| Guarantee | Symbol | Definition |
+|-----------|--------|-----------|
+| **Consistency** | C | Every read receives the most recent write, or an error |
+| **Availability** | A | Every request receives a non-error response (may not be the latest data) |
+| **Partition Tolerance** | P | The system continues operating even when nodes cannot communicate |
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    C["Consistency<br/>(every read = latest write)"]
+    A["Availability<br/>(always responds, never errors)"]
+    P["Partition Tolerance<br/>(survives network splits)"]
+
+    C --- CA["CA<br/>RDBMS (single node)<br/>PostgreSQL, MySQL"]
+    C --- CP["CP<br/>MongoDB (w-concern),<br/>HBase, ZooKeeper"]
+    A --- CA
+    A --- AP["AP<br/>Cassandra, CouchDB,<br/>DynamoDB (eventual)"]
+    P --- CP
+    P --- AP
+```
+
+::: callout-important
+**In real distributed systems, network partitions are unavoidable.**
+Therefore, the practical design choice is always between **CP** and **AP** — not whether to tolerate partitions.
+:::
+
+| Mode | Behaviour under partition | Examples |
+|------|--------------------------|---------|
+| **CP** | Returns an error rather than stale data | MongoDB (majority write concern), HBase |
+| **AP** | Returns potentially stale data, never an error | Cassandra, DynamoDB (default), CouchDB |
+
+---
+
+## 14.3 BASE vs. ACID
+
+NoSQL systems replace ACID with **BASE**:
+
+| Property | ACID | BASE |
+|----------|------|------|
+| **Atomicity / Basically Available** | Transaction succeeds or fails atomically | System stays available even if some replicas are stale |
+| **Consistency / Soft State** | DB moves between only valid states | State may change over time even without new input (as replicas sync) |
+| **Isolation / Eventually Consistent** | Concurrent transactions see consistent snapshots | Replicas converge to agreement eventually — reads may be stale in the interim |
+| **Durability** | Committed data survives failure | Usually provided, but may have weaker guarantees |
+
+**Eventual consistency** means: given no new updates, all replicas will eventually return the same value.
+The window of inconsistency is typically milliseconds to seconds.
+
+---
+
+## 14.4 The Four NoSQL Data Models
+
+### 14.4.1 Key-Value Stores
+
+The simplest model: a distributed hash map. Each key maps to an opaque **value** (blob, string, JSON, binary).
+
+```
+key: "user:123"           → {"name": "Ali", "score": 9820}
+key: "session:tok_abc"    → <binary token>
+key: "counter:page_views" → 42571
+```
+
+::: {.panel-tabset}
+## Redis (Core Commands)
+
+```redis
+-- String
+SET user:123 '{"name":"Ali","score":9820}'
+GET user:123
+EXPIRE user:123 3600          -- expire in 1 hour
+
+-- Hash (object fields)
+HSET user:123 name "Ali" score 9820
+HGET user:123 name
+HGETALL user:123
+
+-- List (push/pop queue)
+LPUSH notifications:user:123 "You have a new message"
+LRANGE notifications:user:123 0 9   -- last 10 notifications
+
+-- Sorted set (leaderboard)
+ZADD leaderboard 9820 "Ali"
+ZADD leaderboard 8550 "Sara"
+ZREVRANGE leaderboard 0 9 WITHSCORES  -- top 10
+```
+
+## Use Cases
+
+| Pattern | Redis Command |
+|---------|-------------|
+| Session cache | `SET / GET / EXPIRE` |
+| Rate limiting | `INCR / EXPIRE` per user per window |
+| Leaderboard | `ZADD / ZREVRANGE` sorted set |
+| Pub/Sub messaging | `PUBLISH / SUBSCRIBE` |
+| Distributed lock | `SET key value NX EX 30` (SETNX + expire) |
+:::
+
+### 14.4.2 Document Stores
+
+Each record is a **self-describing document** (JSON/BSON). Documents in the same collection may have different fields.
+
+```json
+{
+  "_id": "emp001",
+  "name": { "first": "Sara", "last": "Hassan" },
+  "dept": "Engineering",
+  "skills": ["Python", "MongoDB", "Docker"],
+  "salary": 85000,
+  "address": { "city": "Cairo", "country": "Egypt" }
+}
+```
+
+| Feature | Detail |
+|---------|--------|
+| **Schema** | Flexible — each document defines its own structure |
+| **Queries** | Rich filter on any field, embedded documents, arrays |
+| **Relationships** | Either embed sub-documents, or reference by `_id` |
+| **Examples** | MongoDB, CouchDB, Firestore, Couchbase |
+| **Best for** | Catalogs, user profiles, content management, event logging |
+
+### 14.4.3 Column-Family Stores (Wide-Column)
+
+Data is stored in rows where each row can have a different set of columns within a **column family**.
+
+```
+Row Key  │ info CF                     │ metrics CF
+─────────┼─────────────────────────────┼───────────────────
+"user1"  │ name:"Ali"  city:"Cairo"    │ views:1200  shares:45
+"user2"  │ name:"Sara"                 │ views:800
+"user3"  │ name:"Omar" dept:"Sales"    │ (no metrics yet)
+```
+
+- A **column family** groups columns stored together on disk — enables fast column-subset reads
+- Designed for **massive write throughput** and **time-series** data
+- Schema is defined per column family but columns within a family are flexible
+
+::: {.panel-tabset}
+## Cassandra CQL
+
+```sql
+-- Create keyspace (defines replication strategy)
+CREATE KEYSPACE company
+  WITH replication = {'class':'SimpleStrategy', 'replication_factor':3};
+
+-- Table design: optimized for a specific query (denormalize)
+-- Query: "find all employees in a department ordered by hire_date DESC"
+CREATE TABLE employees_by_dept (
+    dept_id   UUID,
+    hire_date TIMESTAMP,
+    emp_id    UUID,
+    name      TEXT,
+    salary    DECIMAL,
+    PRIMARY KEY ((dept_id), hire_date, emp_id)
+) WITH CLUSTERING ORDER BY (hire_date DESC);
+
+INSERT INTO employees_by_dept (dept_id, hire_date, emp_id, name, salary)
+VALUES (uuid(), '2022-03-15', uuid(), 'Ali Hassan', 85000.00);
+
+SELECT * FROM employees_by_dept
+WHERE dept_id = ? AND hire_date > '2022-01-01';
+```
+
+## Design Principles
+
+**Cassandra forces you to design tables around access patterns, not data relationships.**
+
+| RDBMS Principle | Cassandra Equivalent |
+|-----------------|---------------------|
+| One table per entity | Create one table per query |
+| Normalize to avoid redundancy | Denormalize; redundancy is fine |
+| Use JOINs | No JOINs; embed data you need together |
+| Primary key = row identity | Partition key → which node; clustering key → sort order within partition |
+:::
+
+### 14.4.4 Graph Databases
+
+Data is stored as **nodes** (entities) and **edges** (relationships), each with properties.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+graph LR
+    Alice["Alice<br/>(Person)"]
+    Bob["Bob<br/>(Person)"]
+    TechCorp["TechCorp<br/>(Company)"]
+    Cairo["Cairo<br/>(City)"]
+
+    Alice -->|KNOWS| Bob
+    Bob -->|WORKS_AT| TechCorp
+    Alice -->|LIVES_IN| Cairo
+    TechCorp -->|HAS_HQ_IN| Cairo
+```
+
+::: {.panel-tabset}
+## Neo4j Cypher
+
+```cypher
+-- Create nodes
+CREATE (:Person {name:'Alice', age:30})
+CREATE (:Person {name:'Bob', age:25})
+CREATE (:Company {name:'TechCorp'})
+
+-- Create relationship
+MATCH (a:Person {name:'Alice'}), (b:Person {name:'Bob'})
+CREATE (a)-[:KNOWS {since:2020}]->(b)
+
+-- Query: friends of Alice
+MATCH (a:Person {name:'Alice'})-[:KNOWS]->(friend)
+RETURN friend.name
+
+-- Query: who works at TechCorp, and their friends?
+MATCH (p:Person)-[:WORKS_AT]->(:Company {name:'TechCorp'})
+OPTIONAL MATCH (p)-[:KNOWS]->(friend)
+RETURN p.name, collect(friend.name) AS friends
+
+-- Find shortest path
+MATCH path = shortestPath(
+  (a:Person {name:'Alice'})-[*]-(b:Person {name:'Omar'})
+)
+RETURN path
+```
+
+## Use Cases
+
+| Use Case | Why Graph? |
+|----------|-----------|
+| Social networks | Friend-of-friend traversal is O(relationships) not O(rows) |
+| Recommendation engines | "People who liked X also liked Y" — relationship traversal |
+| Fraud detection | Find circular transaction paths or shared identity attributes |
+| Knowledge graphs | Multi-hop entity relationships (concept A → concept B → concept C) |
+:::
+
+---
+
+## 14.5 NoSQL vs. RDBMS: Full Comparison
+
+| Dimension | RDBMS | Document (MongoDB) | Column-Family (Cassandra) | Graph (Neo4j) |
+|-----------|-------|-------------------|--------------------------|--------------|
+| **Data model** | Tables, fixed schema | JSON documents, flexible schema | Rows + column families | Nodes + edges + properties |
+| **Query language** | SQL (standard) | MQL (MongoDB Query Language) | CQL (SQL-like) | Cypher |
+| **Schema** | Rigid (DDL) | Flexible (schema-optional) | Semi-rigid (column families defined) | Node/edge types optional |
+| **ACID** | Full (1 server or distributed) | Multi-document ACID (v4+, replica set) | Lightweight transactions (CAS only) | Full ACID (single server) |
+| **Scaling** | Vertical + limited sharding | Horizontal sharding built-in | Masterless horizontal scale-out | Vertical primarily |
+| **Joins** | Native | No joins (embed or `$lookup`) | No joins (denormalize) | Relationship traversal |
+| **Consistency** | Strong | Tunable (from eventual to majority) | Tunable (ONE, QUORUM, ALL) | Strong |
+| **Best for** | Transactions, reporting, ERP | Catalogs, profiles, CMS | Time-series, IoT, analytics | Social, recommendations, fraud |
+
+::: callout-tip
+## Polyglot Persistence
+
+Modern architectures combine multiple database types for different workloads in the same system:
+
+- **PostgreSQL** → orders, payments (ACID required)  
+- **MongoDB** → product catalog (flexible schema)  
+- **Redis** → session cache, rate limiting (sub-ms reads)  
+- **Cassandra** → clickstream / IoT time-series (huge write volume)  
+- **Neo4j** → recommendation graph (relationship traversal)
+:::
+
+---
+
+## 14.6 When to Choose NoSQL
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    Q1{"Need strong ACID<br/>transactions?"}
+    Q1 -->|Yes| RDBMS["Use RDBMS<br/>(PostgreSQL, MySQL, Oracle)"]
+    Q1 -->|No| Q2{"Data relationships<br/>are the core value?"}
+    Q2 -->|Yes| GRAPH["Graph DB<br/>(Neo4j, Neptune)"]
+    Q2 -->|No| Q3{"Need sub-millisecond<br/>lookup by exact key?"}
+    Q3 -->|Yes| KV["Key-Value Store<br/>(Redis, DynamoDB)"]
+    Q3 -->|No| Q4{"Very high write throughput<br/>or time-series data?"}
+    Q4 -->|Yes| WIDE["Column-Family<br/>(Cassandra, HBase)"]
+    Q4 -->|No| DOC["Document Store<br/>(MongoDB, Firestore)"]
+```
+
+---
+
+## 14.7 Chapter Summary
+
+::: callout-important
+## Key Takeaways — Chapter 14
+
+1. **RDBMS limitations at scale**: horizontal scaling is hard; schema changes are expensive;
+   object/document data has impedance mismatch.
+
+2. **CAP Theorem**: distributed systems can guarantee at most 2 of Consistency, Availability,
+   Partition Tolerance. Since partitions are unavoidable, the real choice is CP vs AP.
+
+3. **BASE** replaces ACID: Basically Available, Soft State, Eventually Consistent.
+
+4. **Four NoSQL models**:
+   - **Key-Value** (Redis): lookup by exact key; sessions, caching, counters
+   - **Document** (MongoDB): flexible JSON; catalogs, profiles, CMS
+   - **Column-Family** (Cassandra): denormalized by query; IoT, time-series, analytics
+   - **Graph** (Neo4j): nodes + edges; social, fraud, recommendations
+
+5. **Polyglot persistence**: use each database type where it excels.
+
+6. The choice between RDBMS and NoSQL depends on consistency requirements,
+   query patterns, data shape, and scale targets — not fashion.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. In the CAP theorem, explain why **Partition Tolerance cannot be avoided** in a distributed system.
+   Given that P must be guaranteed, what is the actual choice a distributed database designer makes?
+
+2. Distinguish between **BASE** and **ACID**. Give a concrete example (e.g., a bank balance vs. a
+   Twitter like-count) where BASE is acceptable and one where it is not.
+
+3. Why do column-family stores like Cassandra require you to **design tables around query patterns**
+   rather than around entity relationships? What is the consequence of violating this rule?
+
+### Applied
+
+4. A social media company needs to store posts. Each post can have 0–100 tags, 0–N embedded comments,
+   and optional media attachments (image URL, video URL). Some posts are text-only, others are media-only.
+   
+   (a) Model this in a relational schema (normalized).
+   (b) Model this as a MongoDB document.
+   (c) Which representation makes more queries simpler? Which allows easier ad-hoc analysis?
+
+5. A leaderboard for a mobile game needs to:
+   - Add/update a user's score in real time (millions of events/minute)
+   - Return the top-100 players in <5 ms
+   - Expire scores older than 24 hours
+   
+   Explain how **Redis Sorted Sets** (`ZADD`, `ZREVRANGE`, `EXPIRE`) implement this requirement.
+   Could a relational database satisfy all three constraints? What would break first?
+
+6. Design a Cassandra table for the following access pattern:
+   *"Find all sensor readings for sensor `X` in the last 24 hours, ordered by timestamp descending."*
+   
+   - Choose an appropriate partition key and clustering key
+   - Explain how the partition key affects which Cassandra node stores the data
+
+### Analysis
+
+7. For each system below, state whether it is **CP or AP** under the CAP theorem, and explain the
+   practical consequence (what happens to the user during a network partition?):
+   - Cassandra (default consistency level `ONE`)
+   - MongoDB with `writeConcern: {w: "majority"}`
+   - A single-server PostgreSQL instance
+
+8. **Fraud detection** must follow chains of transactions:
+   *"Find all accounts that received money from account X, directly or through at most 3 intermediary accounts."*
+   
+   (a) Write this query in SQL (with recursive CTE).
+   (b) Write this query in Neo4j Cypher.
+   (c) Which approach is more efficient as the graph gets deeper (e.g., 10 hops)? Explain why.
+
+### Diagram
+
+9. Draw a **Mermaid graph** (or ASCII diagram) showing the polyglot persistence architecture for an
+   e-commerce platform that uses: PostgreSQL for orders, MongoDB for product catalog, Redis for cart,
+   and Cassandra for clickstream analytics. Label each database with its NoSQL type and the data it owns.
+
+### Design
+
+10. A healthcare company needs to store patient electronic health records (EHR). Each EHR contains:
+    a fixed core (name, dob, blood type) plus a variable set of diagnoses (ICD-10 codes + dates),
+    medications (drug name, dosage, frequency + start/end dates), and procedure records.
+    
+    - Propose a MongoDB document schema for a single patient
+    - Identify which fields belong in a relational DB instead (and why)
+    - What would you do differently if EHRs must be queried with complex multi-field filters for
+      population health analytics?
+
+### Synthesis
+
+11. A startup is building a real-time event-sourcing system. Every user action triggers an event
+    (JSON object with type, payload, user_id, timestamp). Requirements:
+    - Ingest 500,000 events/second
+    - Query: recent 100 events for a user
+    - Query: aggregate counts by event type per hour
+    - Replay all events from a given timestamp (for audit/replay)
+    
+    Propose a combination of NoSQL systems that handles all four requirements.
+    For each requirement, identify which system handles it and why the others fall short.
+
+12. Compare **MongoDB** and **Cassandra** across: (a) schema flexibility, (b) consistency guarantees,
+    (c) primary query patterns, (d) horizontal scaling mechanism, (e) multi-document transaction support.
+    Conclude with: *given a ride-sharing app that needs to store trips, drivers, and GPS coordinates
+    streaming in at 50,000 writes/sec, which would you choose and why?
+

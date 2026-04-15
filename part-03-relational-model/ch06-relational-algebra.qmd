@@ -1,0 +1,785 @@
+---
+title: "Relational Algebra"
+subtitle: "Chapter 6"
+---
+
+SQL is a *declarative* language: you say *what* you want; the DBMS decides *how* to compute it. The "how" is determined by translating your SQL into **relational algebra** — a *procedural* formal language where every operation is an explicit step. Understanding relational algebra means understanding how the query optimizer thinks, why certain queries are fast, and what is happening beneath every `JOIN` you write.
+
+::: callout-note
+## Practise with the RELAX Calculator
+
+Every example in this chapter can be run interactively in the **RELAX relational algebra calculator** at:
+
+[https://nireas.iee.ihu.gr/relax/calc.htm](https://nireas.iee.ihu.gr/relax/calc.htm)
+
+To load the Company Database, paste the **inline-relation schema** from §6.1 into the *Group Editor* panel, then type the algebra expression in the query box. Both keyboard Greek symbols and LaTeX-style notation (`\sigma`, `\pi`, `\bowtie`) are accepted.
+:::
+
+---
+
+## 6.1 Company Database Schema for RELAX
+
+The following schema loads the complete Enhanced Company Database — 30 employees, 8 departments, 12 projects — directly into RELAX.
+
+::: {.callout-tip collapse="true"}
+## Click to expand: RELAX inline-relation schema (paste into Group Editor)
+
+```
+group: Enhanced Company Database (imported from SQL)
+
+Employee = {
+    Fname:string, Minit:string, Lname:string, Ssn:string, Bdate:string, Address:string, Gender:string, Salary:number, Super_ssn:string, Dno:number
+    'Ahmed', 'M', 'Khalidi', '001', '1985-06-15', 'Gaza', 'M', 62000, '003', 1
+    'Mohammed', 'A', 'Asali', '002', '1990-07-20', 'Gaza', 'M', 67000, '001', 2
+    'Hussein', 'B', 'Barghouti', '003', '1988-11-30', 'Ramallah', 'M', 71000, '004', null
+    'Salam', 'C', 'Ahmad', '004', '1982-02-25', 'Ramallah', 'M', 56000, '003', 3
+    'Baraa', 'D', 'Homs', '005', '1995-04-15', 'Nablus', 'M', 49000, '003', 2
+    'Ali', 'S', 'Abbasi', '006', '1992-01-10', 'Hebron', 'M', 73000, '004', 1
+    'Samira', 'A', 'Tawil', '007', '1989-03-22', 'Bethlehem', 'F', 66000, '006', 2
+    'Laila', 'M', 'Asadi', '008', '1991-05-18', 'Qalqilya', 'F', 59000, '006', 1
+    'Yusuf', 'Q', 'Zaghir', '009', '1987-08-30', 'Tulkarem', 'M', 61000, '004', 3
+    'Fatima', 'R', 'Najjar', '010', '1993-02-14', 'Jericho', 'F', 58000, '009', 2
+    'Omar', 'L', 'Qutami', '011', '1986-06-24', 'Jenin', 'M', 65000, '009', 1
+    'Noura', 'M', 'Barghouti', '012', '1994-09-12', 'Jenin', 'F', 63000, '010', 2
+    'Tariq', 'B', 'Ali', '013', '1983-11-05', 'Bethlehem', 'M', 71000, '010', 1
+    'Maryam', 'S', 'Haj', '014', '1995-12-20', 'Gaza', 'F', 60000, '007', 3
+    'Islam', 'A', 'Saleh', '015', '1990-03-09', 'Hebron', 'M', 72000, '014', 2
+    'Jamila', 'Q', 'Fattouni', '016', '1988-08-17', 'Nablus', 'F', 69000, '015', 1
+    'Adnan', 'M', 'Obeid', '017', '1984-07-29', 'Ramallah', 'M', 63000, '016', 3
+    'Hala', 'D', 'Asmar', '018', '1992-10-11', 'Tulkarem', 'F', 61000, '017', 2
+    'Firas', 'B', 'Zahr', '019', '1989-04-16', 'Qalqilya', 'M', 66000, '018', 1
+    'Souad', 'A', 'Sadi', '020', '1996-01-03', 'Jericho', 'F', 59000, '019', 2
+    'Khalid', 'H', 'Masri', '021', '1991-08-14', 'Hebron', 'M', 68000, '003', 1
+    'Rania', 'F', 'Jabari', '022', '1987-12-08', 'Nablus', 'F', 64000, '006', 2
+    'Bassam', 'K', 'Nasser', '023', '1993-05-22', 'Ramallah', 'M', 57000, '009', 3
+    'Diana', 'L', 'Qasim', '024', '1990-11-30', 'Hebron', 'F', 71000, '014', 1
+    'Walid', 'N', 'Hamdan', '025', '1985-09-17', 'Jenin', 'M', 59000, '016', 2
+    'Nadia', 'P', 'Ashour', '026', '1994-07-03', 'Gaza', 'F', 67000, '018', 3
+    'Ziad', 'R', 'Abu Ali', '027', '1989-02-28', 'Bethlehem', 'M', 72000, '020', 1
+    'Hanan', 'S', 'Darwish', '028', '1992-04-12', 'Jerusalem', 'F', 63000, '022', 2
+    'Raed', 'T', 'Alami', '029', '1986-10-25', 'Tulkarem', 'M', 69000, '024', 3
+    'Mona', 'W', 'Shahin', '030', '1995-03-19', 'Qalqilya', 'F', 61000, '026', 1
+}
+
+Department = {
+    Dname:string, Dnumber:number, Mgr_ssn:string, Mgr_start_date:string
+    'Sales', 1, '001', '2010-01-01'
+    'Marketing', 2, '002', '2012-03-15'
+    'Finance', 3, '014', '2015-06-30'
+    'HR', 4, '017', '2018-09-12'
+    'Assistance', 5, '003', '2020-01-01'
+    'IT', 6, '024', '2019-05-20'
+    'Operations', 7, '027', '2021-08-10'
+    'Research', 8, '029', '2022-02-15'
+}
+
+Project = {
+    Pname:string, Pnumber:number, Plocation:string, Dnum:number
+    'Project A', 101, 'Hebron', 1
+    'Project B', 102, 'Jericho', 2
+    'Project C', 103, 'Jenin', 1
+    'Project D', 104, 'Qalqilya', 3
+    'Project E', 105, 'Ramallah', 4
+    'Project F', 106, 'Gaza', 5
+    'Project G', 107, 'Bethlehem', 6
+    'Project H', 108, 'Nablus', 7
+    'Project I', 109, 'Tulkarem', 8
+    'Project J', 110, 'Ramallah', 1
+    'Project K', 111, 'Hebron', 2
+    'Project L', 112, 'Jericho', 3
+}
+
+Dept_Locations = {
+    Dnumber:number, Dlocation:string
+    1, 'Hebron'
+    2, 'Jericho'
+    3, 'Qalqilya'
+    4, 'Ramallah'
+    5, 'Gaza'
+    6, 'Bethlehem'
+    7, 'Nablus'
+    8, 'Tulkarem'
+    1, 'Ramallah'
+    2, 'Hebron'
+    3, 'Jerusalem'
+}
+
+Works_On = {
+    Essn:string, Pno:number, Hours:number
+    '004', 101, 40
+    '005', 102, 35
+    '006', 103, 45
+    '007', 104, 30
+    '001', 105, 25
+    '008', 106, 20
+    '009', 107, 35
+    '010', 108, 40
+    '011', 109, 30
+    '012', 110, 25
+    '013', 111, 35
+    '014', 112, 40
+    '015', 101, 20
+    '016', 102, 30
+    '017', 103, 35
+    '018', 104, 25
+    '019', 105, 40
+    '020', 106, 30
+    '021', 107, 35
+    '022', 108, 20
+}
+
+Dependent = {
+    Essn:string, Dependent_name:string, Gender:string, Bdate:string, Relationship:string
+    '004', 'Sara Khalidi', 'F', '2010-05-10', 'Daughter'
+    '002', 'Omar Asali', 'M', '2015-03-20', 'Son'
+    '002', 'Leila Barghouti', 'F', '2012-08-15', 'Daughter'
+    '001', 'Zaid Ahmad', 'M', '2018-11-30', 'Son'
+    '017', 'Lina Obeid', 'F', '2019-02-14', 'Daughter'
+    '006', 'Yousef Abbasi', 'M', '2017-07-12', 'Son'
+    '009', 'Rashid Zaghir', 'M', '2014-09-05', 'Son'
+    '011', 'Layla Qutami', 'F', '2019-12-25', 'Daughter'
+    '014', 'Hassan Haj', 'M', '2016-04-18', 'Son'
+    '016', 'Noor Fattouni', 'F', '2018-08-30', 'Daughter'
+    '019', 'Majd Zahr', 'M', '2020-03-15', 'Son'
+    '022', 'Tala Jabari', 'F', '2015-11-08', 'Daughter'
+}
+```
+:::
+
+### Entity-Relationship Overview
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+erDiagram
+    Employee {
+        string Ssn PK
+        string Fname
+        string Lname
+        number Salary
+        string Super_ssn FK
+        number Dno FK
+    }
+    Department {
+        number Dnumber PK
+        string Dname
+        string Mgr_ssn FK
+    }
+    Project {
+        number Pnumber PK
+        string Pname
+        number Dnum FK
+    }
+    Works_On {
+        string Essn PK
+        number Pno PK
+        number Hours
+    }
+    Dependent {
+        string Essn PK
+        string Dependent_name PK
+    }
+    Dept_Locations {
+        number Dnumber PK
+        string Dlocation PK
+    }
+
+    Employee }o--|| Department : "works in (Dno)"
+    Department ||--|| Employee : "managed by (Mgr_ssn)"
+    Employee ||--o{ Works_On : "works on"
+    Project ||--o{ Works_On : "assigned"
+    Department ||--o{ Project : "controls"
+    Employee ||--o{ Dependent : "has"
+    Department ||--o{ Dept_Locations : "located at"
+    Employee }o--o| Employee : "supervised by"
+```
+
+---
+
+## 6.2 What Is Relational Algebra?
+
+**Relational algebra** is a **procedural formal query language** for relations. Each *operation* takes one or two relations as input and returns a new relation as output.
+
+**Closure property**: The result of every relational algebra operation is itself a relation. This means operations can be freely composed — the output of one becomes the input of the next.
+
+$$\text{Expression} = \text{Op}_k(\ldots\text{Op}_2(\text{Op}_1(R_1, R_2))\ldots)$$
+
+There are **6 fundamental operations** (from which all others can be derived) and several convenient **additional (derived) operations**.
+
+| Group | Operations |
+|-------|-----------|
+| Fundamental | $\sigma$ select, $\pi$ project, $\cup$ union, $-$ difference, $\times$ Cartesian product, $\rho$ rename |
+| Derived | $\cap$ intersection, $\bowtie$ natural join, $\bowtie_\theta$ theta join, $\ltimes$ outer joins, $\div$ division |
+
+---
+
+## 6.3 Result Schema Notation
+
+For every operation in this chapter, we track the **result schema** — the column names and degree of the output relation. This is exactly what the DBMS query optimizer computes before execution.
+
+**Format used:**
+```
+Result: RelationName(col1, col2, …)
+Degree: k    Cardinality: m rows (estimated)
+```
+
+Column names in a result use **qualified notation** `Table.Column` when there is ambiguity (e.g., after a Cartesian product that produces two `Ssn` columns).
+
+---
+
+## 6.4 Fundamental Operations
+
+### 1. Select — $\sigma$ (Filter Rows)
+
+$$\sigma_{\text{condition}}(R)$$
+
+Returns the subset of tuples in $R$ that satisfy the *predicate*. Equivalent to a SQL `WHERE` clause.
+
+**Properties:**
+- Degree of result = degree of $R$ (same columns)
+- Cardinality of result ≤ cardinality of $R$
+- Conditions: $=, \neq, <, >, \leq, \geq$, combined with $\land$ (AND), $\lor$ (OR), $\lnot$ (NOT)
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\sigma_{\text{Salary} > 65000}(\text{Employee})$$
+
+## RELAX Input
+```
+σ Salary > 65000 (Employee)
+```
+:::
+
+**Result Schema:**
+```
+Result: Employee(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dno)
+Degree: 10
+Cardinality: ~12 rows (employees earning > 65,000)
+```
+
+**Compound example** — employees in department 1 earning more than 60,000:
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\sigma_{\text{Dno}=1 \;\land\; \text{Salary}>60000}(\text{Employee})$$
+
+## RELAX Input
+```
+σ Dno = 1 and Salary > 60000 (Employee)
+```
+:::
+
+**SQL equivalent:**
+```sql
+SELECT * FROM Employee WHERE Dno = 1 AND Salary > 60000;
+```
+
+---
+
+### 2. Project — $\pi$ (Filter Columns)
+
+$$\pi_{A_1, A_2, \ldots, A_k}(R)$$
+
+Returns a relation containing only the listed attributes. Duplicate tuples are **eliminated** (set semantics).
+
+**Properties:**
+- Degree of result = $k$ (number of listed attributes)
+- Cardinality ≤ cardinality of $R$ (duplicates eliminated)
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\pi_{\text{Fname, Lname, Salary}}(\text{Employee})$$
+
+## RELAX Input
+```
+π Fname, Lname, Salary (Employee)
+```
+:::
+
+**Result Schema:**
+```
+Result: (Fname, Lname, Salary)
+Degree: 3    Cardinality: ≤ 30 rows
+```
+
+::: callout-tip
+The SQL keyword `DISTINCT` corresponds to projection in the formal model. Without `DISTINCT`, SQL is a **bag** (multiset) operation; with it, SQL matches formal **set** semantics.
+:::
+
+---
+
+### 3. Union — $\cup$ (Combine Two Relations)
+
+$$R \cup S$$
+
+Returns all tuples in $R$, all tuples in $S$, with **duplicates removed**.
+
+#### Set Compatibility Rules
+
+$\cup$, $\cap$, and $-$ all require **union-compatible** operands:
+
+1. $R$ and $S$ must have the **same degree** (number of attributes)
+2. Corresponding attributes must have **compatible domains** (same or convertible types)
+3. The **result takes the attribute names from the left operand** ($R$)
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\pi_{\text{Ssn}}(\text{Employee}) \;\cup\; \pi_{\text{Essn}}(\text{Works\_On})$$
+
+## RELAX Input
+```
+(π Ssn (Employee)) ∪ (π Essn (Works_On))
+```
+:::
+
+**Result Schema:**
+```
+Result: (Ssn)          ← name taken from LEFT operand
+Degree: 1
+Cardinality: ≤ 30 + 20 = 50 (minus duplicates)
+```
+
+**SQL equivalent:** `UNION` (removes duplicates); `UNION ALL` (keeps duplicates → bag semantics).
+
+---
+
+### 4. Set Difference — $-$ (In One But Not the Other)
+
+$$R - S$$
+
+Returns tuples that are in $R$ but **not** in $S$. Requires union compatibility.
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\pi_{\text{Ssn}}(\text{Employee}) \;-\; \pi_{\text{Essn}}(\text{Works\_On})$$
+
+## RELAX Input
+```
+(π Ssn (Employee)) - (π Essn (Works_On))
+```
+:::
+
+This returns the SSNs of employees who are **not** currently assigned to any project.
+
+**Result Schema:**
+```
+Result: (Ssn)          ← name from LEFT operand
+Degree: 1
+Cardinality: ≤ 30 (employees not in Works_On)
+```
+
+**SQL equivalent:** `EXCEPT` (standard) or `NOT EXISTS` / `NOT IN` subquery.
+
+---
+
+### 5. Cartesian Product — $\times$ (All Combinations)
+
+$$R \times S$$
+
+Returns every possible combination of one tuple from $R$ with one tuple from $S$.
+
+**Properties:**
+- Degree = degree($R$) + degree($S$) — columns from both; qualified as `R.col` and `S.col` for shared names
+- Cardinality = $|R| \times |S|$
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\text{Employee} \times \text{Department}$$
+
+## RELAX Input
+```
+Employee × Department
+```
+:::
+
+**Result Schema:**
+```
+Result: (Employee.Fname, …, Employee.Dno, Department.Dname, …, Department.Dnumber, …)
+Degree: 10 + 4 = 14    Cardinality: 30 × 8 = 240 rows
+```
+
+::: callout-important
+The raw Cartesian product generates 240 rows but most are meaningless combinations. It is almost always followed by a $\sigma$ to keep only matching rows — that combination is precisely a **join**.
+:::
+
+---
+
+### 6. Rename — $\rho$ (Rename Relation or Attributes)
+
+$$\rho_{S(B_1, B_2, \ldots, B_n)}(R)$$
+
+Renames relation $R$ to $S$ and its attributes to $B_1, \ldots, B_n$.
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\rho_{\text{Supervisor}(\text{Ssn, FName, LName})}(\pi_{\text{Ssn, Fname, Lname}}(\text{Employee}))$$
+
+## RELAX Input
+```
+ρ Supervisor(Ssn, FName, LName) (π Ssn, Fname, Lname (Employee))
+```
+:::
+
+This is especially useful for **self-joins** (joining a table with itself), where you need two distinct copies with different names.
+
+---
+
+## 6.5 Additional (Derived) Operations
+
+### 7. Intersection — $\cap$
+
+$$R \cap S = R - (R - S)$$
+
+Returns tuples present in **both** $R$ and $S$. Requires union compatibility.
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\pi_{\text{Ssn}}(\text{Employee}) \;\cap\; \pi_{\text{Essn}}(\text{Works\_On})$$
+
+## RELAX Input
+```
+(π Ssn (Employee)) ∩ (π Essn (Works_On))
+```
+:::
+
+Returns SSNs of employees who are assigned to at least one project.
+
+---
+
+### 8. Natural Join — $\bowtie$
+
+$$R \bowtie S$$
+
+A natural join automatically:
+1. Finds all columns with **identical names** in both $R$ and $S$ (the common attributes)
+2. Keeps only rows where those common attributes have **equal values**
+3. **Eliminates the duplicate common columns** from the result (they appear once)
+
+**Column collapse rule:** If $R$ has columns $(A, B, C)$ and $S$ has columns $(B, C, D)$, then $R \bowtie S$ has columns $(A, B, C, D)$ — not $(A, B, C, B, C, D)$.
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\text{Employee} \bowtie \text{Works\_On}$$
+
+## RELAX Input
+```
+Employee ⋈ Works_On
+```
+:::
+
+**Result Schema:**
+```
+Employee(Fname,…,Ssn,…,Dno) ⋈ Works_On(Essn, Pno, Hours)
+Common attribute: Ssn=Essn → joined on equality; one column kept
+Result: (Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dno, Pno, Hours)
+Degree: 10 + 3 - 1 = 12    Cardinality: ≤ 20 rows (Works_On has 20 rows)
+```
+
+::: callout-note
+In the Company Database, `Employee.Ssn` and `Works_On.Essn` are the **intended** join columns but have *different names*. RELAX's natural join will not match them automatically. Use a **theta join** with the explicit condition `Ssn = Essn`, or first rename one column.
+:::
+
+---
+
+### 9. Theta Join — $\bowtie_\theta$ (Join on Any Condition)
+
+$$R \bowtie_\theta S = \sigma_\theta(R \times S)$$
+
+A theta join is a Cartesian product filtered by condition $\theta$. When $\theta$ uses only equality (`=`), it is an **equijoin**.
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\text{Employee} \bowtie_{\text{Ssn}=\text{Essn}} \text{Works\_On}$$
+
+## RELAX Input
+```
+Employee ⋈ Ssn = Essn Works_On
+```
+:::
+
+**Result Schema:**
+```
+Result: (Employee.Fname,…,Employee.Ssn,…,Works_On.Essn, Works_On.Pno, Works_On.Hours)
+Degree: 13    (both Ssn and Essn are kept — unlike natural join)
+Cardinality: 20 rows
+```
+
+---
+
+### 10. Outer Joins
+
+Standard (inner) joins discard unmatched rows. **Outer joins** preserve them by filling missing values with NULL.
+
+| Operator | Symbol | Keeps unmatched from |
+|----------|--------|---------------------|
+| Left outer join | $R \mathbin{\text{⟕}} S$ | $R$ (left operand) |
+| Right outer join | $R \mathbin{\text{⟖}} S$ | $S$ (right operand) |
+| Full outer join | $R \mathbin{\text{⟗}} S$ | Both $R$ and $S$ |
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\text{Employee} \mathbin{\text{⟕}}_{\text{Ssn}=\text{Essn}} \text{Works\_On}$$
+
+## RELAX Input
+```
+Employee ⟕ Ssn = Essn Works_On
+```
+:::
+
+Returns all 30 employees; those not in `Works_On` get NULL for `Pno` and `Hours`.
+
+---
+
+### 11. Division — $\div$ (Universal Quantification)
+
+$$R(A, B) \div S(B)$$
+
+Returns the values of $A$ in $R$ that are associated with **every** value of $B$ in $S$.
+
+$$R \div S \;\equiv\; \pi_A(R) - \pi_A\bigl((\pi_A(R) \times S) - R\bigr)$$
+
+**Use case:** "Find employee SSNs who work on **all** projects in a given set."
+
+::: {.panel-tabset}
+## LaTeX Notation
+$$\pi_{\text{Essn, Pno}}(\text{Works\_On}) \;\div\; \pi_{\text{Pnumber}}(\sigma_{\text{Dnum}=1}(\text{Project}))$$
+
+## RELAX Input
+```
+(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Dnum = 1 (Project)))
+```
+:::
+
+Returns SSNs of employees who work on **all** projects controlled by department 1.
+
+---
+
+## 6.6 Composed Queries — Company Database Examples
+
+### Q1: Names of employees who work in the 'Research' department
+
+**Step 1:** Find the department number for 'Research':
+$$D \leftarrow \sigma_{\text{Dname}='\text{Research}'}(\text{Department})$$
+
+**Step 2:** Find employees in that department:
+$$E \leftarrow \text{Employee} \bowtie_{\text{Dno}=\text{Dnumber}} D$$
+
+**Step 3:** Project names:
+$$\pi_{\text{Fname, Lname}}(E)$$
+
+**Composed in one expression:**
+$$\pi_{\text{Fname, Lname}}\Bigl(\text{Employee} \bowtie_{\text{Dno}=\text{Dnumber}} \sigma_{\text{Dname}='\text{Research}'}(\text{Department})\Bigr)$$
+
+::: {.panel-tabset}
+## RELAX Input
+```
+π Fname, Lname (Employee ⋈ Dno = Dnumber (σ Dname = 'Research' (Department)))
+```
+
+## SQL Equivalent
+```sql
+SELECT Fname, Lname
+FROM Employee
+JOIN Department ON Dno = Dnumber
+WHERE Dname = 'Research';
+```
+:::
+
+---
+
+### Q2: Names and hours of employees working more than 30 hours on any project
+
+$$\pi_{\text{Fname, Lname, Hours}}\Bigl(\text{Employee} \bowtie_{\text{Ssn}=\text{Essn}} \sigma_{\text{Hours}>30}(\text{Works\_On})\Bigr)$$
+
+::: {.panel-tabset}
+## RELAX Input
+```
+π Fname, Lname, Hours (Employee ⋈ Ssn = Essn (σ Hours > 30 (Works_On)))
+```
+
+## SQL Equivalent
+```sql
+SELECT Fname, Lname, Hours
+FROM Employee
+JOIN Works_On ON Ssn = Essn
+WHERE Hours > 30;
+```
+:::
+
+---
+
+### Q3: Employees who do NOT work on any project
+
+$$\pi_{\text{Ssn}}(\text{Employee}) - \pi_{\text{Essn}}(\text{Works\_On})$$
+
+Then join back to get names:
+$$\pi_{\text{Fname, Lname}}\Bigl(\text{Employee} \bowtie_{\text{Ssn}=\text{Ssn}} \bigl(\pi_{\text{Ssn}}(\text{Employee}) - \pi_{\text{Essn}}(\text{Works\_On})\bigr)\Bigr)$$
+
+::: {.panel-tabset}
+## RELAX Input
+```
+π Fname, Lname (Employee ⋈ Ssn = Ssn ((π Ssn (Employee)) - (π Essn (Works_On))))
+```
+
+## SQL Equivalent
+```sql
+SELECT Fname, Lname
+FROM Employee
+WHERE Ssn NOT IN (SELECT Essn FROM Works_On);
+```
+:::
+
+---
+
+## 6.7 Algebra → Execution Plan and Query Optimization
+
+When the DBMS receives a SQL query, the **DML compiler** translates it into a relational algebra expression tree. The **query optimizer** then applies **equivalence rules** to rewrite the tree into a cheaper form.
+
+### Expression Trees
+
+An **expression tree** (also called a *query tree*) is a binary tree where:
+- **Leaf nodes** are operand relations (base tables)
+- **Internal nodes** are operators ($\sigma$, $\pi$, $\bowtie$, …)
+- Data flows **bottom-up**: leaves feed into parent operators
+
+**Example tree for Q1:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    PI["π Fname, Lname"]
+    J["⋈ Dno = Dnumber"]
+    EMP["Employee<br/>(30 rows)"]
+    S["σ Dname = 'Research'"]
+    DEPT["Department<br/>(8 rows)"]
+
+    PI --> J
+    J --> EMP
+    J --> S
+    S --> DEPT
+```
+
+Notice that $\sigma$ is applied **before** the join — filtering `Department` from 8 rows down to 1 row before the expensive join operation.
+
+### Equivalence Rules
+
+| Rule | Statement | Optimization impact |
+|------|-----------|-------------------|
+| **R1** Cascade select | $\sigma_{c_1 \land c_2}(R) \equiv \sigma_{c_1}(\sigma_{c_2}(R))$ | Apply each condition separately |
+| **R2** Commutativity of select | $\sigma_{c_1}(\sigma_{c_2}(R)) \equiv \sigma_{c_2}(\sigma_{c_1}(R))$ | Apply cheapest condition first |
+| **R3** Cascade project | $\pi_{L}(\pi_{L'}(R)) \equiv \pi_{L}(R)$ if $L \subseteq L'$ | Eliminate intermediate projections |
+| **R4** Push select past join | $\sigma_c(R \bowtie S) \equiv \sigma_c(R) \bowtie S$ if $c$ involves only $R$ | Reduce join inputs |
+| **R5** Commutativity of join | $R \bowtie S \equiv S \bowtie R$ | Put smaller relation on the right (build side) |
+| **R6** Associativity of join | $(R \bowtie S) \bowtie T \equiv R \bowtie (S \bowtie T)$ | Reorder joins for minimal intermediate size |
+
+### Cost Estimation
+
+The optimizer assigns a **cost estimate** to each plan. The dominant cost factor is the number of **disk I/O operations** (page reads). A simple model:
+
+$$\text{cost}(\sigma_c(R)) = b_R \;\text{ page reads}$$
+
+$$\text{cost}(R \bowtie_\theta S) \approx b_R + |R| \cdot b_S \;\text{ (nested-loop join, worst case)}$$
+
+where $b_R$ = number of disk pages in $R$ and $|R|$ = cardinality of $R$.
+
+Pushing a $\sigma$ before a join reduces $|R|$ (and hence $b_R$), making the join substantially cheaper.
+
+### Before-and-After Optimization Example
+
+**Naive plan** (SQL compiler's initial translation):
+```
+π Fname, Lname (σ Dname='Research' (Employee × Department))
+```
+Cost: $30 \times 8 = 240$ Cartesian product rows, then filter.
+
+**Optimized plan** (after applying R4 and R1):
+```
+π Fname, Lname (Employee ⋈_{Dno=Dnumber} (σ Dname='Research' (Department)))
+```
+Cost: Filter 8 department rows → 1 row → join 30 employees against 1 row = 30 comparisons.
+
+The optimization reduces tuples processed from **240 to 30** — and that ratio only grows with larger tables.
+
+---
+
+## 6.8 Relational Algebra vs. SQL — Correspondence
+
+| Relational Algebra | SQL Equivalent |
+|-------------------|----------------|
+| $\sigma_c(R)$ | `SELECT * FROM R WHERE c` |
+| $\pi_{a,b}(R)$ | `SELECT DISTINCT a, b FROM R` |
+| $R \cup S$ | `… UNION …` |
+| $R - S$ | `… EXCEPT …` (or `NOT EXISTS`) |
+| $R \times S$ | `FROM R CROSS JOIN S` |
+| $R \bowtie S$ | `FROM R NATURAL JOIN S` |
+| $R \bowtie_\theta S$ | `FROM R JOIN S ON θ` |
+| $R \mathbin{\text{⟕}}_\theta S$ | `FROM R LEFT OUTER JOIN S ON θ` |
+| $R \div S$ | No direct SQL; simulated with `NOT EXISTS` double negation |
+| $\rho_S(R)$ | `… AS alias …` |
+
+---
+
+## Summary
+
+::: callout-important
+## Chapter 6 — Key Takeaways
+
+- **Relational algebra** is procedural, closed, and composable. Every SQL query translates to a RA expression internally.
+- **6 fundamental operations**: $\sigma$ (filter rows), $\pi$ (filter columns), $\cup$ (union), $-$ (difference), $\times$ (Cartesian product), $\rho$ (rename).
+- **Set compatibility** for $\cup$, $\cap$, $-$: same degree + compatible domains; result takes *left* operand's column names.
+- **Natural join** auto-matches on identically-named columns and **collapses duplicates** to one column. Always verify shared column names match your intent.
+- **Theta join** = $\sigma_\theta(R \times S)$; equijoin uses only `=`; natural join is a special equijoin that removes duplicate columns.
+- **Outer joins** preserve unmatched tuples by padding with NULLs.
+- **Division (÷)** answers universal queries: "find tuples associated with *all* tuples in $S$".
+- **Result schema tracking**: every operation has a known degree, known column names (qualified if needed), and an estimated cardinality.
+- **Query optimization**: expression trees + 6 equivalence rules. Key rule: always push $\sigma$ as far down the tree as possible to minimize join input sizes.
+:::
+
+---
+
+## Review Questions
+
+### Conceptual
+
+1. What is the **closure property** of relational algebra? Why is it essential for composing operations?
+2. State the three **set-compatibility requirements** for $\cup$, $-$, and $\cap$. What happens to column names in the result?
+3. Explain the difference between a **natural join** and a **theta join** in terms of (a) how matching columns are determined, and (b) how duplicate columns are handled in the result.
+
+### Short-Answer / Compare
+
+4. Why is the **Cartesian product** almost never used alone? What operation is formed when a $\sigma$ is combined with $\times$?
+5. Explain the **division operator** $\div$. Write a query in relational algebra that finds employees working on **all** projects located in 'Ramallah'. Use the Company Database schema.
+6. Describe the difference between pushing a $\sigma$ operator **below a join** versus **below a projection**. Which equivalence rules (R1–R6) apply in each case?
+
+### True / False (with explanation)
+
+7. *"A natural join always produces a result with fewer columns than the sum of columns in both operands."* — True or False? Explain the column-collapse rule.
+8. *"The result of $R \cup S$ takes attribute names from $S$ (the right operand)."* — True or False?
+9. *"SQL's `UNION ALL` corresponds to the relational algebra union operator $\cup$."* — True or False? Explain the bag vs. set distinction.
+10. *"A full outer join can be expressed as $(R \mathbin{\text{⟕}} S) \cup (R \mathbin{\text{⟖}} S)$."* — True or False? Explain.
+
+### Multiple Choice
+
+11. Which operation answers the question "Find employees who work on *every* project in department 5"?
+    - (a) Natural join   (b) Set difference   **(c) Division** ✓   (d) Left outer join
+
+12. After applying $\text{Employee} \bowtie_{\text{Ssn}=\text{Essn}} \text{Works\_On}$, what is the degree of the result?
+    - (a) 10   **(b) 13** ✓   (c) 12   (d) 20
+
+    *(Employee has 10 columns, Works_On has 3; equijoin keeps both Ssn and Essn, so 10+3=13)*
+
+### Design / Think-Through
+
+13. The optimizer is given the following naïve plan:
+    $$\pi_{\text{Fname, Pname}}\Bigl(\sigma_{\text{Dno}=8 \;\land\; \text{Dnum}=8 \;\land\; \text{Ssn}=\text{Essn} \;\land\; \text{Pno}=\text{Pnumber}}(\text{Employee} \times \text{Works\_On} \times \text{Project})\Bigr)$$
+
+    (a) Draw the initial expression tree.  
+    (b) Apply equivalence rules R4, R1, and R5 to produce an optimized tree.  
+    (c) Estimate the cardinality at each node before and after optimization using the Company Database row counts (Employee: 30, Works_On: 20, Project: 12).
+
+### SQL / RELAX Exercise
+
+14. Write a RELAX expression to find the **names** of all employees who have dependents with gender `'F'`. Load the Company Database into RELAX and verify your result. Then write the equivalent SQL query.
+
+15. Write a RELAX expression for: "List the first names and project names for all employees working more than 35 hours on a project controlled by department 1." Break it into named intermediate steps (using $\leftarrow$ assignment notation) and verify in RELAX.
