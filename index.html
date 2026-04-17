@@ -161,49 +161,6 @@ div.csl-indent {
       </style>
     
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: false
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -233,7 +190,23 @@ window.Quarto = {
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Fundamentals of Database Systems</a> 
         <div class="sidebar-tools-main">
-    <a href="./Fundamentals-of-Database-Systems.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./Fundamentals-of-Database-Systems.pdf">
+              <i class="bi bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./Fundamentals-of-Database-Systems.epub">
+              <i class="bi bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
 </div>
     </div>
       </div>
@@ -458,11 +431,10 @@ window.Quarto = {
   <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a>
   <ul class="collapse">
   <li><a href="#how-to-use-this-book" id="toc-how-to-use-this-book" class="nav-link" data-scroll-target="#how-to-use-this-book">How to Use This Book</a></li>
-  <li><a href="#primary-reference" id="toc-primary-reference" class="nav-link" data-scroll-target="#primary-reference">Primary Reference</a></li>
   <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
-  <li><a href="#conventions-used" id="toc-conventions-used" class="nav-link" data-scroll-target="#conventions-used">Conventions Used</a></li>
-  <li><a href="#running-example" id="toc-running-example" class="nav-link" data-scroll-target="#running-example">Running Example</a></li>
-  <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link" data-scroll-target="#acknowledgements">Acknowledgements</a></li>
+  <li><a href="#copyright" id="toc-copyright" class="nav-link" data-scroll-target="#copyright">Copyright</a></li>
+  <li><a href="#how-to-cite-this-work" id="toc-how-to-cite-this-work" class="nav-link" data-scroll-target="#how-to-cite-this-work">How to Cite This Work</a></li>
+  <li><a href="#primary-reference-acknowledgements" id="toc-primary-reference-acknowledgements" class="nav-link" data-scroll-target="#primary-reference-acknowledgements">Primary Reference &amp; Acknowledgements</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -584,10 +556,6 @@ window.Quarto = {
 </tbody>
 </table>
 </section>
-<section id="primary-reference" class="level2">
-<h2 class="anchored" data-anchor-id="primary-reference">Primary Reference</h2>
-<p>The theoretical foundations follow <strong>Elmasri &amp; Navathe, <em>Fundamentals of Database Systems</em>, 7th Edition</strong> <span class="citation" data-cites="elmasri2015fundamentals"><a href="#ref-elmasri2015fundamentals" role="doc-biblioref">[1]</a></span>. MongoDB content follows the official MongoDB documentation <span class="citation" data-cites="mongodb-docs"><a href="#ref-mongodb-docs" role="doc-biblioref">[2]</a></span> and <span class="citation" data-cites="bradshaw2019mongodb"><a href="#ref-bradshaw2019mongodb" role="doc-biblioref">[3]</a></span>.</p>
-</section>
 <section id="prerequisites" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
 <p>Students are expected to have:</p>
@@ -596,67 +564,43 @@ window.Quarto = {
 <li>Basic data structures knowledge (lists, trees, hash tables)</li>
 <li>Familiarity with set theory and propositional logic</li>
 </ul>
+<hr>
 </section>
-<section id="conventions-used" class="level2">
-<h2 class="anchored" data-anchor-id="conventions-used">Conventions Used</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 55%">
-<col style="width: 45%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Convention</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>monospace</code></td>
-<td>SQL keywords, code, identifiers</td>
-</tr>
-<tr class="even">
-<td><strong>Bold</strong></td>
-<td>Key term introduced for the first time</td>
-</tr>
-<tr class="odd">
-<td><span class="math inline">\sigma, \pi, \bowtie</span></td>
-<td>Relational algebra operators</td>
-</tr>
-<tr class="even">
-<td><code>::: callout-note</code></td>
-<td>Definition, analogy, or supplementary information</td>
-</tr>
-<tr class="odd">
-<td><code>::: callout-tip</code></td>
-<td>Best practice, practical hint, or fun fact</td>
-</tr>
-<tr class="even">
-<td><code>::: callout-important</code></td>
-<td>Common mistake or exam alert</td>
-</tr>
-<tr class="odd">
-<td><code>{.panel-tabset}</code></td>
-<td>SQL code shown in three tabs: <strong>MySQL</strong>, <strong>PostgreSQL</strong>, <strong>Oracle</strong></td>
-</tr>
-<tr class="even">
-<td><code>{ojs}</code> code block</td>
-<td>Interactive widget — drag sliders or pick from dropdowns</td>
-</tr>
-<tr class="odd">
-<td>NoSQL examples</td>
-<td>MongoDB shell syntax (<code>mongosh</code>)</td>
-</tr>
-</tbody>
-</table>
+<section id="copyright" class="level2">
+<h2 class="anchored" data-anchor-id="copyright">Copyright</h2>
+<p><strong>Fundamentals of Database Systems: A Comprehensive Course — Relational Databases &amp; NoSQL</strong></p>
+<p>© 2026 Hussein Younis. All rights reserved. Computer Engineering Department.</p>
+<p>This work is an original educational resource authored by Hussein Younis. All text, figures, diagrams, interactive widgets, and source code are the intellectual property of the author unless otherwise attributed. Third-party works cited throughout the text (including Elmasri &amp; Navathe, <em>Fundamentals of Database Systems</em>, and the official MongoDB documentation) remain the property of their respective authors and publishers and are used here under fair-use / academic quotation principles.</p>
+<p>The book is distributed for <strong>educational use</strong> within the Database Systems course. Readers may read, study, and quote short excerpts in academic work with proper citation. Redistribution, derivative works, translations, and commercial use require prior written permission of the author.</p>
 </section>
-<section id="running-example" class="level2">
-<h2 class="anchored" data-anchor-id="running-example">Running Example</h2>
-<p>All chapters from Part II onward use a single database — the <strong>Enhanced Company Database</strong> — as the running example. It contains six tables: <code>Employee</code>, <code>Department</code>, <code>Project</code>, <code>Dept_Locations</code>, <code>Works_On</code>, and <code>Dependent</code>. This consistency lets you trace every concept (ER diagram → relational schema → SQL → relational algebra → normalization → indexes) against the same familiar data.</p>
+<section id="how-to-cite-this-work" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-cite-this-work">How to Cite This Work</h2>
+<p>If you reference this book in a paper, thesis, report, or presentation, please use one of the citation formats below.</p>
+<p><strong>IEEE</strong></p>
+<blockquote class="blockquote">
+<p>H. Younis, <em>Fundamentals of Database Systems: A Comprehensive Course — Relational Databases &amp; NoSQL</em>. Computer Engineering Department, 2026.</p>
+</blockquote>
+<p><strong>APA (7th ed.)</strong></p>
+<blockquote class="blockquote">
+<p>Younis, H. (2026). <em>Fundamentals of database systems: A comprehensive course — Relational databases &amp; NoSQL</em>. Computer Engineering Department.</p>
+</blockquote>
+<p><strong>BibTeX</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-code-line-numbers=""><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">@book</span>{<span class="ot">younis2026fundamentals</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>     = {Fundamentals of Database Systems: A Comprehensive Course --</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               Relational Databases <span class="ch">\&amp;</span> NoSQL},</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>    = {Younis, Hussein},</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>      = {2026},</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">publisher</span> = {Computer Engineering Department},</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">edition</span>   = {1st}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For permission requests, corrections, or academic collaboration, please contact the author through the Computer Engineering Department.</p>
+<p><em>Disclaimer: The material in this book is provided “as is” for educational purposes. While every effort has been made to ensure accuracy, the author makes no warranty regarding completeness or fitness for a particular purpose.</em></p>
+<hr>
 </section>
-<section id="acknowledgements" class="level2">
-<h2 class="anchored" data-anchor-id="acknowledgements">Acknowledgements</h2>
-<p>All rights to cited works belong to their respective authors and publishers.</p>
+<section id="primary-reference-acknowledgements" class="level2">
+<h2 class="anchored" data-anchor-id="primary-reference-acknowledgements">Primary Reference &amp; Acknowledgements</h2>
+<p>The theoretical foundations of this book follow <strong>Elmasri &amp; Navathe, <em>Fundamentals of Database Systems</em>, 7th Edition</strong> <span class="citation" data-cites="elmasri2015fundamentals"><a href="#ref-elmasri2015fundamentals" role="doc-biblioref">[1]</a></span>. MongoDB content follows the official MongoDB documentation <span class="citation" data-cites="mongodb-docs"><a href="#ref-mongodb-docs" role="doc-biblioref">[2]</a></span> and <span class="citation" data-cites="bradshaw2019mongodb"><a href="#ref-bradshaw2019mongodb" role="doc-biblioref">[3]</a></span>.</p>
+<p>All rights to cited works belong to their respective authors and publishers. The author gratefully acknowledges these sources, whose scholarship made this teaching resource possible.</p>
 
 
 <!-- -->
@@ -1143,64 +1087,107 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false" data-code-line-numbers=""><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> false</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu"># Preface {.unnumbered}</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>This book serves as the primary reference for the **Database Systems** course in the Computer Engineering curriculum. It bridges classical relational database theory with modern NoSQL technologies, equipping students with both the conceptual foundations and practical skills demanded by today's software industry.</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to Use This Book</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>The book is organized into **eight parts** spanning 15 chapters plus one appendix, designed for a **14–16 week semester**:</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Part <span class="pp">|</span> Chapters <span class="pp">|</span> Weeks <span class="pp">|</span> Theme <span class="pp">|</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|----------|-------|-------|</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> I — Foundations <span class="pp">|</span> 1–2 <span class="pp">|</span> 1–2 <span class="pp">|</span> What databases are and how they work <span class="pp">|</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> II — Data Modeling <span class="pp">|</span> 3–4 <span class="pp">|</span> 3–4 <span class="pp">|</span> Designing with ER and EER diagrams <span class="pp">|</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> III — Relational Model <span class="pp">|</span> 5–6 <span class="pp">|</span> 5–6 <span class="pp">|</span> Formal relational theory and algebra <span class="pp">|</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> IV — SQL <span class="pp">|</span> 7–8 <span class="pp">|</span> 7–8 <span class="pp">|</span> The universal database language <span class="pp">|</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V — Database Design <span class="pp">|</span> 9 <span class="pp">|</span> 9–10 <span class="pp">|</span> Normalization and functional dependencies <span class="pp">|</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> VI — Storage &amp; Query <span class="pp">|</span> 10–11 <span class="pp">|</span> 11–12 <span class="pp">|</span> How databases store data and execute queries <span class="pp">|</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> VII — Transactions <span class="pp">|</span> 12–13 <span class="pp">|</span> 13–14 <span class="pp">|</span> Reliability, ACID, and concurrency <span class="pp">|</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> VIII — NoSQL <span class="pp">|</span> 14–15 <span class="pp">|</span> 15–16 <span class="pp">|</span> NoSQL landscape and MongoDB <span class="pp">|</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Primary Reference</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>The theoretical foundations follow **Elmasri &amp; Navathe, *Fundamentals of Database Systems*, 7th Edition** <span class="co">[</span><span class="ot">@elmasri2015fundamentals</span><span class="co">]</span>. MongoDB content follows the official MongoDB documentation <span class="co">[</span><span class="ot">@mongodb-docs</span><span class="co">]</span> and <span class="co">[</span><span class="ot">@bradshaw2019mongodb</span><span class="co">]</span>.</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prerequisites</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>Students are expected to have:</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Proficiency in at least one programming language (C, Python, or Java)</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Basic data structures knowledge (lists, trees, hash tables)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Familiarity with set theory and propositional logic</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conventions Used</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Convention <span class="pp">|</span> Meaning <span class="pp">|</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|---------|</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`monospace`</span> <span class="pp">|</span> SQL keywords, code, identifiers <span class="pp">|</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Bold** <span class="pp">|</span> Key term introduced for the first time <span class="pp">|</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\sigma, \pi, \bowtie$ <span class="pp">|</span> Relational algebra operators <span class="pp">|</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`::: callout-note`</span> <span class="pp">|</span> Definition, analogy, or supplementary information <span class="pp">|</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`::: callout-tip`</span> <span class="pp">|</span> Best practice, practical hint, or fun fact <span class="pp">|</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`::: callout-important`</span> <span class="pp">|</span> Common mistake or exam alert <span class="pp">|</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`{.panel-tabset}`</span> <span class="pp">|</span> SQL code shown in three tabs: **MySQL**, **PostgreSQL**, **Oracle** <span class="pp">|</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`{ojs}`</span> code block <span class="pp">|</span> Interactive widget — drag sliders or pick from dropdowns <span class="pp">|</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NoSQL examples <span class="pp">|</span> MongoDB shell syntax (<span class="in">`mongosh`</span>) <span class="pp">|</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## Running Example</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>All chapters from Part II onward use a single database — the **Enhanced Company Database** — as the running example. It contains six tables: <span class="in">`Employee`</span>, <span class="in">`Department`</span>, <span class="in">`Project`</span>, <span class="in">`Dept_Locations`</span>, <span class="in">`Works_On`</span>, and <span class="in">`Dependent`</span>. This consistency lets you trace every concept (ER diagram → relational schema → SQL → relational algebra → normalization → indexes) against the same familiar data.</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## Acknowledgements</span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>All rights to cited works belong to their respective authors and publishers.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false" data-code-line-numbers=""><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> false</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu"># Preface {.unnumbered}</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>This book serves as the primary reference for the **Database Systems** course in the Computer Engineering curriculum. It bridges classical relational database theory with modern NoSQL technologies, equipping students with both the conceptual foundations and practical skills demanded by today's software industry.</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to Use This Book</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>The book is organized into **eight parts** spanning 15 chapters plus one appendix, designed for a **14–16 week semester**:</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Part <span class="pp">|</span> Chapters <span class="pp">|</span> Weeks <span class="pp">|</span> Theme <span class="pp">|</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|----------|-------|-------|</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> I — Foundations <span class="pp">|</span> 1–2 <span class="pp">|</span> 1–2 <span class="pp">|</span> What databases are and how they work <span class="pp">|</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> II — Data Modeling <span class="pp">|</span> 3–4 <span class="pp">|</span> 3–4 <span class="pp">|</span> Designing with ER and EER diagrams <span class="pp">|</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> III — Relational Model <span class="pp">|</span> 5–6 <span class="pp">|</span> 5–6 <span class="pp">|</span> Formal relational theory and algebra <span class="pp">|</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> IV — SQL <span class="pp">|</span> 7–8 <span class="pp">|</span> 7–8 <span class="pp">|</span> The universal database language <span class="pp">|</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> V — Database Design <span class="pp">|</span> 9 <span class="pp">|</span> 9–10 <span class="pp">|</span> Normalization and functional dependencies <span class="pp">|</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> VI — Storage &amp; Query <span class="pp">|</span> 10–11 <span class="pp">|</span> 11–12 <span class="pp">|</span> How databases store data and execute queries <span class="pp">|</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> VII — Transactions <span class="pp">|</span> 12–13 <span class="pp">|</span> 13–14 <span class="pp">|</span> Reliability, ACID, and concurrency <span class="pp">|</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> VIII — NoSQL <span class="pp">|</span> 14–15 <span class="pp">|</span> 15–16 <span class="pp">|</span> NoSQL landscape and MongoDB <span class="pp">|</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prerequisites</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>Students are expected to have:</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Proficiency in at least one programming language (C, Python, or Java)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Basic data structures knowledge (lists, trees, hash tables)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Familiarity with set theory and propositional logic</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Copyright</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>**Fundamentals of Database Systems: A Comprehensive Course — Relational Databases &amp; NoSQL**</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>© 2026 Hussein Younis. All rights reserved. Computer Engineering Department.</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>This work is an original educational resource authored by Hussein Younis. All</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>text, figures, diagrams, interactive widgets, and source code are the</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>intellectual property of the author unless otherwise attributed. Third-party</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>works cited throughout the text (including Elmasri &amp; Navathe, *Fundamentals</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>of Database Systems*, and the official MongoDB documentation) remain the</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>property of their respective authors and publishers and are used here under</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>fair-use / academic quotation principles.</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>The book is distributed for **educational use** within the Database Systems</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>course. Readers may read, study, and quote short excerpts in academic work</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>with proper citation. Redistribution, derivative works, translations, and</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>commercial use require prior written permission of the author.</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to Cite This Work</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>If you reference this book in a paper, thesis, report, or presentation,</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>please use one of the citation formats below.</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>**IEEE**</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; H. Younis, *Fundamentals of Database Systems: A Comprehensive Course —</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Relational Databases &amp; NoSQL*. Computer Engineering Department, 2026.</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>**APA (7th ed.)**</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Younis, H. (2026). *Fundamentals of database systems: A comprehensive</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; course — Relational databases &amp; NoSQL*. Computer Engineering Department.</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>**BibTeX**</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="in">```bibtex</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a><span class="in">@book{younis2026fundamentals,</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="in">  title     = {Fundamentals of Database Systems: A Comprehensive Course --</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="in">               Relational Databases \&amp; NoSQL},</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="in">  author    = {Younis, Hussein},</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="in">  year      = {2026},</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="in">  publisher = {Computer Engineering Department},</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="in">  edition   = {1st}</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>For permission requests, corrections, or academic collaboration, please</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>contact the author through the Computer Engineering Department.</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>*Disclaimer: The material in this book is provided "as is" for educational</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>purposes. While every effort has been made to ensure accuracy, the author</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>makes no warranty regarding completeness or fitness for a particular purpose.*</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## Primary Reference &amp; Acknowledgements</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>The theoretical foundations of this book follow **Elmasri &amp; Navathe,</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>*Fundamentals of Database Systems*, 7th Edition** <span class="co">[</span><span class="ot">@elmasri2015fundamentals</span><span class="co">]</span>.</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>MongoDB content follows the official MongoDB documentation <span class="co">[</span><span class="ot">@mongodb-docs</span><span class="co">]</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>and <span class="co">[</span><span class="ot">@bradshaw2019mongodb</span><span class="co">]</span>.</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>All rights to cited works belong to their respective authors and publishers.</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>The author gratefully acknowledges these sources, whose scholarship made this</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>teaching resource possible.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
     <script type="text/javascript">

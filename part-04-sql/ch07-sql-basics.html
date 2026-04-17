@@ -217,7 +217,23 @@ window.Quarto = {
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Fundamentals of Database Systems</a> 
         <div class="sidebar-tools-main">
-    <a href="../Fundamentals-of-Database-Systems.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="../Fundamentals-of-Database-Systems.pdf">
+              <i class="bi bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="../Fundamentals-of-Database-Systems.epub">
+              <i class="bi bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
 </div>
     </div>
       </div>
@@ -766,7 +782,7 @@ window.Quarto = {
 <h3 data-number="7.4.1" class="anchored" data-anchor-id="create-table"><span class="header-section-number">7.4.1</span> CREATE TABLE</h3>
 <p>The Company DB will be our running example. Below is the <code>Employee</code> table written in all three dialects, illustrating the most important syntactic differences.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Oracle</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="" aria-current="page">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> Department (</span>
@@ -1782,41 +1798,41 @@ Note
 <section id="interactive-join-type-explorer" class="level2" data-number="7.10">
 <h2 data-number="7.10" class="anchored" data-anchor-id="interactive-join-type-explorer"><span class="header-section-number">7.10</span> Interactive: Join Type Explorer</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb41" data-startfrom="943" data-source-offset="-12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 942;"><span id="cb41-943"><a href="#cb41-943" aria-hidden="true" tabindex="-1"></a>viewof leftSize  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Left table rows"</span>})</span>
-<span id="cb41-944"><a href="#cb41-944" aria-hidden="true" tabindex="-1"></a>viewof rightSize <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">6</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Right table rows"</span>})</span>
-<span id="cb41-945"><a href="#cb41-945" aria-hidden="true" tabindex="-1"></a>viewof matchPct  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> <span class="dv">100</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"% rows with a match"</span>})</span>
-<span id="cb41-946"><a href="#cb41-946" aria-hidden="true" tabindex="-1"></a>viewof joinType  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
-<span id="cb41-947"><a href="#cb41-947" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"INNER JOIN"</span><span class="op">,</span> <span class="st">"LEFT OUTER JOIN"</span><span class="op">,</span> <span class="st">"RIGHT OUTER JOIN"</span><span class="op">,</span> <span class="st">"FULL OUTER JOIN"</span><span class="op">,</span> <span class="st">"CROSS JOIN"</span>]<span class="op">,</span></span>
-<span id="cb41-948"><a href="#cb41-948" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="st">"INNER JOIN"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Join type"</span>}</span>
-<span id="cb41-949"><a href="#cb41-949" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb41-950"><a href="#cb41-950" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-951"><a href="#cb41-951" aria-hidden="true" tabindex="-1"></a><span class="co">// Compute result sizes</span></span>
-<span id="cb41-952"><a href="#cb41-952" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb41-953"><a href="#cb41-953" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> matched  <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(leftSize<span class="op">,</span> rightSize) <span class="op">*</span> matchPct <span class="op">/</span> <span class="dv">100</span>)<span class="op">;</span></span>
-<span id="cb41-954"><a href="#cb41-954" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> leftOnly <span class="op">=</span> leftSize  <span class="op">-</span> matched<span class="op">;</span></span>
-<span id="cb41-955"><a href="#cb41-955" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rightOnly<span class="op">=</span> rightSize <span class="op">-</span> matched<span class="op">;</span></span>
-<span id="cb41-956"><a href="#cb41-956" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-957"><a href="#cb41-957" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> resultRows<span class="op">;</span></span>
-<span id="cb41-958"><a href="#cb41-958" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>      (joinType <span class="op">===</span> <span class="st">"INNER JOIN"</span>)       resultRows <span class="op">=</span> matched<span class="op">;</span></span>
-<span id="cb41-959"><a href="#cb41-959" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"LEFT OUTER JOIN"</span>)  resultRows <span class="op">=</span> matched <span class="op">+</span> leftOnly<span class="op">;</span></span>
-<span id="cb41-960"><a href="#cb41-960" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"RIGHT OUTER JOIN"</span>) resultRows <span class="op">=</span> matched <span class="op">+</span> rightOnly<span class="op">;</span></span>
-<span id="cb41-961"><a href="#cb41-961" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"FULL OUTER JOIN"</span>)  resultRows <span class="op">=</span> matched <span class="op">+</span> leftOnly <span class="op">+</span> rightOnly<span class="op">;</span></span>
-<span id="cb41-962"><a href="#cb41-962" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>                                      resultRows <span class="op">=</span> leftSize <span class="op">*</span> rightSize<span class="op">;</span>  <span class="co">// CROSS</span></span>
-<span id="cb41-963"><a href="#cb41-963" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-964"><a href="#cb41-964" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> breakdown <span class="op">=</span> joinType <span class="op">===</span> <span class="st">"CROSS JOIN"</span></span>
-<span id="cb41-965"><a href="#cb41-965" aria-hidden="true" tabindex="-1"></a>    <span class="op">?</span> <span class="vs">`</span><span class="sc">${</span>leftSize<span class="sc">}</span><span class="vs"> × </span><span class="sc">${</span>rightSize<span class="sc">}</span><span class="vs"> = </span><span class="sc">${</span>resultRows<span class="sc">}</span><span class="vs">`</span></span>
-<span id="cb41-966"><a href="#cb41-966" aria-hidden="true" tabindex="-1"></a>    <span class="op">:</span> <span class="vs">`Matched: </span><span class="sc">${</span>matched<span class="sc">}</span><span class="vs">  |  Left-only: </span><span class="sc">${</span>leftOnly<span class="sc">}</span><span class="vs">  |  Right-only: </span><span class="sc">${</span>rightOnly<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
-<span id="cb41-967"><a href="#cb41-967" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-968"><a href="#cb41-968" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span></span>
-<span id="cb41-969"><a href="#cb41-969" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="font-family:monospace; background:#f4f4f4; padding:1rem; border-radius:8px;"&gt;</span></span>
-<span id="cb41-970"><a href="#cb41-970" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b&gt;</span><span class="sc">${</span>joinType<span class="sc">}</span><span class="vs">&lt;/b&gt;&lt;br/&gt;</span></span>
-<span id="cb41-971"><a href="#cb41-971" aria-hidden="true" tabindex="-1"></a><span class="vs">      Left table: &lt;b&gt;</span><span class="sc">${</span>leftSize<span class="sc">}</span><span class="vs">&lt;/b&gt; rows &amp;nbsp;|&amp;nbsp;</span></span>
-<span id="cb41-972"><a href="#cb41-972" aria-hidden="true" tabindex="-1"></a><span class="vs">      Right table: &lt;b&gt;</span><span class="sc">${</span>rightSize<span class="sc">}</span><span class="vs">&lt;/b&gt; rows &amp;nbsp;|&amp;nbsp;</span></span>
-<span id="cb41-973"><a href="#cb41-973" aria-hidden="true" tabindex="-1"></a><span class="vs">      Match rate: &lt;b&gt;</span><span class="sc">${</span>matchPct<span class="sc">}</span><span class="vs">%&lt;/b&gt;&lt;br/&gt;</span></span>
-<span id="cb41-974"><a href="#cb41-974" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>breakdown<span class="sc">}</span><span class="vs">&lt;br/&gt;&lt;br/&gt;</span></span>
-<span id="cb41-975"><a href="#cb41-975" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b style="font-size:1.4em;"&gt;Result set: </span><span class="sc">${</span>resultRows<span class="sc">}</span><span class="vs"> rows&lt;/b&gt;</span></span>
-<span id="cb41-976"><a href="#cb41-976" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
-<span id="cb41-977"><a href="#cb41-977" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb41" data-startfrom="945" data-source-offset="-12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 944;"><span id="cb41-945"><a href="#cb41-945" aria-hidden="true" tabindex="-1"></a>viewof leftSize  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Left table rows"</span>})</span>
+<span id="cb41-946"><a href="#cb41-946" aria-hidden="true" tabindex="-1"></a>viewof rightSize <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">6</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Right table rows"</span>})</span>
+<span id="cb41-947"><a href="#cb41-947" aria-hidden="true" tabindex="-1"></a>viewof matchPct  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> <span class="dv">100</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"% rows with a match"</span>})</span>
+<span id="cb41-948"><a href="#cb41-948" aria-hidden="true" tabindex="-1"></a>viewof joinType  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
+<span id="cb41-949"><a href="#cb41-949" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"INNER JOIN"</span><span class="op">,</span> <span class="st">"LEFT OUTER JOIN"</span><span class="op">,</span> <span class="st">"RIGHT OUTER JOIN"</span><span class="op">,</span> <span class="st">"FULL OUTER JOIN"</span><span class="op">,</span> <span class="st">"CROSS JOIN"</span>]<span class="op">,</span></span>
+<span id="cb41-950"><a href="#cb41-950" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="st">"INNER JOIN"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Join type"</span>}</span>
+<span id="cb41-951"><a href="#cb41-951" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-952"><a href="#cb41-952" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-953"><a href="#cb41-953" aria-hidden="true" tabindex="-1"></a><span class="co">// Compute result sizes</span></span>
+<span id="cb41-954"><a href="#cb41-954" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb41-955"><a href="#cb41-955" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> matched  <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(leftSize<span class="op">,</span> rightSize) <span class="op">*</span> matchPct <span class="op">/</span> <span class="dv">100</span>)<span class="op">;</span></span>
+<span id="cb41-956"><a href="#cb41-956" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> leftOnly <span class="op">=</span> leftSize  <span class="op">-</span> matched<span class="op">;</span></span>
+<span id="cb41-957"><a href="#cb41-957" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rightOnly<span class="op">=</span> rightSize <span class="op">-</span> matched<span class="op">;</span></span>
+<span id="cb41-958"><a href="#cb41-958" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-959"><a href="#cb41-959" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> resultRows<span class="op">;</span></span>
+<span id="cb41-960"><a href="#cb41-960" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>      (joinType <span class="op">===</span> <span class="st">"INNER JOIN"</span>)       resultRows <span class="op">=</span> matched<span class="op">;</span></span>
+<span id="cb41-961"><a href="#cb41-961" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"LEFT OUTER JOIN"</span>)  resultRows <span class="op">=</span> matched <span class="op">+</span> leftOnly<span class="op">;</span></span>
+<span id="cb41-962"><a href="#cb41-962" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"RIGHT OUTER JOIN"</span>) resultRows <span class="op">=</span> matched <span class="op">+</span> rightOnly<span class="op">;</span></span>
+<span id="cb41-963"><a href="#cb41-963" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"FULL OUTER JOIN"</span>)  resultRows <span class="op">=</span> matched <span class="op">+</span> leftOnly <span class="op">+</span> rightOnly<span class="op">;</span></span>
+<span id="cb41-964"><a href="#cb41-964" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>                                      resultRows <span class="op">=</span> leftSize <span class="op">*</span> rightSize<span class="op">;</span>  <span class="co">// CROSS</span></span>
+<span id="cb41-965"><a href="#cb41-965" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-966"><a href="#cb41-966" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> breakdown <span class="op">=</span> joinType <span class="op">===</span> <span class="st">"CROSS JOIN"</span></span>
+<span id="cb41-967"><a href="#cb41-967" aria-hidden="true" tabindex="-1"></a>    <span class="op">?</span> <span class="vs">`</span><span class="sc">${</span>leftSize<span class="sc">}</span><span class="vs"> × </span><span class="sc">${</span>rightSize<span class="sc">}</span><span class="vs"> = </span><span class="sc">${</span>resultRows<span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb41-968"><a href="#cb41-968" aria-hidden="true" tabindex="-1"></a>    <span class="op">:</span> <span class="vs">`Matched: </span><span class="sc">${</span>matched<span class="sc">}</span><span class="vs">  |  Left-only: </span><span class="sc">${</span>leftOnly<span class="sc">}</span><span class="vs">  |  Right-only: </span><span class="sc">${</span>rightOnly<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb41-969"><a href="#cb41-969" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-970"><a href="#cb41-970" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span></span>
+<span id="cb41-971"><a href="#cb41-971" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="font-family:monospace; background:#f4f4f4; padding:1rem; border-radius:8px;"&gt;</span></span>
+<span id="cb41-972"><a href="#cb41-972" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b&gt;</span><span class="sc">${</span>joinType<span class="sc">}</span><span class="vs">&lt;/b&gt;&lt;br/&gt;</span></span>
+<span id="cb41-973"><a href="#cb41-973" aria-hidden="true" tabindex="-1"></a><span class="vs">      Left table: &lt;b&gt;</span><span class="sc">${</span>leftSize<span class="sc">}</span><span class="vs">&lt;/b&gt; rows &amp;nbsp;|&amp;nbsp;</span></span>
+<span id="cb41-974"><a href="#cb41-974" aria-hidden="true" tabindex="-1"></a><span class="vs">      Right table: &lt;b&gt;</span><span class="sc">${</span>rightSize<span class="sc">}</span><span class="vs">&lt;/b&gt; rows &amp;nbsp;|&amp;nbsp;</span></span>
+<span id="cb41-975"><a href="#cb41-975" aria-hidden="true" tabindex="-1"></a><span class="vs">      Match rate: &lt;b&gt;</span><span class="sc">${</span>matchPct<span class="sc">}</span><span class="vs">%&lt;/b&gt;&lt;br/&gt;</span></span>
+<span id="cb41-976"><a href="#cb41-976" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>breakdown<span class="sc">}</span><span class="vs">&lt;br/&gt;&lt;br/&gt;</span></span>
+<span id="cb41-977"><a href="#cb41-977" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b style="font-size:1.4em;"&gt;Result set: </span><span class="sc">${</span>resultRows<span class="sc">}</span><span class="vs"> rows&lt;/b&gt;</span></span>
+<span id="cb41-978"><a href="#cb41-978" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb41-979"><a href="#cb41-979" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div id="fig-join-explorer" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-join-explorer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3407,146 +3423,154 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-936"><a href="#cb44-936" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-937"><a href="#cb44-937" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interactive: Join Type Explorer</span></span>
 <span id="cb44-938"><a href="#cb44-938" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-941"><a href="#cb44-941" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
-<span id="cb44-942"><a href="#cb44-942" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
-<span id="cb44-943"><a href="#cb44-943" aria-hidden="true" tabindex="-1"></a><span class="co">//| label: fig-join-explorer</span></span>
-<span id="cb44-944"><a href="#cb44-944" aria-hidden="true" tabindex="-1"></a><span class="co">//| fig-cap: "Explore how different JOIN types affect the result set size."</span></span>
-<span id="cb44-945"><a href="#cb44-945" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-946"><a href="#cb44-946" aria-hidden="true" tabindex="-1"></a><span class="co">// Sliders</span></span>
-<span id="cb44-947"><a href="#cb44-947" aria-hidden="true" tabindex="-1"></a>viewof leftSize  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Left table rows"</span>})</span>
-<span id="cb44-948"><a href="#cb44-948" aria-hidden="true" tabindex="-1"></a>viewof rightSize <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">6</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Right table rows"</span>})</span>
-<span id="cb44-949"><a href="#cb44-949" aria-hidden="true" tabindex="-1"></a>viewof matchPct  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> <span class="dv">100</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"% rows with a match"</span>})</span>
-<span id="cb44-950"><a href="#cb44-950" aria-hidden="true" tabindex="-1"></a>viewof joinType  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
-<span id="cb44-951"><a href="#cb44-951" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"INNER JOIN"</span><span class="op">,</span> <span class="st">"LEFT OUTER JOIN"</span><span class="op">,</span> <span class="st">"RIGHT OUTER JOIN"</span><span class="op">,</span> <span class="st">"FULL OUTER JOIN"</span><span class="op">,</span> <span class="st">"CROSS JOIN"</span>]<span class="op">,</span></span>
-<span id="cb44-952"><a href="#cb44-952" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="st">"INNER JOIN"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Join type"</span>}</span>
-<span id="cb44-953"><a href="#cb44-953" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb44-954"><a href="#cb44-954" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-955"><a href="#cb44-955" aria-hidden="true" tabindex="-1"></a><span class="co">// Compute result sizes</span></span>
-<span id="cb44-956"><a href="#cb44-956" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb44-957"><a href="#cb44-957" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> matched  <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(leftSize<span class="op">,</span> rightSize) <span class="op">*</span> matchPct <span class="op">/</span> <span class="dv">100</span>)<span class="op">;</span></span>
-<span id="cb44-958"><a href="#cb44-958" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> leftOnly <span class="op">=</span> leftSize  <span class="op">-</span> matched<span class="op">;</span></span>
-<span id="cb44-959"><a href="#cb44-959" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rightOnly<span class="op">=</span> rightSize <span class="op">-</span> matched<span class="op">;</span></span>
-<span id="cb44-960"><a href="#cb44-960" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-961"><a href="#cb44-961" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> resultRows<span class="op">;</span></span>
-<span id="cb44-962"><a href="#cb44-962" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>      (joinType <span class="op">===</span> <span class="st">"INNER JOIN"</span>)       resultRows <span class="op">=</span> matched<span class="op">;</span></span>
-<span id="cb44-963"><a href="#cb44-963" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"LEFT OUTER JOIN"</span>)  resultRows <span class="op">=</span> matched <span class="op">+</span> leftOnly<span class="op">;</span></span>
-<span id="cb44-964"><a href="#cb44-964" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"RIGHT OUTER JOIN"</span>) resultRows <span class="op">=</span> matched <span class="op">+</span> rightOnly<span class="op">;</span></span>
-<span id="cb44-965"><a href="#cb44-965" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"FULL OUTER JOIN"</span>)  resultRows <span class="op">=</span> matched <span class="op">+</span> leftOnly <span class="op">+</span> rightOnly<span class="op">;</span></span>
-<span id="cb44-966"><a href="#cb44-966" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>                                      resultRows <span class="op">=</span> leftSize <span class="op">*</span> rightSize<span class="op">;</span>  <span class="co">// CROSS</span></span>
-<span id="cb44-967"><a href="#cb44-967" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-968"><a href="#cb44-968" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> breakdown <span class="op">=</span> joinType <span class="op">===</span> <span class="st">"CROSS JOIN"</span></span>
-<span id="cb44-969"><a href="#cb44-969" aria-hidden="true" tabindex="-1"></a>    <span class="op">?</span> <span class="vs">`</span><span class="sc">${</span>leftSize<span class="sc">}</span><span class="vs"> × </span><span class="sc">${</span>rightSize<span class="sc">}</span><span class="vs"> = </span><span class="sc">${</span>resultRows<span class="sc">}</span><span class="vs">`</span></span>
-<span id="cb44-970"><a href="#cb44-970" aria-hidden="true" tabindex="-1"></a>    <span class="op">:</span> <span class="vs">`Matched: </span><span class="sc">${</span>matched<span class="sc">}</span><span class="vs">  |  Left-only: </span><span class="sc">${</span>leftOnly<span class="sc">}</span><span class="vs">  |  Right-only: </span><span class="sc">${</span>rightOnly<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
-<span id="cb44-971"><a href="#cb44-971" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-972"><a href="#cb44-972" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span></span>
-<span id="cb44-973"><a href="#cb44-973" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="font-family:monospace; background:#f4f4f4; padding:1rem; border-radius:8px;"&gt;</span></span>
-<span id="cb44-974"><a href="#cb44-974" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b&gt;</span><span class="sc">${</span>joinType<span class="sc">}</span><span class="vs">&lt;/b&gt;&lt;br/&gt;</span></span>
-<span id="cb44-975"><a href="#cb44-975" aria-hidden="true" tabindex="-1"></a><span class="vs">      Left table: &lt;b&gt;</span><span class="sc">${</span>leftSize<span class="sc">}</span><span class="vs">&lt;/b&gt; rows &amp;nbsp;|&amp;nbsp;</span></span>
-<span id="cb44-976"><a href="#cb44-976" aria-hidden="true" tabindex="-1"></a><span class="vs">      Right table: &lt;b&gt;</span><span class="sc">${</span>rightSize<span class="sc">}</span><span class="vs">&lt;/b&gt; rows &amp;nbsp;|&amp;nbsp;</span></span>
-<span id="cb44-977"><a href="#cb44-977" aria-hidden="true" tabindex="-1"></a><span class="vs">      Match rate: &lt;b&gt;</span><span class="sc">${</span>matchPct<span class="sc">}</span><span class="vs">%&lt;/b&gt;&lt;br/&gt;</span></span>
-<span id="cb44-978"><a href="#cb44-978" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>breakdown<span class="sc">}</span><span class="vs">&lt;br/&gt;&lt;br/&gt;</span></span>
-<span id="cb44-979"><a href="#cb44-979" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b style="font-size:1.4em;"&gt;Result set: </span><span class="sc">${</span>resultRows<span class="sc">}</span><span class="vs"> rows&lt;/b&gt;</span></span>
-<span id="cb44-980"><a href="#cb44-980" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
-<span id="cb44-981"><a href="#cb44-981" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-982"><a href="#cb44-982" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb44-983"><a href="#cb44-983" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-984"><a href="#cb44-984" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb44-939"><a href="#cb44-939" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb44-940"><a href="#cb44-940" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-943"><a href="#cb44-943" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
+<span id="cb44-944"><a href="#cb44-944" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
+<span id="cb44-945"><a href="#cb44-945" aria-hidden="true" tabindex="-1"></a><span class="co">//| label: fig-join-explorer</span></span>
+<span id="cb44-946"><a href="#cb44-946" aria-hidden="true" tabindex="-1"></a><span class="co">//| fig-cap: "Explore how different JOIN types affect the result set size."</span></span>
+<span id="cb44-947"><a href="#cb44-947" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-948"><a href="#cb44-948" aria-hidden="true" tabindex="-1"></a><span class="co">// Sliders</span></span>
+<span id="cb44-949"><a href="#cb44-949" aria-hidden="true" tabindex="-1"></a>viewof leftSize  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Left table rows"</span>})</span>
+<span id="cb44-950"><a href="#cb44-950" aria-hidden="true" tabindex="-1"></a>viewof rightSize <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">6</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Right table rows"</span>})</span>
+<span id="cb44-951"><a href="#cb44-951" aria-hidden="true" tabindex="-1"></a>viewof matchPct  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> <span class="dv">100</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"% rows with a match"</span>})</span>
+<span id="cb44-952"><a href="#cb44-952" aria-hidden="true" tabindex="-1"></a>viewof joinType  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
+<span id="cb44-953"><a href="#cb44-953" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"INNER JOIN"</span><span class="op">,</span> <span class="st">"LEFT OUTER JOIN"</span><span class="op">,</span> <span class="st">"RIGHT OUTER JOIN"</span><span class="op">,</span> <span class="st">"FULL OUTER JOIN"</span><span class="op">,</span> <span class="st">"CROSS JOIN"</span>]<span class="op">,</span></span>
+<span id="cb44-954"><a href="#cb44-954" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="st">"INNER JOIN"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Join type"</span>}</span>
+<span id="cb44-955"><a href="#cb44-955" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-956"><a href="#cb44-956" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-957"><a href="#cb44-957" aria-hidden="true" tabindex="-1"></a><span class="co">// Compute result sizes</span></span>
+<span id="cb44-958"><a href="#cb44-958" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb44-959"><a href="#cb44-959" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> matched  <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">round</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">min</span>(leftSize<span class="op">,</span> rightSize) <span class="op">*</span> matchPct <span class="op">/</span> <span class="dv">100</span>)<span class="op">;</span></span>
+<span id="cb44-960"><a href="#cb44-960" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> leftOnly <span class="op">=</span> leftSize  <span class="op">-</span> matched<span class="op">;</span></span>
+<span id="cb44-961"><a href="#cb44-961" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> rightOnly<span class="op">=</span> rightSize <span class="op">-</span> matched<span class="op">;</span></span>
+<span id="cb44-962"><a href="#cb44-962" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-963"><a href="#cb44-963" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> resultRows<span class="op">;</span></span>
+<span id="cb44-964"><a href="#cb44-964" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>      (joinType <span class="op">===</span> <span class="st">"INNER JOIN"</span>)       resultRows <span class="op">=</span> matched<span class="op">;</span></span>
+<span id="cb44-965"><a href="#cb44-965" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"LEFT OUTER JOIN"</span>)  resultRows <span class="op">=</span> matched <span class="op">+</span> leftOnly<span class="op">;</span></span>
+<span id="cb44-966"><a href="#cb44-966" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"RIGHT OUTER JOIN"</span>) resultRows <span class="op">=</span> matched <span class="op">+</span> rightOnly<span class="op">;</span></span>
+<span id="cb44-967"><a href="#cb44-967" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (joinType <span class="op">===</span> <span class="st">"FULL OUTER JOIN"</span>)  resultRows <span class="op">=</span> matched <span class="op">+</span> leftOnly <span class="op">+</span> rightOnly<span class="op">;</span></span>
+<span id="cb44-968"><a href="#cb44-968" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>                                      resultRows <span class="op">=</span> leftSize <span class="op">*</span> rightSize<span class="op">;</span>  <span class="co">// CROSS</span></span>
+<span id="cb44-969"><a href="#cb44-969" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-970"><a href="#cb44-970" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> breakdown <span class="op">=</span> joinType <span class="op">===</span> <span class="st">"CROSS JOIN"</span></span>
+<span id="cb44-971"><a href="#cb44-971" aria-hidden="true" tabindex="-1"></a>    <span class="op">?</span> <span class="vs">`</span><span class="sc">${</span>leftSize<span class="sc">}</span><span class="vs"> × </span><span class="sc">${</span>rightSize<span class="sc">}</span><span class="vs"> = </span><span class="sc">${</span>resultRows<span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb44-972"><a href="#cb44-972" aria-hidden="true" tabindex="-1"></a>    <span class="op">:</span> <span class="vs">`Matched: </span><span class="sc">${</span>matched<span class="sc">}</span><span class="vs">  |  Left-only: </span><span class="sc">${</span>leftOnly<span class="sc">}</span><span class="vs">  |  Right-only: </span><span class="sc">${</span>rightOnly<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb44-973"><a href="#cb44-973" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-974"><a href="#cb44-974" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span></span>
+<span id="cb44-975"><a href="#cb44-975" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="font-family:monospace; background:#f4f4f4; padding:1rem; border-radius:8px;"&gt;</span></span>
+<span id="cb44-976"><a href="#cb44-976" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b&gt;</span><span class="sc">${</span>joinType<span class="sc">}</span><span class="vs">&lt;/b&gt;&lt;br/&gt;</span></span>
+<span id="cb44-977"><a href="#cb44-977" aria-hidden="true" tabindex="-1"></a><span class="vs">      Left table: &lt;b&gt;</span><span class="sc">${</span>leftSize<span class="sc">}</span><span class="vs">&lt;/b&gt; rows &amp;nbsp;|&amp;nbsp;</span></span>
+<span id="cb44-978"><a href="#cb44-978" aria-hidden="true" tabindex="-1"></a><span class="vs">      Right table: &lt;b&gt;</span><span class="sc">${</span>rightSize<span class="sc">}</span><span class="vs">&lt;/b&gt; rows &amp;nbsp;|&amp;nbsp;</span></span>
+<span id="cb44-979"><a href="#cb44-979" aria-hidden="true" tabindex="-1"></a><span class="vs">      Match rate: &lt;b&gt;</span><span class="sc">${</span>matchPct<span class="sc">}</span><span class="vs">%&lt;/b&gt;&lt;br/&gt;</span></span>
+<span id="cb44-980"><a href="#cb44-980" aria-hidden="true" tabindex="-1"></a><span class="vs">      </span><span class="sc">${</span>breakdown<span class="sc">}</span><span class="vs">&lt;br/&gt;&lt;br/&gt;</span></span>
+<span id="cb44-981"><a href="#cb44-981" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b style="font-size:1.4em;"&gt;Result set: </span><span class="sc">${</span>resultRows<span class="sc">}</span><span class="vs"> rows&lt;/b&gt;</span></span>
+<span id="cb44-982"><a href="#cb44-982" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb44-983"><a href="#cb44-983" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-984"><a href="#cb44-984" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-985"><a href="#cb44-985" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-986"><a href="#cb44-986" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
+<span id="cb44-986"><a href="#cb44-986" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-987"><a href="#cb44-987" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-988"><a href="#cb44-988" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb44-989"><a href="#cb44-989" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 7</span></span>
-<span id="cb44-990"><a href="#cb44-990" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-991"><a href="#cb44-991" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**SQL is declarative**; the optimizer maps it to a relational algebra expression tree.</span>
-<span id="cb44-992"><a href="#cb44-992" aria-hidden="true" tabindex="-1"></a>   The logical evaluation order (FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT)</span>
-<span id="cb44-993"><a href="#cb44-993" aria-hidden="true" tabindex="-1"></a>   explains why <span class="in">`SELECT`</span> aliases cannot appear in <span class="in">`WHERE`</span>.</span>
-<span id="cb44-994"><a href="#cb44-994" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-995"><a href="#cb44-995" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**DDL**: <span class="in">`CREATE TABLE`</span> with six constraint types (PK, FK, NOT NULL, UNIQUE, CHECK, DEFAULT);</span>
-<span id="cb44-996"><a href="#cb44-996" aria-hidden="true" tabindex="-1"></a>   <span class="in">`ALTER TABLE`</span>; <span class="in">`DROP TABLE`</span>; <span class="in">`TRUNCATE`</span>.</span>
-<span id="cb44-997"><a href="#cb44-997" aria-hidden="true" tabindex="-1"></a>   Auto-increment syntax differs: <span class="in">`AUTO_INCREMENT`</span> (MySQL), <span class="in">`SERIAL`</span>/<span class="in">`IDENTITY`</span> (PostgreSQL), <span class="in">`SEQUENCE`</span> (Oracle).</span>
+<span id="cb44-988"><a href="#cb44-988" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="epub"}</span>
+<span id="cb44-989"><a href="#cb44-989" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *This section contains an interactive JOIN explorer. View the online HTML version to experiment with INNER, OUTER, and CROSS joins across different table sizes.*</span></span>
+<span id="cb44-990"><a href="#cb44-990" aria-hidden="true" tabindex="-1"></a><span class="at">:::</span></span>
+<span id="cb44-991"><a href="#cb44-991" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-992"><a href="#cb44-992" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb44-993"><a href="#cb44-993" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-994"><a href="#cb44-994" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
+<span id="cb44-995"><a href="#cb44-995" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-996"><a href="#cb44-996" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb44-997"><a href="#cb44-997" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 7</span></span>
 <span id="cb44-998"><a href="#cb44-998" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-999"><a href="#cb44-999" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**DML**: <span class="in">`INSERT`</span> (single/multi-row/from-SELECT), <span class="in">`UPDATE`</span> (with WHERE and subquery), <span class="in">`DELETE`</span>.</span>
-<span id="cb44-1000"><a href="#cb44-1000" aria-hidden="true" tabindex="-1"></a>   Prefer <span class="in">`DELETE`</span> when you need filtering or rollback; prefer <span class="in">`TRUNCATE`</span> for wiping entire tables.</span>
-<span id="cb44-1001"><a href="#cb44-1001" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1002"><a href="#cb44-1002" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**SELECT pipeline**: filter with WHERE, group with GROUP BY, filter groups with HAVING,</span>
-<span id="cb44-1003"><a href="#cb44-1003" aria-hidden="true" tabindex="-1"></a>   sort with ORDER BY, paginate with LIMIT/FETCH FIRST/ROWNUM.</span>
-<span id="cb44-1004"><a href="#cb44-1004" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1005"><a href="#cb44-1005" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Aggregate functions** (<span class="in">`COUNT`</span>, <span class="in">`SUM`</span>, <span class="in">`AVG`</span>, <span class="in">`MIN`</span>, <span class="in">`MAX`</span>) ignore NULLs except <span class="in">`COUNT(*)`</span>.</span>
+<span id="cb44-999"><a href="#cb44-999" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**SQL is declarative**; the optimizer maps it to a relational algebra expression tree.</span>
+<span id="cb44-1000"><a href="#cb44-1000" aria-hidden="true" tabindex="-1"></a>   The logical evaluation order (FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT)</span>
+<span id="cb44-1001"><a href="#cb44-1001" aria-hidden="true" tabindex="-1"></a>   explains why <span class="in">`SELECT`</span> aliases cannot appear in <span class="in">`WHERE`</span>.</span>
+<span id="cb44-1002"><a href="#cb44-1002" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1003"><a href="#cb44-1003" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**DDL**: <span class="in">`CREATE TABLE`</span> with six constraint types (PK, FK, NOT NULL, UNIQUE, CHECK, DEFAULT);</span>
+<span id="cb44-1004"><a href="#cb44-1004" aria-hidden="true" tabindex="-1"></a>   <span class="in">`ALTER TABLE`</span>; <span class="in">`DROP TABLE`</span>; <span class="in">`TRUNCATE`</span>.</span>
+<span id="cb44-1005"><a href="#cb44-1005" aria-hidden="true" tabindex="-1"></a>   Auto-increment syntax differs: <span class="in">`AUTO_INCREMENT`</span> (MySQL), <span class="in">`SERIAL`</span>/<span class="in">`IDENTITY`</span> (PostgreSQL), <span class="in">`SEQUENCE`</span> (Oracle).</span>
 <span id="cb44-1006"><a href="#cb44-1006" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1007"><a href="#cb44-1007" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Joins**: INNER removes non-matching rows; LEFT/RIGHT/FULL OUTER preserve unmatched rows;</span>
-<span id="cb44-1008"><a href="#cb44-1008" aria-hidden="true" tabindex="-1"></a>   SELF JOIN handles hierarchies; CROSS JOIN produces the Cartesian product.</span>
-<span id="cb44-1009"><a href="#cb44-1009" aria-hidden="true" tabindex="-1"></a>   MySQL lacks native <span class="in">`FULL OUTER JOIN`</span> — emulate with <span class="in">`LEFT JOIN UNION RIGHT JOIN`</span>.</span>
-<span id="cb44-1010"><a href="#cb44-1010" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1011"><a href="#cb44-1011" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**Subqueries**: scalar (one value), correlated (per outer row), <span class="in">`EXISTS`</span>/<span class="in">`NOT EXISTS`</span></span>
-<span id="cb44-1012"><a href="#cb44-1012" aria-hidden="true" tabindex="-1"></a>   (short-circuit, often faster than <span class="in">`IN`</span> for large sets).</span>
-<span id="cb44-1013"><a href="#cb44-1013" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1014"><a href="#cb44-1014" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>**Set operators**: <span class="in">`UNION`</span>/<span class="in">`INTERSECT`</span>/<span class="in">`EXCEPT`</span> (Oracle: <span class="in">`MINUS`</span>) — require column-count and type compatibility.</span>
-<span id="cb44-1015"><a href="#cb44-1015" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb44-1016"><a href="#cb44-1016" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1017"><a href="#cb44-1017" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb44-1007"><a href="#cb44-1007" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**DML**: <span class="in">`INSERT`</span> (single/multi-row/from-SELECT), <span class="in">`UPDATE`</span> (with WHERE and subquery), <span class="in">`DELETE`</span>.</span>
+<span id="cb44-1008"><a href="#cb44-1008" aria-hidden="true" tabindex="-1"></a>   Prefer <span class="in">`DELETE`</span> when you need filtering or rollback; prefer <span class="in">`TRUNCATE`</span> for wiping entire tables.</span>
+<span id="cb44-1009"><a href="#cb44-1009" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1010"><a href="#cb44-1010" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**SELECT pipeline**: filter with WHERE, group with GROUP BY, filter groups with HAVING,</span>
+<span id="cb44-1011"><a href="#cb44-1011" aria-hidden="true" tabindex="-1"></a>   sort with ORDER BY, paginate with LIMIT/FETCH FIRST/ROWNUM.</span>
+<span id="cb44-1012"><a href="#cb44-1012" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1013"><a href="#cb44-1013" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Aggregate functions** (<span class="in">`COUNT`</span>, <span class="in">`SUM`</span>, <span class="in">`AVG`</span>, <span class="in">`MIN`</span>, <span class="in">`MAX`</span>) ignore NULLs except <span class="in">`COUNT(*)`</span>.</span>
+<span id="cb44-1014"><a href="#cb44-1014" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1015"><a href="#cb44-1015" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Joins**: INNER removes non-matching rows; LEFT/RIGHT/FULL OUTER preserve unmatched rows;</span>
+<span id="cb44-1016"><a href="#cb44-1016" aria-hidden="true" tabindex="-1"></a>   SELF JOIN handles hierarchies; CROSS JOIN produces the Cartesian product.</span>
+<span id="cb44-1017"><a href="#cb44-1017" aria-hidden="true" tabindex="-1"></a>   MySQL lacks native <span class="in">`FULL OUTER JOIN`</span> — emulate with <span class="in">`LEFT JOIN UNION RIGHT JOIN`</span>.</span>
 <span id="cb44-1018"><a href="#cb44-1018" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1019"><a href="#cb44-1019" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
-<span id="cb44-1020"><a href="#cb44-1020" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1021"><a href="#cb44-1021" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
-<span id="cb44-1022"><a href="#cb44-1022" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1023"><a href="#cb44-1023" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Why does SQL evaluate <span class="in">`FROM`</span> before <span class="in">`SELECT`</span>? Give one practical consequence of this evaluation order.</span>
-<span id="cb44-1024"><a href="#cb44-1024" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Explain the difference between <span class="in">`DELETE`</span>, <span class="in">`TRUNCATE`</span>, and <span class="in">`DROP`</span>.</span>
-<span id="cb44-1025"><a href="#cb44-1025" aria-hidden="true" tabindex="-1"></a>   Which ones can be rolled back? Which ones fire triggers?</span>
-<span id="cb44-1026"><a href="#cb44-1026" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>What is referential integrity, and how do <span class="in">`ON DELETE CASCADE`</span> and <span class="in">`ON DELETE SET NULL`</span> differ?</span>
-<span id="cb44-1027"><a href="#cb44-1027" aria-hidden="true" tabindex="-1"></a>   Give a concrete example for each using the Employee–Department scenario.</span>
+<span id="cb44-1019"><a href="#cb44-1019" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**Subqueries**: scalar (one value), correlated (per outer row), <span class="in">`EXISTS`</span>/<span class="in">`NOT EXISTS`</span></span>
+<span id="cb44-1020"><a href="#cb44-1020" aria-hidden="true" tabindex="-1"></a>   (short-circuit, often faster than <span class="in">`IN`</span> for large sets).</span>
+<span id="cb44-1021"><a href="#cb44-1021" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1022"><a href="#cb44-1022" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>**Set operators**: <span class="in">`UNION`</span>/<span class="in">`INTERSECT`</span>/<span class="in">`EXCEPT`</span> (Oracle: <span class="in">`MINUS`</span>) — require column-count and type compatibility.</span>
+<span id="cb44-1023"><a href="#cb44-1023" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb44-1024"><a href="#cb44-1024" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1025"><a href="#cb44-1025" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb44-1026"><a href="#cb44-1026" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1027"><a href="#cb44-1027" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
 <span id="cb44-1028"><a href="#cb44-1028" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1029"><a href="#cb44-1029" aria-hidden="true" tabindex="-1"></a><span class="fu">### Applied</span></span>
+<span id="cb44-1029"><a href="#cb44-1029" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
 <span id="cb44-1030"><a href="#cb44-1030" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1031"><a href="#cb44-1031" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Write SQL to create the <span class="in">`Works_On(Essn CHAR(9), Pno INT, Hours DECIMAL(5,2))`</span> table with:</span>
-<span id="cb44-1032"><a href="#cb44-1032" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>A composite primary key on <span class="in">`(Essn, Pno)`</span></span>
-<span id="cb44-1033"><a href="#cb44-1033" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`Essn`</span> as a foreign key referencing <span class="in">`Employee(Ssn)`</span></span>
-<span id="cb44-1034"><a href="#cb44-1034" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`Pno`</span> as a foreign key referencing <span class="in">`Project(Pnumber)`</span></span>
-<span id="cb44-1035"><a href="#cb44-1035" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`Hours`</span> as NOT NULL with a CHECK that <span class="in">`Hours &gt;= 0`</span></span>
+<span id="cb44-1031"><a href="#cb44-1031" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Why does SQL evaluate <span class="in">`FROM`</span> before <span class="in">`SELECT`</span>? Give one practical consequence of this evaluation order.</span>
+<span id="cb44-1032"><a href="#cb44-1032" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Explain the difference between <span class="in">`DELETE`</span>, <span class="in">`TRUNCATE`</span>, and <span class="in">`DROP`</span>.</span>
+<span id="cb44-1033"><a href="#cb44-1033" aria-hidden="true" tabindex="-1"></a>   Which ones can be rolled back? Which ones fire triggers?</span>
+<span id="cb44-1034"><a href="#cb44-1034" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>What is referential integrity, and how do <span class="in">`ON DELETE CASCADE`</span> and <span class="in">`ON DELETE SET NULL`</span> differ?</span>
+<span id="cb44-1035"><a href="#cb44-1035" aria-hidden="true" tabindex="-1"></a>   Give a concrete example for each using the Employee–Department scenario.</span>
 <span id="cb44-1036"><a href="#cb44-1036" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1037"><a href="#cb44-1037" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Using the Company DB, write a single SQL query to list the **full name** and **total hours worked**</span>
-<span id="cb44-1038"><a href="#cb44-1038" aria-hidden="true" tabindex="-1"></a>   for every employee who has ever worked on a project in the Research department.</span>
-<span id="cb44-1039"><a href="#cb44-1039" aria-hidden="true" tabindex="-1"></a>   Include only employees whose total hours exceed 30.</span>
-<span id="cb44-1040"><a href="#cb44-1040" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1041"><a href="#cb44-1041" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Write a query that returns each project name along with the number of distinct employees</span>
-<span id="cb44-1042"><a href="#cb44-1042" aria-hidden="true" tabindex="-1"></a>   working on it. Include projects with **zero workers** (use an appropriate outer join).</span>
-<span id="cb44-1043"><a href="#cb44-1043" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1044"><a href="#cb44-1044" aria-hidden="true" tabindex="-1"></a><span class="fu">### Analysis</span></span>
-<span id="cb44-1045"><a href="#cb44-1045" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1046"><a href="#cb44-1046" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Predict the output of the following query:</span>
-<span id="cb44-1047"><a href="#cb44-1047" aria-hidden="true" tabindex="-1"></a>   <span class="in">```sql</span></span>
-<span id="cb44-1048"><a href="#cb44-1048" aria-hidden="true" tabindex="-1"></a>   <span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="op">*</span>), <span class="fu">COUNT</span>(Super_ssn), <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> Dno)</span>
-<span id="cb44-1049"><a href="#cb44-1049" aria-hidden="true" tabindex="-1"></a>   <span class="kw">FROM</span> Employee;</span>
-<span id="cb44-1050"><a href="#cb44-1050" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb44-1051"><a href="#cb44-1051" aria-hidden="true" tabindex="-1"></a>   Given that the Company DB has 8 employees, 1 has no supervisor, and they span 3 departments.</span>
-<span id="cb44-1052"><a href="#cb44-1052" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1053"><a href="#cb44-1053" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>A trainee writes:</span>
-<span id="cb44-1054"><a href="#cb44-1054" aria-hidden="true" tabindex="-1"></a>   <span class="in">```sql</span></span>
-<span id="cb44-1055"><a href="#cb44-1055" aria-hidden="true" tabindex="-1"></a>   <span class="kw">SELECT</span> Dno, <span class="fu">AVG</span>(Salary) <span class="kw">AS</span> AvgSal</span>
-<span id="cb44-1056"><a href="#cb44-1056" aria-hidden="true" tabindex="-1"></a>   <span class="kw">FROM</span> Employee</span>
-<span id="cb44-1057"><a href="#cb44-1057" aria-hidden="true" tabindex="-1"></a>   <span class="kw">WHERE</span> AvgSal <span class="op">&gt;</span> <span class="dv">35000</span></span>
-<span id="cb44-1058"><a href="#cb44-1058" aria-hidden="true" tabindex="-1"></a>   <span class="kw">GROUP</span> <span class="kw">BY</span> Dno;</span>
-<span id="cb44-1059"><a href="#cb44-1059" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
-<span id="cb44-1060"><a href="#cb44-1060" aria-hidden="true" tabindex="-1"></a>   Identify the error and write the corrected query.</span>
-<span id="cb44-1061"><a href="#cb44-1061" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1062"><a href="#cb44-1062" aria-hidden="true" tabindex="-1"></a><span class="fu">### Dialect Awareness</span></span>
-<span id="cb44-1063"><a href="#cb44-1063" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1064"><a href="#cb44-1064" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>A query written for PostgreSQL uses <span class="in">`EXCEPT`</span> to find SSNs in one table but not another.</span>
-<span id="cb44-1065"><a href="#cb44-1065" aria-hidden="true" tabindex="-1"></a>   Rewrite it for Oracle, and note any limitations of MySQL 8.0.30 with <span class="in">`EXCEPT`</span>.</span>
-<span id="cb44-1066"><a href="#cb44-1066" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1067"><a href="#cb44-1067" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>Your production database is Oracle 11g (pre-12c). You need a surrogate key on a <span class="in">`Customer`</span> table.</span>
-<span id="cb44-1068"><a href="#cb44-1068" aria-hidden="true" tabindex="-1"></a>    Write the complete DDL including the sequence, the table, and the trigger.</span>
+<span id="cb44-1037"><a href="#cb44-1037" aria-hidden="true" tabindex="-1"></a><span class="fu">### Applied</span></span>
+<span id="cb44-1038"><a href="#cb44-1038" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1039"><a href="#cb44-1039" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Write SQL to create the <span class="in">`Works_On(Essn CHAR(9), Pno INT, Hours DECIMAL(5,2))`</span> table with:</span>
+<span id="cb44-1040"><a href="#cb44-1040" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>A composite primary key on <span class="in">`(Essn, Pno)`</span></span>
+<span id="cb44-1041"><a href="#cb44-1041" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`Essn`</span> as a foreign key referencing <span class="in">`Employee(Ssn)`</span></span>
+<span id="cb44-1042"><a href="#cb44-1042" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`Pno`</span> as a foreign key referencing <span class="in">`Project(Pnumber)`</span></span>
+<span id="cb44-1043"><a href="#cb44-1043" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span><span class="in">`Hours`</span> as NOT NULL with a CHECK that <span class="in">`Hours &gt;= 0`</span></span>
+<span id="cb44-1044"><a href="#cb44-1044" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1045"><a href="#cb44-1045" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Using the Company DB, write a single SQL query to list the **full name** and **total hours worked**</span>
+<span id="cb44-1046"><a href="#cb44-1046" aria-hidden="true" tabindex="-1"></a>   for every employee who has ever worked on a project in the Research department.</span>
+<span id="cb44-1047"><a href="#cb44-1047" aria-hidden="true" tabindex="-1"></a>   Include only employees whose total hours exceed 30.</span>
+<span id="cb44-1048"><a href="#cb44-1048" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1049"><a href="#cb44-1049" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Write a query that returns each project name along with the number of distinct employees</span>
+<span id="cb44-1050"><a href="#cb44-1050" aria-hidden="true" tabindex="-1"></a>   working on it. Include projects with **zero workers** (use an appropriate outer join).</span>
+<span id="cb44-1051"><a href="#cb44-1051" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1052"><a href="#cb44-1052" aria-hidden="true" tabindex="-1"></a><span class="fu">### Analysis</span></span>
+<span id="cb44-1053"><a href="#cb44-1053" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1054"><a href="#cb44-1054" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Predict the output of the following query:</span>
+<span id="cb44-1055"><a href="#cb44-1055" aria-hidden="true" tabindex="-1"></a>   <span class="in">```sql</span></span>
+<span id="cb44-1056"><a href="#cb44-1056" aria-hidden="true" tabindex="-1"></a>   <span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="op">*</span>), <span class="fu">COUNT</span>(Super_ssn), <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> Dno)</span>
+<span id="cb44-1057"><a href="#cb44-1057" aria-hidden="true" tabindex="-1"></a>   <span class="kw">FROM</span> Employee;</span>
+<span id="cb44-1058"><a href="#cb44-1058" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb44-1059"><a href="#cb44-1059" aria-hidden="true" tabindex="-1"></a>   Given that the Company DB has 8 employees, 1 has no supervisor, and they span 3 departments.</span>
+<span id="cb44-1060"><a href="#cb44-1060" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1061"><a href="#cb44-1061" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>A trainee writes:</span>
+<span id="cb44-1062"><a href="#cb44-1062" aria-hidden="true" tabindex="-1"></a>   <span class="in">```sql</span></span>
+<span id="cb44-1063"><a href="#cb44-1063" aria-hidden="true" tabindex="-1"></a>   <span class="kw">SELECT</span> Dno, <span class="fu">AVG</span>(Salary) <span class="kw">AS</span> AvgSal</span>
+<span id="cb44-1064"><a href="#cb44-1064" aria-hidden="true" tabindex="-1"></a>   <span class="kw">FROM</span> Employee</span>
+<span id="cb44-1065"><a href="#cb44-1065" aria-hidden="true" tabindex="-1"></a>   <span class="kw">WHERE</span> AvgSal <span class="op">&gt;</span> <span class="dv">35000</span></span>
+<span id="cb44-1066"><a href="#cb44-1066" aria-hidden="true" tabindex="-1"></a>   <span class="kw">GROUP</span> <span class="kw">BY</span> Dno;</span>
+<span id="cb44-1067"><a href="#cb44-1067" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb44-1068"><a href="#cb44-1068" aria-hidden="true" tabindex="-1"></a>   Identify the error and write the corrected query.</span>
 <span id="cb44-1069"><a href="#cb44-1069" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1070"><a href="#cb44-1070" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design</span></span>
+<span id="cb44-1070"><a href="#cb44-1070" aria-hidden="true" tabindex="-1"></a><span class="fu">### Dialect Awareness</span></span>
 <span id="cb44-1071"><a href="#cb44-1071" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1072"><a href="#cb44-1072" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>The <span class="in">`Employee`</span> table has <span class="in">`Salary DECIMAL(10,2)`</span>. A business rule states that no employee</span>
-<span id="cb44-1073"><a href="#cb44-1073" aria-hidden="true" tabindex="-1"></a>    may earn less than 20 000 or more than 500 000. Where should this constraint be enforced —</span>
-<span id="cb44-1074"><a href="#cb44-1074" aria-hidden="true" tabindex="-1"></a>    as a <span class="in">`CHECK`</span> constraint, in the application layer, or both? Justify your answer.</span>
-<span id="cb44-1075"><a href="#cb44-1075" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1076"><a href="#cb44-1076" aria-hidden="true" tabindex="-1"></a><span class="fu">### Synthesis</span></span>
+<span id="cb44-1072"><a href="#cb44-1072" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>A query written for PostgreSQL uses <span class="in">`EXCEPT`</span> to find SSNs in one table but not another.</span>
+<span id="cb44-1073"><a href="#cb44-1073" aria-hidden="true" tabindex="-1"></a>   Rewrite it for Oracle, and note any limitations of MySQL 8.0.30 with <span class="in">`EXCEPT`</span>.</span>
+<span id="cb44-1074"><a href="#cb44-1074" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1075"><a href="#cb44-1075" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>Your production database is Oracle 11g (pre-12c). You need a surrogate key on a <span class="in">`Customer`</span> table.</span>
+<span id="cb44-1076"><a href="#cb44-1076" aria-hidden="true" tabindex="-1"></a>    Write the complete DDL including the sequence, the table, and the trigger.</span>
 <span id="cb44-1077"><a href="#cb44-1077" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-1078"><a href="#cb44-1078" aria-hidden="true" tabindex="-1"></a><span class="ss">12. </span>Using <span class="in">`INNER JOIN`</span>, <span class="in">`LEFT JOIN`</span>, and <span class="in">`NOT EXISTS`</span>, write **three different** SQL queries</span>
-<span id="cb44-1079"><a href="#cb44-1079" aria-hidden="true" tabindex="-1"></a>    that all return: *employees who have no dependents registered in the Dependent table*.</span>
-<span id="cb44-1080"><a href="#cb44-1080" aria-hidden="true" tabindex="-1"></a>    Which approach do you consider most readable? Which is likely most efficient, and why?</span>
+<span id="cb44-1078"><a href="#cb44-1078" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design</span></span>
+<span id="cb44-1079"><a href="#cb44-1079" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1080"><a href="#cb44-1080" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>The <span class="in">`Employee`</span> table has <span class="in">`Salary DECIMAL(10,2)`</span>. A business rule states that no employee</span>
+<span id="cb44-1081"><a href="#cb44-1081" aria-hidden="true" tabindex="-1"></a>    may earn less than 20 000 or more than 500 000. Where should this constraint be enforced —</span>
+<span id="cb44-1082"><a href="#cb44-1082" aria-hidden="true" tabindex="-1"></a>    as a <span class="in">`CHECK`</span> constraint, in the application layer, or both? Justify your answer.</span>
+<span id="cb44-1083"><a href="#cb44-1083" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1084"><a href="#cb44-1084" aria-hidden="true" tabindex="-1"></a><span class="fu">### Synthesis</span></span>
+<span id="cb44-1085"><a href="#cb44-1085" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-1086"><a href="#cb44-1086" aria-hidden="true" tabindex="-1"></a><span class="ss">12. </span>Using <span class="in">`INNER JOIN`</span>, <span class="in">`LEFT JOIN`</span>, and <span class="in">`NOT EXISTS`</span>, write **three different** SQL queries</span>
+<span id="cb44-1087"><a href="#cb44-1087" aria-hidden="true" tabindex="-1"></a>    that all return: *employees who have no dependents registered in the Dependent table*.</span>
+<span id="cb44-1088"><a href="#cb44-1088" aria-hidden="true" tabindex="-1"></a>    Which approach do you consider most readable? Which is likely most efficient, and why?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

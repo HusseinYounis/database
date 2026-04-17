@@ -217,7 +217,23 @@ window.Quarto = {
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Fundamentals of Database Systems</a> 
         <div class="sidebar-tools-main">
-    <a href="../Fundamentals-of-Database-Systems.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="../Fundamentals-of-Database-Systems.pdf">
+              <i class="bi bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="../Fundamentals-of-Database-Systems.epub">
+              <i class="bi bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
 </div>
     </div>
       </div>
@@ -1109,29 +1125,29 @@ Important
 <section id="interactive-isolation-level-anomaly-explorer" class="level2" data-number="13.11">
 <h2 data-number="13.11" class="anchored" data-anchor-id="interactive-isolation-level-anomaly-explorer"><span class="header-section-number">13.11</span> Interactive: Isolation Level Anomaly Explorer</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="354" data-source-offset="-1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 353;"><span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a>viewof level <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
-<span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"READ UNCOMMITTED"</span><span class="op">,</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="st">"REPEATABLE READ"</span><span class="op">,</span> <span class="st">"SERIALIZABLE"</span>]<span class="op">,</span></span>
-<span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Isolation Level"</span>}</span>
-<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> data <span class="op">=</span> {</span>
-<span id="cb5-361"><a href="#cb5-361" aria-hidden="true" tabindex="-1"></a>    <span class="st">"READ UNCOMMITTED"</span><span class="op">:</span> {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb5-362"><a href="#cb5-362" aria-hidden="true" tabindex="-1"></a>    <span class="st">"READ COMMITTED"</span><span class="op">:</span>   {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb5-363"><a href="#cb5-363" aria-hidden="true" tabindex="-1"></a>    <span class="st">"REPEATABLE READ"</span><span class="op">:</span>  {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SERIALIZABLE"</span><span class="op">:</span>     {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">phantom</span><span class="op">:</span> <span class="kw">false</span>}</span>
-<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
-<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> row <span class="op">=</span> data[level]<span class="op">;</span></span>
-<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> icon <span class="op">=</span> (b) <span class="kw">=&gt;</span> b <span class="op">?</span> <span class="st">"⚠️ Possible"</span> <span class="op">:</span> <span class="st">"✅ Prevented"</span><span class="op">;</span></span>
-<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span></span>
-<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="font-family:sans-serif; padding:1rem; background:#f8f8f8; border-radius:8px; line-height:2"&gt;</span></span>
-<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b&gt;</span><span class="sc">${</span>level<span class="sc">}</span><span class="vs">&lt;/b&gt;&lt;br/&gt;</span></span>
-<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a><span class="vs">      Dirty Read:          </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">dirty</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
-<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a><span class="vs">      Non-Repeatable Read: </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">nonrep</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
-<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a><span class="vs">      Phantom Read:        </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">phantom</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
-<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
-<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="356" data-source-offset="-1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 355;"><span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a>viewof level <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
+<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"READ UNCOMMITTED"</span><span class="op">,</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="st">"REPEATABLE READ"</span><span class="op">,</span> <span class="st">"SERIALIZABLE"</span>]<span class="op">,</span></span>
+<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Isolation Level"</span>}</span>
+<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-361"><a href="#cb5-361" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb5-362"><a href="#cb5-362" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> data <span class="op">=</span> {</span>
+<span id="cb5-363"><a href="#cb5-363" aria-hidden="true" tabindex="-1"></a>    <span class="st">"READ UNCOMMITTED"</span><span class="op">:</span> {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a>    <span class="st">"READ COMMITTED"</span><span class="op">:</span>   {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a>    <span class="st">"REPEATABLE READ"</span><span class="op">:</span>  {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SERIALIZABLE"</span><span class="op">:</span>     {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">phantom</span><span class="op">:</span> <span class="kw">false</span>}</span>
+<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> row <span class="op">=</span> data[level]<span class="op">;</span></span>
+<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> icon <span class="op">=</span> (b) <span class="kw">=&gt;</span> b <span class="op">?</span> <span class="st">"⚠️ Possible"</span> <span class="op">:</span> <span class="st">"✅ Prevented"</span><span class="op">;</span></span>
+<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span></span>
+<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="font-family:sans-serif; padding:1rem; background:#f8f8f8; border-radius:8px; line-height:2"&gt;</span></span>
+<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b&gt;</span><span class="sc">${</span>level<span class="sc">}</span><span class="vs">&lt;/b&gt;&lt;br/&gt;</span></span>
+<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a><span class="vs">      Dirty Read:          </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">dirty</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
+<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a><span class="vs">      Non-Repeatable Read: </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">nonrep</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
+<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a><span class="vs">      Phantom Read:        </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">phantom</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
+<span id="cb5-377"><a href="#cb5-377" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb5-378"><a href="#cb5-378" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div id="fig-isolation-explorer" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-isolation-explorer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2375,348 +2391,356 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-354"><a href="#cb10-354" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-355"><a href="#cb10-355" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interactive: Isolation Level Anomaly Explorer</span></span>
 <span id="cb10-356"><a href="#cb10-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-359"><a href="#cb10-359" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
-<span id="cb10-360"><a href="#cb10-360" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
-<span id="cb10-361"><a href="#cb10-361" aria-hidden="true" tabindex="-1"></a><span class="co">//| label: fig-isolation-explorer</span></span>
-<span id="cb10-362"><a href="#cb10-362" aria-hidden="true" tabindex="-1"></a><span class="co">//| fig-cap: "Which anomalies are possible at each isolation level?"</span></span>
-<span id="cb10-363"><a href="#cb10-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-364"><a href="#cb10-364" aria-hidden="true" tabindex="-1"></a>viewof level <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
-<span id="cb10-365"><a href="#cb10-365" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"READ UNCOMMITTED"</span><span class="op">,</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="st">"REPEATABLE READ"</span><span class="op">,</span> <span class="st">"SERIALIZABLE"</span>]<span class="op">,</span></span>
-<span id="cb10-366"><a href="#cb10-366" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Isolation Level"</span>}</span>
-<span id="cb10-367"><a href="#cb10-367" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-368"><a href="#cb10-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-369"><a href="#cb10-369" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb10-370"><a href="#cb10-370" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> data <span class="op">=</span> {</span>
-<span id="cb10-371"><a href="#cb10-371" aria-hidden="true" tabindex="-1"></a>    <span class="st">"READ UNCOMMITTED"</span><span class="op">:</span> {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb10-372"><a href="#cb10-372" aria-hidden="true" tabindex="-1"></a>    <span class="st">"READ COMMITTED"</span><span class="op">:</span>   {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb10-373"><a href="#cb10-373" aria-hidden="true" tabindex="-1"></a>    <span class="st">"REPEATABLE READ"</span><span class="op">:</span>  {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
-<span id="cb10-374"><a href="#cb10-374" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SERIALIZABLE"</span><span class="op">:</span>     {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">phantom</span><span class="op">:</span> <span class="kw">false</span>}</span>
-<span id="cb10-375"><a href="#cb10-375" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
-<span id="cb10-376"><a href="#cb10-376" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> row <span class="op">=</span> data[level]<span class="op">;</span></span>
-<span id="cb10-377"><a href="#cb10-377" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> icon <span class="op">=</span> (b) <span class="kw">=&gt;</span> b <span class="op">?</span> <span class="st">"⚠️ Possible"</span> <span class="op">:</span> <span class="st">"✅ Prevented"</span><span class="op">;</span></span>
-<span id="cb10-378"><a href="#cb10-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-379"><a href="#cb10-379" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span></span>
-<span id="cb10-380"><a href="#cb10-380" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="font-family:sans-serif; padding:1rem; background:#f8f8f8; border-radius:8px; line-height:2"&gt;</span></span>
-<span id="cb10-381"><a href="#cb10-381" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b&gt;</span><span class="sc">${</span>level<span class="sc">}</span><span class="vs">&lt;/b&gt;&lt;br/&gt;</span></span>
-<span id="cb10-382"><a href="#cb10-382" aria-hidden="true" tabindex="-1"></a><span class="vs">      Dirty Read:          </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">dirty</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
-<span id="cb10-383"><a href="#cb10-383" aria-hidden="true" tabindex="-1"></a><span class="vs">      Non-Repeatable Read: </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">nonrep</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
-<span id="cb10-384"><a href="#cb10-384" aria-hidden="true" tabindex="-1"></a><span class="vs">      Phantom Read:        </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">phantom</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
-<span id="cb10-385"><a href="#cb10-385" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
-<span id="cb10-386"><a href="#cb10-386" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-387"><a href="#cb10-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-388"><a href="#cb10-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-389"><a href="#cb10-389" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-357"><a href="#cb10-357" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb10-358"><a href="#cb10-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-361"><a href="#cb10-361" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
+<span id="cb10-362"><a href="#cb10-362" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
+<span id="cb10-363"><a href="#cb10-363" aria-hidden="true" tabindex="-1"></a><span class="co">//| label: fig-isolation-explorer</span></span>
+<span id="cb10-364"><a href="#cb10-364" aria-hidden="true" tabindex="-1"></a><span class="co">//| fig-cap: "Which anomalies are possible at each isolation level?"</span></span>
+<span id="cb10-365"><a href="#cb10-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-366"><a href="#cb10-366" aria-hidden="true" tabindex="-1"></a>viewof level <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
+<span id="cb10-367"><a href="#cb10-367" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"READ UNCOMMITTED"</span><span class="op">,</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="st">"REPEATABLE READ"</span><span class="op">,</span> <span class="st">"SERIALIZABLE"</span>]<span class="op">,</span></span>
+<span id="cb10-368"><a href="#cb10-368" aria-hidden="true" tabindex="-1"></a>  {<span class="dt">value</span><span class="op">:</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Isolation Level"</span>}</span>
+<span id="cb10-369"><a href="#cb10-369" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-370"><a href="#cb10-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-371"><a href="#cb10-371" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb10-372"><a href="#cb10-372" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> data <span class="op">=</span> {</span>
+<span id="cb10-373"><a href="#cb10-373" aria-hidden="true" tabindex="-1"></a>    <span class="st">"READ UNCOMMITTED"</span><span class="op">:</span> {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb10-374"><a href="#cb10-374" aria-hidden="true" tabindex="-1"></a>    <span class="st">"READ COMMITTED"</span><span class="op">:</span>   {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>  <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb10-375"><a href="#cb10-375" aria-hidden="true" tabindex="-1"></a>    <span class="st">"REPEATABLE READ"</span><span class="op">:</span>  {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">phantom</span><span class="op">:</span> <span class="kw">true</span>}<span class="op">,</span></span>
+<span id="cb10-376"><a href="#cb10-376" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SERIALIZABLE"</span><span class="op">:</span>     {<span class="dt">dirty</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">nonrep</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">phantom</span><span class="op">:</span> <span class="kw">false</span>}</span>
+<span id="cb10-377"><a href="#cb10-377" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb10-378"><a href="#cb10-378" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> row <span class="op">=</span> data[level]<span class="op">;</span></span>
+<span id="cb10-379"><a href="#cb10-379" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> icon <span class="op">=</span> (b) <span class="kw">=&gt;</span> b <span class="op">?</span> <span class="st">"⚠️ Possible"</span> <span class="op">:</span> <span class="st">"✅ Prevented"</span><span class="op">;</span></span>
+<span id="cb10-380"><a href="#cb10-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-381"><a href="#cb10-381" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> htl<span class="op">.</span><span class="fu">html</span><span class="vs">`</span></span>
+<span id="cb10-382"><a href="#cb10-382" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;div style="font-family:sans-serif; padding:1rem; background:#f8f8f8; border-radius:8px; line-height:2"&gt;</span></span>
+<span id="cb10-383"><a href="#cb10-383" aria-hidden="true" tabindex="-1"></a><span class="vs">      &lt;b&gt;</span><span class="sc">${</span>level<span class="sc">}</span><span class="vs">&lt;/b&gt;&lt;br/&gt;</span></span>
+<span id="cb10-384"><a href="#cb10-384" aria-hidden="true" tabindex="-1"></a><span class="vs">      Dirty Read:          </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">dirty</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
+<span id="cb10-385"><a href="#cb10-385" aria-hidden="true" tabindex="-1"></a><span class="vs">      Non-Repeatable Read: </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">nonrep</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
+<span id="cb10-386"><a href="#cb10-386" aria-hidden="true" tabindex="-1"></a><span class="vs">      Phantom Read:        </span><span class="sc">${</span><span class="fu">icon</span>(row<span class="op">.</span><span class="at">phantom</span>)<span class="sc">}</span><span class="vs">&lt;br/&gt;</span></span>
+<span id="cb10-387"><a href="#cb10-387" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/div&gt;`</span><span class="op">;</span></span>
+<span id="cb10-388"><a href="#cb10-388" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-389"><a href="#cb10-389" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb10-390"><a href="#cb10-390" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-391"><a href="#cb10-391" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
+<span id="cb10-391"><a href="#cb10-391" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb10-392"><a href="#cb10-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-393"><a href="#cb10-393" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb10-394"><a href="#cb10-394" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 13</span></span>
-<span id="cb10-395"><a href="#cb10-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-396"><a href="#cb10-396" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>A **schedule** is a total ordering of operations from concurrent transactions.</span>
-<span id="cb10-397"><a href="#cb10-397" aria-hidden="true" tabindex="-1"></a>   **Serial schedules** are always correct; **concurrent schedules** need validation.</span>
+<span id="cb10-393"><a href="#cb10-393" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="epub"}</span>
+<span id="cb10-394"><a href="#cb10-394" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; *This section contains an interactive isolation-level explorer. View the online HTML version to see which anomalies are possible at each SQL isolation level.*</span></span>
+<span id="cb10-395"><a href="#cb10-395" aria-hidden="true" tabindex="-1"></a><span class="at">:::</span></span>
+<span id="cb10-396"><a href="#cb10-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-397"><a href="#cb10-397" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-398"><a href="#cb10-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-399"><a href="#cb10-399" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Conflict serializability** (the practical standard): a schedule is correct iff its **precedence graph is acyclic**.</span>
-<span id="cb10-400"><a href="#cb10-400" aria-hidden="true" tabindex="-1"></a>   An acyclic graph's topological sort gives the equivalent serial order.</span>
-<span id="cb10-401"><a href="#cb10-401" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-402"><a href="#cb10-402" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Recoverable schedules**: $T_j$ commits only after all $T_i$ whose data it read.</span>
-<span id="cb10-403"><a href="#cb10-403" aria-hidden="true" tabindex="-1"></a>   **Cascadeless** schedules: no dirty reads at all — prevents cascading rollback.</span>
-<span id="cb10-404"><a href="#cb10-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-405"><a href="#cb10-405" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Two-Phase Locking (2PL)**: acquire all locks in the growing phase; release in the shrinking phase.</span>
-<span id="cb10-406"><a href="#cb10-406" aria-hidden="true" tabindex="-1"></a>   **Strict 2PL** (hold X locks until commit) is what real DBMS implement.</span>
-<span id="cb10-407"><a href="#cb10-407" aria-hidden="true" tabindex="-1"></a>   Produces conflict-serializable, cascadeless schedules.</span>
-<span id="cb10-408"><a href="#cb10-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-409"><a href="#cb10-409" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Deadlocks**: circular lock-wait chains; detected via **wait-for graph** cycles.</span>
-<span id="cb10-410"><a href="#cb10-410" aria-hidden="true" tabindex="-1"></a>   Resolved by aborting a victim; prevented by Wait-Die or Wound-Wait timestamp ordering.</span>
-<span id="cb10-411"><a href="#cb10-411" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-412"><a href="#cb10-412" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**MVCC**: readers never block writers, writers never block readers.</span>
-<span id="cb10-413"><a href="#cb10-413" aria-hidden="true" tabindex="-1"></a>   Each transaction reads a snapshot valid at its start time.</span>
-<span id="cb10-414"><a href="#cb10-414" aria-hidden="true" tabindex="-1"></a>   Used by PostgreSQL (with SSI for <span class="in">`SERIALIZABLE`</span>), MySQL InnoDB, Oracle.</span>
-<span id="cb10-415"><a href="#cb10-415" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-416"><a href="#cb10-416" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**OCC**: validate at commit, not during execution — best for low-conflict, read-heavy workloads.</span>
-<span id="cb10-417"><a href="#cb10-417" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-418"><a href="#cb10-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-419"><a href="#cb10-419" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb10-420"><a href="#cb10-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-421"><a href="#cb10-421" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
-<span id="cb10-422"><a href="#cb10-422" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-423"><a href="#cb10-423" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
-<span id="cb10-424"><a href="#cb10-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-425"><a href="#cb10-425" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define a **conflicting operation pair**. Using the operations $r_1(X)$, $w_1(X)$, $r_2(X)$, $w_2(X)$,</span>
-<span id="cb10-426"><a href="#cb10-426" aria-hidden="true" tabindex="-1"></a>   list all four pairs and classify each as conflicting or non-conflicting.</span>
-<span id="cb10-427"><a href="#cb10-427" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-428"><a href="#cb10-428" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Explain the difference between **conflict-serializability** and **view-serializability**.</span>
-<span id="cb10-429"><a href="#cb10-429" aria-hidden="true" tabindex="-1"></a>   Why does practice rely on conflict-serializability even though view-serializability is more permissive?</span>
+<span id="cb10-399"><a href="#cb10-399" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
+<span id="cb10-400"><a href="#cb10-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-401"><a href="#cb10-401" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb10-402"><a href="#cb10-402" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 13</span></span>
+<span id="cb10-403"><a href="#cb10-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-404"><a href="#cb10-404" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>A **schedule** is a total ordering of operations from concurrent transactions.</span>
+<span id="cb10-405"><a href="#cb10-405" aria-hidden="true" tabindex="-1"></a>   **Serial schedules** are always correct; **concurrent schedules** need validation.</span>
+<span id="cb10-406"><a href="#cb10-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-407"><a href="#cb10-407" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Conflict serializability** (the practical standard): a schedule is correct iff its **precedence graph is acyclic**.</span>
+<span id="cb10-408"><a href="#cb10-408" aria-hidden="true" tabindex="-1"></a>   An acyclic graph's topological sort gives the equivalent serial order.</span>
+<span id="cb10-409"><a href="#cb10-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-410"><a href="#cb10-410" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Recoverable schedules**: $T_j$ commits only after all $T_i$ whose data it read.</span>
+<span id="cb10-411"><a href="#cb10-411" aria-hidden="true" tabindex="-1"></a>   **Cascadeless** schedules: no dirty reads at all — prevents cascading rollback.</span>
+<span id="cb10-412"><a href="#cb10-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-413"><a href="#cb10-413" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Two-Phase Locking (2PL)**: acquire all locks in the growing phase; release in the shrinking phase.</span>
+<span id="cb10-414"><a href="#cb10-414" aria-hidden="true" tabindex="-1"></a>   **Strict 2PL** (hold X locks until commit) is what real DBMS implement.</span>
+<span id="cb10-415"><a href="#cb10-415" aria-hidden="true" tabindex="-1"></a>   Produces conflict-serializable, cascadeless schedules.</span>
+<span id="cb10-416"><a href="#cb10-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-417"><a href="#cb10-417" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Deadlocks**: circular lock-wait chains; detected via **wait-for graph** cycles.</span>
+<span id="cb10-418"><a href="#cb10-418" aria-hidden="true" tabindex="-1"></a>   Resolved by aborting a victim; prevented by Wait-Die or Wound-Wait timestamp ordering.</span>
+<span id="cb10-419"><a href="#cb10-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-420"><a href="#cb10-420" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**MVCC**: readers never block writers, writers never block readers.</span>
+<span id="cb10-421"><a href="#cb10-421" aria-hidden="true" tabindex="-1"></a>   Each transaction reads a snapshot valid at its start time.</span>
+<span id="cb10-422"><a href="#cb10-422" aria-hidden="true" tabindex="-1"></a>   Used by PostgreSQL (with SSI for <span class="in">`SERIALIZABLE`</span>), MySQL InnoDB, Oracle.</span>
+<span id="cb10-423"><a href="#cb10-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-424"><a href="#cb10-424" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**OCC**: validate at commit, not during execution — best for low-conflict, read-heavy workloads.</span>
+<span id="cb10-425"><a href="#cb10-425" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-426"><a href="#cb10-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-427"><a href="#cb10-427" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-428"><a href="#cb10-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-429"><a href="#cb10-429" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
 <span id="cb10-430"><a href="#cb10-430" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-431"><a href="#cb10-431" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explain how **MVCC** allows readers and writers to coexist without blocking each other.</span>
-<span id="cb10-432"><a href="#cb10-432" aria-hidden="true" tabindex="-1"></a>   What happens to old versions over time, and who is responsible for cleaning them up?</span>
-<span id="cb10-433"><a href="#cb10-433" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-434"><a href="#cb10-434" aria-hidden="true" tabindex="-1"></a><span class="fu">### Applied</span></span>
+<span id="cb10-431"><a href="#cb10-431" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
+<span id="cb10-432"><a href="#cb10-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-433"><a href="#cb10-433" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define a **conflicting operation pair**. Using the operations $r_1(X)$, $w_1(X)$, $r_2(X)$, $w_2(X)$,</span>
+<span id="cb10-434"><a href="#cb10-434" aria-hidden="true" tabindex="-1"></a>   list all four pairs and classify each as conflicting or non-conflicting.</span>
 <span id="cb10-435"><a href="#cb10-435" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-436"><a href="#cb10-436" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>For the following schedule, identify all conflicting operations, draw the precedence graph,</span>
-<span id="cb10-437"><a href="#cb10-437" aria-hidden="true" tabindex="-1"></a>   and determine whether the schedule is conflict-serializable. If yes, state the equivalent serial order.</span>
-<span id="cb10-438"><a href="#cb10-438" aria-hidden="true" tabindex="-1"></a>   </span>
-<span id="cb10-439"><a href="#cb10-439" aria-hidden="true" tabindex="-1"></a>   $$S: w_1(A)\;\; r_2(A)\;\; r_1(B)\;\; w_2(B)\;\; c_1\;\; c_2$$</span>
-<span id="cb10-440"><a href="#cb10-440" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-441"><a href="#cb10-441" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Explain why the following schedule is **not recoverable**, and modify it minimally to make it recoverable:</span>
-<span id="cb10-442"><a href="#cb10-442" aria-hidden="true" tabindex="-1"></a>   </span>
-<span id="cb10-443"><a href="#cb10-443" aria-hidden="true" tabindex="-1"></a>   $$S: w_1(X)\;\; r_2(X)\;\; c_2\;\; a_1$$</span>
-<span id="cb10-444"><a href="#cb10-444" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-445"><a href="#cb10-445" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>A database uses **Strict 2PL**. Transaction T1 holds an <span class="in">`X`</span> lock on row <span class="in">`R7`</span>.</span>
-<span id="cb10-446"><a href="#cb10-446" aria-hidden="true" tabindex="-1"></a>   Transaction T2 requests an <span class="in">`S`</span> lock on <span class="in">`R7`</span>, then T3 requests an <span class="in">`X`</span> lock on <span class="in">`R7`</span>.</span>
-<span id="cb10-447"><a href="#cb10-447" aria-hidden="true" tabindex="-1"></a>   Draw the lock request queue and show what happens when T1 commits.</span>
-<span id="cb10-448"><a href="#cb10-448" aria-hidden="true" tabindex="-1"></a>   Will T2 and T3 both proceed? In what order?</span>
-<span id="cb10-449"><a href="#cb10-449" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-450"><a href="#cb10-450" aria-hidden="true" tabindex="-1"></a><span class="fu">### Analysis</span></span>
-<span id="cb10-451"><a href="#cb10-451" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-452"><a href="#cb10-452" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Show the wait-for graph for the following deadlock scenario and identify the minimal set of</span>
-<span id="cb10-453"><a href="#cb10-453" aria-hidden="true" tabindex="-1"></a>   victims that, when aborted, breaks all cycles:</span>
-<span id="cb10-454"><a href="#cb10-454" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T1 holds X(A), waiting for X(B)</span>
-<span id="cb10-455"><a href="#cb10-455" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T2 holds X(B), waiting for X(C)</span>
-<span id="cb10-456"><a href="#cb10-456" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T3 holds X(C), waiting for X(A)</span>
-<span id="cb10-457"><a href="#cb10-457" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T4 holds X(D), waiting for X(E)</span>
-<span id="cb10-458"><a href="#cb10-458" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T5 holds X(E), waiting for X(D)</span>
+<span id="cb10-436"><a href="#cb10-436" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Explain the difference between **conflict-serializability** and **view-serializability**.</span>
+<span id="cb10-437"><a href="#cb10-437" aria-hidden="true" tabindex="-1"></a>   Why does practice rely on conflict-serializability even though view-serializability is more permissive?</span>
+<span id="cb10-438"><a href="#cb10-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-439"><a href="#cb10-439" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explain how **MVCC** allows readers and writers to coexist without blocking each other.</span>
+<span id="cb10-440"><a href="#cb10-440" aria-hidden="true" tabindex="-1"></a>   What happens to old versions over time, and who is responsible for cleaning them up?</span>
+<span id="cb10-441"><a href="#cb10-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-442"><a href="#cb10-442" aria-hidden="true" tabindex="-1"></a><span class="fu">### Applied</span></span>
+<span id="cb10-443"><a href="#cb10-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-444"><a href="#cb10-444" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>For the following schedule, identify all conflicting operations, draw the precedence graph,</span>
+<span id="cb10-445"><a href="#cb10-445" aria-hidden="true" tabindex="-1"></a>   and determine whether the schedule is conflict-serializable. If yes, state the equivalent serial order.</span>
+<span id="cb10-446"><a href="#cb10-446" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb10-447"><a href="#cb10-447" aria-hidden="true" tabindex="-1"></a>   $$S: w_1(A)\;\; r_2(A)\;\; r_1(B)\;\; w_2(B)\;\; c_1\;\; c_2$$</span>
+<span id="cb10-448"><a href="#cb10-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-449"><a href="#cb10-449" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Explain why the following schedule is **not recoverable**, and modify it minimally to make it recoverable:</span>
+<span id="cb10-450"><a href="#cb10-450" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb10-451"><a href="#cb10-451" aria-hidden="true" tabindex="-1"></a>   $$S: w_1(X)\;\; r_2(X)\;\; c_2\;\; a_1$$</span>
+<span id="cb10-452"><a href="#cb10-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-453"><a href="#cb10-453" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>A database uses **Strict 2PL**. Transaction T1 holds an <span class="in">`X`</span> lock on row <span class="in">`R7`</span>.</span>
+<span id="cb10-454"><a href="#cb10-454" aria-hidden="true" tabindex="-1"></a>   Transaction T2 requests an <span class="in">`S`</span> lock on <span class="in">`R7`</span>, then T3 requests an <span class="in">`X`</span> lock on <span class="in">`R7`</span>.</span>
+<span id="cb10-455"><a href="#cb10-455" aria-hidden="true" tabindex="-1"></a>   Draw the lock request queue and show what happens when T1 commits.</span>
+<span id="cb10-456"><a href="#cb10-456" aria-hidden="true" tabindex="-1"></a>   Will T2 and T3 both proceed? In what order?</span>
+<span id="cb10-457"><a href="#cb10-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-458"><a href="#cb10-458" aria-hidden="true" tabindex="-1"></a><span class="fu">### Analysis</span></span>
 <span id="cb10-459"><a href="#cb10-459" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-460"><a href="#cb10-460" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>In the **Timestamp Protocol**, transaction T1 (TS=5) tries to write $X$ where $R<span class="sc">\_</span>TS(X)=8$.</span>
-<span id="cb10-461"><a href="#cb10-461" aria-hidden="true" tabindex="-1"></a>   What happens? Why is this the correct behavior?</span>
-<span id="cb10-462"><a href="#cb10-462" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-463"><a href="#cb10-463" aria-hidden="true" tabindex="-1"></a><span class="fu">### Diagram</span></span>
-<span id="cb10-464"><a href="#cb10-464" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-465"><a href="#cb10-465" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>Draw a timeline diagram (with two rows: T1 and T2) showing:</span>
-<span id="cb10-466"><a href="#cb10-466" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>A **non-repeatable read** anomaly at <span class="in">`READ COMMITTED`</span> level</span>
-<span id="cb10-467"><a href="#cb10-467" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>How <span class="in">`REPEATABLE READ`</span> prevents the same scenario (using MVCC or locking)</span>
-<span id="cb10-468"><a href="#cb10-468" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-469"><a href="#cb10-469" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design</span></span>
+<span id="cb10-460"><a href="#cb10-460" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Show the wait-for graph for the following deadlock scenario and identify the minimal set of</span>
+<span id="cb10-461"><a href="#cb10-461" aria-hidden="true" tabindex="-1"></a>   victims that, when aborted, breaks all cycles:</span>
+<span id="cb10-462"><a href="#cb10-462" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T1 holds X(A), waiting for X(B)</span>
+<span id="cb10-463"><a href="#cb10-463" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T2 holds X(B), waiting for X(C)</span>
+<span id="cb10-464"><a href="#cb10-464" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T3 holds X(C), waiting for X(A)</span>
+<span id="cb10-465"><a href="#cb10-465" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T4 holds X(D), waiting for X(E)</span>
+<span id="cb10-466"><a href="#cb10-466" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>T5 holds X(E), waiting for X(D)</span>
+<span id="cb10-467"><a href="#cb10-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-468"><a href="#cb10-468" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>In the **Timestamp Protocol**, transaction T1 (TS=5) tries to write $X$ where $R<span class="sc">\_</span>TS(X)=8$.</span>
+<span id="cb10-469"><a href="#cb10-469" aria-hidden="true" tabindex="-1"></a>   What happens? Why is this the correct behavior?</span>
 <span id="cb10-470"><a href="#cb10-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-471"><a href="#cb10-471" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>An online banking system runs thousands of concurrent transactions per second.</span>
-<span id="cb10-472"><a href="#cb10-472" aria-hidden="true" tabindex="-1"></a>    Most transactions are balance reads; 10% involve writes (transfers, deposits).</span>
-<span id="cb10-473"><a href="#cb10-473" aria-hidden="true" tabindex="-1"></a>    A DBA debates between <span class="in">`SERIALIZABLE`</span> isolation (maximum safety) and <span class="in">`READ COMMITTED`</span> (maximum throughput).</span>
-<span id="cb10-474"><a href="#cb10-474" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Describe a specific sequence of events in which <span class="in">`READ COMMITTED`</span> would produce an incorrect bank balance.</span>
-<span id="cb10-475"><a href="#cb10-475" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Describe whether PostgreSQL's <span class="in">`SERIALIZABLE`</span> (SSI) or <span class="in">`REPEATABLE READ`</span> (MVCC snapshot) would catch this. </span>
-<span id="cb10-476"><a href="#cb10-476" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>What is the performance cost of each approach?</span>
-<span id="cb10-477"><a href="#cb10-477" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-478"><a href="#cb10-478" aria-hidden="true" tabindex="-1"></a><span class="fu">### Synthesis</span></span>
-<span id="cb10-479"><a href="#cb10-479" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-480"><a href="#cb10-480" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>Compare **Two-Phase Locking** and **MVCC** across the following dimensions:</span>
-<span id="cb10-481"><a href="#cb10-481" aria-hidden="true" tabindex="-1"></a>    | Dimension | 2PL | MVCC |</span>
-<span id="cb10-482"><a href="#cb10-482" aria-hidden="true" tabindex="-1"></a>    |-----------|-----|------|</span>
-<span id="cb10-483"><a href="#cb10-483" aria-hidden="true" tabindex="-1"></a>    | Readers block writers? | | |</span>
-<span id="cb10-484"><a href="#cb10-484" aria-hidden="true" tabindex="-1"></a>    | Writers block readers? | | |</span>
-<span id="cb10-485"><a href="#cb10-485" aria-hidden="true" tabindex="-1"></a>    | Deadlock possible? | | |</span>
-<span id="cb10-486"><a href="#cb10-486" aria-hidden="true" tabindex="-1"></a>    | Stale read possible? | | |</span>
-<span id="cb10-487"><a href="#cb10-487" aria-hidden="true" tabindex="-1"></a>    | Write skew anomaly possible? | | |</span>
-<span id="cb10-488"><a href="#cb10-488" aria-hidden="true" tabindex="-1"></a>    | Storage overhead? | | |</span>
-<span id="cb10-489"><a href="#cb10-489" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-490"><a href="#cb10-490" aria-hidden="true" tabindex="-1"></a>    Complete the table and then justify which mechanism you would choose for: (a) a high-concurrency web app (mostly reads), (b) a financial ledger system (strict correctness required).</span>
-<span id="cb10-491"><a href="#cb10-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-492"><a href="#cb10-492" aria-hidden="true" tabindex="-1"></a>**Notation:**</span>
-<span id="cb10-493"><a href="#cb10-493" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-494"><a href="#cb10-494" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_i(X)$: transaction $T_i$ reads item $X$</span>
-<span id="cb10-495"><a href="#cb10-495" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$w_i(X)$: transaction $T_i$ writes item $X$</span>
-<span id="cb10-496"><a href="#cb10-496" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$c_i$: transaction $T_i$ commits</span>
-<span id="cb10-497"><a href="#cb10-497" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$a_i$: transaction $T_i$ aborts</span>
-<span id="cb10-498"><a href="#cb10-498" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-499"><a href="#cb10-499" aria-hidden="true" tabindex="-1"></a>**Serial schedule:** All operations of one transaction complete before the next starts — always correct, but low concurrency:</span>
-<span id="cb10-500"><a href="#cb10-500" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-501"><a href="#cb10-501" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-502"><a href="#cb10-502" aria-hidden="true" tabindex="-1"></a>S_1: r_1(X)\; w_1(X)\; c_1\; r_2(X)\; w_2(X)\; c_2</span>
-<span id="cb10-503"><a href="#cb10-503" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-504"><a href="#cb10-504" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-505"><a href="#cb10-505" aria-hidden="true" tabindex="-1"></a>**Concurrent (non-serial) schedule:** Operations interleaved:</span>
+<span id="cb10-471"><a href="#cb10-471" aria-hidden="true" tabindex="-1"></a><span class="fu">### Diagram</span></span>
+<span id="cb10-472"><a href="#cb10-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-473"><a href="#cb10-473" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>Draw a timeline diagram (with two rows: T1 and T2) showing:</span>
+<span id="cb10-474"><a href="#cb10-474" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>A **non-repeatable read** anomaly at <span class="in">`READ COMMITTED`</span> level</span>
+<span id="cb10-475"><a href="#cb10-475" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>How <span class="in">`REPEATABLE READ`</span> prevents the same scenario (using MVCC or locking)</span>
+<span id="cb10-476"><a href="#cb10-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-477"><a href="#cb10-477" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design</span></span>
+<span id="cb10-478"><a href="#cb10-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-479"><a href="#cb10-479" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>An online banking system runs thousands of concurrent transactions per second.</span>
+<span id="cb10-480"><a href="#cb10-480" aria-hidden="true" tabindex="-1"></a>    Most transactions are balance reads; 10% involve writes (transfers, deposits).</span>
+<span id="cb10-481"><a href="#cb10-481" aria-hidden="true" tabindex="-1"></a>    A DBA debates between <span class="in">`SERIALIZABLE`</span> isolation (maximum safety) and <span class="in">`READ COMMITTED`</span> (maximum throughput).</span>
+<span id="cb10-482"><a href="#cb10-482" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Describe a specific sequence of events in which <span class="in">`READ COMMITTED`</span> would produce an incorrect bank balance.</span>
+<span id="cb10-483"><a href="#cb10-483" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Describe whether PostgreSQL's <span class="in">`SERIALIZABLE`</span> (SSI) or <span class="in">`REPEATABLE READ`</span> (MVCC snapshot) would catch this. </span>
+<span id="cb10-484"><a href="#cb10-484" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>What is the performance cost of each approach?</span>
+<span id="cb10-485"><a href="#cb10-485" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-486"><a href="#cb10-486" aria-hidden="true" tabindex="-1"></a><span class="fu">### Synthesis</span></span>
+<span id="cb10-487"><a href="#cb10-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-488"><a href="#cb10-488" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>Compare **Two-Phase Locking** and **MVCC** across the following dimensions:</span>
+<span id="cb10-489"><a href="#cb10-489" aria-hidden="true" tabindex="-1"></a>    | Dimension | 2PL | MVCC |</span>
+<span id="cb10-490"><a href="#cb10-490" aria-hidden="true" tabindex="-1"></a>    |-----------|-----|------|</span>
+<span id="cb10-491"><a href="#cb10-491" aria-hidden="true" tabindex="-1"></a>    | Readers block writers? | | |</span>
+<span id="cb10-492"><a href="#cb10-492" aria-hidden="true" tabindex="-1"></a>    | Writers block readers? | | |</span>
+<span id="cb10-493"><a href="#cb10-493" aria-hidden="true" tabindex="-1"></a>    | Deadlock possible? | | |</span>
+<span id="cb10-494"><a href="#cb10-494" aria-hidden="true" tabindex="-1"></a>    | Stale read possible? | | |</span>
+<span id="cb10-495"><a href="#cb10-495" aria-hidden="true" tabindex="-1"></a>    | Write skew anomaly possible? | | |</span>
+<span id="cb10-496"><a href="#cb10-496" aria-hidden="true" tabindex="-1"></a>    | Storage overhead? | | |</span>
+<span id="cb10-497"><a href="#cb10-497" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-498"><a href="#cb10-498" aria-hidden="true" tabindex="-1"></a>    Complete the table and then justify which mechanism you would choose for: (a) a high-concurrency web app (mostly reads), (b) a financial ledger system (strict correctness required).</span>
+<span id="cb10-499"><a href="#cb10-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-500"><a href="#cb10-500" aria-hidden="true" tabindex="-1"></a>**Notation:**</span>
+<span id="cb10-501"><a href="#cb10-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-502"><a href="#cb10-502" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_i(X)$: transaction $T_i$ reads item $X$</span>
+<span id="cb10-503"><a href="#cb10-503" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$w_i(X)$: transaction $T_i$ writes item $X$</span>
+<span id="cb10-504"><a href="#cb10-504" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$c_i$: transaction $T_i$ commits</span>
+<span id="cb10-505"><a href="#cb10-505" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$a_i$: transaction $T_i$ aborts</span>
 <span id="cb10-506"><a href="#cb10-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-507"><a href="#cb10-507" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-508"><a href="#cb10-508" aria-hidden="true" tabindex="-1"></a>S_2: r_1(X)\; r_2(X)\; w_1(X)\; w_2(X)\; c_1\; c_2</span>
+<span id="cb10-507"><a href="#cb10-507" aria-hidden="true" tabindex="-1"></a>**Serial schedule:** All operations of one transaction complete before the next starts — always correct, but low concurrency:</span>
+<span id="cb10-508"><a href="#cb10-508" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-509"><a href="#cb10-509" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-510"><a href="#cb10-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-511"><a href="#cb10-511" aria-hidden="true" tabindex="-1"></a><span class="fu">## Serializability</span></span>
+<span id="cb10-510"><a href="#cb10-510" aria-hidden="true" tabindex="-1"></a>S_1: r_1(X)\; w_1(X)\; c_1\; r_2(X)\; w_2(X)\; c_2</span>
+<span id="cb10-511"><a href="#cb10-511" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb10-512"><a href="#cb10-512" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-513"><a href="#cb10-513" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conflict Serializability</span></span>
+<span id="cb10-513"><a href="#cb10-513" aria-hidden="true" tabindex="-1"></a>**Concurrent (non-serial) schedule:** Operations interleaved:</span>
 <span id="cb10-514"><a href="#cb10-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-515"><a href="#cb10-515" aria-hidden="true" tabindex="-1"></a>Two operations **conflict** if they:</span>
-<span id="cb10-516"><a href="#cb10-516" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Belong to **different** transactions</span>
-<span id="cb10-517"><a href="#cb10-517" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Access the **same data item** $X$</span>
-<span id="cb10-518"><a href="#cb10-518" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>At least **one is a write**</span>
-<span id="cb10-519"><a href="#cb10-519" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-520"><a href="#cb10-520" aria-hidden="true" tabindex="-1"></a>Conflicting operation pairs:</span>
-<span id="cb10-521"><a href="#cb10-521" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_i(X)$ and $w_j(X)$ — read-write conflict</span>
-<span id="cb10-522"><a href="#cb10-522" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$w_i(X)$ and $r_j(X)$ — write-read conflict</span>
-<span id="cb10-523"><a href="#cb10-523" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$w_i(X)$ and $w_j(X)$ — write-write conflict</span>
-<span id="cb10-524"><a href="#cb10-524" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-525"><a href="#cb10-525" aria-hidden="true" tabindex="-1"></a>A schedule $S$ is **conflict-serializable** iff it is conflict-equivalent to some serial schedule — i.e., we can transform $S$ to a serial schedule by swapping **non-conflicting** adjacent operations.</span>
-<span id="cb10-526"><a href="#cb10-526" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-527"><a href="#cb10-527" aria-hidden="true" tabindex="-1"></a><span class="fu">### Precedence Graph (Serialization Graph)</span></span>
-<span id="cb10-528"><a href="#cb10-528" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-529"><a href="#cb10-529" aria-hidden="true" tabindex="-1"></a>Given a schedule $S$ over transactions $T_1, \ldots, T_n$:</span>
-<span id="cb10-530"><a href="#cb10-530" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-531"><a href="#cb10-531" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>One node per transaction</span>
-<span id="cb10-532"><a href="#cb10-532" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add edge $T_i \to T_j$ if $T_i$ has an operation that **conflicts with and precedes** an operation of $T_j$</span>
-<span id="cb10-533"><a href="#cb10-533" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-534"><a href="#cb10-534" aria-hidden="true" tabindex="-1"></a>**Theorem:** $S$ is conflict-serializable iff its precedence graph is **acyclic** (no cycles).</span>
-<span id="cb10-535"><a href="#cb10-535" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-536"><a href="#cb10-536" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
-<span id="cb10-537"><a href="#cb10-537" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-538"><a href="#cb10-538" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-539"><a href="#cb10-539" aria-hidden="true" tabindex="-1"></a>S: r_1(A)\; w_2(A)\; r_1(B)\; w_2(B)\; c_1\; c_2</span>
-<span id="cb10-540"><a href="#cb10-540" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-515"><a href="#cb10-515" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-516"><a href="#cb10-516" aria-hidden="true" tabindex="-1"></a>S_2: r_1(X)\; r_2(X)\; w_1(X)\; w_2(X)\; c_1\; c_2</span>
+<span id="cb10-517"><a href="#cb10-517" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-518"><a href="#cb10-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-519"><a href="#cb10-519" aria-hidden="true" tabindex="-1"></a><span class="fu">## Serializability</span></span>
+<span id="cb10-520"><a href="#cb10-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-521"><a href="#cb10-521" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conflict Serializability</span></span>
+<span id="cb10-522"><a href="#cb10-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-523"><a href="#cb10-523" aria-hidden="true" tabindex="-1"></a>Two operations **conflict** if they:</span>
+<span id="cb10-524"><a href="#cb10-524" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Belong to **different** transactions</span>
+<span id="cb10-525"><a href="#cb10-525" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Access the **same data item** $X$</span>
+<span id="cb10-526"><a href="#cb10-526" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>At least **one is a write**</span>
+<span id="cb10-527"><a href="#cb10-527" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-528"><a href="#cb10-528" aria-hidden="true" tabindex="-1"></a>Conflicting operation pairs:</span>
+<span id="cb10-529"><a href="#cb10-529" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_i(X)$ and $w_j(X)$ — read-write conflict</span>
+<span id="cb10-530"><a href="#cb10-530" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$w_i(X)$ and $r_j(X)$ — write-read conflict</span>
+<span id="cb10-531"><a href="#cb10-531" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$w_i(X)$ and $w_j(X)$ — write-write conflict</span>
+<span id="cb10-532"><a href="#cb10-532" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-533"><a href="#cb10-533" aria-hidden="true" tabindex="-1"></a>A schedule $S$ is **conflict-serializable** iff it is conflict-equivalent to some serial schedule — i.e., we can transform $S$ to a serial schedule by swapping **non-conflicting** adjacent operations.</span>
+<span id="cb10-534"><a href="#cb10-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-535"><a href="#cb10-535" aria-hidden="true" tabindex="-1"></a><span class="fu">### Precedence Graph (Serialization Graph)</span></span>
+<span id="cb10-536"><a href="#cb10-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-537"><a href="#cb10-537" aria-hidden="true" tabindex="-1"></a>Given a schedule $S$ over transactions $T_1, \ldots, T_n$:</span>
+<span id="cb10-538"><a href="#cb10-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-539"><a href="#cb10-539" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>One node per transaction</span>
+<span id="cb10-540"><a href="#cb10-540" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add edge $T_i \to T_j$ if $T_i$ has an operation that **conflicts with and precedes** an operation of $T_j$</span>
 <span id="cb10-541"><a href="#cb10-541" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-542"><a href="#cb10-542" aria-hidden="true" tabindex="-1"></a>Conflicts:</span>
-<span id="cb10-543"><a href="#cb10-543" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_1(A)$ before $w_2(A)$ → edge $T_1 \to T_2$</span>
-<span id="cb10-544"><a href="#cb10-544" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_1(B)$ before $w_2(B)$ → edge $T_1 \to T_2$ (redundant)</span>
+<span id="cb10-542"><a href="#cb10-542" aria-hidden="true" tabindex="-1"></a>**Theorem:** $S$ is conflict-serializable iff its precedence graph is **acyclic** (no cycles).</span>
+<span id="cb10-543"><a href="#cb10-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-544"><a href="#cb10-544" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
 <span id="cb10-545"><a href="#cb10-545" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-546"><a href="#cb10-546" aria-hidden="true" tabindex="-1"></a>Graph: $T_1 \to T_2$ — no cycle → **conflict-serializable** (equivalent to serial order $T_1, T_2$).</span>
-<span id="cb10-547"><a href="#cb10-547" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-548"><a href="#cb10-548" aria-hidden="true" tabindex="-1"></a><span class="fu">## View Serializability</span></span>
+<span id="cb10-546"><a href="#cb10-546" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-547"><a href="#cb10-547" aria-hidden="true" tabindex="-1"></a>S: r_1(A)\; w_2(A)\; r_1(B)\; w_2(B)\; c_1\; c_2</span>
+<span id="cb10-548"><a href="#cb10-548" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb10-549"><a href="#cb10-549" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-550"><a href="#cb10-550" aria-hidden="true" tabindex="-1"></a>**View serializability** is a weaker (more permissive) notion:</span>
-<span id="cb10-551"><a href="#cb10-551" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-552"><a href="#cb10-552" aria-hidden="true" tabindex="-1"></a>Two schedules $S$ and $S'$ are **view-equivalent** iff for each data item $X$:</span>
+<span id="cb10-550"><a href="#cb10-550" aria-hidden="true" tabindex="-1"></a>Conflicts:</span>
+<span id="cb10-551"><a href="#cb10-551" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_1(A)$ before $w_2(A)$ → edge $T_1 \to T_2$</span>
+<span id="cb10-552"><a href="#cb10-552" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_1(B)$ before $w_2(B)$ → edge $T_1 \to T_2$ (redundant)</span>
 <span id="cb10-553"><a href="#cb10-553" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-554"><a href="#cb10-554" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Initial reads**: if $T_i$ reads the initial value of $X$ in $S$, it does so in $S'$</span>
-<span id="cb10-555"><a href="#cb10-555" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Updated reads**: if $T_i$ reads $X$ written by $T_j$ in $S$, it does so in $S'$</span>
-<span id="cb10-556"><a href="#cb10-556" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Final writes**: if $T_i$ performs the last write of $X$ in $S$, it does so in $S'$</span>
+<span id="cb10-554"><a href="#cb10-554" aria-hidden="true" tabindex="-1"></a>Graph: $T_1 \to T_2$ — no cycle → **conflict-serializable** (equivalent to serial order $T_1, T_2$).</span>
+<span id="cb10-555"><a href="#cb10-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-556"><a href="#cb10-556" aria-hidden="true" tabindex="-1"></a><span class="fu">## View Serializability</span></span>
 <span id="cb10-557"><a href="#cb10-557" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-558"><a href="#cb10-558" aria-hidden="true" tabindex="-1"></a>**Relationship**: Every conflict-serializable schedule is view-serializable. The converse is **not** always true.</span>
+<span id="cb10-558"><a href="#cb10-558" aria-hidden="true" tabindex="-1"></a>**View serializability** is a weaker (more permissive) notion:</span>
 <span id="cb10-559"><a href="#cb10-559" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-560"><a href="#cb10-560" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb10-561"><a href="#cb10-561" aria-hidden="true" tabindex="-1"></a>View serializability is NP-complete to check, so most DBMS use conflict-serializability (which is polynomial via precedence graphs).</span>
-<span id="cb10-562"><a href="#cb10-562" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-563"><a href="#cb10-563" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-564"><a href="#cb10-564" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recoverability</span></span>
+<span id="cb10-560"><a href="#cb10-560" aria-hidden="true" tabindex="-1"></a>Two schedules $S$ and $S'$ are **view-equivalent** iff for each data item $X$:</span>
+<span id="cb10-561"><a href="#cb10-561" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-562"><a href="#cb10-562" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Initial reads**: if $T_i$ reads the initial value of $X$ in $S$, it does so in $S'$</span>
+<span id="cb10-563"><a href="#cb10-563" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Updated reads**: if $T_i$ reads $X$ written by $T_j$ in $S$, it does so in $S'$</span>
+<span id="cb10-564"><a href="#cb10-564" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Final writes**: if $T_i$ performs the last write of $X$ in $S$, it does so in $S'$</span>
 <span id="cb10-565"><a href="#cb10-565" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-566"><a href="#cb10-566" aria-hidden="true" tabindex="-1"></a>A schedule is **recoverable** iff no transaction $T_i$ commits before all transactions $T_j$ that wrote data read by $T_i$ have committed.</span>
+<span id="cb10-566"><a href="#cb10-566" aria-hidden="true" tabindex="-1"></a>**Relationship**: Every conflict-serializable schedule is view-serializable. The converse is **not** always true.</span>
 <span id="cb10-567"><a href="#cb10-567" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-568"><a href="#cb10-568" aria-hidden="true" tabindex="-1"></a>**Non-recoverable example:**</span>
-<span id="cb10-569"><a href="#cb10-569" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-570"><a href="#cb10-570" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-571"><a href="#cb10-571" aria-hidden="true" tabindex="-1"></a><span class="in">T1: w(X)</span></span>
-<span id="cb10-572"><a href="#cb10-572" aria-hidden="true" tabindex="-1"></a><span class="in">T2: r(X) ← reads T1's uncommitted write (dirty read)</span></span>
-<span id="cb10-573"><a href="#cb10-573" aria-hidden="true" tabindex="-1"></a><span class="in">T2: c    ← T2 commits</span></span>
-<span id="cb10-574"><a href="#cb10-574" aria-hidden="true" tabindex="-1"></a><span class="in">T1: a    ← T1 aborts! But T2 already committed based on T1's data → non-recoverable</span></span>
-<span id="cb10-575"><a href="#cb10-575" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-576"><a href="#cb10-576" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-577"><a href="#cb10-577" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cascading Rollback</span></span>
-<span id="cb10-578"><a href="#cb10-578" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-579"><a href="#cb10-579" aria-hidden="true" tabindex="-1"></a>If $T_1$ aborts and other transactions read data written by $T_1$, they must also abort — cascading effect:</span>
-<span id="cb10-580"><a href="#cb10-580" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-581"><a href="#cb10-581" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-582"><a href="#cb10-582" aria-hidden="true" tabindex="-1"></a><span class="in">T1: w(X)           T2: r(X)                  T3: r(X)</span></span>
-<span id="cb10-583"><a href="#cb10-583" aria-hidden="true" tabindex="-1"></a><span class="in">                                              T1 aborts → T2 must abort → T3 must abort</span></span>
-<span id="cb10-584"><a href="#cb10-584" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-585"><a href="#cb10-585" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-586"><a href="#cb10-586" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cascadeless Schedules</span></span>
-<span id="cb10-587"><a href="#cb10-587" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-588"><a href="#cb10-588" aria-hidden="true" tabindex="-1"></a>A **cascadeless schedule** ensures no transaction reads uncommitted data:</span>
-<span id="cb10-589"><a href="#cb10-589" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-590"><a href="#cb10-590" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-591"><a href="#cb10-591" aria-hidden="true" tabindex="-1"></a>\text{If } T_j \text{ reads } X \text{ written by } T_i, \text{ then } T_i \text{ must commit before that read}</span>
-<span id="cb10-592"><a href="#cb10-592" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-568"><a href="#cb10-568" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb10-569"><a href="#cb10-569" aria-hidden="true" tabindex="-1"></a>View serializability is NP-complete to check, so most DBMS use conflict-serializability (which is polynomial via precedence graphs).</span>
+<span id="cb10-570"><a href="#cb10-570" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-571"><a href="#cb10-571" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-572"><a href="#cb10-572" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recoverability</span></span>
+<span id="cb10-573"><a href="#cb10-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-574"><a href="#cb10-574" aria-hidden="true" tabindex="-1"></a>A schedule is **recoverable** iff no transaction $T_i$ commits before all transactions $T_j$ that wrote data read by $T_i$ have committed.</span>
+<span id="cb10-575"><a href="#cb10-575" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-576"><a href="#cb10-576" aria-hidden="true" tabindex="-1"></a>**Non-recoverable example:**</span>
+<span id="cb10-577"><a href="#cb10-577" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-578"><a href="#cb10-578" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-579"><a href="#cb10-579" aria-hidden="true" tabindex="-1"></a><span class="in">T1: w(X)</span></span>
+<span id="cb10-580"><a href="#cb10-580" aria-hidden="true" tabindex="-1"></a><span class="in">T2: r(X) ← reads T1's uncommitted write (dirty read)</span></span>
+<span id="cb10-581"><a href="#cb10-581" aria-hidden="true" tabindex="-1"></a><span class="in">T2: c    ← T2 commits</span></span>
+<span id="cb10-582"><a href="#cb10-582" aria-hidden="true" tabindex="-1"></a><span class="in">T1: a    ← T1 aborts! But T2 already committed based on T1's data → non-recoverable</span></span>
+<span id="cb10-583"><a href="#cb10-583" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-584"><a href="#cb10-584" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-585"><a href="#cb10-585" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cascading Rollback</span></span>
+<span id="cb10-586"><a href="#cb10-586" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-587"><a href="#cb10-587" aria-hidden="true" tabindex="-1"></a>If $T_1$ aborts and other transactions read data written by $T_1$, they must also abort — cascading effect:</span>
+<span id="cb10-588"><a href="#cb10-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-589"><a href="#cb10-589" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-590"><a href="#cb10-590" aria-hidden="true" tabindex="-1"></a><span class="in">T1: w(X)           T2: r(X)                  T3: r(X)</span></span>
+<span id="cb10-591"><a href="#cb10-591" aria-hidden="true" tabindex="-1"></a><span class="in">                                              T1 aborts → T2 must abort → T3 must abort</span></span>
+<span id="cb10-592"><a href="#cb10-592" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb10-593"><a href="#cb10-593" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-594"><a href="#cb10-594" aria-hidden="true" tabindex="-1"></a>**Hierarchy:**</span>
+<span id="cb10-594"><a href="#cb10-594" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cascadeless Schedules</span></span>
 <span id="cb10-595"><a href="#cb10-595" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-596"><a href="#cb10-596" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-597"><a href="#cb10-597" aria-hidden="true" tabindex="-1"></a>\text{Serial} \subset \text{Cascadeless} \subset \text{Recoverable} \subset \text{All schedules}</span>
+<span id="cb10-596"><a href="#cb10-596" aria-hidden="true" tabindex="-1"></a>A **cascadeless schedule** ensures no transaction reads uncommitted data:</span>
+<span id="cb10-597"><a href="#cb10-597" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-598"><a href="#cb10-598" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-599"><a href="#cb10-599" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-600"><a href="#cb10-600" aria-hidden="true" tabindex="-1"></a>All practical DBMS implement (at minimum) recoverable, cascadeless schedules.</span>
+<span id="cb10-599"><a href="#cb10-599" aria-hidden="true" tabindex="-1"></a>\text{If } T_j \text{ reads } X \text{ written by } T_i, \text{ then } T_i \text{ must commit before that read}</span>
+<span id="cb10-600"><a href="#cb10-600" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb10-601"><a href="#cb10-601" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-602"><a href="#cb10-602" aria-hidden="true" tabindex="-1"></a><span class="fu">## Concurrency Control Protocols</span></span>
+<span id="cb10-602"><a href="#cb10-602" aria-hidden="true" tabindex="-1"></a>**Hierarchy:**</span>
 <span id="cb10-603"><a href="#cb10-603" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-604"><a href="#cb10-604" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2PL Variants (Review and Extension)</span></span>
-<span id="cb10-605"><a href="#cb10-605" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-606"><a href="#cb10-606" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Variant <span class="pp">|</span> Rule <span class="pp">|</span> Guarantees <span class="pp">|</span></span>
-<span id="cb10-607"><a href="#cb10-607" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|------|-----------|</span></span>
-<span id="cb10-608"><a href="#cb10-608" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Basic 2PL** <span class="pp">|</span> Two-phase; locks released in shrinking phase <span class="pp">|</span> Conflict-serializability <span class="pp">|</span></span>
-<span id="cb10-609"><a href="#cb10-609" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Strict 2PL** <span class="pp">|</span> Hold all locks until commit/abort <span class="pp">|</span> Conflict-serializable + no dirty reads <span class="pp">|</span></span>
-<span id="cb10-610"><a href="#cb10-610" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Rigorous 2PL** <span class="pp">|</span> Even shared locks held until commit <span class="pp">|</span> Equivalent to basic serial ordering <span class="pp">|</span></span>
-<span id="cb10-611"><a href="#cb10-611" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Conservative 2PL** <span class="pp">|</span> Acquire all locks before starting <span class="pp">|</span> No deadlocks, but low throughput <span class="pp">|</span></span>
-<span id="cb10-612"><a href="#cb10-612" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-613"><a href="#cb10-613" aria-hidden="true" tabindex="-1"></a><span class="fu">### Timestamp-Based Concurrency Control</span></span>
-<span id="cb10-614"><a href="#cb10-614" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-615"><a href="#cb10-615" aria-hidden="true" tabindex="-1"></a>Each transaction receives a **timestamp** $TS(T)$ at start. Operations are validated against timestamps:</span>
-<span id="cb10-616"><a href="#cb10-616" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-617"><a href="#cb10-617" aria-hidden="true" tabindex="-1"></a>**Rules:**</span>
-<span id="cb10-618"><a href="#cb10-618" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-619"><a href="#cb10-619" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_i(X)$: if $TS(T_i) &lt; W<span class="sc">\_</span>TS(X)$ → $T_i$ tries to read a value overwritten by a newer transaction → **abort** $T_i$ and restart with a new timestamp</span>
-<span id="cb10-620"><a href="#cb10-620" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$w_i(X)$: if $TS(T_i) &lt; R<span class="sc">\_</span>TS(X)$ → abort $T_i$; if $TS(T_i) &lt; W<span class="sc">\_</span>TS(X)$ → skip write (Thomas Write Rule)</span>
-<span id="cb10-621"><a href="#cb10-621" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-622"><a href="#cb10-622" aria-hidden="true" tabindex="-1"></a>**Advantage:** No deadlocks; lock-free  </span>
-<span id="cb10-623"><a href="#cb10-623" aria-hidden="true" tabindex="-1"></a>**Disadvantage:** Starvation if a transaction is always restarted; long-running transactions may repeatedly abort</span>
+<span id="cb10-604"><a href="#cb10-604" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-605"><a href="#cb10-605" aria-hidden="true" tabindex="-1"></a>\text{Serial} \subset \text{Cascadeless} \subset \text{Recoverable} \subset \text{All schedules}</span>
+<span id="cb10-606"><a href="#cb10-606" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-607"><a href="#cb10-607" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-608"><a href="#cb10-608" aria-hidden="true" tabindex="-1"></a>All practical DBMS implement (at minimum) recoverable, cascadeless schedules.</span>
+<span id="cb10-609"><a href="#cb10-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-610"><a href="#cb10-610" aria-hidden="true" tabindex="-1"></a><span class="fu">## Concurrency Control Protocols</span></span>
+<span id="cb10-611"><a href="#cb10-611" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-612"><a href="#cb10-612" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2PL Variants (Review and Extension)</span></span>
+<span id="cb10-613"><a href="#cb10-613" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-614"><a href="#cb10-614" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Variant <span class="pp">|</span> Rule <span class="pp">|</span> Guarantees <span class="pp">|</span></span>
+<span id="cb10-615"><a href="#cb10-615" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|------|-----------|</span></span>
+<span id="cb10-616"><a href="#cb10-616" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Basic 2PL** <span class="pp">|</span> Two-phase; locks released in shrinking phase <span class="pp">|</span> Conflict-serializability <span class="pp">|</span></span>
+<span id="cb10-617"><a href="#cb10-617" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Strict 2PL** <span class="pp">|</span> Hold all locks until commit/abort <span class="pp">|</span> Conflict-serializable + no dirty reads <span class="pp">|</span></span>
+<span id="cb10-618"><a href="#cb10-618" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Rigorous 2PL** <span class="pp">|</span> Even shared locks held until commit <span class="pp">|</span> Equivalent to basic serial ordering <span class="pp">|</span></span>
+<span id="cb10-619"><a href="#cb10-619" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Conservative 2PL** <span class="pp">|</span> Acquire all locks before starting <span class="pp">|</span> No deadlocks, but low throughput <span class="pp">|</span></span>
+<span id="cb10-620"><a href="#cb10-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-621"><a href="#cb10-621" aria-hidden="true" tabindex="-1"></a><span class="fu">### Timestamp-Based Concurrency Control</span></span>
+<span id="cb10-622"><a href="#cb10-622" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-623"><a href="#cb10-623" aria-hidden="true" tabindex="-1"></a>Each transaction receives a **timestamp** $TS(T)$ at start. Operations are validated against timestamps:</span>
 <span id="cb10-624"><a href="#cb10-624" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-625"><a href="#cb10-625" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiversion Concurrency Control (MVCC)</span></span>
+<span id="cb10-625"><a href="#cb10-625" aria-hidden="true" tabindex="-1"></a>**Rules:**</span>
 <span id="cb10-626"><a href="#cb10-626" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-627"><a href="#cb10-627" aria-hidden="true" tabindex="-1"></a>Used by PostgreSQL, MySQL InnoDB, Oracle:</span>
-<span id="cb10-628"><a href="#cb10-628" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-629"><a href="#cb10-629" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Each write creates a **new version** of the data item</span>
-<span id="cb10-630"><a href="#cb10-630" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Readers never block writers; writers never block readers</span>
-<span id="cb10-631"><a href="#cb10-631" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Each transaction sees a **snapshot** of the database at a fixed point in time</span>
+<span id="cb10-627"><a href="#cb10-627" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$r_i(X)$: if $TS(T_i) &lt; W<span class="sc">\_</span>TS(X)$ → $T_i$ tries to read a value overwritten by a newer transaction → **abort** $T_i$ and restart with a new timestamp</span>
+<span id="cb10-628"><a href="#cb10-628" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$w_i(X)$: if $TS(T_i) &lt; R<span class="sc">\_</span>TS(X)$ → abort $T_i$; if $TS(T_i) &lt; W<span class="sc">\_</span>TS(X)$ → skip write (Thomas Write Rule)</span>
+<span id="cb10-629"><a href="#cb10-629" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-630"><a href="#cb10-630" aria-hidden="true" tabindex="-1"></a>**Advantage:** No deadlocks; lock-free  </span>
+<span id="cb10-631"><a href="#cb10-631" aria-hidden="true" tabindex="-1"></a>**Disadvantage:** Starvation if a transaction is always restarted; long-running transactions may repeatedly abort</span>
 <span id="cb10-632"><a href="#cb10-632" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-633"><a href="#cb10-633" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-634"><a href="#cb10-634" aria-hidden="true" tabindex="-1"></a><span class="in">Item X: </span></span>
-<span id="cb10-635"><a href="#cb10-635" aria-hidden="true" tabindex="-1"></a><span class="in">  Version 1: value=100, created_by=T1, expires_at=T5</span></span>
-<span id="cb10-636"><a href="#cb10-636" aria-hidden="true" tabindex="-1"></a><span class="in">  Version 2: value=150, created_by=T5, expires_at=∞</span></span>
-<span id="cb10-637"><a href="#cb10-637" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-638"><a href="#cb10-638" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-639"><a href="#cb10-639" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Transaction $T_3$ (timestamp between T1 and T5) reads Version 1</span>
-<span id="cb10-640"><a href="#cb10-640" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Transaction $T_7$ (after T5) reads Version 2</span>
-<span id="cb10-641"><a href="#cb10-641" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-642"><a href="#cb10-642" aria-hidden="true" tabindex="-1"></a><span class="fu">### Optimistic Concurrency Control (OCC)</span></span>
-<span id="cb10-643"><a href="#cb10-643" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-644"><a href="#cb10-644" aria-hidden="true" tabindex="-1"></a>Assumes conflicts are rare. Three phases per transaction:</span>
-<span id="cb10-645"><a href="#cb10-645" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-646"><a href="#cb10-646" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Phase <span class="pp">|</span> Activity <span class="pp">|</span></span>
-<span id="cb10-647"><a href="#cb10-647" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------|---------|</span></span>
-<span id="cb10-648"><a href="#cb10-648" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Read** <span class="pp">|</span> Read from DB; store in local workspace; no locks <span class="pp">|</span></span>
-<span id="cb10-649"><a href="#cb10-649" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Validate** <span class="pp">|</span> Check if transaction's reads/writes conflict with committed transactions <span class="pp">|</span></span>
-<span id="cb10-650"><a href="#cb10-650" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Write** <span class="pp">|</span> If valid: write changes; if invalid: abort and restart <span class="pp">|</span></span>
+<span id="cb10-633"><a href="#cb10-633" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiversion Concurrency Control (MVCC)</span></span>
+<span id="cb10-634"><a href="#cb10-634" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-635"><a href="#cb10-635" aria-hidden="true" tabindex="-1"></a>Used by PostgreSQL, MySQL InnoDB, Oracle:</span>
+<span id="cb10-636"><a href="#cb10-636" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-637"><a href="#cb10-637" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Each write creates a **new version** of the data item</span>
+<span id="cb10-638"><a href="#cb10-638" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Readers never block writers; writers never block readers</span>
+<span id="cb10-639"><a href="#cb10-639" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Each transaction sees a **snapshot** of the database at a fixed point in time</span>
+<span id="cb10-640"><a href="#cb10-640" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-641"><a href="#cb10-641" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-642"><a href="#cb10-642" aria-hidden="true" tabindex="-1"></a><span class="in">Item X: </span></span>
+<span id="cb10-643"><a href="#cb10-643" aria-hidden="true" tabindex="-1"></a><span class="in">  Version 1: value=100, created_by=T1, expires_at=T5</span></span>
+<span id="cb10-644"><a href="#cb10-644" aria-hidden="true" tabindex="-1"></a><span class="in">  Version 2: value=150, created_by=T5, expires_at=∞</span></span>
+<span id="cb10-645"><a href="#cb10-645" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-646"><a href="#cb10-646" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-647"><a href="#cb10-647" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Transaction $T_3$ (timestamp between T1 and T5) reads Version 1</span>
+<span id="cb10-648"><a href="#cb10-648" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Transaction $T_7$ (after T5) reads Version 2</span>
+<span id="cb10-649"><a href="#cb10-649" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-650"><a href="#cb10-650" aria-hidden="true" tabindex="-1"></a><span class="fu">### Optimistic Concurrency Control (OCC)</span></span>
 <span id="cb10-651"><a href="#cb10-651" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-652"><a href="#cb10-652" aria-hidden="true" tabindex="-1"></a>**Good for** read-heavy workloads with few conflicts.</span>
+<span id="cb10-652"><a href="#cb10-652" aria-hidden="true" tabindex="-1"></a>Assumes conflicts are rare. Three phases per transaction:</span>
 <span id="cb10-653"><a href="#cb10-653" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-654"><a href="#cb10-654" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary: Isolation Implementations</span></span>
-<span id="cb10-655"><a href="#cb10-655" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-656"><a href="#cb10-656" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Approach <span class="pp">|</span> Mechanism <span class="pp">|</span> Used By <span class="pp">|</span></span>
-<span id="cb10-657"><a href="#cb10-657" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|-----------|---------|</span></span>
-<span id="cb10-658"><a href="#cb10-658" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Locking (2PL) <span class="pp">|</span> Shared/exclusive locks <span class="pp">|</span> SQL Server, older MySQL <span class="pp">|</span></span>
-<span id="cb10-659"><a href="#cb10-659" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> MVCC <span class="pp">|</span> Snapshots and versions <span class="pp">|</span> PostgreSQL, MySQL InnoDB, Oracle <span class="pp">|</span></span>
-<span id="cb10-660"><a href="#cb10-660" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Optimistic <span class="pp">|</span> Validate before commit <span class="pp">|</span> In-memory DBs, some NoSQL <span class="pp">|</span></span>
-<span id="cb10-661"><a href="#cb10-661" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Serializable Snapshot Isolation (SSI) <span class="pp">|</span> MVCC + conflict detection <span class="pp">|</span> PostgreSQL ≥9.1, serializable level <span class="pp">|</span></span>
-<span id="cb10-662"><a href="#cb10-662" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-663"><a href="#cb10-663" aria-hidden="true" tabindex="-1"></a><span class="fu">## Timestamp Protocol Example</span></span>
-<span id="cb10-664"><a href="#cb10-664" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-665"><a href="#cb10-665" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-666"><a href="#cb10-666" aria-hidden="true" tabindex="-1"></a><span class="in">Transactions: T1 (TS=1), T2 (TS=2)</span></span>
-<span id="cb10-667"><a href="#cb10-667" aria-hidden="true" tabindex="-1"></a><span class="in">Initial state: R_TS(X)=0, W_TS(X)=0</span></span>
-<span id="cb10-668"><a href="#cb10-668" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-669"><a href="#cb10-669" aria-hidden="true" tabindex="-1"></a><span class="in">T1: w(X)  → TS(T1)=1 ≥ R_TS(X)=0 and W_TS(X)=0 → OK; W_TS(X)=1</span></span>
-<span id="cb10-670"><a href="#cb10-670" aria-hidden="true" tabindex="-1"></a><span class="in">T2: r(X)  → TS(T2)=2 ≥ W_TS(X)=1 → OK; R_TS(X)=2</span></span>
-<span id="cb10-671"><a href="#cb10-671" aria-hidden="true" tabindex="-1"></a><span class="in">T2: w(X)  → TS(T2)=2 ≥ R_TS(X)=2 and W_TS(X)=1 → OK; W_TS(X)=2</span></span>
-<span id="cb10-672"><a href="#cb10-672" aria-hidden="true" tabindex="-1"></a><span class="in">T1: r(X)  → TS(T1)=1 &lt; W_TS(X)=2 → ABORT T1, restart with new TS</span></span>
+<span id="cb10-654"><a href="#cb10-654" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Phase <span class="pp">|</span> Activity <span class="pp">|</span></span>
+<span id="cb10-655"><a href="#cb10-655" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------|---------|</span></span>
+<span id="cb10-656"><a href="#cb10-656" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Read** <span class="pp">|</span> Read from DB; store in local workspace; no locks <span class="pp">|</span></span>
+<span id="cb10-657"><a href="#cb10-657" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Validate** <span class="pp">|</span> Check if transaction's reads/writes conflict with committed transactions <span class="pp">|</span></span>
+<span id="cb10-658"><a href="#cb10-658" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Write** <span class="pp">|</span> If valid: write changes; if invalid: abort and restart <span class="pp">|</span></span>
+<span id="cb10-659"><a href="#cb10-659" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-660"><a href="#cb10-660" aria-hidden="true" tabindex="-1"></a>**Good for** read-heavy workloads with few conflicts.</span>
+<span id="cb10-661"><a href="#cb10-661" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-662"><a href="#cb10-662" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary: Isolation Implementations</span></span>
+<span id="cb10-663"><a href="#cb10-663" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-664"><a href="#cb10-664" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Approach <span class="pp">|</span> Mechanism <span class="pp">|</span> Used By <span class="pp">|</span></span>
+<span id="cb10-665"><a href="#cb10-665" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|-----------|---------|</span></span>
+<span id="cb10-666"><a href="#cb10-666" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Locking (2PL) <span class="pp">|</span> Shared/exclusive locks <span class="pp">|</span> SQL Server, older MySQL <span class="pp">|</span></span>
+<span id="cb10-667"><a href="#cb10-667" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> MVCC <span class="pp">|</span> Snapshots and versions <span class="pp">|</span> PostgreSQL, MySQL InnoDB, Oracle <span class="pp">|</span></span>
+<span id="cb10-668"><a href="#cb10-668" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Optimistic <span class="pp">|</span> Validate before commit <span class="pp">|</span> In-memory DBs, some NoSQL <span class="pp">|</span></span>
+<span id="cb10-669"><a href="#cb10-669" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Serializable Snapshot Isolation (SSI) <span class="pp">|</span> MVCC + conflict detection <span class="pp">|</span> PostgreSQL ≥9.1, serializable level <span class="pp">|</span></span>
+<span id="cb10-670"><a href="#cb10-670" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-671"><a href="#cb10-671" aria-hidden="true" tabindex="-1"></a><span class="fu">## Timestamp Protocol Example</span></span>
+<span id="cb10-672"><a href="#cb10-672" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-673"><a href="#cb10-673" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-674"><a href="#cb10-674" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-675"><a href="#cb10-675" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb10-674"><a href="#cb10-674" aria-hidden="true" tabindex="-1"></a><span class="in">Transactions: T1 (TS=1), T2 (TS=2)</span></span>
+<span id="cb10-675"><a href="#cb10-675" aria-hidden="true" tabindex="-1"></a><span class="in">Initial state: R_TS(X)=0, W_TS(X)=0</span></span>
 <span id="cb10-676"><a href="#cb10-676" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-677"><a href="#cb10-677" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb10-678"><a href="#cb10-678" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter 13 — Key Takeaways</span></span>
-<span id="cb10-679"><a href="#cb10-679" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-680"><a href="#cb10-680" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A **schedule** interleaves operations from multiple transactions; it must ensure correct results.</span>
-<span id="cb10-681"><a href="#cb10-681" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Conflict-serializability**: a schedule is correct if it's equivalent to a serial one — checked via the **precedence graph** (acyclic = serializable).</span>
-<span id="cb10-682"><a href="#cb10-682" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**View serializability** is less restrictive but NP-complete to check.</span>
-<span id="cb10-683"><a href="#cb10-683" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A **recoverable** schedule never commits before its dirty-read sources commit; **cascadeless** schedules prohibit dirty reads entirely.</span>
-<span id="cb10-684"><a href="#cb10-684" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Strict 2PL** (lock everything until commit) is the dominant practical protocol.</span>
-<span id="cb10-685"><a href="#cb10-685" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Timestamp ordering** avoids deadlocks but may cause starvation.</span>
-<span id="cb10-686"><a href="#cb10-686" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**MVCC** allows readers and writers to not block each other — used in PostgreSQL, InnoDB.</span>
-<span id="cb10-687"><a href="#cb10-687" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**OCC** (optimistic) validates at commit time — good for low-conflict workloads.</span>
-<span id="cb10-688"><a href="#cb10-688" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-689"><a href="#cb10-689" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-690"><a href="#cb10-690" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
-<span id="cb10-691"><a href="#cb10-691" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-692"><a href="#cb10-692" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define a **schedule**. What is the difference between a serial and a concurrent schedule?</span>
-<span id="cb10-693"><a href="#cb10-693" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>For the schedule $S: r_1(A)\; w_2(A)\; w_1(A)\; r_2(B)\; w_2(B)\; c_1\; c_2$:</span>
-<span id="cb10-694"><a href="#cb10-694" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Identify all conflicting operations</span>
-<span id="cb10-695"><a href="#cb10-695" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Draw the precedence graph</span>
-<span id="cb10-696"><a href="#cb10-696" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Is $S$ conflict-serializable? If so, what is the equivalent serial order?</span>
-<span id="cb10-697"><a href="#cb10-697" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explain the difference between **conflict-serializable** and **view-serializable** schedules.</span>
-<span id="cb10-698"><a href="#cb10-698" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>What is a **cascading rollback**? How does Strict 2PL prevent it?</span>
-<span id="cb10-699"><a href="#cb10-699" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Explain how **MVCC** allows readers and writers to not block each other.</span>
-<span id="cb10-700"><a href="#cb10-700" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>When would you choose **optimistic concurrency control** over locking?</span>
+<span id="cb10-677"><a href="#cb10-677" aria-hidden="true" tabindex="-1"></a><span class="in">T1: w(X)  → TS(T1)=1 ≥ R_TS(X)=0 and W_TS(X)=0 → OK; W_TS(X)=1</span></span>
+<span id="cb10-678"><a href="#cb10-678" aria-hidden="true" tabindex="-1"></a><span class="in">T2: r(X)  → TS(T2)=2 ≥ W_TS(X)=1 → OK; R_TS(X)=2</span></span>
+<span id="cb10-679"><a href="#cb10-679" aria-hidden="true" tabindex="-1"></a><span class="in">T2: w(X)  → TS(T2)=2 ≥ R_TS(X)=2 and W_TS(X)=1 → OK; W_TS(X)=2</span></span>
+<span id="cb10-680"><a href="#cb10-680" aria-hidden="true" tabindex="-1"></a><span class="in">T1: r(X)  → TS(T1)=1 &lt; W_TS(X)=2 → ABORT T1, restart with new TS</span></span>
+<span id="cb10-681"><a href="#cb10-681" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-682"><a href="#cb10-682" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-683"><a href="#cb10-683" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb10-684"><a href="#cb10-684" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-685"><a href="#cb10-685" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb10-686"><a href="#cb10-686" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter 13 — Key Takeaways</span></span>
+<span id="cb10-687"><a href="#cb10-687" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-688"><a href="#cb10-688" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A **schedule** interleaves operations from multiple transactions; it must ensure correct results.</span>
+<span id="cb10-689"><a href="#cb10-689" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Conflict-serializability**: a schedule is correct if it's equivalent to a serial one — checked via the **precedence graph** (acyclic = serializable).</span>
+<span id="cb10-690"><a href="#cb10-690" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**View serializability** is less restrictive but NP-complete to check.</span>
+<span id="cb10-691"><a href="#cb10-691" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A **recoverable** schedule never commits before its dirty-read sources commit; **cascadeless** schedules prohibit dirty reads entirely.</span>
+<span id="cb10-692"><a href="#cb10-692" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Strict 2PL** (lock everything until commit) is the dominant practical protocol.</span>
+<span id="cb10-693"><a href="#cb10-693" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Timestamp ordering** avoids deadlocks but may cause starvation.</span>
+<span id="cb10-694"><a href="#cb10-694" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**MVCC** allows readers and writers to not block each other — used in PostgreSQL, InnoDB.</span>
+<span id="cb10-695"><a href="#cb10-695" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**OCC** (optimistic) validates at commit time — good for low-conflict workloads.</span>
+<span id="cb10-696"><a href="#cb10-696" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-697"><a href="#cb10-697" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-698"><a href="#cb10-698" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
+<span id="cb10-699"><a href="#cb10-699" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-700"><a href="#cb10-700" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define a **schedule**. What is the difference between a serial and a concurrent schedule?</span>
+<span id="cb10-701"><a href="#cb10-701" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>For the schedule $S: r_1(A)\; w_2(A)\; w_1(A)\; r_2(B)\; w_2(B)\; c_1\; c_2$:</span>
+<span id="cb10-702"><a href="#cb10-702" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Identify all conflicting operations</span>
+<span id="cb10-703"><a href="#cb10-703" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Draw the precedence graph</span>
+<span id="cb10-704"><a href="#cb10-704" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Is $S$ conflict-serializable? If so, what is the equivalent serial order?</span>
+<span id="cb10-705"><a href="#cb10-705" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explain the difference between **conflict-serializable** and **view-serializable** schedules.</span>
+<span id="cb10-706"><a href="#cb10-706" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>What is a **cascading rollback**? How does Strict 2PL prevent it?</span>
+<span id="cb10-707"><a href="#cb10-707" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Explain how **MVCC** allows readers and writers to not block each other.</span>
+<span id="cb10-708"><a href="#cb10-708" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>When would you choose **optimistic concurrency control** over locking?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
