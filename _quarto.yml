@@ -13,7 +13,7 @@ book:
   cover-image: images/cover.jpeg
   favicon: images/cover.jpeg
   repo-url: ""
-  downloads: [pdf]
+  downloads: [pdf, epub]
   search: true
   sidebar:
     style: "docked"
@@ -123,6 +123,16 @@ format:
     citecolor: "DarkGreen"
     include-in-header:
       - shared/latex-header.tex
+    highlight-style: github
+
+  epub:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    cover-image: images/cover.jpeg
+    epub-cover-image: images/cover.jpeg
+    fig-align: center
+    html-math-method: mathml
     highlight-style: github
 
 execute:

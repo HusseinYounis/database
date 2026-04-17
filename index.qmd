@@ -23,10 +23,6 @@ The book is organized into **eight parts** spanning 15 chapters plus one appendi
 | VII — Transactions | 12–13 | 13–14 | Reliability, ACID, and concurrency |
 | VIII — NoSQL | 14–15 | 15–16 | NoSQL landscape and MongoDB |
 
-## Primary Reference
-
-The theoretical foundations follow **Elmasri & Navathe, *Fundamentals of Database Systems*, 7th Edition** [@elmasri2015fundamentals]. MongoDB content follows the official MongoDB documentation [@mongodb-docs] and [@bradshaw2019mongodb].
-
 ## Prerequisites
 
 Students are expected to have:
@@ -35,24 +31,71 @@ Students are expected to have:
 - Basic data structures knowledge (lists, trees, hash tables)
 - Familiarity with set theory and propositional logic
 
-## Conventions Used
+---
 
-| Convention | Meaning |
-|-----------|---------|
-| `monospace` | SQL keywords, code, identifiers |
-| **Bold** | Key term introduced for the first time |
-| $\sigma, \pi, \bowtie$ | Relational algebra operators |
-| `::: callout-note` | Definition, analogy, or supplementary information |
-| `::: callout-tip` | Best practice, practical hint, or fun fact |
-| `::: callout-important` | Common mistake or exam alert |
-| `{.panel-tabset}` | SQL code shown in three tabs: **MySQL**, **PostgreSQL**, **Oracle** |
-| `{ojs}` code block | Interactive widget — drag sliders or pick from dropdowns |
-| NoSQL examples | MongoDB shell syntax (`mongosh`) |
+## Copyright
 
-## Running Example
+**Fundamentals of Database Systems: A Comprehensive Course — Relational Databases & NoSQL**
 
-All chapters from Part II onward use a single database — the **Enhanced Company Database** — as the running example. It contains six tables: `Employee`, `Department`, `Project`, `Dept_Locations`, `Works_On`, and `Dependent`. This consistency lets you trace every concept (ER diagram → relational schema → SQL → relational algebra → normalization → indexes) against the same familiar data.
+© 2026 Hussein Younis. All rights reserved. Computer Engineering Department.
 
-## Acknowledgements
+This work is an original educational resource authored by Hussein Younis. All
+text, figures, diagrams, interactive widgets, and source code are the
+intellectual property of the author unless otherwise attributed. Third-party
+works cited throughout the text (including Elmasri & Navathe, *Fundamentals
+of Database Systems*, and the official MongoDB documentation) remain the
+property of their respective authors and publishers and are used here under
+fair-use / academic quotation principles.
+
+The book is distributed for **educational use** within the Database Systems
+course. Readers may read, study, and quote short excerpts in academic work
+with proper citation. Redistribution, derivative works, translations, and
+commercial use require prior written permission of the author.
+
+## How to Cite This Work
+
+If you reference this book in a paper, thesis, report, or presentation,
+please use one of the citation formats below.
+
+**IEEE**
+
+> H. Younis, *Fundamentals of Database Systems: A Comprehensive Course —
+> Relational Databases & NoSQL*. Computer Engineering Department, 2026.
+
+**APA (7th ed.)**
+
+> Younis, H. (2026). *Fundamentals of database systems: A comprehensive
+> course — Relational databases & NoSQL*. Computer Engineering Department.
+
+**BibTeX**
+
+```bibtex
+@book{younis2026fundamentals,
+  title     = {Fundamentals of Database Systems: A Comprehensive Course --
+               Relational Databases \& NoSQL},
+  author    = {Younis, Hussein},
+  year      = {2026},
+  publisher = {Computer Engineering Department},
+  edition   = {1st}
+}
+```
+
+For permission requests, corrections, or academic collaboration, please
+contact the author through the Computer Engineering Department.
+
+*Disclaimer: The material in this book is provided "as is" for educational
+purposes. While every effort has been made to ensure accuracy, the author
+makes no warranty regarding completeness or fitness for a particular purpose.*
+
+---
+
+## Primary Reference & Acknowledgements
+
+The theoretical foundations of this book follow **Elmasri & Navathe,
+*Fundamentals of Database Systems*, 7th Edition** [@elmasri2015fundamentals].
+MongoDB content follows the official MongoDB documentation [@mongodb-docs]
+and [@bradshaw2019mongodb].
 
 All rights to cited works belong to their respective authors and publishers.
+The author gratefully acknowledges these sources, whose scholarship made this
+teaching resource possible.

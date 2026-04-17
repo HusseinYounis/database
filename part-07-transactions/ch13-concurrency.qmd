@@ -346,6 +346,8 @@ OCC is ideal for **read-heavy, low-conflict** workloads. It can cause high abort
 
 ## Interactive: Isolation Level Anomaly Explorer
 
+::: {.content-visible when-format="html"}
+
 ```{ojs}
 //| echo: false
 //| label: fig-isolation-explorer
@@ -375,6 +377,12 @@ viewof level = Inputs.select(
     </div>`;
 }
 ```
+
+:::
+
+::: {.content-visible when-format="epub"}
+> *This section contains an interactive isolation-level explorer. View the online HTML version to see which anomalies are possible at each SQL isolation level.*
+:::
 
 ---
 

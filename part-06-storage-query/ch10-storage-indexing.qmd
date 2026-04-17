@@ -180,7 +180,71 @@ Four page reads to find any record in a 100-million-row table.
 
 ---
 
+## Interactive: File Scan vs. Index Lookup
+
+::: {.content-visible when-format="html"}
+
+::: callout-tip
+Drag the slider to change the number of rows. Observe how a full file scan grows linearly ($O(n)$) while a B+ tree index lookup grows only logarithmically ($O(\log n)$).
+:::
+
+```{ojs}
+//| echo: false
+//| eval: true
+viewof rowCount = Inputs.range([1000, 1000000], {
+  step: 1000,
+  value: 100000,
+  label: "Number of rows"
+})
+```
+
+```{ojs}
+//| echo: false
+//| eval: true
+{
+  const scanMs  = (rowCount / 1e6) * 2500;
+  const indexMs = Math.log2(rowCount) * 0.05;
+  const fmt = v => v >= 1 ? `${v.toFixed(2)} ms` : `${(v * 1000).toFixed(1)} µs`;
+  const speedup = (scanMs / indexMs).toFixed(0);
+
+  return htl.html`
+    <div style="font-family:sans-serif;max-width:520px;padding:12px;border:1px solid #ddd;border-radius:6px">
+      <h4 style="margin:0 0 12px">Cost at ${rowCount.toLocaleString()} rows</h4>
+      <table style="width:100%;border-collapse:collapse">
+        <tr style="background:#f0f4f8">
+          <th style="padding:8px;text-align:left">Method</th>
+          <th style="padding:8px;text-align:right">Estimated time</th>
+          <th style="padding:8px;text-align:left">Complexity</th>
+        </tr>
+        <tr>
+          <td style="padding:8px">📄 Full file scan (no index)</td>
+          <td style="padding:8px;text-align:right;color:#c0392b;font-weight:bold">${fmt(scanMs)}</td>
+          <td style="padding:8px">O(n)</td>
+        </tr>
+        <tr style="background:#f0fff4">
+          <td style="padding:8px">🌳 B+ tree index lookup</td>
+          <td style="padding:8px;text-align:right;color:#27ae60;font-weight:bold">${fmt(indexMs)}</td>
+          <td style="padding:8px">O(log n)</td>
+        </tr>
+      </table>
+      <p style="margin-top:10px;font-size:0.9em;color:#444">
+        Index is <strong>${speedup}×</strong> faster at this table size.
+      </p>
+    </div>`;
+}
+```
+
+:::
+
+::: {.content-visible when-format="epub"}
+> *This section contains an interactive visualization. View the online HTML version to explore file-scan vs. index-lookup costs across different table sizes.*
+:::
+
+---
+
 ## Interactive: B+ Tree Order Explorer
+
+::: {.content-visible when-format="html"}
 
 ```{ojs}
 //| echo: false
@@ -207,6 +271,12 @@ viewof n = Inputs.range([1000, 1_000_000_000], {value: 10_000_000, step: 1000, l
     </div>`;
 }
 ```
+
+:::
+
+::: {.content-visible when-format="epub"}
+> *This section contains an interactive B+ tree explorer. View the online HTML version to see how tree order and record count affect height and fan-out.*
+:::
 
 ---
 

@@ -14,25 +14,25 @@ Before databases existed, every programmer answered that question the same way: 
 
 Imagine you are building a simple student-grade system for your department. You create three text files:
 
-**`students.txt`**
+{{< fa file-lines >}} **`students.txt`**
 ```
-001 Ahmed Khalidi  Computer_Eng
-002 Sara Hasan     Computer_Eng
-003 Omar Zayed     Information_Sys
-```
-
-**`grades.txt`**
-```
-001 Database 92
-001 Networks 85
-002 Database 78
-003 Database 90
+001, Ahmed Khalidi, Computer_Eng
+002, Sara Hasan,    Computer_Eng
+003, Omar Zayed,    Information_Sys
 ```
 
-**`departments.txt`**
+{{< fa file-lines >}} **`grades.txt`**
 ```
-Computer_Eng      Dr_Mansour  Building_A
-Information_Sys   Dr_Younis   Building_B
+001, Database, 92
+001, Networks, 85
+002, Database, 78
+003, Database, 90
+```
+
+{{< fa file-lines >}} **`departments.txt`**
+```
+Computer_Eng,    Dr_Mansour, Building_A
+Information_Sys, Dr_Younis,  Building_B
 ```
 
 Simple. Clean. Until it is not.
@@ -41,24 +41,135 @@ Simple. Clean. Until it is not.
 ### The Six Problems That Appear Immediately
 
 ::: callout-important
-**Problem 1 — Search is O(n).**
+## {{< fa magnifying-glass >}} Problem 1 — Search is [O(n)]{fg="#c0392b" .bold}
+
 To find Ahmed's grades, your program reads every line of `grades.txt` from top to bottom until it finds `001`. With 1,000 students that is manageable. With 1,000,000 students — a national exam registry — that scan takes several *seconds* per query, every query.
 
-**Problem 2 — Updates break consistency.**
-Ahmed transfers departments. You update `students.txt`. Two weeks later someone notices `grades.txt` still refers to the old department in a derived report. You forgot to update the second file. Your data now contradicts itself and you have no automatic way to detect the conflict.
+**Example — the real issue:**
 
-**Problem 3 — Concurrent access destroys data.**
-The registrar and the department secretary both open `grades.txt` at 9:00 AM to add grades. The registrar saves at 9:05. The secretary saves at 9:06 — overwriting the registrar's changes entirely. One transaction is silently **lost**.
-
-**Problem 4 — Relationships require 40 lines of code.**
-"List all students in Building A with a grade above 80." To answer that, you must open `departments.txt`, find Building A entries, open `students.txt`, filter by department, open `grades.txt`, cross-reference by ID, filter by grade. That is a dedicated Python script for a question a manager asks in 10 seconds.
-
-**Problem 5 — No types, no validation.**
-Nothing stops someone from typing `"92.5"`, `"92,5"`, `"ninety-two"`, or `"N/A"` into the grade column. Your code must handle every variant. One malformed record crashes the parser.
-
-**Problem 6 — Crashes leave corrupt files.**
-Power cuts exactly when you are writing a 200-record batch update. Half the file is in the new format; half is in the old format. There is no recovery log. Data is permanently corrupted.
+```python
+# Linear scan — reads every single line
+with open("grades.txt") as f:
+    for line in f:                         # ← 1,000,000 iterations
+        sid, course, grade = line.split(",")
+        if sid.strip() == "001":
+            print(line)
+# 1 M rows × ~1 µs/row ≈ 1–3 seconds PER QUERY
+```
 :::
+
+::: callout-important
+## {{< fa rotate >}} Problem 2 — Updates break [consistency]{fg="#c0392b" .bold}
+
+Ahmed transfers departments. You update `students.txt`. Two weeks later someone notices a derived report still shows the old department. You forgot to update another file that duplicated the value.
+
+**Example — the real issue:**
+
+{{< fa file-lines >}} `students.txt` *(updated — new department)*
+```
+001, Ahmed Khalidi, Information_Sys
+```
+
+{{< fa file-lines >}} `enrollment_report.txt` *(stale — still says old department)*
+```
+001, Ahmed Khalidi, Computer_Eng, Database, 92
+```
+
+Two files, [two truths]{bg="#f39c12" fg="#000000"}, no way for the system to detect the conflict.
+:::
+
+::: callout-important
+## {{< fa users >}} Problem 3 — Concurrent access [destroys data]{fg="#c0392b" .bold}
+
+Two users edit `grades.txt` at the same time. The last save wins — the earlier save is silently overwritten.
+
+**Example — the real issue:**
+
+| Time | Registrar | Secretary |
+|------|-----------|-----------|
+| 09:00 | opens `grades.txt` (10 rows) | opens `grades.txt` (10 rows) |
+| 09:05 | adds row 11, **saves** | editing row 4... |
+| 09:06 | — | **saves** (only 10 rows) |
+| 09:07 | Registrar's row 11 is **gone**. No error. No warning. |
+
+This is the classic [Lost Update]{fg="#c0392b" .bold} anomaly — one transaction's work vanishes because another transaction overwrote the same file.
+:::
+
+::: callout-important
+## {{< fa diagram-project >}} Problem 4 — Relationships require [40+ lines of code]{fg="#c0392b" .bold}
+
+"List all students in Building A with a grade above 80."
+
+**Example — the real issue:**
+
+```python
+# 1. Find departments in Building A
+depts = []
+for line in open("departments.txt"):
+    name, head, bld = [x.strip() for x in line.split(",")]
+    if bld == "Building_A":
+        depts.append(name)
+
+# 2. Find students in those departments
+students = {}
+for line in open("students.txt"):
+    sid, name, dept = [x.strip() for x in line.split(",")]
+    if dept in depts:
+        students[sid] = name
+
+# 3. Cross-reference grades
+for line in open("grades.txt"):
+    sid, course, grade = [x.strip() for x in line.split(",")]
+    if sid in students and int(grade) > 80:
+        print(students[sid], course, grade)
+```
+
+Three nested loops, three file opens, manual joins. In SQL this is **one line**.
+:::
+
+::: callout-important
+## {{< fa ban >}} Problem 5 — No types, no [validation]{fg="#c0392b" .bold}
+
+Nothing prevents a user from typing garbage into the grade column. Every variant crashes or silently corrupts your analytics.
+
+**Example — the real issue:**
+
+{{< fa file-lines >}} `grades.txt`
+```
+001, Database, 92
+002, Database, 92.5
+003, Database, 92,5        ← comma used as decimal separator
+004, Database, ninety-two  ← text instead of number
+005, Database, N/A         ← missing value sentinel
+006, Database,             ← empty field
+```
+
+```python
+avg = sum(int(row.split(",")[2]) for row in open("grades.txt")) / 6
+# ValueError: invalid literal for int() with base 10: ' 92.5'
+```
+
+One malformed record kills the whole report.
+:::
+
+::: callout-important
+## {{< fa plug-circle-exclamation >}} Problem 6 — Crashes leave [corrupt files]{fg="#c0392b" .bold}
+
+Power is cut in the middle of a batch update. Half the file is in the new format; half is in the old. There is no recovery log.
+
+**Example — the real issue:**
+
+{{< fa file-lines >}} `grades.txt` *(mid-write, power cut here ↯)*
+```
+001, Database, 92          ← old row, untouched
+002, Database, 78          ← old row, untouched
+003, Database, 90          ← partially rewritten
+003, Database, 9           ← truncated! file ends here
+```
+
+The file is now [permanently inconsistent]{fg="#c0392b" .bold}. No transaction log, no rollback, no way to know which rows were supposed to change.
+:::
+
 
 ### "OK, I Will Write a Program to Handle All That"
 
@@ -109,6 +220,100 @@ A **database** is an organized collection of interrelated data that models some 
 
 ::: callout-note
 The combination of a database and its DBMS is called a **database system**. In everyday speech, people often say "database" when they mean the entire system.
+:::
+
+### The Database Is Just Files — The DBMS Is the *Container*
+
+::: callout-important
+## {{< fa folder-open >}} A database is, literally, a set of files on disk
+
+When you run `CREATE DATABASE company;` in MySQL, the server simply [creates a folder on disk]{fg="#c0392b" .bold} named `company/`. When you run `CREATE TABLE employee (...)`, MySQL writes files like `employee.ibd` into that folder. Your rows, indexes, and even the data dictionary all live on disk as **bytes in files** — nothing magical.
+
+**Proof you can verify on your own laptop:**
+
+```bash
+# On a default MySQL install (Linux)
+$ ls /var/lib/mysql/company/
+db.opt  employee.ibd  department.ibd  project.ibd
+
+# On Windows
+C:\ProgramData\MySQL\MySQL Server 8.0\Data\company\
+```
+
+So *if* a database is just files, why did we spend the whole Notepad Scenario arguing against files? Because **raw files are dead bytes**. Making those bytes behave like a reliable, fast, multi-user, crash-safe system requires an entire **runtime/container** around them — that runtime is the [DBMS]{fg="#2980b9" .bold}.
+:::
+
+Think of it exactly like programs and operating systems:
+
+- A `.exe` file on disk is just bytes — it cannot "run" anything by itself. The **operating system** loads it into memory, gives it CPU time, manages its files, and protects it from other programs.
+- A `.ibd` / `.frm` / `.mdf` database file on disk is just bytes — it cannot "query" anything by itself. The **DBMS** loads pages into a buffer cache, schedules queries, isolates transactions, and protects data from other users.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TB
+    subgraph APP ["👥 Users &amp; Applications"]
+      U1["Student portal"]
+      U2["Workbench"]
+      U3["Analytics script"]
+    end
+
+    subgraph DBMS ["🛡️ DBMS — the container around the data files"]
+      direction TB
+      Q["Query processor<br/>(parser, optimizer, executor)"]
+      B["Buffer manager<br/>(memory cache of disk pages)"]
+      T["Transaction &amp; lock manager<br/>(ACID, isolation, recovery)"]
+      S["Security / user manager<br/>(auth, roles, GRANT/REVOKE)"]
+      C["System catalog<br/>(self-describing metadata)"]
+    end
+
+    subgraph OS ["🖥️ Operating System services"]
+      FS["File system"]
+      MM["Virtual memory"]
+      NET["TCP / sockets"]
+      SCH["Process / CPU scheduler"]
+    end
+
+    subgraph DISK ["💾 Disk — the database itself"]
+      F1["employee.ibd"]
+      F2["department.ibd"]
+      F3["WAL / redo log"]
+      F4["system catalog files"]
+    end
+
+    APP -->|SQL| Q
+    Q --> B
+    Q --> T
+    Q --> S
+    Q --> C
+    B  --> FS
+    T  --> FS
+    S  --> FS
+    C  --> FS
+    FS --> DISK
+    B  --> MM
+    APP --> NET
+    DBMS --> SCH
+```
+
+**What the DBMS adds on top of the raw files:**
+
+| {{< fa layer-group >}} Concern | What "just files" give you | What the DBMS gives you |
+|---|---|---|
+| **OS integration** | Raw `read`/`write` syscalls | Buffered, page-aligned I/O; direct-I/O for WAL; `fsync` for durability |
+| **Memory / cache** | Nothing — every read hits disk | **Buffer pool** — hot pages stay in RAM (thousands of times faster than disk) |
+| **Concurrency** | OS advisory file locks (all-or-nothing) | Row/page/table locks, MVCC, isolation levels, deadlock detection |
+| **User management** | OS file permissions only | `CREATE USER`, `GRANT`/`REVOKE` at database / table / column / row level |
+| **Security** | Bytes on disk, readable by anyone with file access | Authentication, encryption-at-rest, audit logs, TLS for client connections |
+| **Crash safety** | Half-written file after a crash | Write-Ahead Log + rollback/redo → ACID durability |
+| **Query processing** | You write the scan / join / sort code | SQL parser → optimizer → executor picks the best plan automatically |
+| **Self-description** | You remember what columns exist | **Data dictionary** — the database describes itself |
+| **Networking** | Local access only | TCP listener, connection pool, client drivers (JDBC/ODBC) |
+
+::: callout-tip
+## {{< fa lightbulb >}} The one-sentence summary
+
+A **database** is where your data *lives* (on disk). A **DBMS** is the [runtime container]{bg="#f39c12" fg="#000000"} that turns those dead bytes into a reliable, fast, multi-user, queryable service — exactly like an operating system turns a `.exe` file into a running program.
 :::
 
 ### Key properties of a database
@@ -179,7 +384,7 @@ flowchart TD
     SD --> NOSQL
 ```
 
-### The Relational Model
+### The Relational Model (Briefly)
 
 Proposed by **E.F. Codd in 1970** [@codd1970relational], the relational model represents data as a collection of **tables (relations)**, each with named columns of fixed types. It remains the dominant model in enterprise software more than 50 years later.
 
@@ -190,6 +395,263 @@ Codd's 1970 paper, *"A Relational Model of Data for Large Shared Data Banks"*, i
 :::
 
 The relational model is elegant because it is mathematically grounded in **set theory** and **first-order logic**. That foundation is what makes SQL queries predictable and composable — and what makes relational algebra (Chapter 6) a rigorous optimization tool.
+
+The relational model is not the only data model in use, though — the next section surveys the main families and where each one is still used today.
+
+---
+
+## Types of Database Models — A Guided Tour
+
+The relational model dominates today, but it is not the only data model in use. Understanding the main families — and *why* each one was invented — helps you pick the right tool for a given problem.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+timeline
+    title 70 Years of Database Models
+    1960s : Flat file
+          : Hierarchical (IMS)
+    1970s : Network (CODASYL)
+          : Relational (Codd)
+    1980s : SQL standardized
+          : Object-oriented
+    1990s : Object-relational (ORDBMS)
+          : XML databases
+    2000s : NoSQL wave
+          : Key-value · Document · Column-family · Graph
+    2010s : NewSQL
+          : Cloud-native distributed SQL
+```
+
+### 1. Flat File Model {{< fa file-lines >}}
+
+One file, one record per line, delimited columns. No relationships, no constraints.
+
+**Real-world examples:** Excel / Google Sheets, CSV exports, `/etc/passwd`, Windows `.ini` files, small `.log` files.
+
+**Advantages**
+
+- Extremely simple and human-readable
+- Works in any tool (Notepad, Excel, any language's string library)
+
+**Disadvantages**
+
+- All the Notepad Scenario problems: no integrity, no concurrency, redundancy
+- Cannot scale beyond a few thousand rows
+
+### 2. Hierarchical Model {{< fa sitemap >}}
+
+Data is organized as a **tree** — each record has exactly **one parent**. Developed in the 1960s for mainframe systems.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    U["AAUP"] --> F1["Faculty: Engineering"]
+    U --> F2["Faculty: Medicine"]
+    F1 --> D1["Dept: Computer Eng"]
+    F1 --> D2["Dept: Civil Eng"]
+    D1 --> S1["Student 001"]
+    D1 --> S2["Student 002"]
+    D2 --> S3["Student 101"]
+```
+
+**Used by:** IBM **IMS** (still runs many banks and airlines today!), XML documents, JSON trees, LDAP directories, the Windows Registry.
+**Strengths:** very fast for tree-shaped traversals (org charts, file systems, bill-of-materials).
+**Weaknesses:** awkward for **many-to-many** relationships — a student enrolled in two departments would need to be duplicated.
+
+### 3. Network Model (CODASYL) {{< fa diagram-project >}}
+
+Like the hierarchical model, but a record can have **many parents** — so many-to-many relationships are supported directly through explicit pointers.
+
+**Real-world examples:** IDMS (still running inside some European banks and insurance companies), Raima DB, older mainframe systems at airlines and telecoms.
+
+**Advantages**
+
+- Supports many-to-many relationships without duplication
+- Very fast when the access paths are known in advance
+
+**Disadvantages**
+
+- No declarative query language — the programmer navigates pointers by hand
+- Schema changes are extremely painful
+- Largely replaced by relational databases since the 1980s
+
+::: callout-note
+Both hierarchical and network models were displaced by the relational model because Codd's math-based foundation allowed **declarative queries** ("what" instead of "how") and automatic query optimization.
+:::
+
+### 4. Relational Model {{< fa table >}}
+
+Data as **tables** (rows + columns); relationships via **foreign keys**; queries via **SQL**. Invented by E.F. Codd in 1970, still the #1 database model today.
+
+**Real-world examples:** Facebook (MySQL), Instagram (PostgreSQL), Booking.com (Oracle + MySQL), Uber's core services (PostgreSQL + MySQL), most banks worldwide, AAUP's own student portal.
+
+**Advantages**
+
+- Declarative SQL — you say *what*, the database figures out *how*
+- Strong ACID guarantees (safe for money, grades, medical records)
+- Huge ecosystem: tools, drivers, hosting, experts everywhere
+
+**Disadvantages**
+
+- Rigid schema — changing columns on a live table is expensive
+- Joins get slow on very large datasets
+- Not ideal for deeply nested JSON or graph-shaped data
+
+This is the model that dominates **Parts III – VII** of this book.
+
+### 5. Object-Oriented (OODB) {{< fa cube >}}
+
+Stores objects exactly as they exist in a Java / C++ / C# program — no mapping to tables.
+
+**Real-world examples:** ObjectDB (used inside some CAD and telecom systems), db4o (embedded in apps), Gemstone/S (financial trading). Niche today.
+
+**Advantages**
+
+- No impedance mismatch between code and database
+- Natural fit for inheritance and complex nested types
+
+**Disadvantages**
+
+- No dominant query language (OQL never caught on)
+- Tiny ecosystem; lost the market to **relational + ORM** (Hibernate, Django ORM, Entity Framework)
+
+### 6. Object-Relational (ORDBMS) {{< fa cubes-stacked >}}
+
+A relational database with object-like extras: user-defined types, arrays, JSON columns, spatial types, inheritance.
+
+**Real-world examples:** **PostgreSQL** (the gold standard — used by Apple, Instagram, Reddit), Oracle Database, modern SQL Server and MySQL (JSON columns, `GEOMETRY`, arrays).
+
+**Advantages**
+
+- Keeps SQL + ACID but adds rich types (`JSONB`, `ARRAY`, `GEOMETRY`, `UUID`)
+- Single database can handle both traditional and document-style data
+
+**Disadvantages**
+
+- Extensions are vendor-specific — moving from Oracle to PostgreSQL is harder than moving pure SQL
+
+### 7. NoSQL Models {{< fa database >}}
+
+A family of **non-relational** databases born in the 2000s at web-scale companies (Google, Amazon, Facebook) to handle data volumes and write rates that single-server relational databases could not match. Four main sub-families:
+
+#### 7a. Key-Value Stores {{< fa key >}}
+
+A giant distributed hash table: `get(key)` / `put(key, value)`. The simplest NoSQL model.
+
+**Real-world examples:** **Redis** (Twitter timeline cache, Stack Overflow, GitHub, Shopify), **Memcached** (Facebook), **Amazon DynamoDB** (Amazon's own shopping cart, Lyft, Airbnb sessions), etcd (inside Kubernetes).
+
+**Advantages**
+
+- Blazingly fast (often in-memory, microsecond latency)
+- Scales horizontally to millions of operations per second
+
+**Disadvantages**
+
+- No queries across values — you can only fetch by key
+- No joins, no `WHERE`, no rich schema
+
+#### 7b. Document Stores {{< fa file-code >}}
+
+Store self-contained **JSON-like documents**; each document can have a different shape. Query on any nested field.
+
+**Real-world examples:** **MongoDB** (The New York Times, Forbes, eBay, Adobe), **Couchbase** (LinkedIn, PayPal), **Firebase Firestore** (many mobile apps), Amazon DocumentDB.
+
+**Advantages**
+
+- Flexible schema — add fields without migrations
+- Natural fit for JSON from web and mobile APIs
+- Good horizontal scalability
+
+**Disadvantages**
+
+- Cross-document joins are awkward (or absent)
+- Easy to end up with inconsistent document shapes over time
+
+MongoDB is covered in depth in **Chapter 15**.
+
+#### 7c. Column-Family (Wide-Column) Stores {{< fa table-columns >}}
+
+Data is stored by **column families** rather than whole rows; optimized for huge, sparse tables and write-heavy workloads. Inspired by Google's **Bigtable** paper (2006).
+
+**Real-world examples:** **Apache Cassandra** (Netflix viewing history, Apple iCloud, Instagram messaging), **HBase** (Facebook Messenger, Pinterest), **Google Bigtable** (Google Search, Gmail, Google Analytics), **ScyllaDB** (Discord messages).
+
+**Advantages**
+
+- Massive write throughput — millions of writes/sec across a cluster
+- Linear horizontal scaling by adding nodes
+- Great for time-series, IoT, logs
+
+**Disadvantages**
+
+- Ad-hoc queries are limited — you must design around known access patterns
+- No joins, weaker consistency by default
+
+#### 7d. Graph Databases {{< fa circle-nodes >}}
+
+First-class support for **nodes** (entities) and **edges** (relationships). Queries are traversals like *"friends of friends within 3 hops"*.
+
+**Real-world examples:** **Neo4j** (NASA's lessons-learned graph, eBay delivery routing, UBS fraud detection), **Amazon Neptune** (Amazon product recommendations), **TigerGraph** (Jaguar, China Mobile), LinkedIn's own social graph engine.
+
+**Advantages**
+
+- Relationship queries are orders of magnitude faster than SQL joins
+- Natural fit for social networks, recommendations, fraud detection, knowledge graphs
+
+**Disadvantages**
+
+- Poor fit for plain tabular analytics
+- Smaller ecosystem than relational or document stores
+
+### 8. NewSQL & Cloud-Native Distributed SQL {{< fa cloud >}}
+
+A 2010s answer to: *"Can we get NoSQL's horizontal scalability **and** relational SQL + ACID?"* Yes — at the cost of more complex infrastructure.
+
+**Real-world examples:** **Google Spanner** (Google Ads, Gmail metadata), **CockroachDB** (DoorDash, Netflix billing), **YugabyteDB**, **TiDB** (Shopee, Bank of China), **Amazon Aurora** (most large AWS customers).
+
+**Advantages**
+
+- Standard SQL and ACID transactions
+- Scales horizontally across regions / continents
+- No need to re-learn a new query language
+
+**Disadvantages**
+
+- Operationally complex — more moving parts than a single MySQL server
+- Young ecosystem; fewer DBAs with deep experience
+- Cross-region writes still have latency costs
+
+### Side-by-Side Comparison
+
+| Family | Shape of data | Query style | ACID | Horizontal scale | Example |
+|---|---|---|---|---|---|
+| Flat file | Rows in one file | Parse by hand | ❌ | ❌ | CSV |
+| Hierarchical | Tree (one parent) | Navigate | Partial | Limited | IBM IMS, XML |
+| Network (CODASYL) | Graph via pointers | Navigate | Partial | Limited | IDMS |
+| **Relational** | Tables + FKs | **SQL (declarative)** | **✅** | Medium | MySQL, Postgres, Oracle |
+| Object-oriented | Objects | OQL / API | Partial | Limited | ObjectDB |
+| Object-relational | Tables + rich types | SQL + extensions | ✅ | Medium | PostgreSQL |
+| Key-value | `(key, value)` blobs | `get` / `put` | Per-key | ✅✅✅ | Redis, DynamoDB |
+| Document | JSON documents | Query DSL over JSON | Per-document | ✅✅ | **MongoDB** |
+| Column-family | Sparse wide rows | CQL / API | Tunable | ✅✅✅ | Cassandra, HBase |
+| Graph | Nodes + edges | Cypher / Gremlin | ✅ | ✅ | Neo4j |
+| NewSQL | Tables + FKs | SQL | ✅ | ✅✅✅ | Spanner, CockroachDB |
+
+::: callout-tip
+## {{< fa compass >}} How to choose (rule of thumb)
+
+- **Tabular data with real relationships?** → Relational (start here by default).
+- **Each record is a self-contained document with nested fields?** → Document (MongoDB).
+- **Distributed cache or session store?** → Key-value (Redis).
+- **Relationships between entities are the main query pattern?** → Graph (Neo4j).
+- **Petabyte-scale writes, time series, telemetry?** → Column-family (Cassandra).
+- **SQL + ACID *and* global horizontal scale?** → NewSQL (Spanner, CockroachDB).
+
+Modern systems often combine **several** of these — this is called **polyglot persistence**. The AAUP portal might use PostgreSQL for grades, Redis for sessions, and Elasticsearch for search, all in the same application.
+:::
+
+NoSQL families are covered in depth in **Part VIII (Chapters 14–15)**.
 
 ---
 
@@ -233,40 +695,92 @@ The distinction between schema and instance is the first of several **abstractio
 
 As a database grows, different people interact with it differently: end users care about a grade-entry form; the application developer cares about the logical table structure; the storage engineer cares about disk blocks and indexes. The **three-schema architecture** separates these concerns.
 
+::: callout-note
+## {{< fa building-columns >}} Scenario — The AAUP Academic Information System
+
+Picture the **Arab American University – Palestine (AAUP)** academic information system (the one you use through the student portal and SIS). Thousands of people touch the *same* underlying database every day, but each of them sees it very differently:
+
+- {{< fa user-graduate >}} **A student in the Computer Engineering Department** logs into the portal to check her grades for *Database Systems* and register for next semester's courses. She should only see **her own** courses, grades, GPA, and schedule — never another student's record.
+- {{< fa chalkboard-user >}} **A course instructor** opens the faculty portal to enter grades for *Database Systems — Section 1*. He should see the list of students enrolled in **his sections only**, plus the assessment columns (midterm, project, final) — but **not** salary information or other instructors' sections.
+- {{< fa user-tie >}} **The Registrar's office** needs a dashboard of enrollment counts per faculty (Engineering, Medicine, Law, Arts) and graduation statistics across the whole university.
+- {{< fa money-bill-wave >}} **The Finance department** generates tuition invoices and payroll — they see student fees and staff salaries, but not academic grades.
+- {{< fa user-gear >}} **The database administrator (DBA)** in the IT Center at Jenin campus is responsible for the entire logical schema — every table, every foreign key, every constraint.
+- {{< fa server >}} **The system engineer** tunes physical storage: which tables live on SSD, which columns are indexed, how backups are scheduled across the Jenin and Ramallah data centers.
+
+One database. Six very different views. The **three-schema architecture** is what makes this possible.
+:::
+
 ```{mermaid}
 %%| eval: true
 %%| echo: false
 flowchart TD
-    U1["User A<br/>grade portal"]
-    U2["User B<br/>payroll app"]
-    U3["User C<br/>analytics dashboard"]
+    U1["👩‍🎓 Student"]
+    U2["👨‍🏫 Instructor"]
+    U3["🏛️ Registrar"]
+    U4["💰 Finance"]
 
-    E["External Level — Views<br/>Multiple user-specific views of the data"]
-    C["Conceptual Level — Schema<br/>Complete logical structure:<br/>tables, columns, constraints, foreign keys"]
-    I["Internal Level — Storage<br/>Physical files, indexes,<br/>buffer pools, block layout"]
+    subgraph EXT["🔹 External Level"]
+      V1["my_grades_view"]
+      V2["my_sections_view"]
+      V3["enrollment_stats_view"]
+      V4["billing_view"]
+    end
 
-    U1 --> E
-    U2 --> E
-    U3 --> E
-    E <-->|mapping| C
-    C <-->|mapping| I
+    subgraph CONC["🔸 Conceptual Level (AAUP logical schema)"]
+      direction LR
+      S1["Student"]
+      S2["Course"]
+      S3["Section"]
+      S4["Enrollment"]
+      S5["Instructor"]
+      S6["Faculty"]
+    end
+
+    subgraph INT["🔻 Internal Level (physical storage)"]
+      P1["Tablespaces · B+ tree indexes<br/>Partitioning · Backups"]
+    end
+
+    U1 --> V1
+    U2 --> V2
+    U3 --> V3
+    U4 --> V4
+
+    V1 <--> CONC
+    V2 <--> CONC
+    V3 <--> CONC
+    V4 <--> CONC
+
+    CONC <--> INT
 ```
 
-- **External level**: Each user or application sees only the data it needs. A student sees their own grades; the payroll clerk sees only salary data. These are called **views**.
-- **Conceptual level**: The complete logical structure of the entire database — all tables, all columns, all constraints, all relationships. This is what the DBA works with.
-- **Internal level**: How data is physically stored — which file, which block, which index structure. Invisible to users and applications.
+*Mappings: external ⇄ conceptual (for each view) and conceptual ⇄ internal (managed by the DBMS).*
 
-### Data Independence
+**Conceptual schema in detail:**
+
+- `Student(student_id, name, faculty, department, gpa)`
+- `Course(course_code, title, credits)`
+- `Section(section_id, course_code, instructor_id, semester)`
+- `Enrollment(student_id, section_id, grade)`
+- `Instructor(instructor_id, name, department, salary)`
+- `Faculty(faculty_id, name, campus)`
+
+**Internal-level details at AAUP:** tablespaces on SSD at the Jenin data center, B+ tree indexes on `student_id` and `course_code`, `Enrollment` partitioned by semester, nightly replication to the Ramallah site.
+
+- **External level** — *what each user sees.* At AAUP this is the set of **views** behind every portal screen: `my_grades_view`, `my_sections_view`, `enrollment_stats_view`, `billing_view`. Each view exposes only the rows and columns that user is authorized to see.
+- **Conceptual level** — *the complete logical schema maintained by the AAUP DBA.* All tables (`Student`, `Course`, `Section`, `Enrollment`, `Instructor`, `Faculty`), all columns, all primary/foreign keys, all constraints. This is the single source of truth.
+- **Internal level** — *how the data is physically stored.* Tablespaces on SSD at the Jenin campus data center, B+ tree indexes on `student_id` and `course_code`, partitioning of `Enrollment` by semester, and nightly replication to the Ramallah site. No student, no instructor, and no application program ever sees this.
+
+### Data Independence — An AAUP Example
 
 The three-level separation provides **data independence** — the ability to change one level without rewriting the level(s) above it.
 
-| Type | Definition | Example |
-|------|-----------|---------|
-| **Logical data independence** | Change the *conceptual* schema without rewriting external views or application programs | Add a `Phone` column to `Employee` — existing payroll application is unaffected |
-| **Physical data independence** | Change the *internal* schema (e.g., add an index, switch storage engine) without changing the conceptual schema | Add a B+ tree index on `Salary` — no SQL queries need to change |
+| Type | Definition | Example at AAUP |
+|------|-----------|-----------------|
+| **Logical data independence** | Change the *conceptual* schema without rewriting external views or application programs | The Registrar adds a new `mobile_number` column to `Student` so the university can send SMS notifications. Ahmed still logs in and sees his grades exactly as before — the student portal was not touched. |
+| **Physical data independence** | Change the *internal* schema (e.g., add an index, switch storage engine) without changing the conceptual schema | The IT team adds a B+ tree index on `Enrollment(section_id)` so grade-sheet queries run 100× faster. No SQL query, no portal, no report has to be rewritten. |
 
 ::: callout-tip
-Physical independence is relatively easy to achieve (most DBMSs do it well). Logical independence is harder — adding a column is safe, but splitting a table or renaming a column requires updating views and queries that reference the old structure.
+Physical independence is relatively easy to achieve (most DBMSs do it well). Logical independence is harder — adding a column is safe, but splitting `Student` into `Student` + `StudentContact`, or renaming `gpa` to `cumulative_gpa`, forces every view and application that referenced the old structure to be updated.
 :::
 
 The three-schema architecture explains *how* a DBMS provides data independence. To communicate with the DBMS — to define those schemas and manipulate that data — we need a language.
@@ -331,7 +845,30 @@ All components — user interface, application logic, and the DBMS — reside on
 
 ![Example of Single Tier DBMS Architecture](../images/1tier-architecture-example.png){fig-align="center" width="80%"}
 
-**When to use:** Learning environments, local development, single-user desktop tools (e.g., a SQLite-backed app, MS Access on a single laptop).
+::: callout-tip
+## {{< fa terminal >}} You have already used a 1-tier setup — in the Database Lab!
+
+Remember the **Database Systems lab at AAUP**? When you installed MySQL Server on your own laptop and then opened the [MySQL shell from the Windows Command Prompt]{fg="#2980b9" .bold} to run your first `SELECT` — **that was a 1-tier architecture**.
+
+```bash
+C:\> mysql -u root -p
+Enter password: ********
+mysql> USE company;
+mysql> SELECT * FROM employee;
+```
+
+On your laptop at that moment:
+
+- {{< fa desktop >}} **The client** (the `mysql` shell) — running on your machine
+- {{< fa gears >}} **The application logic** (you typing SQL) — running on your machine
+- {{< fa database >}} **The DBMS server** (`mysqld`) + the data files — [also running on your machine]{bg="#f39c12" fg="#000000"}
+
+No network, no other users, no separate server — everything on one box. That is exactly what *single-tier* means. Any program that uses SQLite (which is just a library embedded inside your application) is 1-tier by design.
+
+> Note: once you connect from one laptop to a **MySQL server running on a different machine** (e.g., `mysql -h lab-server -u student -p`), you have crossed into **2-tier** territory — covered next.
+:::
+
+**When to use:** Learning environments, local development, single-user desktop tools (e.g., a SQLite-backed app, MS Access on a single laptop, or your MySQL lab setup).
 
 | Advantage | Disadvantage |
 |-----------|-------------|
@@ -357,6 +894,24 @@ flowchart LR
 ```
 
 ![Example of 2-Tier (Client-Server) Architecture](../images/2tier-architecture-example.png){fig-align="center" width="80%"}
+
+::: callout-tip
+## {{< fa diagram-project >}} You have used 2-tier too — every time you open MySQL Workbench
+
+When you launch **MySQL Workbench** and click a connection to run a query, you are using a textbook [2-tier architecture]{fg="#2980b9" .bold}.
+
+- {{< fa desktop >}} **Client (Tier 1)** — `MySQLWorkbench.exe` on your laptop: the query editor, schema inspector, EER diagram designer, and result grid. *All the UI and application logic runs here.*
+- {{< fa database >}} **DB Server (Tier 2)** — `mysqld` listening on TCP port **3306**, executing your SQL and sending rows back.
+- {{< fa network-wired >}} **The wire between them** — the **MySQL native protocol** (the same role JDBC / ODBC plays for Java / .NET apps).
+
+This stays 2-tier [even when Workbench and the server are on the *same* laptop]{bg="#f39c12" fg="#000000"} (connecting to `localhost:3306`). What defines the tier is the *process / protocol* separation, not physical location. Connect to a remote server instead (e.g., the lab server `mysql-lab.aaup.edu`) and you simply change the hostname — the architecture is identical.
+
+> **Rule of thumb**
+>
+> - `mysql` CLI on the same machine as the server → taught as **1-tier** (all-in-one bundled lab setup)
+> - Workbench ↔ `mysqld` over TCP (local or remote) → **2-tier**
+> - Browser → web server → database → **3-tier** (see next section)
+:::
 
 **When to use:** Departmental applications, internal tools where the developer controls all clients (e.g., a bank teller terminal, a clinic management desktop app).
 
@@ -387,6 +942,39 @@ flowchart TD
 ```
 
 ![Example of 3-Tier Architecture](../images/3tier-architecture-example.png){fig-align="center" width="80%"}
+
+::: callout-tip
+## {{< fa graduation-cap >}} Scenario — AAUP student opens the portal from her laptop
+
+Sara opens Chrome on her laptop in the café and visits `https://portal.aaup.edu` to check her Database Systems grade. What she thinks is "one click" is actually a [3-tier architecture]{fg="#2980b9" .bold} in action:
+
+- {{< fa laptop >}} **Presentation Tier (Sara's laptop)** — Chrome renders HTML, CSS, and JavaScript. It knows **nothing** about tables, SQL, or the database. It only speaks **HTTPS** to the portal.
+- {{< fa server >}} **Application Tier (AAUP web/app server)** — running somewhere in the Jenin campus data center (e.g., Node.js / Django / Laravel). It:
+  1. Receives Sara's HTTPS request.
+  2. Checks her session / JWT token — is she logged in? is she Sara?
+  3. Applies business rules (students can see **their own** grades only).
+  4. Translates the request into SQL and forwards it to the DBMS.
+- {{< fa database >}} **Data Tier (AAUP database server)** — MySQL / PostgreSQL on a protected server, [reachable only from the app server]{bg="#f39c12" fg="#000000"}, never from the public Internet. It runs:
+
+  ```sql
+  SELECT course_code, grade
+  FROM   Enrollment
+  WHERE  student_id = '202012345';
+  ```
+
+  and returns the rows to the app tier, which renders them into the HTML page Sara sees.
+
+**Why three tiers instead of two?**
+
+| Concern | What 3-tier gives AAUP |
+|---|---|
+| {{< fa shield-halved >}} **Security** | The database is behind a firewall; Sara's browser cannot talk to it directly. Even if her laptop is compromised, the attacker cannot run raw SQL. |
+| {{< fa users >}} **Scalability** | When registration opens and 10,000 students hit the portal at once, AAUP adds more app servers behind a load balancer without touching the DB. |
+| {{< fa user-shield >}} **Authorization** | "Students see only their rows" is enforced by the app tier — a single trusted place — not by every desktop client. |
+| {{< fa wrench >}} **Maintainability** | The portal team can redesign the UI, or swap Laravel for Node.js, without ever touching the database schema. |
+
+Now compare this to Sara running `mysql -u sara -p` on her laptop (1-tier) or opening Workbench against the lab server (2-tier). Same data, completely different architectures — each fit for a different purpose.
+:::
 
 **When to use:** Virtually all modern web applications — e-commerce, banking portals, social media, ERP systems.
 
@@ -433,60 +1021,6 @@ The tier architecture describes *where* the DBMS engine runs relative to the use
 
 ---
 
-## Interactive: File Scan vs. Index Lookup
-
-::: callout-tip
-Drag the slider to change the number of rows. Observe how a full file scan grows linearly while a B+ tree index lookup grows only logarithmically.
-:::
-
-```{ojs}
-//| echo: false
-//| eval: true
-viewof rowCount = Inputs.range([1000, 1000000], {
-  step: 1000,
-  value: 100000,
-  label: "Number of rows"
-})
-```
-
-```{ojs}
-//| echo: false
-//| eval: true
-{
-  const scanMs  = (rowCount / 1e6) * 2500;
-  const indexMs = Math.log2(rowCount) * 0.05;
-  const fmt = v => v >= 1 ? `${v.toFixed(2)} ms` : `${(v * 1000).toFixed(1)} µs`;
-  const speedup = (scanMs / indexMs).toFixed(0);
-
-  return htl.html`
-    <div style="font-family:sans-serif;max-width:520px;padding:12px;border:1px solid #ddd;border-radius:6px">
-      <h4 style="margin:0 0 12px">Cost at ${rowCount.toLocaleString()} rows</h4>
-      <table style="width:100%;border-collapse:collapse">
-        <tr style="background:#f0f4f8">
-          <th style="padding:8px;text-align:left">Method</th>
-          <th style="padding:8px;text-align:right">Estimated time</th>
-          <th style="padding:8px;text-align:left">Complexity</th>
-        </tr>
-        <tr>
-          <td style="padding:8px">📄 Full file scan (no index)</td>
-          <td style="padding:8px;text-align:right;color:#c0392b;font-weight:bold">${fmt(scanMs)}</td>
-          <td style="padding:8px">O(n)</td>
-        </tr>
-        <tr style="background:#f0fff4">
-          <td style="padding:8px">🌳 B+ tree index lookup</td>
-          <td style="padding:8px;text-align:right;color:#27ae60;font-weight:bold">${fmt(indexMs)}</td>
-          <td style="padding:8px">O(log n)</td>
-        </tr>
-      </table>
-      <p style="margin-top:10px;font-size:0.9em;color:#444">
-        Index is <strong>${speedup}×</strong> faster at this table size.
-      </p>
-    </div>`;
-}
-```
-
----
-
 ## Summary
 
 ::: callout-important
@@ -506,52 +1040,277 @@ viewof rowCount = Inputs.range([1000, 1000000], {
 
 ## Review Questions
 
+Every question below includes a collapsible **Show Answer** box so you can self-check after attempting the question.
+
 ### Conceptual
 
-1. Define the term **database system**. Distinguish it from a *database* and from a *DBMS*, giving a concrete example of each.
-2. What is the **data dictionary** (system catalog)? What information does it store, and which DBMS component maintains it?
-3. Explain the difference between **logical data independence** and **physical data independence**. Which is harder to achieve in practice, and why?
+**Q1.** Define the term **database system**. Distinguish it from a *database* and from a *DBMS*, giving a concrete example of each.
 
-### Short-Answer / Compare
+<details><summary>Show Answer</summary>
 
-4. A colleague proposes storing all employee records in a shared Excel spreadsheet on a network drive. List **four specific problems** that will arise when the company reaches 500 employees and 10 concurrent users. For each, name the DBMS mechanism that would prevent it.
-5. Compare the **conceptual level** and the **external level** of the three-schema architecture. Who works at each level, and what do they see?
-6. Compare **1-tier**, **2-tier**, and **3-tier** deployment architectures. For each, give one real-world example and identify its single most important limitation.
+- **Database** — the *collection of data itself* (the rows, tables, documents). Example: the AAUP `Student`, `Enrollment`, and `Course` tables stored on disk.
+- **DBMS** — the *software* that creates, manages, queries, and protects the database. Example: MySQL, PostgreSQL, Oracle, MongoDB.
+- **Database system** — the **combination of the database + DBMS + application programs + users**. Example: the entire AAUP academic information system (MySQL + portal + staff + students).
+
+</details>
+
+**Q2.** What is the **data dictionary** (system catalog)? What information does it store, and which DBMS component maintains it?
+
+<details><summary>Show Answer</summary>
+
+The **data dictionary** (a.k.a. system catalog) is a special set of tables inside the database that describes **the database's own structure** — table names, column names, data types, constraints, indexes, views, user privileges. It is maintained by the **DBMS itself** (specifically the DDL processor updates it whenever `CREATE`, `ALTER`, or `DROP` runs) and consulted by every query during parsing and optimization. This is what makes a database **self-describing**, unlike a plain text file.
+
+</details>
+
+**Q3.** Explain the difference between **logical data independence** and **physical data independence**. Which is harder to achieve in practice, and why?
+
+<details><summary>Show Answer</summary>
+
+- **Logical data independence** — the ability to change the **conceptual schema** (add a column, rename a table, split a table) **without rewriting external views or application programs**.
+- **Physical data independence** — the ability to change the **internal/storage schema** (add an index, switch storage engine, re-partition) **without changing the conceptual schema**.
+
+**Logical independence is harder.** Adding a column is safe, but splitting `Student` into `Student` + `StudentContact` or renaming `gpa` → `cumulative_gpa` forces every view, query, and application that referenced the old structure to be updated. Physical independence is easier because the DBMS already hides storage details behind SQL.
+
+</details>
+
+**Q4.** List the seven classic problems of using plain files instead of a DBMS, and match each one to the specific DBMS mechanism that solves it.
+
+<details><summary>Show Answer</summary>
+
+
+| Problem | DBMS solution |
+|---|---|
+| Data redundancy | Normalization + single authoritative schema |
+| Data inconsistency | Foreign keys + referential integrity |
+| Data isolation | SQL joins across tables |
+| Integrity constraints scattered in code | Centralized `CHECK`, `NOT NULL`, `UNIQUE`, `FK` constraints |
+| Atomicity problems on crash | Transactions + write-ahead log (WAL) |
+| Concurrent access anomalies | Locking / MVCC (transaction isolation) |
+| Security below file level | Role-based access control (GRANT / REVOKE) |
+
+</details>
+
+### Notepad Scenario (Section recap)
+
+**Q5.** In the Notepad Scenario, why does a **linear scan** of `grades.txt` become impractical as the university grows? Give the Big-O cost and a concrete timing estimate for 1,000,000 rows.
+
+<details><summary>Show Answer</summary>
+
+A file scan reads every line sequentially, so cost is $O(n)$. At roughly 1 µs per row on a modern laptop, scanning 1 million rows takes **≈ 1–3 seconds per query**. With an index the same lookup becomes $O(\log n)$ ≈ 0.1 ms — about a **10,000× speedup**.
+
+</details>
+
+**Q6.** Two secretaries edit `grades.txt` simultaneously; the second save silently erases the first. Name this anomaly and name the DBMS mechanism that prevents it.
+
+<details><summary>Show Answer</summary>
+
+This is the **Lost Update** anomaly. A DBMS prevents it with **transactions** providing **isolation** via locking (or MVCC) — the second writer either waits for the first to commit or is rolled back and retried.
+
+</details>
+
+### Data Models
+
+**Q7.** Classify each of the following as *conceptual*, *representational/implementation*, or *physical* data model:
+(a) Entity-Relationship (ER) diagram, (b) Relational model, (c) B+ tree file organization, (d) JSON document model, (e) Storage block layout.
+
+<details><summary>Show Answer</summary>
+
+- (a) ER — **conceptual** (high-level, for humans)
+- (b) Relational — **representational / implementation** (tables and rows)
+- (c) B+ tree — **physical** (how records are stored)
+- (d) JSON document — **self-describing / representational** (NoSQL)
+- (e) Block layout — **physical**
+
+</details>
+
+### Three-Schema Architecture
+
+**Q8.** Compare the **conceptual level** and the **external level** of the three-schema architecture. Who works at each level, and what do they see? Answer in the AAUP context.
+
+<details><summary>Show Answer</summary>
+
+- **Conceptual level** — the **DBA** in the AAUP IT Center. Sees the *entire* logical schema: every table (`Student`, `Course`, `Enrollment`, `Instructor`, …), every column, every FK, every constraint.
+- **External level** — each end user or application. A **student** sees `my_grades_view` (her rows only); an **instructor** sees `my_sections_view`; the **Registrar** sees `enrollment_stats_view`. Each is a customized projection of the conceptual schema.
+
+</details>
+
+### Deployment Tiers
+
+**Q9.** Classify each of the following as **1-tier**, **2-tier**, or **3-tier** and justify:
+
+(a) Running `mysql -u root -p` in the Windows CMD on your own laptop against a local MySQL server.
+(b) Opening **MySQL Workbench** on your laptop and connecting to `localhost:3306`.
+(c) Sara opening `https://portal.aaup.edu` in Chrome to check her grades.
+(d) A SQLite-backed mobile note-taking app.
+
+<details><summary>Show Answer</summary>
+
+- (a) **1-tier** — CLI + server + data files all on one machine, one user. (The Database Lab setup.)
+- (b) **2-tier** — Workbench is a separate client process that speaks the MySQL protocol over TCP (port 3306) to `mysqld`. Same architecture whether the server is on the same laptop or a remote lab server.
+- (c) **3-tier** — Browser (Presentation) → AAUP web/app server (Application, enforces auth + business rules) → MySQL database (Data, firewalled from the Internet).
+- (d) **1-tier** — SQLite is a library linked into the app; no separate server process.
+
+</details>
+
+**Q10.** Why is a 3-tier architecture preferred over 2-tier for a public-facing system like the AAUP portal? Give **three reasons**.
+
+<details><summary>Show Answer</summary>
+
+1. **Security** — the database is never exposed to the Internet; the attacker must first compromise the app server.
+2. **Scalability** — app servers can be replicated horizontally behind a load balancer independently of the DB.
+3. **Centralized authorization** — business rules ("students see only their rows") live in one trusted tier, not scattered across every client.
+
+(Also acceptable: maintainability, DB portability, clean separation of UI / logic / data.)
+
+</details>
+
+### Data Languages
+
+**Q11.** Match each statement to the correct sub-language (**DDL / DML / DCL / TCL**):
+(a) `CREATE TABLE Student(...)`, (b) `SELECT * FROM Student`, (c) `GRANT SELECT ON Student TO dr_smith`, (d) `COMMIT`, (e) `UPDATE Student SET gpa = 3.9 WHERE id = '001'`, (f) `ROLLBACK`.
+
+<details><summary>Show Answer</summary>
+
+- (a) **DDL** — defines structure
+- (b) **DML** — reads data
+- (c) **DCL** — grants privileges
+- (d) **TCL** — commits a transaction
+- (e) **DML** — modifies data
+- (f) **TCL** — undoes uncommitted work
+
+</details>
 
 ### True / False (with explanation)
 
-7. *"A database schema changes every time a new row is inserted."* — True or False? Explain.
-8. *"Physical data independence means that application programs do not need to know which disk the data is stored on."* — True or False? Explain precisely.
-9. *"A naive user can interact with a DBMS only by writing SQL queries."* — True or False? Explain.
-10. *"The data dictionary is stored separately from the database it describes."* — True or False? Explain.
+**Q12.** *"A database schema changes every time a new row is inserted."*
+
+<details><summary>Show Answer</summary>
+
+**False.** Inserting a row changes the **data**, not the **schema**. The schema (tables, columns, types, constraints) only changes when you run DDL such as `ALTER TABLE`.
+
+</details>
+
+**Q13.** *"Physical data independence means that application programs do not need to know which disk the data is stored on."*
+
+<details><summary>Show Answer</summary>
+
+**True, but the phrasing is narrow.** Physical independence means the **entire internal storage level** (file organization, indexes, disk location, block size) can change without affecting the conceptual schema or applications — the disk name is just one example.
+
+</details>
+
+**Q14.** *"A naive user can interact with a DBMS only by writing SQL queries."*
+
+<details><summary>Show Answer</summary>
+
+**False.** Naive (end) users typically interact through **forms, menus, mobile apps, or canned reports** that issue SQL on their behalf. They rarely write SQL themselves — that is the job of application programmers and DBAs.
+
+</details>
+
+**Q15.** *"The data dictionary is stored separately from the database it describes."*
+
+<details><summary>Show Answer</summary>
+
+**False.** The data dictionary is stored **inside the same database** as a set of special system tables (e.g., `information_schema.tables` in MySQL, `pg_catalog` in PostgreSQL). This is exactly what makes the DB *self-describing*.
+
+</details>
 
 ### Multiple Choice
 
-11. Which DBMS sub-language is used to define tables, columns, and constraints?
-    - (a) DML   (b) DCL   **(c) DDL** ✓   (d) TCL
+**Q16.** Which DBMS sub-language is used to define tables, columns, and constraints?
 
-12. Which property of a database distinguishes it from a plain text file?
-    - (a) It can store text
-    - **(b) It is self-describing** ✓
-    - (c) It requires an internet connection
-    - (d) It can only be accessed by one user at a time
+(a) DML  (b) DCL  (c) DDL  (d) TCL
 
-13. Physical data independence means you can change:
-    - (a) application programs without changing the schema
-    - (b) external views without changing the conceptual schema
-    - **(c) the internal storage structure without changing the conceptual schema** ✓
-    - (d) the conceptual schema without changing external views
+<details><summary>Show Answer</summary>
+
+**(c) DDL** — Data Definition Language.
+
+</details>
+
+**Q17.** Which property of a database distinguishes it from a plain text file?
+
+(a) It can store text
+(b) It is self-describing
+(c) It requires an internet connection
+(d) It can only be accessed by one user at a time
+
+<details><summary>Show Answer</summary>
+
+**(b) It is self-describing.** The database stores its own schema (the data dictionary) alongside the data — a plain text file does not.
+
+</details>
+
+**Q18.** Physical data independence means you can change:
+
+(a) application programs without changing the schema
+(b) external views without changing the conceptual schema
+(c) the internal storage structure without changing the conceptual schema
+(d) the conceptual schema without changing external views
+
+<details><summary>Show Answer</summary>
+
+**(c)** — change the internal (storage) layer without touching the conceptual schema. Option (d) would be *logical* independence.
+
+</details>
+
+**Q19.** Which component of a DBMS is responsible for ensuring that a partially completed transaction is rolled back after a crash?
+
+(a) Query optimizer
+(b) Buffer manager
+(c) Transaction/recovery manager
+(d) Data dictionary
+
+<details><summary>Show Answer</summary>
+
+**(c) Transaction / recovery manager** — uses the write-ahead log (WAL) to undo incomplete transactions after a crash.
+
+</details>
 
 ### Design Exercise
 
-14. A small clinic stores patient records in three CSV files: `patients.csv`, `appointments.csv`, and `doctors.csv`. Identify **three specific anomalies or risks** in this design. For each, write one sentence describing the specific DBMS feature that would eliminate it.
+**Q20.** A small clinic stores patient records in three CSV files: `patients.csv`, `appointments.csv`, and `doctors.csv`. Identify **three specific anomalies or risks** and, for each, name the DBMS feature that would eliminate it.
+
+<details><summary>Show Answer</summary>
+
+Any three of the following:
+
+1. **Referential integrity violated** — an appointment can reference a non-existent patient id. Fix: **foreign key** from `appointments.patient_id` → `patients.id`.
+2. **Lost updates** — two receptionists edit `appointments.csv` simultaneously and one save overwrites the other. Fix: **transactions with locking / MVCC**.
+3. **No type enforcement** — `date` column can contain `"2026-04-17"`, `"17/4/26"`, or `"N/A"`. Fix: **typed schema** (`DATE NOT NULL`).
+4. **Slow search** — linear scan through 100,000 appointments to find one doctor's schedule. Fix: **B+ tree index** on `doctor_id`.
+5. **No security granularity** — OS file permissions are all-or-nothing. Fix: **GRANT/REVOKE** at table, column, or row level.
+6. **Crash corruption** — power cut mid-write leaves a half-written CSV. Fix: **write-ahead logging + crash recovery**.
+
+</details>
 
 ### SQL / Query Preview
 
-15. Given a table `Grades(StudentId, StudentName, Course, Grade)`, write a SQL query to retrieve the names of all students with a grade above 80. Then explain in one sentence why this single statement replaces tens of lines of file-parsing code.
+**Q21.** Given a table `Grades(StudentId, StudentName, Course, Grade)`, write a SQL query to retrieve the names of all students with a grade above 80. Explain in one sentence why this replaces tens of lines of file-parsing code.
 
-16. What SQL sub-language command would you use to:
-    - (a) Create the `Grades` table?
-    - (b) Insert a new grade record?
-    - (c) Allow user `dr_smith` to read from `Grades` but not modify it?
-    - (d) Undo all changes made in the current session?
+<details><summary>Show Answer</summary>
+
+```sql
+SELECT DISTINCT StudentName
+FROM   Grades
+WHERE  Grade > 80;
+```
+
+SQL is **declarative** — you state *what* you want; the DBMS's query optimizer decides *how* to fetch it (scan vs. index, which order, which join method). All the file-opening, line-splitting, type-parsing, filtering, and de-duplication that you would hand-write in Python is handled once, correctly, by the engine.
+
+</details>
+
+**Q22.** What SQL sub-language command would you use to:
+
+(a) Create the `Grades` table?
+(b) Insert a new grade record?
+(c) Allow user `dr_smith` to read from `Grades` but not modify it?
+(d) Undo all changes made in the current session?
+
+<details><summary>Show Answer</summary>
+
+- (a) **DDL** — `CREATE TABLE Grades (...);`
+- (b) **DML** — `INSERT INTO Grades VALUES (...);`
+- (c) **DCL** — `GRANT SELECT ON Grades TO dr_smith;`
+- (d) **TCL** — `ROLLBACK;`
+
+</details>
+

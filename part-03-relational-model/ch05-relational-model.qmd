@@ -23,7 +23,7 @@ Each element of $R$ is a **tuple** $t = (v_1, v_2, \ldots, v_n)$ where $v_i \in 
 
 A **domain** $D_i$ is a set of **atomic** (indivisible) values of the same type. For example:
 - $D_{Salary} = \{x \in \mathbb{R} \;|\; x \geq 0\}$
-- $D_{Gender} = \{`M', `F', `N'\}$
+- $D_{Gender} = \{\text{'M', 'F', 'N'}\}$
 
 ---
 
