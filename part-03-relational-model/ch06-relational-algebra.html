@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-04-sql/ch07-sql-basics.html" rel="next">
 <link href="../part-03-relational-model/ch05-relational-model.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -437,13 +437,13 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#company-database-schema-for-relax" id="toc-company-database-schema-for-relax" class="nav-link active" data-scroll-target="#company-database-schema-for-relax"><span class="header-section-number">6.1</span> 6.1 Company Database Schema for RELAX</a>
+  <li><a href="#company-database-schema-for-relax" id="toc-company-database-schema-for-relax" class="nav-link active" data-scroll-target="#company-database-schema-for-relax"><span class="header-section-number">6.1</span> Company Database Schema for RELAX</a>
   <ul class="collapse">
   <li><a href="#entity-relationship-overview" id="toc-entity-relationship-overview" class="nav-link" data-scroll-target="#entity-relationship-overview"><span class="header-section-number">6.1.1</span> Entity-Relationship Overview</a></li>
   </ul></li>
-  <li><a href="#what-is-relational-algebra" id="toc-what-is-relational-algebra" class="nav-link" data-scroll-target="#what-is-relational-algebra"><span class="header-section-number">6.2</span> 6.2 What Is Relational Algebra?</a></li>
-  <li><a href="#result-schema-notation" id="toc-result-schema-notation" class="nav-link" data-scroll-target="#result-schema-notation"><span class="header-section-number">6.3</span> 6.3 Result Schema Notation</a></li>
-  <li><a href="#fundamental-operations" id="toc-fundamental-operations" class="nav-link" data-scroll-target="#fundamental-operations"><span class="header-section-number">6.4</span> 6.4 Fundamental Operations</a>
+  <li><a href="#what-is-relational-algebra" id="toc-what-is-relational-algebra" class="nav-link" data-scroll-target="#what-is-relational-algebra"><span class="header-section-number">6.2</span> What Is Relational Algebra?</a></li>
+  <li><a href="#result-schema-notation" id="toc-result-schema-notation" class="nav-link" data-scroll-target="#result-schema-notation"><span class="header-section-number">6.3</span> Result Schema Notation</a></li>
+  <li><a href="#fundamental-operations" id="toc-fundamental-operations" class="nav-link" data-scroll-target="#fundamental-operations"><span class="header-section-number">6.4</span> Fundamental Operations</a>
   <ul class="collapse">
   <li><a href="#select-sigma-filter-rows" id="toc-select-sigma-filter-rows" class="nav-link" data-scroll-target="#select-sigma-filter-rows"><span class="header-section-number">6.4.1</span> 1. Select — <span class="math inline">\sigma</span> (Filter Rows)</a></li>
   <li><a href="#project-pi-filter-columns" id="toc-project-pi-filter-columns" class="nav-link" data-scroll-target="#project-pi-filter-columns"><span class="header-section-number">6.4.2</span> 2. Project — <span class="math inline">\pi</span> (Filter Columns)</a></li>
@@ -452,7 +452,7 @@ window.Quarto = {
   <li><a href="#cartesian-product-times-all-combinations" id="toc-cartesian-product-times-all-combinations" class="nav-link" data-scroll-target="#cartesian-product-times-all-combinations"><span class="header-section-number">6.4.5</span> 5. Cartesian Product — <span class="math inline">\times</span> (All Combinations)</a></li>
   <li><a href="#rename-rho-rename-relation-or-attributes" id="toc-rename-rho-rename-relation-or-attributes" class="nav-link" data-scroll-target="#rename-rho-rename-relation-or-attributes"><span class="header-section-number">6.4.6</span> 6. Rename — <span class="math inline">\rho</span> (Rename Relation or Attributes)</a></li>
   </ul></li>
-  <li><a href="#additional-derived-operations" id="toc-additional-derived-operations" class="nav-link" data-scroll-target="#additional-derived-operations"><span class="header-section-number">6.5</span> 6.5 Additional (Derived) Operations</a>
+  <li><a href="#additional-derived-operations" id="toc-additional-derived-operations" class="nav-link" data-scroll-target="#additional-derived-operations"><span class="header-section-number">6.5</span> Additional (Derived) Operations</a>
   <ul class="collapse">
   <li><a href="#intersection-cap" id="toc-intersection-cap" class="nav-link" data-scroll-target="#intersection-cap"><span class="header-section-number">6.5.1</span> 7. Intersection — <span class="math inline">\cap</span></a></li>
   <li><a href="#natural-join-bowtie" id="toc-natural-join-bowtie" class="nav-link" data-scroll-target="#natural-join-bowtie"><span class="header-section-number">6.5.2</span> 8. Natural Join — <span class="math inline">\bowtie</span></a></li>
@@ -460,20 +460,20 @@ window.Quarto = {
   <li><a href="#outer-joins" id="toc-outer-joins" class="nav-link" data-scroll-target="#outer-joins"><span class="header-section-number">6.5.4</span> 10. Outer Joins</a></li>
   <li><a href="#division-div-universal-quantification" id="toc-division-div-universal-quantification" class="nav-link" data-scroll-target="#division-div-universal-quantification"><span class="header-section-number">6.5.5</span> 11. Division — <span class="math inline">\div</span> (Universal Quantification)</a></li>
   </ul></li>
-  <li><a href="#composed-queries-company-database-examples" id="toc-composed-queries-company-database-examples" class="nav-link" data-scroll-target="#composed-queries-company-database-examples"><span class="header-section-number">6.6</span> 6.6 Composed Queries — Company Database Examples</a>
+  <li><a href="#composed-queries-company-database-examples" id="toc-composed-queries-company-database-examples" class="nav-link" data-scroll-target="#composed-queries-company-database-examples"><span class="header-section-number">6.6</span> Composed Queries — Company Database Examples</a>
   <ul class="collapse">
   <li><a href="#q1-names-of-employees-who-work-in-the-research-department" id="toc-q1-names-of-employees-who-work-in-the-research-department" class="nav-link" data-scroll-target="#q1-names-of-employees-who-work-in-the-research-department"><span class="header-section-number">6.6.1</span> Q1: Names of employees who work in the ‘Research’ department</a></li>
   <li><a href="#q2-names-and-hours-of-employees-working-more-than-30-hours-on-any-project" id="toc-q2-names-and-hours-of-employees-working-more-than-30-hours-on-any-project" class="nav-link" data-scroll-target="#q2-names-and-hours-of-employees-working-more-than-30-hours-on-any-project"><span class="header-section-number">6.6.2</span> Q2: Names and hours of employees working more than 30 hours on any project</a></li>
   <li><a href="#q3-employees-who-do-not-work-on-any-project" id="toc-q3-employees-who-do-not-work-on-any-project" class="nav-link" data-scroll-target="#q3-employees-who-do-not-work-on-any-project"><span class="header-section-number">6.6.3</span> Q3: Employees who do NOT work on any project</a></li>
   </ul></li>
-  <li><a href="#algebra-execution-plan-and-query-optimization" id="toc-algebra-execution-plan-and-query-optimization" class="nav-link" data-scroll-target="#algebra-execution-plan-and-query-optimization"><span class="header-section-number">6.7</span> 6.7 Algebra → Execution Plan and Query Optimization</a>
+  <li><a href="#algebra-execution-plan-and-query-optimization" id="toc-algebra-execution-plan-and-query-optimization" class="nav-link" data-scroll-target="#algebra-execution-plan-and-query-optimization"><span class="header-section-number">6.7</span> Algebra → Execution Plan and Query Optimization</a>
   <ul class="collapse">
   <li><a href="#expression-trees" id="toc-expression-trees" class="nav-link" data-scroll-target="#expression-trees"><span class="header-section-number">6.7.1</span> Expression Trees</a></li>
   <li><a href="#equivalence-rules" id="toc-equivalence-rules" class="nav-link" data-scroll-target="#equivalence-rules"><span class="header-section-number">6.7.2</span> Equivalence Rules</a></li>
   <li><a href="#cost-estimation" id="toc-cost-estimation" class="nav-link" data-scroll-target="#cost-estimation"><span class="header-section-number">6.7.3</span> Cost Estimation</a></li>
   <li><a href="#before-and-after-optimization-example" id="toc-before-and-after-optimization-example" class="nav-link" data-scroll-target="#before-and-after-optimization-example"><span class="header-section-number">6.7.4</span> Before-and-After Optimization Example</a></li>
   </ul></li>
-  <li><a href="#relational-algebra-vs.-sql-correspondence" id="toc-relational-algebra-vs.-sql-correspondence" class="nav-link" data-scroll-target="#relational-algebra-vs.-sql-correspondence"><span class="header-section-number">6.8</span> 6.8 Relational Algebra vs.&nbsp;SQL — Correspondence</a></li>
+  <li><a href="#relational-algebra-vs.-sql-correspondence" id="toc-relational-algebra-vs.-sql-correspondence" class="nav-link" data-scroll-target="#relational-algebra-vs.-sql-correspondence"><span class="header-section-number">6.8</span> Relational Algebra vs.&nbsp;SQL — Correspondence</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">6.9</span> Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">6.10</span> Review Questions</a>
   <ul class="collapse">
@@ -528,7 +528,7 @@ window.Quarto = {
 </div>
 <hr>
 <section id="company-database-schema-for-relax" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="company-database-schema-for-relax"><span class="header-section-number">6.1</span> 6.1 Company Database Schema for RELAX</h2>
+<h2 data-number="6.1" class="anchored" data-anchor-id="company-database-schema-for-relax"><span class="header-section-number">6.1</span> Company Database Schema for RELAX</h2>
 <p>The following schema loads the complete Enhanced Company Database — 30 employees, 8 departments, 12 projects — directly into RELAX.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
@@ -680,7 +680,7 @@ Dependent = {
 </section>
 </section>
 <section id="what-is-relational-algebra" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="what-is-relational-algebra"><span class="header-section-number">6.2</span> 6.2 What Is Relational Algebra?</h2>
+<h2 data-number="6.2" class="anchored" data-anchor-id="what-is-relational-algebra"><span class="header-section-number">6.2</span> What Is Relational Algebra?</h2>
 <p><strong>Relational algebra</strong> is a <strong>procedural formal query language</strong> for relations. Each <em>operation</em> takes one or two relations as input and returns a new relation as output.</p>
 <p><strong>Closure property</strong>: The result of every relational algebra operation is itself a relation. This means operations can be freely composed — the output of one becomes the input of the next.</p>
 <p><span class="math display">\text{Expression} = \text{Op}_k(\ldots\text{Op}_2(\text{Op}_1(R_1, R_2))\ldots)</span></p>
@@ -710,7 +710,7 @@ Dependent = {
 <hr>
 </section>
 <section id="result-schema-notation" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="result-schema-notation"><span class="header-section-number">6.3</span> 6.3 Result Schema Notation</h2>
+<h2 data-number="6.3" class="anchored" data-anchor-id="result-schema-notation"><span class="header-section-number">6.3</span> Result Schema Notation</h2>
 <p>For every operation in this chapter, we track the <strong>result schema</strong> — the column names and degree of the output relation. This is exactly what the DBMS query optimizer computes before execution.</p>
 <p><strong>Format used:</strong></p>
 <pre data-code-line-numbers=""><code>Result: RelationName(col1, col2, …)
@@ -719,7 +719,7 @@ Degree: k    Cardinality: m rows (estimated)</code></pre>
 <hr>
 </section>
 <section id="fundamental-operations" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="fundamental-operations"><span class="header-section-number">6.4</span> 6.4 Fundamental Operations</h2>
+<h2 data-number="6.4" class="anchored" data-anchor-id="fundamental-operations"><span class="header-section-number">6.4</span> Fundamental Operations</h2>
 <section id="select-sigma-filter-rows" class="level3" data-number="6.4.1">
 <h3 data-number="6.4.1" class="anchored" data-anchor-id="select-sigma-filter-rows"><span class="header-section-number">6.4.1</span> 1. Select — <span class="math inline">\sigma</span> (Filter Rows)</h3>
 <p><span class="math display">\sigma_{\text{condition}}(R)</span></p>
@@ -898,7 +898,7 @@ Important
 </section>
 </section>
 <section id="additional-derived-operations" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="additional-derived-operations"><span class="header-section-number">6.5</span> 6.5 Additional (Derived) Operations</h2>
+<h2 data-number="6.5" class="anchored" data-anchor-id="additional-derived-operations"><span class="header-section-number">6.5</span> Additional (Derived) Operations</h2>
 <section id="intersection-cap" class="level3" data-number="6.5.1">
 <h3 data-number="6.5.1" class="anchored" data-anchor-id="intersection-cap"><span class="header-section-number">6.5.1</span> 7. Intersection — <span class="math inline">\cap</span></h3>
 <p><span class="math display">R \cap S = R - (R - S)</span></p>
@@ -1039,7 +1039,7 @@ Cardinality: 20 rows</code></pre>
 </section>
 </section>
 <section id="composed-queries-company-database-examples" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="composed-queries-company-database-examples"><span class="header-section-number">6.6</span> 6.6 Composed Queries — Company Database Examples</h2>
+<h2 data-number="6.6" class="anchored" data-anchor-id="composed-queries-company-database-examples"><span class="header-section-number">6.6</span> Composed Queries — Company Database Examples</h2>
 <section id="q1-names-of-employees-who-work-in-the-research-department" class="level3" data-number="6.6.1">
 <h3 data-number="6.6.1" class="anchored" data-anchor-id="q1-names-of-employees-who-work-in-the-research-department"><span class="header-section-number">6.6.1</span> Q1: Names of employees who work in the ‘Research’ department</h3>
 <p><strong>Step 1:</strong> Find the department number for ‘Research’: <span class="math display">D \leftarrow \sigma_{\text{Dname}='\text{Research}'}(\text{Department})</span></p>
@@ -1102,7 +1102,7 @@ Cardinality: 20 rows</code></pre>
 </section>
 </section>
 <section id="algebra-execution-plan-and-query-optimization" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="algebra-execution-plan-and-query-optimization"><span class="header-section-number">6.7</span> 6.7 Algebra → Execution Plan and Query Optimization</h2>
+<h2 data-number="6.7" class="anchored" data-anchor-id="algebra-execution-plan-and-query-optimization"><span class="header-section-number">6.7</span> Algebra → Execution Plan and Query Optimization</h2>
 <p>When the DBMS receives a SQL query, the <strong>DML compiler</strong> translates it into a relational algebra expression tree. The <strong>query optimizer</strong> then applies <strong>equivalence rules</strong> to rewrite the tree into a cheaper form.</p>
 <section id="expression-trees" class="level3" data-number="6.7.1">
 <h3 data-number="6.7.1" class="anchored" data-anchor-id="expression-trees"><span class="header-section-number">6.7.1</span> Expression Trees</h3>
@@ -1191,7 +1191,7 @@ Cardinality: 20 rows</code></pre>
 </section>
 </section>
 <section id="relational-algebra-vs.-sql-correspondence" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="relational-algebra-vs.-sql-correspondence"><span class="header-section-number">6.8</span> 6.8 Relational Algebra vs.&nbsp;SQL — Correspondence</h2>
+<h2 data-number="6.8" class="anchored" data-anchor-id="relational-algebra-vs.-sql-correspondence"><span class="header-section-number">6.8</span> Relational Algebra vs.&nbsp;SQL — Correspondence</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 54%">
@@ -1836,7 +1836,7 @@ Cardinality: 20 rows</code></pre>
 <span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.1 Company Database Schema for RELAX</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Company Database Schema for RELAX</span></span>
 <span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>The following schema loads the complete Enhanced Company Database — 30 employees, 8 departments, 12 projects — directly into RELAX.</span>
 <span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a></span>
@@ -2015,7 +2015,7 @@ Cardinality: 20 rows</code></pre>
 <span id="cb31-198"><a href="#cb31-198" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-199"><a href="#cb31-199" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-200"><a href="#cb31-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-201"><a href="#cb31-201" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.2 What Is Relational Algebra?</span></span>
+<span id="cb31-201"><a href="#cb31-201" aria-hidden="true" tabindex="-1"></a><span class="fu">## What Is Relational Algebra?</span></span>
 <span id="cb31-202"><a href="#cb31-202" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-203"><a href="#cb31-203" aria-hidden="true" tabindex="-1"></a>**Relational algebra** is a **procedural formal query language** for relations. Each *operation* takes one or two relations as input and returns a new relation as output.</span>
 <span id="cb31-204"><a href="#cb31-204" aria-hidden="true" tabindex="-1"></a></span>
@@ -2032,7 +2032,7 @@ Cardinality: 20 rows</code></pre>
 <span id="cb31-215"><a href="#cb31-215" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-216"><a href="#cb31-216" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-217"><a href="#cb31-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-218"><a href="#cb31-218" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.3 Result Schema Notation</span></span>
+<span id="cb31-218"><a href="#cb31-218" aria-hidden="true" tabindex="-1"></a><span class="fu">## Result Schema Notation</span></span>
 <span id="cb31-219"><a href="#cb31-219" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-220"><a href="#cb31-220" aria-hidden="true" tabindex="-1"></a>For every operation in this chapter, we track the **result schema** — the column names and degree of the output relation. This is exactly what the DBMS query optimizer computes before execution.</span>
 <span id="cb31-221"><a href="#cb31-221" aria-hidden="true" tabindex="-1"></a></span>
@@ -2046,7 +2046,7 @@ Cardinality: 20 rows</code></pre>
 <span id="cb31-229"><a href="#cb31-229" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-230"><a href="#cb31-230" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-231"><a href="#cb31-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-232"><a href="#cb31-232" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.4 Fundamental Operations</span></span>
+<span id="cb31-232"><a href="#cb31-232" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fundamental Operations</span></span>
 <span id="cb31-233"><a href="#cb31-233" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-234"><a href="#cb31-234" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Select — $\sigma$ (Filter Rows)</span></span>
 <span id="cb31-235"><a href="#cb31-235" aria-hidden="true" tabindex="-1"></a></span>
@@ -2243,7 +2243,7 @@ Cardinality: 20 rows</code></pre>
 <span id="cb31-426"><a href="#cb31-426" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-427"><a href="#cb31-427" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-428"><a href="#cb31-428" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-429"><a href="#cb31-429" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.5 Additional (Derived) Operations</span></span>
+<span id="cb31-429"><a href="#cb31-429" aria-hidden="true" tabindex="-1"></a><span class="fu">## Additional (Derived) Operations</span></span>
 <span id="cb31-430"><a href="#cb31-430" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-431"><a href="#cb31-431" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7. Intersection — $\cap$</span></span>
 <span id="cb31-432"><a href="#cb31-432" aria-hidden="true" tabindex="-1"></a></span>
@@ -2373,7 +2373,7 @@ Cardinality: 20 rows</code></pre>
 <span id="cb31-556"><a href="#cb31-556" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-557"><a href="#cb31-557" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-558"><a href="#cb31-558" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-559"><a href="#cb31-559" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.6 Composed Queries — Company Database Examples</span></span>
+<span id="cb31-559"><a href="#cb31-559" aria-hidden="true" tabindex="-1"></a><span class="fu">## Composed Queries — Company Database Examples</span></span>
 <span id="cb31-560"><a href="#cb31-560" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-561"><a href="#cb31-561" aria-hidden="true" tabindex="-1"></a><span class="fu">### Q1: Names of employees who work in the 'Research' department</span></span>
 <span id="cb31-562"><a href="#cb31-562" aria-hidden="true" tabindex="-1"></a></span>
@@ -2450,7 +2450,7 @@ Cardinality: 20 rows</code></pre>
 <span id="cb31-633"><a href="#cb31-633" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-634"><a href="#cb31-634" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-635"><a href="#cb31-635" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-636"><a href="#cb31-636" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.7 Algebra → Execution Plan and Query Optimization</span></span>
+<span id="cb31-636"><a href="#cb31-636" aria-hidden="true" tabindex="-1"></a><span class="fu">## Algebra → Execution Plan and Query Optimization</span></span>
 <span id="cb31-637"><a href="#cb31-637" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-638"><a href="#cb31-638" aria-hidden="true" tabindex="-1"></a>When the DBMS receives a SQL query, the **DML compiler** translates it into a relational algebra expression tree. The **query optimizer** then applies **equivalence rules** to rewrite the tree into a cheaper form.</span>
 <span id="cb31-639"><a href="#cb31-639" aria-hidden="true" tabindex="-1"></a></span>
@@ -2522,7 +2522,7 @@ Cardinality: 20 rows</code></pre>
 <span id="cb31-707"><a href="#cb31-707" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-708"><a href="#cb31-708" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb31-709"><a href="#cb31-709" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-710"><a href="#cb31-710" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.8 Relational Algebra vs. SQL — Correspondence</span></span>
+<span id="cb31-710"><a href="#cb31-710" aria-hidden="true" tabindex="-1"></a><span class="fu">## Relational Algebra vs. SQL — Correspondence</span></span>
 <span id="cb31-711"><a href="#cb31-711" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-712"><a href="#cb31-712" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Relational Algebra <span class="pp">|</span> SQL Equivalent <span class="pp">|</span></span>
 <span id="cb31-713"><a href="#cb31-713" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------------|----------------|</span></span>

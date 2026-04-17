@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-03-relational-model/ch05-relational-model.html" rel="next">
 <link href="../part-02-data-modeling/ch03-er-modeling.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -437,29 +437,29 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#subclasses-superclasses-and-inheritance" id="toc-subclasses-superclasses-and-inheritance" class="nav-link active" data-scroll-target="#subclasses-superclasses-and-inheritance"><span class="header-section-number">4.1</span> 4.1 Subclasses, Superclasses, and Inheritance</a>
+  <li><a href="#subclasses-superclasses-and-inheritance" id="toc-subclasses-superclasses-and-inheritance" class="nav-link active" data-scroll-target="#subclasses-superclasses-and-inheritance"><span class="header-section-number">4.1</span> Subclasses, Superclasses, and Inheritance</a>
   <ul class="collapse">
   <li><a href="#type-inheritance" id="toc-type-inheritance" class="nav-link" data-scroll-target="#type-inheritance"><span class="header-section-number">4.1.1</span> Type Inheritance</a></li>
   </ul></li>
-  <li><a href="#specialization" id="toc-specialization" class="nav-link" data-scroll-target="#specialization"><span class="header-section-number">4.2</span> 4.2 Specialization</a>
+  <li><a href="#specialization" id="toc-specialization" class="nav-link" data-scroll-target="#specialization"><span class="header-section-number">4.2</span> Specialization</a>
   <ul class="collapse">
   <li><a href="#constraints-on-specialization" id="toc-constraints-on-specialization" class="nav-link" data-scroll-target="#constraints-on-specialization"><span class="header-section-number">4.2.1</span> Constraints on Specialization</a></li>
   <li><a href="#combining-the-two-constraints" id="toc-combining-the-two-constraints" class="nav-link" data-scroll-target="#combining-the-two-constraints"><span class="header-section-number">4.2.2</span> Combining the Two Constraints</a></li>
   </ul></li>
-  <li><a href="#generalization" id="toc-generalization" class="nav-link" data-scroll-target="#generalization"><span class="header-section-number">4.3</span> 4.3 Generalization</a></li>
-  <li><a href="#specialization-hierarchies-and-lattices" id="toc-specialization-hierarchies-and-lattices" class="nav-link" data-scroll-target="#specialization-hierarchies-and-lattices"><span class="header-section-number">4.4</span> 4.4 Specialization Hierarchies and Lattices</a></li>
-  <li><a href="#aggregation" id="toc-aggregation" class="nav-link" data-scroll-target="#aggregation"><span class="header-section-number">4.5</span> 4.5 Aggregation</a>
+  <li><a href="#generalization" id="toc-generalization" class="nav-link" data-scroll-target="#generalization"><span class="header-section-number">4.3</span> Generalization</a></li>
+  <li><a href="#specialization-hierarchies-and-lattices" id="toc-specialization-hierarchies-and-lattices" class="nav-link" data-scroll-target="#specialization-hierarchies-and-lattices"><span class="header-section-number">4.4</span> Specialization Hierarchies and Lattices</a></li>
+  <li><a href="#aggregation" id="toc-aggregation" class="nav-link" data-scroll-target="#aggregation"><span class="header-section-number">4.5</span> Aggregation</a>
   <ul class="collapse">
   <li><a href="#why-aggregation" id="toc-why-aggregation" class="nav-link" data-scroll-target="#why-aggregation"><span class="header-section-number">4.5.1</span> Why Aggregation?</a></li>
   </ul></li>
-  <li><a href="#category-union-types" id="toc-category-union-types" class="nav-link" data-scroll-target="#category-union-types"><span class="header-section-number">4.6</span> 4.6 Category (UNION) Types</a></li>
-  <li><a href="#eer-to-relational-mapping" id="toc-eer-to-relational-mapping" class="nav-link" data-scroll-target="#eer-to-relational-mapping"><span class="header-section-number">4.7</span> 4.7 EER-to-Relational Mapping</a>
+  <li><a href="#category-union-types" id="toc-category-union-types" class="nav-link" data-scroll-target="#category-union-types"><span class="header-section-number">4.6</span> Category (UNION) Types</a></li>
+  <li><a href="#eer-to-relational-mapping" id="toc-eer-to-relational-mapping" class="nav-link" data-scroll-target="#eer-to-relational-mapping"><span class="header-section-number">4.7</span> EER-to-Relational Mapping</a>
   <ul class="collapse">
   <li><a href="#mapping-specialization-four-options" id="toc-mapping-specialization-four-options" class="nav-link" data-scroll-target="#mapping-specialization-four-options"><span class="header-section-number">4.7.1</span> Mapping Specialization — Four Options</a></li>
   <li><a href="#mapping-aggregation" id="toc-mapping-aggregation" class="nav-link" data-scroll-target="#mapping-aggregation"><span class="header-section-number">4.7.2</span> Mapping Aggregation</a></li>
   <li><a href="#mapping-categories" id="toc-mapping-categories" class="nav-link" data-scroll-target="#mapping-categories"><span class="header-section-number">4.7.3</span> Mapping Categories</a></li>
   </ul></li>
-  <li><a href="#eer-vs.-object-oriented-mapping" id="toc-eer-vs.-object-oriented-mapping" class="nav-link" data-scroll-target="#eer-vs.-object-oriented-mapping"><span class="header-section-number">4.8</span> 4.8 EER vs.&nbsp;Object-Oriented Mapping</a></li>
+  <li><a href="#eer-vs.-object-oriented-mapping" id="toc-eer-vs.-object-oriented-mapping" class="nav-link" data-scroll-target="#eer-vs.-object-oriented-mapping"><span class="header-section-number">4.8</span> EER vs.&nbsp;Object-Oriented Mapping</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">4.9</span> Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">4.10</span> Review Questions</a>
   <ul class="collapse">
@@ -499,7 +499,7 @@ window.Quarto = {
 <p>The ER model of Chapter 3 handles most real-world data structures, but it lacks one critical capability: <strong>type hierarchies</strong>. When some employees are engineers, some are managers, and a few are engineer-managers, the basic ER model forces you to bundle everything into one bloated entity type or fragment the design artificially. The Enhanced ER (EER) model adds three mechanisms — <em>specialization/generalization</em>, <em>aggregation</em>, and <em>union types</em> — to handle these situations cleanly.</p>
 <hr>
 <section id="subclasses-superclasses-and-inheritance" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="subclasses-superclasses-and-inheritance"><span class="header-section-number">4.1</span> 4.1 Subclasses, Superclasses, and Inheritance</h2>
+<h2 data-number="4.1" class="anchored" data-anchor-id="subclasses-superclasses-and-inheritance"><span class="header-section-number">4.1</span> Subclasses, Superclasses, and Inheritance</h2>
 <p>An entity type <span class="math inline">S</span> is a <strong>subclass</strong> of entity type <span class="math inline">C</span> if: - Every entity instance of <span class="math inline">S</span> is <em>also</em> an instance of <span class="math inline">C</span> - <span class="math inline">S</span> has attributes or relationships that are not meaningful for all of <span class="math inline">C</span></p>
 <p><span class="math inline">C</span> is called the <strong>superclass</strong> of <span class="math inline">S</span>, and the pair forms a <strong>superclass/subclass (IS-A) relationship</strong>.</p>
 <div class="cell" data-eval="true" data-layout-align="center">
@@ -534,7 +534,7 @@ Note
 </section>
 </section>
 <section id="specialization" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="specialization"><span class="header-section-number">4.2</span> 4.2 Specialization</h2>
+<h2 data-number="4.2" class="anchored" data-anchor-id="specialization"><span class="header-section-number">4.2</span> Specialization</h2>
 <p><strong>Specialization</strong> is a <strong>top-down</strong> design process: starting with a superclass, the designer defines subclasses that represent better-defined subsets of the superclass.</p>
 <p><em>Rationale:</em> Some entities in <code>EMPLOYEE</code> have attributes irrelevant to others — not every employee has a <code>TypingSpeed</code>, but every secretary does. Specializing <code>EMPLOYEE</code> into <code>SECRETARY</code> keeps the schema clean.</p>
 <section id="constraints-on-specialization" class="level3" data-number="4.2.1">
@@ -645,7 +645,7 @@ Note
 </section>
 </section>
 <section id="generalization" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="generalization"><span class="header-section-number">4.3</span> 4.3 Generalization</h2>
+<h2 data-number="4.3" class="anchored" data-anchor-id="generalization"><span class="header-section-number">4.3</span> Generalization</h2>
 <p><strong>Generalization</strong> is the <strong>bottom-up</strong> process: the designer observes that several entity types share common attributes and abstracts those into a new superclass.</p>
 <p><em>Example:</em> Designing independently, you create <code>CAR</code>, <code>TRUCK</code>, and <code>MOTORCYCLE</code> all with <code>LicensePlate</code>, <code>Make</code>, <code>Model</code>, <code>Year</code>. Noticing the overlap, you generalize them into <code>VEHICLE</code>, extracting the shared attributes:</p>
 <div class="cell" data-eval="true" data-layout-align="center">
@@ -676,7 +676,7 @@ Tip
 <hr>
 </section>
 <section id="specialization-hierarchies-and-lattices" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="specialization-hierarchies-and-lattices"><span class="header-section-number">4.4</span> 4.4 Specialization Hierarchies and Lattices</h2>
+<h2 data-number="4.4" class="anchored" data-anchor-id="specialization-hierarchies-and-lattices"><span class="header-section-number">4.4</span> Specialization Hierarchies and Lattices</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 31%">
@@ -731,7 +731,7 @@ Important
 <hr>
 </section>
 <section id="aggregation" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="aggregation"><span class="header-section-number">4.5</span> 4.5 Aggregation</h2>
+<h2 data-number="4.5" class="anchored" data-anchor-id="aggregation"><span class="header-section-number">4.5</span> Aggregation</h2>
 <p><strong>Aggregation</strong> promotes an existing <em>relationship type</em> to a higher-level entity, allowing that relationship to participate in another relationship.</p>
 <section id="why-aggregation" class="level3" data-number="4.5.1">
 <h3 data-number="4.5.1" class="anchored" data-anchor-id="why-aggregation"><span class="header-section-number">4.5.1</span> Why Aggregation?</h3>
@@ -766,7 +766,7 @@ Note
 </section>
 </section>
 <section id="category-union-types" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="category-union-types"><span class="header-section-number">4.6</span> 4.6 Category (UNION) Types</h2>
+<h2 data-number="4.6" class="anchored" data-anchor-id="category-union-types"><span class="header-section-number">4.6</span> Category (UNION) Types</h2>
 <p>A <strong>category</strong> (or <em>Union type</em>) is a subclass that can come from <strong>different, unrelated superclass types</strong>. The key difference from a lattice node:</p>
 <table class="caption-top table">
 <colgroup>
@@ -827,7 +827,7 @@ Tip
 <hr>
 </section>
 <section id="eer-to-relational-mapping" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="eer-to-relational-mapping"><span class="header-section-number">4.7</span> 4.7 EER-to-Relational Mapping</h2>
+<h2 data-number="4.7" class="anchored" data-anchor-id="eer-to-relational-mapping"><span class="header-section-number">4.7</span> EER-to-Relational Mapping</h2>
 <section id="mapping-specialization-four-options" class="level3" data-number="4.7.1">
 <h3 data-number="4.7.1" class="anchored" data-anchor-id="mapping-specialization-four-options"><span class="header-section-number">4.7.1</span> Mapping Specialization — Four Options</h3>
 <p>Given a superclass <span class="math inline">C</span> with subclasses <span class="math inline">S_1, S_2, \ldots, S_k</span>:</p>
@@ -911,7 +911,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 </section>
 </section>
 <section id="eer-vs.-object-oriented-mapping" class="level2" data-number="4.8">
-<h2 data-number="4.8" class="anchored" data-anchor-id="eer-vs.-object-oriented-mapping"><span class="header-section-number">4.8</span> 4.8 EER vs.&nbsp;Object-Oriented Mapping</h2>
+<h2 data-number="4.8" class="anchored" data-anchor-id="eer-vs.-object-oriented-mapping"><span class="header-section-number">4.8</span> EER vs.&nbsp;Object-Oriented Mapping</h2>
 <p>The EER specialization/generalization hierarchy closely resembles inheritance in object-oriented languages. The correspondences are:</p>
 <table class="caption-top table">
 <colgroup>
@@ -1542,7 +1542,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.1 Subclasses, Superclasses, and Inheritance</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Subclasses, Superclasses, and Inheritance</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>An entity type $S$ is a **subclass** of entity type $C$ if:</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Every entity instance of $S$ is *also* an instance of $C$</span>
@@ -1576,7 +1576,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.2 Specialization</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Specialization</span></span>
 <span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>**Specialization** is a **top-down** design process: starting with a superclass, the designer defines subclasses that represent better-defined subsets of the superclass.</span>
 <span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
@@ -1619,7 +1619,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.3 Generalization</span></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## Generalization</span></span>
 <span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>**Generalization** is the **bottom-up** process: the designer observes that several entity types share common attributes and abstracts those into a new superclass.</span>
 <span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
@@ -1643,7 +1643,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.4 Specialization Hierarchies and Lattices</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## Specialization Hierarchies and Lattices</span></span>
 <span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Structure <span class="pp">|</span> Description <span class="pp">|</span> Constraint <span class="pp">|</span></span>
 <span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|-------------|-----------|</span></span>
@@ -1670,7 +1670,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.5 Aggregation</span></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## Aggregation</span></span>
 <span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>**Aggregation** promotes an existing *relationship type* to a higher-level entity, allowing that relationship to participate in another relationship.</span>
 <span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a></span>
@@ -1698,7 +1698,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.6 Category (UNION) Types</span></span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Category (UNION) Types</span></span>
 <span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a>A **category** (or *Union type*) is a subclass that can come from **different, unrelated superclass types**. The key difference from a lattice node:</span>
 <span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a></span>
@@ -1730,7 +1730,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.7 EER-to-Relational Mapping</span></span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="fu">## EER-to-Relational Mapping</span></span>
 <span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Specialization — Four Options</span></span>
 <span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a></span>
@@ -1784,7 +1784,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4.8 EER vs. Object-Oriented Mapping</span></span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## EER vs. Object-Oriented Mapping</span></span>
 <span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>The EER specialization/generalization hierarchy closely resembles inheritance in object-oriented languages. The correspondences are:</span>
 <span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a></span>

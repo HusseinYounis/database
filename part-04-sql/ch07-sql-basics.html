@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-04-sql/ch08-advanced-sql.html" rel="next">
 <link href="../part-03-relational-model/ch06-relational-algebra.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -439,56 +439,56 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#from-algebra-to-executable-queries" id="toc-from-algebra-to-executable-queries" class="nav-link active" data-scroll-target="#from-algebra-to-executable-queries"><span class="header-section-number">7.1</span> §7.0 From Algebra to Executable Queries</a></li>
-  <li><a href="#sql-overview" id="toc-sql-overview" class="nav-link" data-scroll-target="#sql-overview"><span class="header-section-number">7.2</span> 7.1 SQL Overview</a>
+  <li><a href="#from-algebra-to-executable-queries" id="toc-from-algebra-to-executable-queries" class="nav-link active" data-scroll-target="#from-algebra-to-executable-queries"><span class="header-section-number">7.1</span> From Algebra to Executable Queries</a></li>
+  <li><a href="#sql-overview" id="toc-sql-overview" class="nav-link" data-scroll-target="#sql-overview"><span class="header-section-number">7.2</span> SQL Overview</a>
   <ul class="collapse">
   <li><a href="#sql-sub-languages" id="toc-sql-sub-languages" class="nav-link" data-scroll-target="#sql-sub-languages"><span class="header-section-number">7.2.1</span> SQL Sub-languages</a></li>
   </ul></li>
-  <li><a href="#data-types" id="toc-data-types" class="nav-link" data-scroll-target="#data-types"><span class="header-section-number">7.3</span> 7.2 Data Types</a></li>
-  <li><a href="#ddl-data-definition-language" id="toc-ddl-data-definition-language" class="nav-link" data-scroll-target="#ddl-data-definition-language"><span class="header-section-number">7.4</span> 7.3 DDL — Data Definition Language</a>
+  <li><a href="#data-types" id="toc-data-types" class="nav-link" data-scroll-target="#data-types"><span class="header-section-number">7.3</span> Data Types</a></li>
+  <li><a href="#ddl-data-definition-language" id="toc-ddl-data-definition-language" class="nav-link" data-scroll-target="#ddl-data-definition-language"><span class="header-section-number">7.4</span> DDL — Data Definition Language</a>
   <ul class="collapse">
-  <li><a href="#create-table" id="toc-create-table" class="nav-link" data-scroll-target="#create-table"><span class="header-section-number">7.4.1</span> 7.3.1 CREATE TABLE</a></li>
-  <li><a href="#constraint-summary" id="toc-constraint-summary" class="nav-link" data-scroll-target="#constraint-summary"><span class="header-section-number">7.4.2</span> 7.3.2 Constraint Summary</a></li>
-  <li><a href="#auto-increment-identity-columns" id="toc-auto-increment-identity-columns" class="nav-link" data-scroll-target="#auto-increment-identity-columns"><span class="header-section-number">7.4.3</span> 7.3.3 Auto-Increment / Identity Columns</a></li>
-  <li><a href="#alter-table" id="toc-alter-table" class="nav-link" data-scroll-target="#alter-table"><span class="header-section-number">7.4.4</span> 7.3.4 ALTER TABLE</a></li>
-  <li><a href="#drop-and-truncate" id="toc-drop-and-truncate" class="nav-link" data-scroll-target="#drop-and-truncate"><span class="header-section-number">7.4.5</span> 7.3.5 DROP and TRUNCATE</a></li>
+  <li><a href="#create-table" id="toc-create-table" class="nav-link" data-scroll-target="#create-table"><span class="header-section-number">7.4.1</span> CREATE TABLE</a></li>
+  <li><a href="#constraint-summary" id="toc-constraint-summary" class="nav-link" data-scroll-target="#constraint-summary"><span class="header-section-number">7.4.2</span> Constraint Summary</a></li>
+  <li><a href="#auto-increment-identity-columns" id="toc-auto-increment-identity-columns" class="nav-link" data-scroll-target="#auto-increment-identity-columns"><span class="header-section-number">7.4.3</span> Auto-Increment / Identity Columns</a></li>
+  <li><a href="#alter-table" id="toc-alter-table" class="nav-link" data-scroll-target="#alter-table"><span class="header-section-number">7.4.4</span> ALTER TABLE</a></li>
+  <li><a href="#drop-and-truncate" id="toc-drop-and-truncate" class="nav-link" data-scroll-target="#drop-and-truncate"><span class="header-section-number">7.4.5</span> DROP and TRUNCATE</a></li>
   </ul></li>
-  <li><a href="#dml-manipulating-data" id="toc-dml-manipulating-data" class="nav-link" data-scroll-target="#dml-manipulating-data"><span class="header-section-number">7.5</span> 7.4 DML — Manipulating Data</a>
+  <li><a href="#dml-manipulating-data" id="toc-dml-manipulating-data" class="nav-link" data-scroll-target="#dml-manipulating-data"><span class="header-section-number">7.5</span> DML — Manipulating Data</a>
   <ul class="collapse">
-  <li><a href="#insert" id="toc-insert" class="nav-link" data-scroll-target="#insert"><span class="header-section-number">7.5.1</span> 7.4.1 INSERT</a></li>
-  <li><a href="#update" id="toc-update" class="nav-link" data-scroll-target="#update"><span class="header-section-number">7.5.2</span> 7.4.2 UPDATE</a></li>
-  <li><a href="#delete" id="toc-delete" class="nav-link" data-scroll-target="#delete"><span class="header-section-number">7.5.3</span> 7.4.3 DELETE</a></li>
+  <li><a href="#insert" id="toc-insert" class="nav-link" data-scroll-target="#insert"><span class="header-section-number">7.5.1</span> INSERT</a></li>
+  <li><a href="#update" id="toc-update" class="nav-link" data-scroll-target="#update"><span class="header-section-number">7.5.2</span> UPDATE</a></li>
+  <li><a href="#delete" id="toc-delete" class="nav-link" data-scroll-target="#delete"><span class="header-section-number">7.5.3</span> DELETE</a></li>
   </ul></li>
-  <li><a href="#select-querying-data" id="toc-select-querying-data" class="nav-link" data-scroll-target="#select-querying-data"><span class="header-section-number">7.6</span> 7.5 SELECT — Querying Data</a>
+  <li><a href="#select-querying-data" id="toc-select-querying-data" class="nav-link" data-scroll-target="#select-querying-data"><span class="header-section-number">7.6</span> SELECT — Querying Data</a>
   <ul class="collapse">
-  <li><a href="#logical-evaluation-order" id="toc-logical-evaluation-order" class="nav-link" data-scroll-target="#logical-evaluation-order"><span class="header-section-number">7.6.1</span> 7.5.1 Logical Evaluation Order</a></li>
-  <li><a href="#basic-select" id="toc-basic-select" class="nav-link" data-scroll-target="#basic-select"><span class="header-section-number">7.6.2</span> 7.5.2 Basic SELECT</a></li>
-  <li><a href="#where-filtering-rows" id="toc-where-filtering-rows" class="nav-link" data-scroll-target="#where-filtering-rows"><span class="header-section-number">7.6.3</span> 7.5.3 WHERE — Filtering Rows</a></li>
-  <li><a href="#order-by" id="toc-order-by" class="nav-link" data-scroll-target="#order-by"><span class="header-section-number">7.6.4</span> 7.5.4 ORDER BY</a></li>
-  <li><a href="#limiting-rows-pagination" id="toc-limiting-rows-pagination" class="nav-link" data-scroll-target="#limiting-rows-pagination"><span class="header-section-number">7.6.5</span> 7.5.5 Limiting Rows / Pagination</a></li>
+  <li><a href="#logical-evaluation-order" id="toc-logical-evaluation-order" class="nav-link" data-scroll-target="#logical-evaluation-order"><span class="header-section-number">7.6.1</span> Logical Evaluation Order</a></li>
+  <li><a href="#basic-select" id="toc-basic-select" class="nav-link" data-scroll-target="#basic-select"><span class="header-section-number">7.6.2</span> Basic SELECT</a></li>
+  <li><a href="#where-filtering-rows" id="toc-where-filtering-rows" class="nav-link" data-scroll-target="#where-filtering-rows"><span class="header-section-number">7.6.3</span> WHERE — Filtering Rows</a></li>
+  <li><a href="#order-by" id="toc-order-by" class="nav-link" data-scroll-target="#order-by"><span class="header-section-number">7.6.4</span> ORDER BY</a></li>
+  <li><a href="#limiting-rows-pagination" id="toc-limiting-rows-pagination" class="nav-link" data-scroll-target="#limiting-rows-pagination"><span class="header-section-number">7.6.5</span> Limiting Rows / Pagination</a></li>
   </ul></li>
-  <li><a href="#aggregate-functions" id="toc-aggregate-functions" class="nav-link" data-scroll-target="#aggregate-functions"><span class="header-section-number">7.7</span> 7.6 Aggregate Functions</a>
+  <li><a href="#aggregate-functions" id="toc-aggregate-functions" class="nav-link" data-scroll-target="#aggregate-functions"><span class="header-section-number">7.7</span> Aggregate Functions</a>
   <ul class="collapse">
-  <li><a href="#group-by-and-having" id="toc-group-by-and-having" class="nav-link" data-scroll-target="#group-by-and-having"><span class="header-section-number">7.7.1</span> 7.6.1 GROUP BY and HAVING</a></li>
+  <li><a href="#group-by-and-having" id="toc-group-by-and-having" class="nav-link" data-scroll-target="#group-by-and-having"><span class="header-section-number">7.7.1</span> GROUP BY and HAVING</a></li>
   </ul></li>
-  <li><a href="#joins" id="toc-joins" class="nav-link" data-scroll-target="#joins"><span class="header-section-number">7.8</span> 7.7 Joins</a>
+  <li><a href="#joins" id="toc-joins" class="nav-link" data-scroll-target="#joins"><span class="header-section-number">7.8</span> Joins</a>
   <ul class="collapse">
-  <li><a href="#cross-join-cartesian-product" id="toc-cross-join-cartesian-product" class="nav-link" data-scroll-target="#cross-join-cartesian-product"><span class="header-section-number">7.8.1</span> 7.7.1 CROSS JOIN (Cartesian Product)</a></li>
-  <li><a href="#inner-join" id="toc-inner-join" class="nav-link" data-scroll-target="#inner-join"><span class="header-section-number">7.8.2</span> 7.7.2 INNER JOIN</a></li>
-  <li><a href="#outer-joins" id="toc-outer-joins" class="nav-link" data-scroll-target="#outer-joins"><span class="header-section-number">7.8.3</span> 7.7.3 OUTER JOINs</a></li>
-  <li><a href="#self-join" id="toc-self-join" class="nav-link" data-scroll-target="#self-join"><span class="header-section-number">7.8.4</span> 7.7.4 SELF JOIN</a></li>
-  <li><a href="#join-type-visual-summary" id="toc-join-type-visual-summary" class="nav-link" data-scroll-target="#join-type-visual-summary"><span class="header-section-number">7.8.5</span> 7.7.5 Join Type Visual Summary</a></li>
+  <li><a href="#cross-join-cartesian-product" id="toc-cross-join-cartesian-product" class="nav-link" data-scroll-target="#cross-join-cartesian-product"><span class="header-section-number">7.8.1</span> CROSS JOIN (Cartesian Product)</a></li>
+  <li><a href="#inner-join" id="toc-inner-join" class="nav-link" data-scroll-target="#inner-join"><span class="header-section-number">7.8.2</span> INNER JOIN</a></li>
+  <li><a href="#outer-joins" id="toc-outer-joins" class="nav-link" data-scroll-target="#outer-joins"><span class="header-section-number">7.8.3</span> OUTER JOINs</a></li>
+  <li><a href="#self-join" id="toc-self-join" class="nav-link" data-scroll-target="#self-join"><span class="header-section-number">7.8.4</span> SELF JOIN</a></li>
+  <li><a href="#join-type-visual-summary" id="toc-join-type-visual-summary" class="nav-link" data-scroll-target="#join-type-visual-summary"><span class="header-section-number">7.8.5</span> Join Type Visual Summary</a></li>
   </ul></li>
-  <li><a href="#subqueries" id="toc-subqueries" class="nav-link" data-scroll-target="#subqueries"><span class="header-section-number">7.9</span> 7.8 Subqueries</a>
+  <li><a href="#subqueries" id="toc-subqueries" class="nav-link" data-scroll-target="#subqueries"><span class="header-section-number">7.9</span> Subqueries</a>
   <ul class="collapse">
-  <li><a href="#scalar-subquery" id="toc-scalar-subquery" class="nav-link" data-scroll-target="#scalar-subquery"><span class="header-section-number">7.9.1</span> 7.8.1 Scalar Subquery</a></li>
-  <li><a href="#row-table-subquery-in-where" id="toc-row-table-subquery-in-where" class="nav-link" data-scroll-target="#row-table-subquery-in-where"><span class="header-section-number">7.9.2</span> 7.8.2 Row / Table Subquery in WHERE</a></li>
-  <li><a href="#correlated-subquery" id="toc-correlated-subquery" class="nav-link" data-scroll-target="#correlated-subquery"><span class="header-section-number">7.9.3</span> 7.8.3 Correlated Subquery</a></li>
-  <li><a href="#exists-and-not-exists" id="toc-exists-and-not-exists" class="nav-link" data-scroll-target="#exists-and-not-exists"><span class="header-section-number">7.9.4</span> 7.8.4 EXISTS and NOT EXISTS</a></li>
-  <li><a href="#set-operators-union-intersect-except" id="toc-set-operators-union-intersect-except" class="nav-link" data-scroll-target="#set-operators-union-intersect-except"><span class="header-section-number">7.9.5</span> 7.8.5 Set Operators: UNION, INTERSECT, EXCEPT</a></li>
+  <li><a href="#scalar-subquery" id="toc-scalar-subquery" class="nav-link" data-scroll-target="#scalar-subquery"><span class="header-section-number">7.9.1</span> Scalar Subquery</a></li>
+  <li><a href="#row-table-subquery-in-where" id="toc-row-table-subquery-in-where" class="nav-link" data-scroll-target="#row-table-subquery-in-where"><span class="header-section-number">7.9.2</span> Row / Table Subquery in WHERE</a></li>
+  <li><a href="#correlated-subquery" id="toc-correlated-subquery" class="nav-link" data-scroll-target="#correlated-subquery"><span class="header-section-number">7.9.3</span> Correlated Subquery</a></li>
+  <li><a href="#exists-and-not-exists" id="toc-exists-and-not-exists" class="nav-link" data-scroll-target="#exists-and-not-exists"><span class="header-section-number">7.9.4</span> EXISTS and NOT EXISTS</a></li>
+  <li><a href="#set-operators-union-intersect-except" id="toc-set-operators-union-intersect-except" class="nav-link" data-scroll-target="#set-operators-union-intersect-except"><span class="header-section-number">7.9.5</span> Set Operators: UNION, INTERSECT, EXCEPT</a></li>
   </ul></li>
-  <li><a href="#interactive-join-type-explorer" id="toc-interactive-join-type-explorer" class="nav-link" data-scroll-target="#interactive-join-type-explorer"><span class="header-section-number">7.10</span> 7.9 Interactive: Join Type Explorer</a></li>
-  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">7.11</span> 7.10 Chapter Summary</a></li>
+  <li><a href="#interactive-join-type-explorer" id="toc-interactive-join-type-explorer" class="nav-link" data-scroll-target="#interactive-join-type-explorer"><span class="header-section-number">7.10</span> Interactive: Join Type Explorer</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">7.11</span> Chapter Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">7.12</span> Review Questions</a>
   <ul class="collapse">
   <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">7.12.1</span> Conceptual</a></li>
@@ -525,7 +525,7 @@ window.Quarto = {
 
 
 <section id="from-algebra-to-executable-queries" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="from-algebra-to-executable-queries"><span class="header-section-number">7.1</span> §7.0 From Algebra to Executable Queries</h2>
+<h2 data-number="7.1" class="anchored" data-anchor-id="from-algebra-to-executable-queries"><span class="header-section-number">7.1</span> From Algebra to Executable Queries</h2>
 <p>In Chapter 6 you wrote relational algebra expressions — precise mathematical statements like <span class="math inline">\pi_{\text{Fname,Lname}}(\sigma_{\text{Salary}&gt;60000}(\text{Employee}))</span>. Relational algebra is <em>procedural</em>: it specifies an exact sequence of operators.</p>
 <p><strong>SQL is the executable, declarative counterpart.</strong> You tell the database <em>what</em> you want; the query optimizer translates your SQL into an algebra expression tree (Chapter 11), picks the cheapest execution plan, and returns the result.</p>
 <table class="caption-top table">
@@ -587,7 +587,7 @@ window.Quarto = {
 </div>
 </section>
 <section id="sql-overview" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="sql-overview"><span class="header-section-number">7.2</span> 7.1 SQL Overview</h2>
+<h2 data-number="7.2" class="anchored" data-anchor-id="sql-overview"><span class="header-section-number">7.2</span> SQL Overview</h2>
 <p><strong>SQL</strong> (Structured Query Language) was originally developed at IBM (SEQUEL, 1974) and standardized by ANSI/ISO. It is:</p>
 <ul>
 <li><strong>Declarative</strong>: You specify <em>what</em> you want, not <em>how</em> to get it</li>
@@ -647,7 +647,7 @@ window.Quarto = {
 </section>
 </section>
 <section id="data-types" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="data-types"><span class="header-section-number">7.3</span> 7.2 Data Types</h2>
+<h2 data-number="7.3" class="anchored" data-anchor-id="data-types"><span class="header-section-number">7.3</span> Data Types</h2>
 <p>Choosing the right type affects storage, performance, and data integrity. The table below compares the three target dialects.</p>
 <table class="caption-top table">
 <colgroup>
@@ -760,10 +760,10 @@ window.Quarto = {
 </div>
 </section>
 <section id="ddl-data-definition-language" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="ddl-data-definition-language"><span class="header-section-number">7.4</span> 7.3 DDL — Data Definition Language</h2>
+<h2 data-number="7.4" class="anchored" data-anchor-id="ddl-data-definition-language"><span class="header-section-number">7.4</span> DDL — Data Definition Language</h2>
 <p>DDL commands define or modify the <em>structure</em> of the database (schema objects). They implicitly commit any open transaction.</p>
 <section id="create-table" class="level3" data-number="7.4.1">
-<h3 data-number="7.4.1" class="anchored" data-anchor-id="create-table"><span class="header-section-number">7.4.1</span> 7.3.1 CREATE TABLE</h3>
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="create-table"><span class="header-section-number">7.4.1</span> CREATE TABLE</h3>
 <p>The Company DB will be our running example. Below is the <code>Employee</code> table written in all three dialects, illustrating the most important syntactic differences.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Oracle</a></li></ul>
@@ -848,7 +848,7 @@ window.Quarto = {
 </div>
 </section>
 <section id="constraint-summary" class="level3" data-number="7.4.2">
-<h3 data-number="7.4.2" class="anchored" data-anchor-id="constraint-summary"><span class="header-section-number">7.4.2</span> 7.3.2 Constraint Summary</h3>
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="constraint-summary"><span class="header-section-number">7.4.2</span> Constraint Summary</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 21%">
@@ -947,7 +947,7 @@ window.Quarto = {
 </div>
 </section>
 <section id="auto-increment-identity-columns" class="level3" data-number="7.4.3">
-<h3 data-number="7.4.3" class="anchored" data-anchor-id="auto-increment-identity-columns"><span class="header-section-number">7.4.3</span> 7.3.3 Auto-Increment / Identity Columns</h3>
+<h3 data-number="7.4.3" class="anchored" data-anchor-id="auto-increment-identity-columns"><span class="header-section-number">7.4.3</span> Auto-Increment / Identity Columns</h3>
 <p>Auto-generated surrogate keys are handled differently across dialects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Oracle</a></li></ul>
@@ -1004,7 +1004,7 @@ window.Quarto = {
 </div>
 </section>
 <section id="alter-table" class="level3" data-number="7.4.4">
-<h3 data-number="7.4.4" class="anchored" data-anchor-id="alter-table"><span class="header-section-number">7.4.4</span> 7.3.4 ALTER TABLE</h3>
+<h3 data-number="7.4.4" class="anchored" data-anchor-id="alter-table"><span class="header-section-number">7.4.4</span> ALTER TABLE</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Add a column</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> Employee <span class="kw">ADD</span> <span class="kw">COLUMN</span> Email <span class="dt">VARCHAR</span>(<span class="dv">100</span>);         <span class="co">-- MySQL/PG</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> Employee <span class="kw">ADD</span> Email <span class="dt">VARCHAR2</span>(<span class="dv">100</span>);               <span class="co">-- Oracle</span></span>
@@ -1024,7 +1024,7 @@ window.Quarto = {
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> Employee <span class="kw">CHANGE</span> Fname FirstName <span class="dt">VARCHAR</span>(<span class="dv">15</span>);    <span class="co">-- MySQL</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="drop-and-truncate" class="level3" data-number="7.4.5">
-<h3 data-number="7.4.5" class="anchored" data-anchor-id="drop-and-truncate"><span class="header-section-number">7.4.5</span> 7.3.5 DROP and TRUNCATE</h3>
+<h3 data-number="7.4.5" class="anchored" data-anchor-id="drop-and-truncate"><span class="header-section-number">7.4.5</span> DROP and TRUNCATE</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -1103,9 +1103,9 @@ window.Quarto = {
 </section>
 </section>
 <section id="dml-manipulating-data" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="dml-manipulating-data"><span class="header-section-number">7.5</span> 7.4 DML — Manipulating Data</h2>
+<h2 data-number="7.5" class="anchored" data-anchor-id="dml-manipulating-data"><span class="header-section-number">7.5</span> DML — Manipulating Data</h2>
 <section id="insert" class="level3" data-number="7.5.1">
-<h3 data-number="7.5.1" class="anchored" data-anchor-id="insert"><span class="header-section-number">7.5.1</span> 7.4.1 INSERT</h3>
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="insert"><span class="header-section-number">7.5.1</span> INSERT</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Single row</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> Department (Dnumber, Dname, Mgr_ssn)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">VALUES</span> (<span class="dv">5</span>, <span class="st">'Research'</span>, <span class="st">'333445555'</span>);</span>
@@ -1127,7 +1127,7 @@ window.Quarto = {
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="dv">1</span> <span class="kw">FROM</span> DUAL;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="update" class="level3" data-number="7.5.2">
-<h3 data-number="7.5.2" class="anchored" data-anchor-id="update"><span class="header-section-number">7.5.2</span> 7.4.2 UPDATE</h3>
+<h3 data-number="7.5.2" class="anchored" data-anchor-id="update"><span class="header-section-number">7.5.2</span> UPDATE</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 10 % raise for all Research department employees</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> Employee</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span>    Salary <span class="op">=</span> Salary <span class="op">*</span> <span class="fl">1.10</span></span>
@@ -1140,7 +1140,7 @@ window.Quarto = {
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span>  Ssn <span class="op">=</span> <span class="st">'123456789'</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="delete" class="level3" data-number="7.5.3">
-<h3 data-number="7.5.3" class="anchored" data-anchor-id="delete"><span class="header-section-number">7.5.3</span> 7.4.3 DELETE</h3>
+<h3 data-number="7.5.3" class="anchored" data-anchor-id="delete"><span class="header-section-number">7.5.3</span> DELETE</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Remove a specific employee</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span> <span class="kw">FROM</span> Employee</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span>  Ssn <span class="op">=</span> <span class="st">'123456789'</span>;</span>
@@ -1152,9 +1152,9 @@ window.Quarto = {
 </section>
 </section>
 <section id="select-querying-data" class="level2" data-number="7.6">
-<h2 data-number="7.6" class="anchored" data-anchor-id="select-querying-data"><span class="header-section-number">7.6</span> 7.5 SELECT — Querying Data</h2>
+<h2 data-number="7.6" class="anchored" data-anchor-id="select-querying-data"><span class="header-section-number">7.6</span> SELECT — Querying Data</h2>
 <section id="logical-evaluation-order" class="level3" data-number="7.6.1">
-<h3 data-number="7.6.1" class="anchored" data-anchor-id="logical-evaluation-order"><span class="header-section-number">7.6.1</span> 7.5.1 Logical Evaluation Order</h3>
+<h3 data-number="7.6.1" class="anchored" data-anchor-id="logical-evaluation-order"><span class="header-section-number">7.6.1</span> Logical Evaluation Order</h3>
 <p>SQL is <em>written</em> in SELECT–FROM–WHERE order but <em>evaluated</em> in a different order:</p>
 <pre data-code-line-numbers=""><code>① FROM / JOIN   — identify source rows (and join)
 ② WHERE         — filter rows before grouping
@@ -1185,7 +1185,7 @@ window.Quarto = {
 </div>
 </section>
 <section id="basic-select" class="level3" data-number="7.6.2">
-<h3 data-number="7.6.2" class="anchored" data-anchor-id="basic-select"><span class="header-section-number">7.6.2</span> 7.5.2 Basic SELECT</h3>
+<h3 data-number="7.6.2" class="anchored" data-anchor-id="basic-select"><span class="header-section-number">7.6.2</span> Basic SELECT</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- All columns</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> Employee;</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1205,7 +1205,7 @@ window.Quarto = {
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="dv">1</span> <span class="op">+</span> <span class="dv">1</span> <span class="kw">FROM</span> DUAL;             <span class="co">-- Oracle requires FROM DUAL for scalar queries</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="where-filtering-rows" class="level3" data-number="7.6.3">
-<h3 data-number="7.6.3" class="anchored" data-anchor-id="where-filtering-rows"><span class="header-section-number">7.6.3</span> 7.5.3 WHERE — Filtering Rows</h3>
+<h3 data-number="7.6.3" class="anchored" data-anchor-id="where-filtering-rows"><span class="header-section-number">7.6.3</span> WHERE — Filtering Rows</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 36%">
@@ -1266,14 +1266,14 @@ window.Quarto = {
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname <span class="kw">FROM</span> Employee <span class="kw">WHERE</span> Super_ssn <span class="kw">IS</span> <span class="kw">NULL</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="order-by" class="level3" data-number="7.6.4">
-<h3 data-number="7.6.4" class="anchored" data-anchor-id="order-by"><span class="header-section-number">7.6.4</span> 7.5.4 ORDER BY</h3>
+<h3 data-number="7.6.4" class="anchored" data-anchor-id="order-by"><span class="header-section-number">7.6.4</span> ORDER BY</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Sort by salary descending, then last name ascending (tie-breaker)</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname, Salary</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span>   Employee</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> Salary <span class="kw">DESC</span>, Lname <span class="kw">ASC</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="limiting-rows-pagination" class="level3" data-number="7.6.5">
-<h3 data-number="7.6.5" class="anchored" data-anchor-id="limiting-rows-pagination"><span class="header-section-number">7.6.5</span> 7.5.5 Limiting Rows / Pagination</h3>
+<h3 data-number="7.6.5" class="anchored" data-anchor-id="limiting-rows-pagination"><span class="header-section-number">7.6.5</span> Limiting Rows / Pagination</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -1337,7 +1337,7 @@ window.Quarto = {
 </section>
 </section>
 <section id="aggregate-functions" class="level2" data-number="7.7">
-<h2 data-number="7.7" class="anchored" data-anchor-id="aggregate-functions"><span class="header-section-number">7.7</span> 7.6 Aggregate Functions</h2>
+<h2 data-number="7.7" class="anchored" data-anchor-id="aggregate-functions"><span class="header-section-number">7.7</span> Aggregate Functions</h2>
 <p>Aggregate functions collapse a set of rows into a single value.</p>
 <table class="caption-top table">
 <thead>
@@ -1399,7 +1399,7 @@ Tip
 </div>
 </div>
 <section id="group-by-and-having" class="level3" data-number="7.7.1">
-<h3 data-number="7.7.1" class="anchored" data-anchor-id="group-by-and-having"><span class="header-section-number">7.7.1</span> 7.6.1 GROUP BY and HAVING</h3>
+<h3 data-number="7.7.1" class="anchored" data-anchor-id="group-by-and-having"><span class="header-section-number">7.7.1</span> GROUP BY and HAVING</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Number of employees and average salary per department</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span>   Dno,</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">COUNT</span>(<span class="op">*</span>)         <span class="kw">AS</span> Headcount,</span>
@@ -1498,17 +1498,17 @@ Tip
 </section>
 </section>
 <section id="joins" class="level2" data-number="7.8">
-<h2 data-number="7.8" class="anchored" data-anchor-id="joins"><span class="header-section-number">7.8</span> 7.7 Joins</h2>
+<h2 data-number="7.8" class="anchored" data-anchor-id="joins"><span class="header-section-number">7.8</span> Joins</h2>
 <p>A join combines rows from two or more tables based on a related column. All examples use the Company DB.</p>
 <section id="cross-join-cartesian-product" class="level3" data-number="7.8.1">
-<h3 data-number="7.8.1" class="anchored" data-anchor-id="cross-join-cartesian-product"><span class="header-section-number">7.8.1</span> 7.7.1 CROSS JOIN (Cartesian Product)</h3>
+<h3 data-number="7.8.1" class="anchored" data-anchor-id="cross-join-cartesian-product"><span class="header-section-number">7.8.1</span> CROSS JOIN (Cartesian Product)</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> E.Fname, D.Dname</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span>   Employee E <span class="kw">CROSS</span> <span class="kw">JOIN</span> Department D;</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Produces |Employee| × |Department| rows — every employee ↔ every dept</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- Useful only for generating test data or combinatorial problems</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="inner-join" class="level3" data-number="7.8.2">
-<h3 data-number="7.8.2" class="anchored" data-anchor-id="inner-join"><span class="header-section-number">7.8.2</span> 7.7.2 INNER JOIN</h3>
+<h3 data-number="7.8.2" class="anchored" data-anchor-id="inner-join"><span class="header-section-number">7.8.2</span> INNER JOIN</h3>
 <p>Returns only rows where the join condition is satisfied in <strong>both</strong> tables.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Algebra: Employee ⋈_{Dno=Dnumber} Department</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1531,7 +1531,7 @@ Tip
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> E.Lname, P.Pname;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="outer-joins" class="level3" data-number="7.8.3">
-<h3 data-number="7.8.3" class="anchored" data-anchor-id="outer-joins"><span class="header-section-number">7.8.3</span> 7.7.3 OUTER JOINs</h3>
+<h3 data-number="7.8.3" class="anchored" data-anchor-id="outer-joins"><span class="header-section-number">7.8.3</span> OUTER JOINs</h3>
 <p>An outer join preserves rows from one (or both) sides that have <strong>no match</strong>.</p>
 <pre data-code-line-numbers=""><code>LEFT OUTER JOIN         — keep all rows from LEFT table
 RIGHT OUTER JOIN        — keep all rows from RIGHT table
@@ -1574,7 +1574,7 @@ FULL OUTER JOIN         — keep unmatched rows from BOTH tables</code></pre>
 </div>
 </section>
 <section id="self-join" class="level3" data-number="7.8.4">
-<h3 data-number="7.8.4" class="anchored" data-anchor-id="self-join"><span class="header-section-number">7.8.4</span> 7.7.4 SELF JOIN</h3>
+<h3 data-number="7.8.4" class="anchored" data-anchor-id="self-join"><span class="header-section-number">7.8.4</span> SELF JOIN</h3>
 <p>A table joined to itself using different aliases — useful for hierarchical data.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Find each employee and their direct supervisor</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> E.Fname  <span class="op">||</span> <span class="st">' '</span> <span class="op">||</span> E.Lname  <span class="kw">AS</span> Employee,</span>
@@ -1624,7 +1624,7 @@ Tip
 </div>
 </section>
 <section id="join-type-visual-summary" class="level3" data-number="7.8.5">
-<h3 data-number="7.8.5" class="anchored" data-anchor-id="join-type-visual-summary"><span class="header-section-number">7.8.5</span> 7.7.5 Join Type Visual Summary</h3>
+<h3 data-number="7.8.5" class="anchored" data-anchor-id="join-type-visual-summary"><span class="header-section-number">7.8.5</span> Join Type Visual Summary</h3>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
 <div>
@@ -1641,10 +1641,10 @@ Tip
 </section>
 </section>
 <section id="subqueries" class="level2" data-number="7.9">
-<h2 data-number="7.9" class="anchored" data-anchor-id="subqueries"><span class="header-section-number">7.9</span> 7.8 Subqueries</h2>
+<h2 data-number="7.9" class="anchored" data-anchor-id="subqueries"><span class="header-section-number">7.9</span> Subqueries</h2>
 <p>A <strong>subquery</strong> (nested query) is a <code>SELECT</code> statement inside another SQL statement.</p>
 <section id="scalar-subquery" class="level3" data-number="7.9.1">
-<h3 data-number="7.9.1" class="anchored" data-anchor-id="scalar-subquery"><span class="header-section-number">7.9.1</span> 7.8.1 Scalar Subquery</h3>
+<h3 data-number="7.9.1" class="anchored" data-anchor-id="scalar-subquery"><span class="header-section-number">7.9.1</span> Scalar Subquery</h3>
 <p>Returns exactly one row and one column; can be used wherever a single value is expected.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Employees earning more than the company average salary</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname, Salary</span>
@@ -1652,7 +1652,7 @@ Tip
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span>  Salary <span class="op">&gt;</span> (<span class="kw">SELECT</span> <span class="fu">AVG</span>(Salary) <span class="kw">FROM</span> Employee);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="row-table-subquery-in-where" class="level3" data-number="7.9.2">
-<h3 data-number="7.9.2" class="anchored" data-anchor-id="row-table-subquery-in-where"><span class="header-section-number">7.9.2</span> 7.8.2 Row / Table Subquery in WHERE</h3>
+<h3 data-number="7.9.2" class="anchored" data-anchor-id="row-table-subquery-in-where"><span class="header-section-number">7.9.2</span> Row / Table Subquery in WHERE</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Employees who work in the same department as 'John Smith'</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span>   Employee</span>
@@ -1666,7 +1666,7 @@ Tip
 <span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="kw">WHERE</span>  Dlocation <span class="op">=</span> <span class="st">'Houston'</span>));</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="correlated-subquery" class="level3" data-number="7.9.3">
-<h3 data-number="7.9.3" class="anchored" data-anchor-id="correlated-subquery"><span class="header-section-number">7.9.3</span> 7.8.3 Correlated Subquery</h3>
+<h3 data-number="7.9.3" class="anchored" data-anchor-id="correlated-subquery"><span class="header-section-number">7.9.3</span> Correlated Subquery</h3>
 <p>A subquery that references a column from the outer query — re-evaluated once per outer row.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- For each employee, show their salary relative to their own department's average</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> E.Fname, E.Lname, E.Salary,</span>
@@ -1693,7 +1693,7 @@ Note
 </div>
 </section>
 <section id="exists-and-not-exists" class="level3" data-number="7.9.4">
-<h3 data-number="7.9.4" class="anchored" data-anchor-id="exists-and-not-exists"><span class="header-section-number">7.9.4</span> 7.8.4 EXISTS and NOT EXISTS</h3>
+<h3 data-number="7.9.4" class="anchored" data-anchor-id="exists-and-not-exists"><span class="header-section-number">7.9.4</span> EXISTS and NOT EXISTS</h3>
 <p><code>EXISTS(subquery)</code> is <code>TRUE</code> if the subquery returns <strong>at least one row</strong>. It is typically faster than <code>IN</code> when the subquery result set is large, because it short-circuits at the first match.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Employees who are supervising at least one other employee</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> S.Fname, S.Lname</span>
@@ -1712,7 +1712,7 @@ Note
 <span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>               <span class="kw">WHERE</span>  W.Pno <span class="op">=</span> P.Pnumber <span class="kw">AND</span> W.Hours <span class="op">&gt;</span> <span class="dv">20</span>);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="set-operators-union-intersect-except" class="level3" data-number="7.9.5">
-<h3 data-number="7.9.5" class="anchored" data-anchor-id="set-operators-union-intersect-except"><span class="header-section-number">7.9.5</span> 7.8.5 Set Operators: UNION, INTERSECT, EXCEPT</h3>
+<h3 data-number="7.9.5" class="anchored" data-anchor-id="set-operators-union-intersect-except"><span class="header-section-number">7.9.5</span> Set Operators: UNION, INTERSECT, EXCEPT</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -1780,7 +1780,7 @@ Note
 </section>
 </section>
 <section id="interactive-join-type-explorer" class="level2" data-number="7.10">
-<h2 data-number="7.10" class="anchored" data-anchor-id="interactive-join-type-explorer"><span class="header-section-number">7.10</span> 7.9 Interactive: Join Type Explorer</h2>
+<h2 data-number="7.10" class="anchored" data-anchor-id="interactive-join-type-explorer"><span class="header-section-number">7.10</span> Interactive: Join Type Explorer</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb41" data-startfrom="943" data-source-offset="-12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 942;"><span id="cb41-943"><a href="#cb41-943" aria-hidden="true" tabindex="-1"></a>viewof leftSize  <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">8</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Left table rows"</span>})</span>
 <span id="cb41-944"><a href="#cb41-944" aria-hidden="true" tabindex="-1"></a>viewof rightSize <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">6</span><span class="op">,</span>  <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Right table rows"</span>})</span>
@@ -1900,7 +1900,7 @@ Figure&nbsp;7.1: Explore how different JOIN types affect the result set size.
 <hr>
 </section>
 <section id="chapter-summary" class="level2" data-number="7.11">
-<h2 data-number="7.11" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">7.11</span> 7.10 Chapter Summary</h2>
+<h2 data-number="7.11" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">7.11</span> Chapter Summary</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2476,7 +2476,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 7"</span></span>
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## §7.0 From Algebra to Executable Queries</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## From Algebra to Executable Queries</span></span>
 <span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>In Chapter 6 you wrote relational algebra expressions — precise mathematical statements like</span>
 <span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>$\pi_{\text{Fname,Lname}}(\sigma_{\text{Salary}&gt;60000}(\text{Employee}))$.</span>
@@ -2511,7 +2511,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-38"><a href="#cb44-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-39"><a href="#cb44-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-40"><a href="#cb44-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-41"><a href="#cb44-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.1 SQL Overview</span></span>
+<span id="cb44-41"><a href="#cb44-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## SQL Overview</span></span>
 <span id="cb44-42"><a href="#cb44-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-43"><a href="#cb44-43" aria-hidden="true" tabindex="-1"></a>**SQL** (Structured Query Language) was originally developed at IBM (SEQUEL, 1974) and standardized by ANSI/ISO. It is:</span>
 <span id="cb44-44"><a href="#cb44-44" aria-hidden="true" tabindex="-1"></a></span>
@@ -2529,7 +2529,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-56"><a href="#cb44-56" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Data Control <span class="pp">|</span> DCL <span class="pp">|</span> <span class="in">`GRANT`</span>, <span class="in">`REVOKE`</span> <span class="pp">|</span> Permissions <span class="pp">|</span></span>
 <span id="cb44-57"><a href="#cb44-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Transaction Control <span class="pp">|</span> TCL <span class="pp">|</span> <span class="in">`COMMIT`</span>, <span class="in">`ROLLBACK`</span>, <span class="in">`SAVEPOINT`</span> <span class="pp">|</span> Atomicity <span class="pp">|</span></span>
 <span id="cb44-58"><a href="#cb44-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-59"><a href="#cb44-59" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.2 Data Types</span></span>
+<span id="cb44-59"><a href="#cb44-59" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data Types</span></span>
 <span id="cb44-60"><a href="#cb44-60" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-61"><a href="#cb44-61" aria-hidden="true" tabindex="-1"></a>Choosing the right type affects storage, performance, and data integrity. The table below compares the three target dialects.</span>
 <span id="cb44-62"><a href="#cb44-62" aria-hidden="true" tabindex="-1"></a></span>
@@ -2556,12 +2556,12 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-83"><a href="#cb44-83" aria-hidden="true" tabindex="-1"></a>PostgreSQL's <span class="in">`TEXT`</span> is unlimited and identical in performance to <span class="in">`VARCHAR(n)`</span> without a length limit.</span>
 <span id="cb44-84"><a href="#cb44-84" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-85"><a href="#cb44-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-86"><a href="#cb44-86" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.3 DDL — Data Definition Language</span></span>
+<span id="cb44-86"><a href="#cb44-86" aria-hidden="true" tabindex="-1"></a><span class="fu">## DDL — Data Definition Language</span></span>
 <span id="cb44-87"><a href="#cb44-87" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-88"><a href="#cb44-88" aria-hidden="true" tabindex="-1"></a>DDL commands define or modify the *structure* of the database (schema objects).</span>
 <span id="cb44-89"><a href="#cb44-89" aria-hidden="true" tabindex="-1"></a>They implicitly commit any open transaction.</span>
 <span id="cb44-90"><a href="#cb44-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-91"><a href="#cb44-91" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.1 CREATE TABLE</span></span>
+<span id="cb44-91"><a href="#cb44-91" aria-hidden="true" tabindex="-1"></a><span class="fu">### CREATE TABLE</span></span>
 <span id="cb44-92"><a href="#cb44-92" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-93"><a href="#cb44-93" aria-hidden="true" tabindex="-1"></a>The Company DB will be our running example. Below is the <span class="in">`Employee`</span> table written in all three dialects, illustrating the most important syntactic differences.</span>
 <span id="cb44-94"><a href="#cb44-94" aria-hidden="true" tabindex="-1"></a></span>
@@ -2654,7 +2654,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-181"><a href="#cb44-181" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-182"><a href="#cb44-182" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-183"><a href="#cb44-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-184"><a href="#cb44-184" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.2 Constraint Summary</span></span>
+<span id="cb44-184"><a href="#cb44-184" aria-hidden="true" tabindex="-1"></a><span class="fu">### Constraint Summary</span></span>
 <span id="cb44-185"><a href="#cb44-185" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-186"><a href="#cb44-186" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constraint <span class="pp">|</span> Column-level example <span class="pp">|</span> Table-level example <span class="pp">|</span></span>
 <span id="cb44-187"><a href="#cb44-187" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|---------------------|-------------------|</span></span>
@@ -2680,7 +2680,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-207"><a href="#cb44-207" aria-hidden="true" tabindex="-1"></a>Oracle only supports <span class="in">`ON DELETE CASCADE`</span> and <span class="in">`ON DELETE SET NULL`</span> — no <span class="in">`ON UPDATE`</span> referential actions.</span>
 <span id="cb44-208"><a href="#cb44-208" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-209"><a href="#cb44-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-210"><a href="#cb44-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.3 Auto-Increment / Identity Columns</span></span>
+<span id="cb44-210"><a href="#cb44-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### Auto-Increment / Identity Columns</span></span>
 <span id="cb44-211"><a href="#cb44-211" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-212"><a href="#cb44-212" aria-hidden="true" tabindex="-1"></a>Auto-generated surrogate keys are handled differently across dialects.</span>
 <span id="cb44-213"><a href="#cb44-213" aria-hidden="true" tabindex="-1"></a></span>
@@ -2745,7 +2745,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-272"><a href="#cb44-272" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-273"><a href="#cb44-273" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-274"><a href="#cb44-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-275"><a href="#cb44-275" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.4 ALTER TABLE</span></span>
+<span id="cb44-275"><a href="#cb44-275" aria-hidden="true" tabindex="-1"></a><span class="fu">### ALTER TABLE</span></span>
 <span id="cb44-276"><a href="#cb44-276" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-277"><a href="#cb44-277" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-278"><a href="#cb44-278" aria-hidden="true" tabindex="-1"></a><span class="co">-- Add a column</span></span>
@@ -2767,7 +2767,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-294"><a href="#cb44-294" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> Employee <span class="kw">CHANGE</span> Fname FirstName <span class="dt">VARCHAR</span>(<span class="dv">15</span>);    <span class="co">-- MySQL</span></span>
 <span id="cb44-295"><a href="#cb44-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-296"><a href="#cb44-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-297"><a href="#cb44-297" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.3.5 DROP and TRUNCATE</span></span>
+<span id="cb44-297"><a href="#cb44-297" aria-hidden="true" tabindex="-1"></a><span class="fu">### DROP and TRUNCATE</span></span>
 <span id="cb44-298"><a href="#cb44-298" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-299"><a href="#cb44-299" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb44-300"><a href="#cb44-300" aria-hidden="true" tabindex="-1"></a></span>
@@ -2821,9 +2821,9 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-348"><a href="#cb44-348" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-349"><a href="#cb44-349" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb44-350"><a href="#cb44-350" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-351"><a href="#cb44-351" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.4 DML — Manipulating Data</span></span>
+<span id="cb44-351"><a href="#cb44-351" aria-hidden="true" tabindex="-1"></a><span class="fu">## DML — Manipulating Data</span></span>
 <span id="cb44-352"><a href="#cb44-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-353"><a href="#cb44-353" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.4.1 INSERT</span></span>
+<span id="cb44-353"><a href="#cb44-353" aria-hidden="true" tabindex="-1"></a><span class="fu">### INSERT</span></span>
 <span id="cb44-354"><a href="#cb44-354" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-355"><a href="#cb44-355" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-356"><a href="#cb44-356" aria-hidden="true" tabindex="-1"></a><span class="co">-- Single row</span></span>
@@ -2847,7 +2847,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-374"><a href="#cb44-374" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="dv">1</span> <span class="kw">FROM</span> DUAL;</span>
 <span id="cb44-375"><a href="#cb44-375" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-376"><a href="#cb44-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-377"><a href="#cb44-377" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.4.2 UPDATE</span></span>
+<span id="cb44-377"><a href="#cb44-377" aria-hidden="true" tabindex="-1"></a><span class="fu">### UPDATE</span></span>
 <span id="cb44-378"><a href="#cb44-378" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-379"><a href="#cb44-379" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-380"><a href="#cb44-380" aria-hidden="true" tabindex="-1"></a><span class="co">-- 10 % raise for all Research department employees</span></span>
@@ -2862,7 +2862,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-389"><a href="#cb44-389" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span>  Ssn <span class="op">=</span> <span class="st">'123456789'</span>;</span>
 <span id="cb44-390"><a href="#cb44-390" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-391"><a href="#cb44-391" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-392"><a href="#cb44-392" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.4.3 DELETE</span></span>
+<span id="cb44-392"><a href="#cb44-392" aria-hidden="true" tabindex="-1"></a><span class="fu">### DELETE</span></span>
 <span id="cb44-393"><a href="#cb44-393" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-394"><a href="#cb44-394" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-395"><a href="#cb44-395" aria-hidden="true" tabindex="-1"></a><span class="co">-- Remove a specific employee</span></span>
@@ -2876,9 +2876,9 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-403"><a href="#cb44-403" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-404"><a href="#cb44-404" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb44-405"><a href="#cb44-405" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-406"><a href="#cb44-406" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.5 SELECT — Querying Data</span></span>
+<span id="cb44-406"><a href="#cb44-406" aria-hidden="true" tabindex="-1"></a><span class="fu">## SELECT — Querying Data</span></span>
 <span id="cb44-407"><a href="#cb44-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-408"><a href="#cb44-408" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.5.1 Logical Evaluation Order</span></span>
+<span id="cb44-408"><a href="#cb44-408" aria-hidden="true" tabindex="-1"></a><span class="fu">### Logical Evaluation Order</span></span>
 <span id="cb44-409"><a href="#cb44-409" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-410"><a href="#cb44-410" aria-hidden="true" tabindex="-1"></a>SQL is *written* in SELECT–FROM–WHERE order but *evaluated* in a different order:</span>
 <span id="cb44-411"><a href="#cb44-411" aria-hidden="true" tabindex="-1"></a></span>
@@ -2909,7 +2909,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-436"><a href="#cb44-436" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-437"><a href="#cb44-437" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-438"><a href="#cb44-438" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-439"><a href="#cb44-439" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.5.2 Basic SELECT</span></span>
+<span id="cb44-439"><a href="#cb44-439" aria-hidden="true" tabindex="-1"></a><span class="fu">### Basic SELECT</span></span>
 <span id="cb44-440"><a href="#cb44-440" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-441"><a href="#cb44-441" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-442"><a href="#cb44-442" aria-hidden="true" tabindex="-1"></a><span class="co">-- All columns</span></span>
@@ -2931,7 +2931,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-458"><a href="#cb44-458" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="dv">1</span> <span class="op">+</span> <span class="dv">1</span> <span class="kw">FROM</span> DUAL;             <span class="co">-- Oracle requires FROM DUAL for scalar queries</span></span>
 <span id="cb44-459"><a href="#cb44-459" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-460"><a href="#cb44-460" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-461"><a href="#cb44-461" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.5.3 WHERE — Filtering Rows</span></span>
+<span id="cb44-461"><a href="#cb44-461" aria-hidden="true" tabindex="-1"></a><span class="fu">### WHERE — Filtering Rows</span></span>
 <span id="cb44-462"><a href="#cb44-462" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-463"><a href="#cb44-463" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Operator <span class="pp">|</span> Example <span class="pp">|</span> Notes <span class="pp">|</span></span>
 <span id="cb44-464"><a href="#cb44-464" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|---------|-------|</span></span>
@@ -2957,7 +2957,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-484"><a href="#cb44-484" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname <span class="kw">FROM</span> Employee <span class="kw">WHERE</span> Super_ssn <span class="kw">IS</span> <span class="kw">NULL</span>;</span>
 <span id="cb44-485"><a href="#cb44-485" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-486"><a href="#cb44-486" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-487"><a href="#cb44-487" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.5.4 ORDER BY</span></span>
+<span id="cb44-487"><a href="#cb44-487" aria-hidden="true" tabindex="-1"></a><span class="fu">### ORDER BY</span></span>
 <span id="cb44-488"><a href="#cb44-488" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-489"><a href="#cb44-489" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-490"><a href="#cb44-490" aria-hidden="true" tabindex="-1"></a><span class="co">-- Sort by salary descending, then last name ascending (tie-breaker)</span></span>
@@ -2966,7 +2966,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-493"><a href="#cb44-493" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> Salary <span class="kw">DESC</span>, Lname <span class="kw">ASC</span>;</span>
 <span id="cb44-494"><a href="#cb44-494" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-495"><a href="#cb44-495" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-496"><a href="#cb44-496" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.5.5 Limiting Rows / Pagination</span></span>
+<span id="cb44-496"><a href="#cb44-496" aria-hidden="true" tabindex="-1"></a><span class="fu">### Limiting Rows / Pagination</span></span>
 <span id="cb44-497"><a href="#cb44-497" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-498"><a href="#cb44-498" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb44-499"><a href="#cb44-499" aria-hidden="true" tabindex="-1"></a></span>
@@ -3037,7 +3037,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-564"><a href="#cb44-564" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-565"><a href="#cb44-565" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb44-566"><a href="#cb44-566" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-567"><a href="#cb44-567" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.6 Aggregate Functions</span></span>
+<span id="cb44-567"><a href="#cb44-567" aria-hidden="true" tabindex="-1"></a><span class="fu">## Aggregate Functions</span></span>
 <span id="cb44-568"><a href="#cb44-568" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-569"><a href="#cb44-569" aria-hidden="true" tabindex="-1"></a>Aggregate functions collapse a set of rows into a single value.</span>
 <span id="cb44-570"><a href="#cb44-570" aria-hidden="true" tabindex="-1"></a></span>
@@ -3056,7 +3056,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-583"><a href="#cb44-583" aria-hidden="true" tabindex="-1"></a>If some employees have a NULL salary, <span class="in">`AVG`</span> quietly excludes them — use <span class="in">`COUNT(*) vs COUNT(Salary)`</span> to detect this.</span>
 <span id="cb44-584"><a href="#cb44-584" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-585"><a href="#cb44-585" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-586"><a href="#cb44-586" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.6.1 GROUP BY and HAVING</span></span>
+<span id="cb44-586"><a href="#cb44-586" aria-hidden="true" tabindex="-1"></a><span class="fu">### GROUP BY and HAVING</span></span>
 <span id="cb44-587"><a href="#cb44-587" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-588"><a href="#cb44-588" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-589"><a href="#cb44-589" aria-hidden="true" tabindex="-1"></a><span class="co">-- Number of employees and average salary per department</span></span>
@@ -3108,12 +3108,12 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-635"><a href="#cb44-635" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-636"><a href="#cb44-636" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb44-637"><a href="#cb44-637" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-638"><a href="#cb44-638" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.7 Joins</span></span>
+<span id="cb44-638"><a href="#cb44-638" aria-hidden="true" tabindex="-1"></a><span class="fu">## Joins</span></span>
 <span id="cb44-639"><a href="#cb44-639" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-640"><a href="#cb44-640" aria-hidden="true" tabindex="-1"></a>A join combines rows from two or more tables based on a related column.</span>
 <span id="cb44-641"><a href="#cb44-641" aria-hidden="true" tabindex="-1"></a>All examples use the Company DB.</span>
 <span id="cb44-642"><a href="#cb44-642" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-643"><a href="#cb44-643" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.7.1 CROSS JOIN (Cartesian Product)</span></span>
+<span id="cb44-643"><a href="#cb44-643" aria-hidden="true" tabindex="-1"></a><span class="fu">### CROSS JOIN (Cartesian Product)</span></span>
 <span id="cb44-644"><a href="#cb44-644" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-645"><a href="#cb44-645" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-646"><a href="#cb44-646" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> E<span class="ch">.</span>Fname, D<span class="ch">.</span>Dname</span>
@@ -3122,7 +3122,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-649"><a href="#cb44-649" aria-hidden="true" tabindex="-1"></a><span class="co">-- Useful only for generating test data or combinatorial problems</span></span>
 <span id="cb44-650"><a href="#cb44-650" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-651"><a href="#cb44-651" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-652"><a href="#cb44-652" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.7.2 INNER JOIN</span></span>
+<span id="cb44-652"><a href="#cb44-652" aria-hidden="true" tabindex="-1"></a><span class="fu">### INNER JOIN</span></span>
 <span id="cb44-653"><a href="#cb44-653" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-654"><a href="#cb44-654" aria-hidden="true" tabindex="-1"></a>Returns only rows where the join condition is satisfied in **both** tables.</span>
 <span id="cb44-655"><a href="#cb44-655" aria-hidden="true" tabindex="-1"></a></span>
@@ -3152,7 +3152,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-679"><a href="#cb44-679" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> E<span class="ch">.</span>Lname, P<span class="ch">.</span>Pname;</span>
 <span id="cb44-680"><a href="#cb44-680" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-681"><a href="#cb44-681" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-682"><a href="#cb44-682" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.7.3 OUTER JOINs</span></span>
+<span id="cb44-682"><a href="#cb44-682" aria-hidden="true" tabindex="-1"></a><span class="fu">### OUTER JOINs</span></span>
 <span id="cb44-683"><a href="#cb44-683" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-684"><a href="#cb44-684" aria-hidden="true" tabindex="-1"></a>An outer join preserves rows from one (or both) sides that have **no match**.</span>
 <span id="cb44-685"><a href="#cb44-685" aria-hidden="true" tabindex="-1"></a></span>
@@ -3210,7 +3210,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-737"><a href="#cb44-737" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-738"><a href="#cb44-738" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-739"><a href="#cb44-739" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-740"><a href="#cb44-740" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.7.4 SELF JOIN</span></span>
+<span id="cb44-740"><a href="#cb44-740" aria-hidden="true" tabindex="-1"></a><span class="fu">### SELF JOIN</span></span>
 <span id="cb44-741"><a href="#cb44-741" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-742"><a href="#cb44-742" aria-hidden="true" tabindex="-1"></a>A table joined to itself using different aliases — useful for hierarchical data.</span>
 <span id="cb44-743"><a href="#cb44-743" aria-hidden="true" tabindex="-1"></a></span>
@@ -3235,7 +3235,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-762"><a href="#cb44-762" aria-hidden="true" tabindex="-1"></a>MySQL also supports <span class="in">`||`</span> when <span class="in">`PIPES_AS_CONCAT`</span> SQL mode is enabled.</span>
 <span id="cb44-763"><a href="#cb44-763" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-764"><a href="#cb44-764" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-765"><a href="#cb44-765" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.7.5 Join Type Visual Summary</span></span>
+<span id="cb44-765"><a href="#cb44-765" aria-hidden="true" tabindex="-1"></a><span class="fu">### Join Type Visual Summary</span></span>
 <span id="cb44-766"><a href="#cb44-766" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-769"><a href="#cb44-769" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
 <span id="cb44-770"><a href="#cb44-770" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
@@ -3263,11 +3263,11 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-792"><a href="#cb44-792" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-793"><a href="#cb44-793" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb44-794"><a href="#cb44-794" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-795"><a href="#cb44-795" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.8 Subqueries</span></span>
+<span id="cb44-795"><a href="#cb44-795" aria-hidden="true" tabindex="-1"></a><span class="fu">## Subqueries</span></span>
 <span id="cb44-796"><a href="#cb44-796" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-797"><a href="#cb44-797" aria-hidden="true" tabindex="-1"></a>A **subquery** (nested query) is a <span class="in">`SELECT`</span> statement inside another SQL statement.</span>
 <span id="cb44-798"><a href="#cb44-798" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-799"><a href="#cb44-799" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.8.1 Scalar Subquery</span></span>
+<span id="cb44-799"><a href="#cb44-799" aria-hidden="true" tabindex="-1"></a><span class="fu">### Scalar Subquery</span></span>
 <span id="cb44-800"><a href="#cb44-800" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-801"><a href="#cb44-801" aria-hidden="true" tabindex="-1"></a>Returns exactly one row and one column; can be used wherever a single value is expected.</span>
 <span id="cb44-802"><a href="#cb44-802" aria-hidden="true" tabindex="-1"></a></span>
@@ -3278,7 +3278,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-807"><a href="#cb44-807" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span>  Salary <span class="op">&gt;</span> (<span class="kw">SELECT</span> <span class="fu">AVG</span>(Salary) <span class="kw">FROM</span> Employee);</span>
 <span id="cb44-808"><a href="#cb44-808" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-809"><a href="#cb44-809" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-810"><a href="#cb44-810" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.8.2 Row / Table Subquery in WHERE</span></span>
+<span id="cb44-810"><a href="#cb44-810" aria-hidden="true" tabindex="-1"></a><span class="fu">### Row / Table Subquery in WHERE</span></span>
 <span id="cb44-811"><a href="#cb44-811" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-812"><a href="#cb44-812" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb44-813"><a href="#cb44-813" aria-hidden="true" tabindex="-1"></a><span class="co">-- Employees who work in the same department as 'John Smith'</span></span>
@@ -3294,7 +3294,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-823"><a href="#cb44-823" aria-hidden="true" tabindex="-1"></a>                                  <span class="kw">WHERE</span>  Dlocation <span class="op">=</span> <span class="st">'Houston'</span>));</span>
 <span id="cb44-824"><a href="#cb44-824" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-825"><a href="#cb44-825" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-826"><a href="#cb44-826" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.8.3 Correlated Subquery</span></span>
+<span id="cb44-826"><a href="#cb44-826" aria-hidden="true" tabindex="-1"></a><span class="fu">### Correlated Subquery</span></span>
 <span id="cb44-827"><a href="#cb44-827" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-828"><a href="#cb44-828" aria-hidden="true" tabindex="-1"></a>A subquery that references a column from the outer query — re-evaluated once per outer row.</span>
 <span id="cb44-829"><a href="#cb44-829" aria-hidden="true" tabindex="-1"></a></span>
@@ -3316,7 +3316,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-845"><a href="#cb44-845" aria-hidden="true" tabindex="-1"></a>Chapter 8 introduces **Common Table Expressions (CTEs)** and **window functions** — more efficient alternatives for the pattern above.</span>
 <span id="cb44-846"><a href="#cb44-846" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb44-847"><a href="#cb44-847" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-848"><a href="#cb44-848" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.8.4 EXISTS and NOT EXISTS</span></span>
+<span id="cb44-848"><a href="#cb44-848" aria-hidden="true" tabindex="-1"></a><span class="fu">### EXISTS and NOT EXISTS</span></span>
 <span id="cb44-849"><a href="#cb44-849" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-850"><a href="#cb44-850" aria-hidden="true" tabindex="-1"></a><span class="in">`EXISTS(subquery)`</span> is <span class="in">`TRUE`</span> if the subquery returns **at least one row**.</span>
 <span id="cb44-851"><a href="#cb44-851" aria-hidden="true" tabindex="-1"></a>It is typically faster than <span class="in">`IN`</span> when the subquery result set is large, because it short-circuits at the first match.</span>
@@ -3339,7 +3339,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-868"><a href="#cb44-868" aria-hidden="true" tabindex="-1"></a>               <span class="kw">WHERE</span>  W<span class="ch">.</span>Pno <span class="op">=</span> P<span class="ch">.</span>Pnumber <span class="kw">AND</span> W<span class="ch">.</span>Hours <span class="op">&gt;</span> <span class="dv">20</span>);</span>
 <span id="cb44-869"><a href="#cb44-869" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb44-870"><a href="#cb44-870" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-871"><a href="#cb44-871" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7.8.5 Set Operators: UNION, INTERSECT, EXCEPT</span></span>
+<span id="cb44-871"><a href="#cb44-871" aria-hidden="true" tabindex="-1"></a><span class="fu">### Set Operators: UNION, INTERSECT, EXCEPT</span></span>
 <span id="cb44-872"><a href="#cb44-872" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-873"><a href="#cb44-873" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb44-874"><a href="#cb44-874" aria-hidden="true" tabindex="-1"></a></span>
@@ -3405,7 +3405,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-934"><a href="#cb44-934" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-935"><a href="#cb44-935" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb44-936"><a href="#cb44-936" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-937"><a href="#cb44-937" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.9 Interactive: Join Type Explorer</span></span>
+<span id="cb44-937"><a href="#cb44-937" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interactive: Join Type Explorer</span></span>
 <span id="cb44-938"><a href="#cb44-938" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-941"><a href="#cb44-941" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
 <span id="cb44-942"><a href="#cb44-942" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
@@ -3452,7 +3452,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb44-983"><a href="#cb44-983" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-984"><a href="#cb44-984" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb44-985"><a href="#cb44-985" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-986"><a href="#cb44-986" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7.10 Chapter Summary</span></span>
+<span id="cb44-986"><a href="#cb44-986" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
 <span id="cb44-987"><a href="#cb44-987" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-988"><a href="#cb44-988" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb44-989"><a href="#cb44-989" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 7</span></span>

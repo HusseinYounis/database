@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-07-transactions/ch13-concurrency.html" rel="next">
 <link href="../part-06-storage-query/ch11-query-processing.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -437,33 +437,33 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#why-transactions" id="toc-why-transactions" class="nav-link active" data-scroll-target="#why-transactions"><span class="header-section-number">12.1</span> §12.0 Why Transactions?</a></li>
-  <li><a href="#what-is-a-transaction" id="toc-what-is-a-transaction" class="nav-link" data-scroll-target="#what-is-a-transaction"><span class="header-section-number">12.2</span> 12.1 What Is a Transaction?</a></li>
-  <li><a href="#acid-properties" id="toc-acid-properties" class="nav-link" data-scroll-target="#acid-properties"><span class="header-section-number">12.3</span> 12.2 ACID Properties</a>
+  <li><a href="#why-transactions" id="toc-why-transactions" class="nav-link active" data-scroll-target="#why-transactions"><span class="header-section-number">12.1</span> Why Transactions?</a></li>
+  <li><a href="#what-is-a-transaction" id="toc-what-is-a-transaction" class="nav-link" data-scroll-target="#what-is-a-transaction"><span class="header-section-number">12.2</span> What Is a Transaction?</a></li>
+  <li><a href="#acid-properties" id="toc-acid-properties" class="nav-link" data-scroll-target="#acid-properties"><span class="header-section-number">12.3</span> ACID Properties</a>
   <ul class="collapse">
   <li><a href="#worked-examples-what-goes-wrong-without-each-property" id="toc-worked-examples-what-goes-wrong-without-each-property" class="nav-link" data-scroll-target="#worked-examples-what-goes-wrong-without-each-property"><span class="header-section-number">12.3.1</span> Worked Examples — What Goes Wrong Without Each Property</a></li>
   </ul></li>
-  <li><a href="#transaction-states" id="toc-transaction-states" class="nav-link" data-scroll-target="#transaction-states"><span class="header-section-number">12.4</span> 12.3 Transaction States</a></li>
-  <li><a href="#concurrency-anomalies" id="toc-concurrency-anomalies" class="nav-link" data-scroll-target="#concurrency-anomalies"><span class="header-section-number">12.5</span> 12.4 Concurrency Anomalies</a>
+  <li><a href="#transaction-states" id="toc-transaction-states" class="nav-link" data-scroll-target="#transaction-states"><span class="header-section-number">12.4</span> Transaction States</a></li>
+  <li><a href="#concurrency-anomalies" id="toc-concurrency-anomalies" class="nav-link" data-scroll-target="#concurrency-anomalies"><span class="header-section-number">12.5</span> Concurrency Anomalies</a>
   <ul class="collapse">
-  <li><a href="#lost-update" id="toc-lost-update" class="nav-link" data-scroll-target="#lost-update"><span class="header-section-number">12.5.1</span> 12.4.1 Lost Update</a></li>
-  <li><a href="#dirty-read-reading-uncommitted-data" id="toc-dirty-read-reading-uncommitted-data" class="nav-link" data-scroll-target="#dirty-read-reading-uncommitted-data"><span class="header-section-number">12.5.2</span> 12.4.2 Dirty Read (Reading Uncommitted Data)</a></li>
-  <li><a href="#non-repeatable-read" id="toc-non-repeatable-read" class="nav-link" data-scroll-target="#non-repeatable-read"><span class="header-section-number">12.5.3</span> 12.4.3 Non-Repeatable Read</a></li>
-  <li><a href="#phantom-read" id="toc-phantom-read" class="nav-link" data-scroll-target="#phantom-read"><span class="header-section-number">12.5.4</span> 12.4.4 Phantom Read</a></li>
+  <li><a href="#lost-update" id="toc-lost-update" class="nav-link" data-scroll-target="#lost-update"><span class="header-section-number">12.5.1</span> Lost Update</a></li>
+  <li><a href="#dirty-read-reading-uncommitted-data" id="toc-dirty-read-reading-uncommitted-data" class="nav-link" data-scroll-target="#dirty-read-reading-uncommitted-data"><span class="header-section-number">12.5.2</span> Dirty Read (Reading Uncommitted Data)</a></li>
+  <li><a href="#non-repeatable-read" id="toc-non-repeatable-read" class="nav-link" data-scroll-target="#non-repeatable-read"><span class="header-section-number">12.5.3</span> Non-Repeatable Read</a></li>
+  <li><a href="#phantom-read" id="toc-phantom-read" class="nav-link" data-scroll-target="#phantom-read"><span class="header-section-number">12.5.4</span> Phantom Read</a></li>
   </ul></li>
-  <li><a href="#isolation-levels" id="toc-isolation-levels" class="nav-link" data-scroll-target="#isolation-levels"><span class="header-section-number">12.6</span> 12.5 Isolation Levels</a></li>
-  <li><a href="#write-ahead-logging-wal" id="toc-write-ahead-logging-wal" class="nav-link" data-scroll-target="#write-ahead-logging-wal"><span class="header-section-number">12.7</span> 12.6 Write-Ahead Logging (WAL)</a>
+  <li><a href="#isolation-levels" id="toc-isolation-levels" class="nav-link" data-scroll-target="#isolation-levels"><span class="header-section-number">12.6</span> Isolation Levels</a></li>
+  <li><a href="#write-ahead-logging-wal" id="toc-write-ahead-logging-wal" class="nav-link" data-scroll-target="#write-ahead-logging-wal"><span class="header-section-number">12.7</span> Write-Ahead Logging (WAL)</a>
   <ul class="collapse">
   <li><a href="#log-record-format" id="toc-log-record-format" class="nav-link" data-scroll-target="#log-record-format"><span class="header-section-number">12.7.1</span> Log Record Format</a></li>
   <li><a href="#commit-flow-with-wal" id="toc-commit-flow-with-wal" class="nav-link" data-scroll-target="#commit-flow-with-wal"><span class="header-section-number">12.7.2</span> Commit Flow with WAL</a></li>
   </ul></li>
-  <li><a href="#recovery-undo-and-redo" id="toc-recovery-undo-and-redo" class="nav-link" data-scroll-target="#recovery-undo-and-redo"><span class="header-section-number">12.8</span> 12.7 Recovery: Undo and Redo</a>
+  <li><a href="#recovery-undo-and-redo" id="toc-recovery-undo-and-redo" class="nav-link" data-scroll-target="#recovery-undo-and-redo"><span class="header-section-number">12.8</span> Recovery: Undo and Redo</a>
   <ul class="collapse">
   <li><a href="#aries-recovery-algorithm-3-phases" id="toc-aries-recovery-algorithm-3-phases" class="nav-link" data-scroll-target="#aries-recovery-algorithm-3-phases"><span class="header-section-number">12.8.1</span> ARIES Recovery Algorithm (3 Phases)</a></li>
   <li><a href="#checkpointing" id="toc-checkpointing" class="nav-link" data-scroll-target="#checkpointing"><span class="header-section-number">12.8.2</span> Checkpointing</a></li>
   </ul></li>
-  <li><a href="#savepoints" id="toc-savepoints" class="nav-link" data-scroll-target="#savepoints"><span class="header-section-number">12.9</span> 12.8 Savepoints</a></li>
-  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">12.10</span> 12.9 Chapter Summary</a></li>
+  <li><a href="#savepoints" id="toc-savepoints" class="nav-link" data-scroll-target="#savepoints"><span class="header-section-number">12.9</span> Savepoints</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">12.10</span> Chapter Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">12.11</span> Review Questions</a>
   <ul class="collapse">
   <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">12.11.1</span> Conceptual</a></li>
@@ -473,30 +473,30 @@ window.Quarto = {
   <li><a href="#design" id="toc-design" class="nav-link" data-scroll-target="#design"><span class="header-section-number">12.11.5</span> Design</a></li>
   <li><a href="#synthesis" id="toc-synthesis" class="nav-link" data-scroll-target="#synthesis"><span class="header-section-number">12.11.6</span> Synthesis</a></li>
   </ul></li>
-  <li><a href="#what-is-a-transaction-1" id="toc-what-is-a-transaction-1" class="nav-link" data-scroll-target="#what-is-a-transaction-1"><span class="header-section-number">12.12</span> 12.1 What Is a Transaction?</a></li>
-  <li><a href="#acid-properties-1" id="toc-acid-properties-1" class="nav-link" data-scroll-target="#acid-properties-1"><span class="header-section-number">12.13</span> 12.2 ACID Properties</a></li>
-  <li><a href="#transaction-states-1" id="toc-transaction-states-1" class="nav-link" data-scroll-target="#transaction-states-1"><span class="header-section-number">12.14</span> 12.3 Transaction States</a></li>
-  <li><a href="#concurrency-issues" id="toc-concurrency-issues" class="nav-link" data-scroll-target="#concurrency-issues"><span class="header-section-number">12.15</span> 12.4 Concurrency Issues</a>
+  <li><a href="#what-is-a-transaction-1" id="toc-what-is-a-transaction-1" class="nav-link" data-scroll-target="#what-is-a-transaction-1"><span class="header-section-number">12.12</span> What Is a Transaction?</a></li>
+  <li><a href="#acid-properties-1" id="toc-acid-properties-1" class="nav-link" data-scroll-target="#acid-properties-1"><span class="header-section-number">12.13</span> ACID Properties</a></li>
+  <li><a href="#transaction-states-1" id="toc-transaction-states-1" class="nav-link" data-scroll-target="#transaction-states-1"><span class="header-section-number">12.14</span> Transaction States</a></li>
+  <li><a href="#concurrency-issues" id="toc-concurrency-issues" class="nav-link" data-scroll-target="#concurrency-issues"><span class="header-section-number">12.15</span> Concurrency Issues</a>
   <ul class="collapse">
   <li><a href="#lost-update-1" id="toc-lost-update-1" class="nav-link" data-scroll-target="#lost-update-1"><span class="header-section-number">12.15.1</span> 1. Lost Update</a></li>
   <li><a href="#dirty-read-temporary-update" id="toc-dirty-read-temporary-update" class="nav-link" data-scroll-target="#dirty-read-temporary-update"><span class="header-section-number">12.15.2</span> 2. Dirty Read (Temporary Update)</a></li>
   <li><a href="#unrepeatable-read" id="toc-unrepeatable-read" class="nav-link" data-scroll-target="#unrepeatable-read"><span class="header-section-number">12.15.3</span> 3. Unrepeatable Read</a></li>
   <li><a href="#phantom-read-1" id="toc-phantom-read-1" class="nav-link" data-scroll-target="#phantom-read-1"><span class="header-section-number">12.15.4</span> 4. Phantom Read</a></li>
   </ul></li>
-  <li><a href="#transaction-isolation-levels" id="toc-transaction-isolation-levels" class="nav-link" data-scroll-target="#transaction-isolation-levels"><span class="header-section-number">12.16</span> 12.5 Transaction Isolation Levels</a></li>
-  <li><a href="#concurrency-control-two-phase-locking-2pl" id="toc-concurrency-control-two-phase-locking-2pl" class="nav-link" data-scroll-target="#concurrency-control-two-phase-locking-2pl"><span class="header-section-number">12.17</span> 12.6 Concurrency Control: Two-Phase Locking (2PL)</a>
+  <li><a href="#transaction-isolation-levels" id="toc-transaction-isolation-levels" class="nav-link" data-scroll-target="#transaction-isolation-levels"><span class="header-section-number">12.16</span> Transaction Isolation Levels</a></li>
+  <li><a href="#concurrency-control-two-phase-locking-2pl" id="toc-concurrency-control-two-phase-locking-2pl" class="nav-link" data-scroll-target="#concurrency-control-two-phase-locking-2pl"><span class="header-section-number">12.17</span> Concurrency Control: Two-Phase Locking (2PL)</a>
   <ul class="collapse">
   <li><a href="#lock-types" id="toc-lock-types" class="nav-link" data-scroll-target="#lock-types"><span class="header-section-number">12.17.1</span> Lock Types</a></li>
   <li><a href="#lock-compatibility-matrix" id="toc-lock-compatibility-matrix" class="nav-link" data-scroll-target="#lock-compatibility-matrix"><span class="header-section-number">12.17.2</span> Lock Compatibility Matrix</a></li>
   <li><a href="#pl-protocol" id="toc-pl-protocol" class="nav-link" data-scroll-target="#pl-protocol"><span class="header-section-number">12.17.3</span> 2PL Protocol</a></li>
   <li><a href="#strict-2pl" id="toc-strict-2pl" class="nav-link" data-scroll-target="#strict-2pl"><span class="header-section-number">12.17.4</span> Strict 2PL</a></li>
   </ul></li>
-  <li><a href="#deadlocks" id="toc-deadlocks" class="nav-link" data-scroll-target="#deadlocks"><span class="header-section-number">12.18</span> 12.7 Deadlocks</a>
+  <li><a href="#deadlocks" id="toc-deadlocks" class="nav-link" data-scroll-target="#deadlocks"><span class="header-section-number">12.18</span> Deadlocks</a>
   <ul class="collapse">
   <li><a href="#deadlock-detection" id="toc-deadlock-detection" class="nav-link" data-scroll-target="#deadlock-detection"><span class="header-section-number">12.18.1</span> Deadlock Detection</a></li>
   <li><a href="#deadlock-prevention" id="toc-deadlock-prevention" class="nav-link" data-scroll-target="#deadlock-prevention"><span class="header-section-number">12.18.2</span> Deadlock Prevention</a></li>
   </ul></li>
-  <li><a href="#recovery-logging-and-aries" id="toc-recovery-logging-and-aries" class="nav-link" data-scroll-target="#recovery-logging-and-aries"><span class="header-section-number">12.19</span> 12.8 Recovery: Logging and ARIES</a>
+  <li><a href="#recovery-logging-and-aries" id="toc-recovery-logging-and-aries" class="nav-link" data-scroll-target="#recovery-logging-and-aries"><span class="header-section-number">12.19</span> Recovery: Logging and ARIES</a>
   <ul class="collapse">
   <li><a href="#why-recovery-is-needed" id="toc-why-recovery-is-needed" class="nav-link" data-scroll-target="#why-recovery-is-needed"><span class="header-section-number">12.19.1</span> Why Recovery Is Needed</a></li>
   <li><a href="#write-ahead-logging-wal-1" id="toc-write-ahead-logging-wal-1" class="nav-link" data-scroll-target="#write-ahead-logging-wal-1"><span class="header-section-number">12.19.2</span> Write-Ahead Logging (WAL)</a></li>
@@ -531,7 +531,7 @@ window.Quarto = {
 
 
 <section id="why-transactions" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="why-transactions"><span class="header-section-number">12.1</span> §12.0 Why Transactions?</h2>
+<h2 data-number="12.1" class="anchored" data-anchor-id="why-transactions"><span class="header-section-number">12.1</span> Why Transactions?</h2>
 <p>Chapters 7–8 showed you <em>how</em> to read and write data with SQL. But two problems arise in any real system:</p>
 <ol type="1">
 <li><strong>Multi-step operations</strong> must either complete fully or not at all — a bank transfer that deducts money but never credits the recipient would be catastrophic.</li>
@@ -541,7 +541,7 @@ window.Quarto = {
 <hr>
 </section>
 <section id="what-is-a-transaction" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="what-is-a-transaction"><span class="header-section-number">12.2</span> 12.1 What Is a Transaction?</h2>
+<h2 data-number="12.2" class="anchored" data-anchor-id="what-is-a-transaction"><span class="header-section-number">12.2</span> What Is a Transaction?</h2>
 <p>A <strong>transaction</strong> is a sequence of one or more SQL operations that the DBMS treats as a single, indivisible unit of work.</p>
 <p><strong>Example — Bank Transfer of $500 from Account A to Account B:</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">BEGIN</span>;                                                          <span class="co">-- start transaction</span></span>
@@ -552,7 +552,7 @@ window.Quarto = {
 <hr>
 </section>
 <section id="acid-properties" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="acid-properties"><span class="header-section-number">12.3</span> 12.2 ACID Properties</h2>
+<h2 data-number="12.3" class="anchored" data-anchor-id="acid-properties"><span class="header-section-number">12.3</span> ACID Properties</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 32%">
@@ -621,7 +621,7 @@ window.Quarto = {
 </section>
 </section>
 <section id="transaction-states" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="transaction-states"><span class="header-section-number">12.4</span> 12.3 Transaction States</h2>
+<h2 data-number="12.4" class="anchored" data-anchor-id="transaction-states"><span class="header-section-number">12.4</span> Transaction States</h2>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
 <div>
@@ -670,10 +670,10 @@ window.Quarto = {
 <hr>
 </section>
 <section id="concurrency-anomalies" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="concurrency-anomalies"><span class="header-section-number">12.5</span> 12.4 Concurrency Anomalies</h2>
+<h2 data-number="12.5" class="anchored" data-anchor-id="concurrency-anomalies"><span class="header-section-number">12.5</span> Concurrency Anomalies</h2>
 <p>When multiple transactions run without coordination, four classes of anomaly can occur.</p>
 <section id="lost-update" class="level3" data-number="12.5.1">
-<h3 data-number="12.5.1" class="anchored" data-anchor-id="lost-update"><span class="header-section-number">12.5.1</span> 12.4.1 Lost Update</h3>
+<h3 data-number="12.5.1" class="anchored" data-anchor-id="lost-update"><span class="header-section-number">12.5.1</span> Lost Update</h3>
 <p>Two transactions both read a value, modify it independently, and write back — the second write overwrites the first.</p>
 <table class="caption-top table">
 <thead>
@@ -714,20 +714,20 @@ window.Quarto = {
 <p>Correct result should be 80. T1’s update is <em>lost</em>.</p>
 </section>
 <section id="dirty-read-reading-uncommitted-data" class="level3" data-number="12.5.2">
-<h3 data-number="12.5.2" class="anchored" data-anchor-id="dirty-read-reading-uncommitted-data"><span class="header-section-number">12.5.2</span> 12.4.2 Dirty Read (Reading Uncommitted Data)</h3>
+<h3 data-number="12.5.2" class="anchored" data-anchor-id="dirty-read-reading-uncommitted-data"><span class="header-section-number">12.5.2</span> Dirty Read (Reading Uncommitted Data)</h3>
 <pre data-code-line-numbers=""><code>T1: Write(X = 200)    -- not yet committed
 T2:   Read(X) = 200   -- reads T1's uncommitted value
 T1: ROLLBACK          -- X reverts to 100
 T2: uses X = 200      -- now based on data that never officially existed</code></pre>
 </section>
 <section id="non-repeatable-read" class="level3" data-number="12.5.3">
-<h3 data-number="12.5.3" class="anchored" data-anchor-id="non-repeatable-read"><span class="header-section-number">12.5.3</span> 12.4.3 Non-Repeatable Read</h3>
+<h3 data-number="12.5.3" class="anchored" data-anchor-id="non-repeatable-read"><span class="header-section-number">12.5.3</span> Non-Repeatable Read</h3>
 <pre data-code-line-numbers=""><code>T1: Read(X) = 100
               T2: Write(X = 200), COMMIT
 T1: Read(X) = 200   -- same query, different result within same transaction</code></pre>
 </section>
 <section id="phantom-read" class="level3" data-number="12.5.4">
-<h3 data-number="12.5.4" class="anchored" data-anchor-id="phantom-read"><span class="header-section-number">12.5.4</span> 12.4.4 Phantom Read</h3>
+<h3 data-number="12.5.4" class="anchored" data-anchor-id="phantom-read"><span class="header-section-number">12.5.4</span> Phantom Read</h3>
 <pre data-code-line-numbers=""><code>T1: SELECT COUNT(*) WHERE Salary &gt; 50000  →  10
               T2: INSERT employee with Salary = 80000, COMMIT
 T1: SELECT COUNT(*) WHERE Salary &gt; 50000  →  11  -- new row "appeared"</code></pre>
@@ -735,7 +735,7 @@ T1: SELECT COUNT(*) WHERE Salary &gt; 50000  →  11  -- new row "appeared"</cod
 </section>
 </section>
 <section id="isolation-levels" class="level2" data-number="12.6">
-<h2 data-number="12.6" class="anchored" data-anchor-id="isolation-levels"><span class="header-section-number">12.6</span> 12.5 Isolation Levels</h2>
+<h2 data-number="12.6" class="anchored" data-anchor-id="isolation-levels"><span class="header-section-number">12.6</span> Isolation Levels</h2>
 <p>SQL:1992 defines four standard isolation levels, each preventing progressively more anomalies.</p>
 <table class="caption-top table">
 <colgroup>
@@ -826,7 +826,7 @@ T1: SELECT COUNT(*) WHERE Salary &gt; 50000  →  11  -- new row "appeared"</cod
 <hr>
 </section>
 <section id="write-ahead-logging-wal" class="level2" data-number="12.7">
-<h2 data-number="12.7" class="anchored" data-anchor-id="write-ahead-logging-wal"><span class="header-section-number">12.7</span> 12.6 Write-Ahead Logging (WAL)</h2>
+<h2 data-number="12.7" class="anchored" data-anchor-id="write-ahead-logging-wal"><span class="header-section-number">12.7</span> Write-Ahead Logging (WAL)</h2>
 <p>WAL is the mechanism that implements both <strong>Atomicity</strong> (rollback) and <strong>Durability</strong> (recovery after crash).</p>
 <p><strong>Core WAL rule:</strong><br>
 &gt; Before a modified data page is written to disk, its log record must reach stable storage first.</p>
@@ -926,7 +926,7 @@ T1: SELECT COUNT(*) WHERE Salary &gt; 50000  →  11  -- new row "appeared"</cod
 </section>
 </section>
 <section id="recovery-undo-and-redo" class="level2" data-number="12.8">
-<h2 data-number="12.8" class="anchored" data-anchor-id="recovery-undo-and-redo"><span class="header-section-number">12.8</span> 12.7 Recovery: Undo and Redo</h2>
+<h2 data-number="12.8" class="anchored" data-anchor-id="recovery-undo-and-redo"><span class="header-section-number">12.8</span> Recovery: Undo and Redo</h2>
 <p>After a crash, the recovery manager reads the log and restores a consistent state.</p>
 <section id="aries-recovery-algorithm-3-phases" class="level3" data-number="12.8.1">
 <h3 data-number="12.8.1" class="anchored" data-anchor-id="aries-recovery-algorithm-3-phases"><span class="header-section-number">12.8.1</span> ARIES Recovery Algorithm (3 Phases)</h3>
@@ -981,7 +981,7 @@ T1: SELECT COUNT(*) WHERE Salary &gt; 50000  →  11  -- new row "appeared"</cod
 </section>
 </section>
 <section id="savepoints" class="level2" data-number="12.9">
-<h2 data-number="12.9" class="anchored" data-anchor-id="savepoints"><span class="header-section-number">12.9</span> 12.8 Savepoints</h2>
+<h2 data-number="12.9" class="anchored" data-anchor-id="savepoints"><span class="header-section-number">12.9</span> Savepoints</h2>
 <p>Savepoints allow partial rollback within a transaction without aborting the entire unit:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Oracle</a></li></ul>
@@ -1019,7 +1019,7 @@ T1: SELECT COUNT(*) WHERE Salary &gt; 50000  →  11  -- new row "appeared"</cod
 <hr>
 </section>
 <section id="chapter-summary" class="level2" data-number="12.10">
-<h2 data-number="12.10" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">12.10</span> 12.9 Chapter Summary</h2>
+<h2 data-number="12.10" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">12.10</span> Chapter Summary</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1116,7 +1116,7 @@ Which is better for a high-throughput OLTP system, and why?</li>
 </section>
 </section>
 <section id="what-is-a-transaction-1" class="level2" data-number="12.12">
-<h2 data-number="12.12" class="anchored" data-anchor-id="what-is-a-transaction-1"><span class="header-section-number">12.12</span> 12.1 What Is a Transaction?</h2>
+<h2 data-number="12.12" class="anchored" data-anchor-id="what-is-a-transaction-1"><span class="header-section-number">12.12</span> What Is a Transaction?</h2>
 <p>A <strong>transaction</strong> is a logical unit of work that consists of one or more database operations that must be executed as an <strong>indivisible whole</strong> — either all succeed or none do.</p>
 <p><strong>Example:</strong> Bank transfer of $500 from Account A to Account B:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">BEGIN</span>;</span>
@@ -1126,7 +1126,7 @@ Which is better for a high-throughput OLTP system, and why?</li>
 <p>If the system crashes after the first UPDATE but before the second, the transfer <strong>must be rolled back</strong> — we cannot allow money to vanish.</p>
 </section>
 <section id="acid-properties-1" class="level2" data-number="12.13">
-<h2 data-number="12.13" class="anchored" data-anchor-id="acid-properties-1"><span class="header-section-number">12.13</span> 12.2 ACID Properties</h2>
+<h2 data-number="12.13" class="anchored" data-anchor-id="acid-properties-1"><span class="header-section-number">12.13</span> ACID Properties</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 45%">
@@ -1159,7 +1159,7 @@ Which is better for a high-throughput OLTP system, and why?</li>
 </table>
 </section>
 <section id="transaction-states-1" class="level2" data-number="12.14">
-<h2 data-number="12.14" class="anchored" data-anchor-id="transaction-states-1"><span class="header-section-number">12.14</span> 12.3 Transaction States</h2>
+<h2 data-number="12.14" class="anchored" data-anchor-id="transaction-states-1"><span class="header-section-number">12.14</span> Transaction States</h2>
 <pre data-code-line-numbers=""><code>                ┌─────────────────────────────┐
                 │                             │
    BEGIN        │                             │  COMMIT
@@ -1209,7 +1209,7 @@ Which is better for a high-throughput OLTP system, and why?</li>
 </table>
 </section>
 <section id="concurrency-issues" class="level2" data-number="12.15">
-<h2 data-number="12.15" class="anchored" data-anchor-id="concurrency-issues"><span class="header-section-number">12.15</span> 12.4 Concurrency Issues</h2>
+<h2 data-number="12.15" class="anchored" data-anchor-id="concurrency-issues"><span class="header-section-number">12.15</span> Concurrency Issues</h2>
 <p>When multiple transactions run concurrently without control, several <strong>anomalies</strong> can arise:</p>
 <section id="lost-update-1" class="level3" data-number="12.15.1">
 <h3 data-number="12.15.1" class="anchored" data-anchor-id="lost-update-1"><span class="header-section-number">12.15.1</span> 1. Lost Update</h3>
@@ -1240,7 +1240,7 @@ T1: SELECT COUNT(*) WHERE salary&gt;50000  → 11  ← phantom row appeared!</co
 </section>
 </section>
 <section id="transaction-isolation-levels" class="level2" data-number="12.16">
-<h2 data-number="12.16" class="anchored" data-anchor-id="transaction-isolation-levels"><span class="header-section-number">12.16</span> 12.5 Transaction Isolation Levels</h2>
+<h2 data-number="12.16" class="anchored" data-anchor-id="transaction-isolation-levels"><span class="header-section-number">12.16</span> Transaction Isolation Levels</h2>
 <p>SQL defines four standard isolation levels:</p>
 <table class="caption-top table">
 <thead>
@@ -1301,7 +1301,7 @@ Tip
 </div>
 </section>
 <section id="concurrency-control-two-phase-locking-2pl" class="level2" data-number="12.17">
-<h2 data-number="12.17" class="anchored" data-anchor-id="concurrency-control-two-phase-locking-2pl"><span class="header-section-number">12.17</span> 12.6 Concurrency Control: Two-Phase Locking (2PL)</h2>
+<h2 data-number="12.17" class="anchored" data-anchor-id="concurrency-control-two-phase-locking-2pl"><span class="header-section-number">12.17</span> Concurrency Control: Two-Phase Locking (2PL)</h2>
 <p><strong>Two-Phase Locking</strong> is the most widely used protocol for guaranteeing serializability.</p>
 <section id="lock-types" class="level3" data-number="12.17.1">
 <h3 data-number="12.17.1" class="anchored" data-anchor-id="lock-types"><span class="header-section-number">12.17.1</span> Lock Types</h3>
@@ -1383,7 +1383,7 @@ Locks acquired ───────╯╲──────── Locks release
 </section>
 </section>
 <section id="deadlocks" class="level2" data-number="12.18">
-<h2 data-number="12.18" class="anchored" data-anchor-id="deadlocks"><span class="header-section-number">12.18</span> 12.7 Deadlocks</h2>
+<h2 data-number="12.18" class="anchored" data-anchor-id="deadlocks"><span class="header-section-number">12.18</span> Deadlocks</h2>
 <p>A <strong>deadlock</strong> occurs when two or more transactions wait for each other’s locks indefinitely:</p>
 <pre data-code-line-numbers=""><code>T1 holds X(A), waits for X(B)
 T2 holds X(B), waits for X(A)
@@ -1405,7 +1405,7 @@ T3 → T1 (T3 waits for T1) ← cycle! deadlock</code></pre>
 </section>
 </section>
 <section id="recovery-logging-and-aries" class="level2" data-number="12.19">
-<h2 data-number="12.19" class="anchored" data-anchor-id="recovery-logging-and-aries"><span class="header-section-number">12.19</span> 12.8 Recovery: Logging and ARIES</h2>
+<h2 data-number="12.19" class="anchored" data-anchor-id="recovery-logging-and-aries"><span class="header-section-number">12.19</span> Recovery: Logging and ARIES</h2>
 <section id="why-recovery-is-needed" class="level3" data-number="12.19.1">
 <h3 data-number="12.19.1" class="anchored" data-anchor-id="why-recovery-is-needed"><span class="header-section-number">12.19.1</span> Why Recovery Is Needed</h3>
 <ul>
@@ -1947,7 +1947,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 12"</span></span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## §12.0 Why Transactions?</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why Transactions?</span></span>
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>Chapters 7–8 showed you *how* to read and write data with SQL.</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>But two problems arise in any real system:</span>
@@ -1962,7 +1962,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.1 What Is a Transaction?</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="fu">## What Is a Transaction?</span></span>
 <span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>A **transaction** is a sequence of one or more SQL operations that the DBMS treats as a single,</span>
 <span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>indivisible unit of work.</span>
@@ -1981,7 +1981,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.2 ACID Properties</span></span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## ACID Properties</span></span>
 <span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> One-line definition <span class="pp">|</span></span>
 <span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------------------|</span></span>
@@ -2037,7 +2037,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-93"><a href="#cb30-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-94"><a href="#cb30-94" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-95"><a href="#cb30-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-96"><a href="#cb30-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.3 Transaction States</span></span>
+<span id="cb30-96"><a href="#cb30-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## Transaction States</span></span>
 <span id="cb30-97"><a href="#cb30-97" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-100"><a href="#cb30-100" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
 <span id="cb30-101"><a href="#cb30-101" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
@@ -2064,11 +2064,11 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-122"><a href="#cb30-122" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-123"><a href="#cb30-123" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-124"><a href="#cb30-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-125"><a href="#cb30-125" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.4 Concurrency Anomalies</span></span>
+<span id="cb30-125"><a href="#cb30-125" aria-hidden="true" tabindex="-1"></a><span class="fu">## Concurrency Anomalies</span></span>
 <span id="cb30-126"><a href="#cb30-126" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-127"><a href="#cb30-127" aria-hidden="true" tabindex="-1"></a>When multiple transactions run without coordination, four classes of anomaly can occur.</span>
 <span id="cb30-128"><a href="#cb30-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-129"><a href="#cb30-129" aria-hidden="true" tabindex="-1"></a><span class="fu">### 12.4.1 Lost Update</span></span>
+<span id="cb30-129"><a href="#cb30-129" aria-hidden="true" tabindex="-1"></a><span class="fu">### Lost Update</span></span>
 <span id="cb30-130"><a href="#cb30-130" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-131"><a href="#cb30-131" aria-hidden="true" tabindex="-1"></a>Two transactions both read a value, modify it independently, and write back — the second write overwrites the first.</span>
 <span id="cb30-132"><a href="#cb30-132" aria-hidden="true" tabindex="-1"></a></span>
@@ -2081,7 +2081,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-139"><a href="#cb30-139" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-140"><a href="#cb30-140" aria-hidden="true" tabindex="-1"></a>Correct result should be 80. T1's update is *lost*.</span>
 <span id="cb30-141"><a href="#cb30-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-142"><a href="#cb30-142" aria-hidden="true" tabindex="-1"></a><span class="fu">### 12.4.2 Dirty Read (Reading Uncommitted Data)</span></span>
+<span id="cb30-142"><a href="#cb30-142" aria-hidden="true" tabindex="-1"></a><span class="fu">### Dirty Read (Reading Uncommitted Data)</span></span>
 <span id="cb30-143"><a href="#cb30-143" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-144"><a href="#cb30-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-145"><a href="#cb30-145" aria-hidden="true" tabindex="-1"></a><span class="in">T1: Write(X = 200)    -- not yet committed</span></span>
@@ -2090,7 +2090,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-148"><a href="#cb30-148" aria-hidden="true" tabindex="-1"></a><span class="in">T2: uses X = 200      -- now based on data that never officially existed</span></span>
 <span id="cb30-149"><a href="#cb30-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-150"><a href="#cb30-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-151"><a href="#cb30-151" aria-hidden="true" tabindex="-1"></a><span class="fu">### 12.4.3 Non-Repeatable Read</span></span>
+<span id="cb30-151"><a href="#cb30-151" aria-hidden="true" tabindex="-1"></a><span class="fu">### Non-Repeatable Read</span></span>
 <span id="cb30-152"><a href="#cb30-152" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-153"><a href="#cb30-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-154"><a href="#cb30-154" aria-hidden="true" tabindex="-1"></a><span class="in">T1: Read(X) = 100</span></span>
@@ -2098,7 +2098,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-156"><a href="#cb30-156" aria-hidden="true" tabindex="-1"></a><span class="in">T1: Read(X) = 200   -- same query, different result within same transaction</span></span>
 <span id="cb30-157"><a href="#cb30-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-158"><a href="#cb30-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-159"><a href="#cb30-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### 12.4.4 Phantom Read</span></span>
+<span id="cb30-159"><a href="#cb30-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### Phantom Read</span></span>
 <span id="cb30-160"><a href="#cb30-160" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-161"><a href="#cb30-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-162"><a href="#cb30-162" aria-hidden="true" tabindex="-1"></a><span class="in">T1: SELECT COUNT(*) WHERE Salary &gt; 50000  →  10</span></span>
@@ -2108,7 +2108,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-166"><a href="#cb30-166" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-167"><a href="#cb30-167" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-168"><a href="#cb30-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-169"><a href="#cb30-169" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.5 Isolation Levels</span></span>
+<span id="cb30-169"><a href="#cb30-169" aria-hidden="true" tabindex="-1"></a><span class="fu">## Isolation Levels</span></span>
 <span id="cb30-170"><a href="#cb30-170" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-171"><a href="#cb30-171" aria-hidden="true" tabindex="-1"></a>SQL:1992 defines four standard isolation levels, each preventing progressively more anomalies.</span>
 <span id="cb30-172"><a href="#cb30-172" aria-hidden="true" tabindex="-1"></a></span>
@@ -2175,7 +2175,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-233"><a href="#cb30-233" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-234"><a href="#cb30-234" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-235"><a href="#cb30-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-236"><a href="#cb30-236" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.6 Write-Ahead Logging (WAL)</span></span>
+<span id="cb30-236"><a href="#cb30-236" aria-hidden="true" tabindex="-1"></a><span class="fu">## Write-Ahead Logging (WAL)</span></span>
 <span id="cb30-237"><a href="#cb30-237" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-238"><a href="#cb30-238" aria-hidden="true" tabindex="-1"></a>WAL is the mechanism that implements both **Atomicity** (rollback) and **Durability** (recovery after crash).</span>
 <span id="cb30-239"><a href="#cb30-239" aria-hidden="true" tabindex="-1"></a></span>
@@ -2232,7 +2232,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-292"><a href="#cb30-292" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-293"><a href="#cb30-293" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-294"><a href="#cb30-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-295"><a href="#cb30-295" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.7 Recovery: Undo and Redo</span></span>
+<span id="cb30-295"><a href="#cb30-295" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recovery: Undo and Redo</span></span>
 <span id="cb30-296"><a href="#cb30-296" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-297"><a href="#cb30-297" aria-hidden="true" tabindex="-1"></a>After a crash, the recovery manager reads the log and restores a consistent state.</span>
 <span id="cb30-298"><a href="#cb30-298" aria-hidden="true" tabindex="-1"></a></span>
@@ -2278,7 +2278,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-340"><a href="#cb30-340" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-341"><a href="#cb30-341" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-342"><a href="#cb30-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-343"><a href="#cb30-343" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.8 Savepoints</span></span>
+<span id="cb30-343"><a href="#cb30-343" aria-hidden="true" tabindex="-1"></a><span class="fu">## Savepoints</span></span>
 <span id="cb30-344"><a href="#cb30-344" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-345"><a href="#cb30-345" aria-hidden="true" tabindex="-1"></a>Savepoints allow partial rollback within a transaction without aborting the entire unit:</span>
 <span id="cb30-346"><a href="#cb30-346" aria-hidden="true" tabindex="-1"></a></span>
@@ -2325,7 +2325,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-387"><a href="#cb30-387" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-388"><a href="#cb30-388" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb30-389"><a href="#cb30-389" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-390"><a href="#cb30-390" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.9 Chapter Summary</span></span>
+<span id="cb30-390"><a href="#cb30-390" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
 <span id="cb30-391"><a href="#cb30-391" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-392"><a href="#cb30-392" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb30-393"><a href="#cb30-393" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 12</span></span>
@@ -2426,7 +2426,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-488"><a href="#cb30-488" aria-hidden="true" tabindex="-1"></a>    Which is better for a high-throughput OLTP system, and why?</span>
 <span id="cb30-489"><a href="#cb30-489" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-490"><a href="#cb30-490" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-491"><a href="#cb30-491" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.1 What Is a Transaction?</span></span>
+<span id="cb30-491"><a href="#cb30-491" aria-hidden="true" tabindex="-1"></a><span class="fu">## What Is a Transaction?</span></span>
 <span id="cb30-492"><a href="#cb30-492" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-493"><a href="#cb30-493" aria-hidden="true" tabindex="-1"></a>A **transaction** is a logical unit of work that consists of one or more database operations that must be executed as an **indivisible whole** — either all succeed or none do.</span>
 <span id="cb30-494"><a href="#cb30-494" aria-hidden="true" tabindex="-1"></a></span>
@@ -2441,7 +2441,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-503"><a href="#cb30-503" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-504"><a href="#cb30-504" aria-hidden="true" tabindex="-1"></a>If the system crashes after the first UPDATE but before the second, the transfer **must be rolled back** — we cannot allow money to vanish.</span>
 <span id="cb30-505"><a href="#cb30-505" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-506"><a href="#cb30-506" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.2 ACID Properties</span></span>
+<span id="cb30-506"><a href="#cb30-506" aria-hidden="true" tabindex="-1"></a><span class="fu">## ACID Properties</span></span>
 <span id="cb30-507"><a href="#cb30-507" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-508"><a href="#cb30-508" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Definition <span class="pp">|</span></span>
 <span id="cb30-509"><a href="#cb30-509" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-----------|</span></span>
@@ -2450,7 +2450,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-512"><a href="#cb30-512" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Isolation** <span class="pp">|</span> Concurrent transactions execute as if they were serial. Intermediate states not visible to others. <span class="pp">|</span></span>
 <span id="cb30-513"><a href="#cb30-513" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Durability** <span class="pp">|</span> Once a transaction is committed, its effects survive system failures (written to stable storage). <span class="pp">|</span></span>
 <span id="cb30-514"><a href="#cb30-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-515"><a href="#cb30-515" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.3 Transaction States</span></span>
+<span id="cb30-515"><a href="#cb30-515" aria-hidden="true" tabindex="-1"></a><span class="fu">## Transaction States</span></span>
 <span id="cb30-516"><a href="#cb30-516" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-517"><a href="#cb30-517" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-518"><a href="#cb30-518" aria-hidden="true" tabindex="-1"></a><span class="in">                ┌─────────────────────────────┐</span></span>
@@ -2473,7 +2473,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-535"><a href="#cb30-535" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Aborted** <span class="pp">|</span> Transaction rolled back; database restored to pre-transaction state <span class="pp">|</span></span>
 <span id="cb30-536"><a href="#cb30-536" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Terminated** <span class="pp">|</span> Either committed or aborted; leaves the system <span class="pp">|</span></span>
 <span id="cb30-537"><a href="#cb30-537" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-538"><a href="#cb30-538" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.4 Concurrency Issues</span></span>
+<span id="cb30-538"><a href="#cb30-538" aria-hidden="true" tabindex="-1"></a><span class="fu">## Concurrency Issues</span></span>
 <span id="cb30-539"><a href="#cb30-539" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-540"><a href="#cb30-540" aria-hidden="true" tabindex="-1"></a>When multiple transactions run concurrently without control, several **anomalies** can arise:</span>
 <span id="cb30-541"><a href="#cb30-541" aria-hidden="true" tabindex="-1"></a></span>
@@ -2512,7 +2512,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-574"><a href="#cb30-574" aria-hidden="true" tabindex="-1"></a><span class="in">T1: SELECT COUNT(*) WHERE salary&gt;50000  → 11  ← phantom row appeared!</span></span>
 <span id="cb30-575"><a href="#cb30-575" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-576"><a href="#cb30-576" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-577"><a href="#cb30-577" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.5 Transaction Isolation Levels</span></span>
+<span id="cb30-577"><a href="#cb30-577" aria-hidden="true" tabindex="-1"></a><span class="fu">## Transaction Isolation Levels</span></span>
 <span id="cb30-578"><a href="#cb30-578" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-579"><a href="#cb30-579" aria-hidden="true" tabindex="-1"></a>SQL defines four standard isolation levels:</span>
 <span id="cb30-580"><a href="#cb30-580" aria-hidden="true" tabindex="-1"></a></span>
@@ -2539,7 +2539,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-601"><a href="#cb30-601" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Oracle: <span class="in">`READ COMMITTED`</span></span>
 <span id="cb30-602"><a href="#cb30-602" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb30-603"><a href="#cb30-603" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-604"><a href="#cb30-604" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.6 Concurrency Control: Two-Phase Locking (2PL)</span></span>
+<span id="cb30-604"><a href="#cb30-604" aria-hidden="true" tabindex="-1"></a><span class="fu">## Concurrency Control: Two-Phase Locking (2PL)</span></span>
 <span id="cb30-605"><a href="#cb30-605" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-606"><a href="#cb30-606" aria-hidden="true" tabindex="-1"></a>**Two-Phase Locking** is the most widely used protocol for guaranteeing serializability.</span>
 <span id="cb30-607"><a href="#cb30-607" aria-hidden="true" tabindex="-1"></a></span>
@@ -2588,7 +2588,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-650"><a href="#cb30-650" aria-hidden="true" tabindex="-1"></a>COMMIT;  <span class="co">-- Releases all locks</span></span>
 <span id="cb30-651"><a href="#cb30-651" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-652"><a href="#cb30-652" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-653"><a href="#cb30-653" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.7 Deadlocks</span></span>
+<span id="cb30-653"><a href="#cb30-653" aria-hidden="true" tabindex="-1"></a><span class="fu">## Deadlocks</span></span>
 <span id="cb30-654"><a href="#cb30-654" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-655"><a href="#cb30-655" aria-hidden="true" tabindex="-1"></a>A **deadlock** occurs when two or more transactions wait for each other's locks indefinitely:</span>
 <span id="cb30-656"><a href="#cb30-656" aria-hidden="true" tabindex="-1"></a></span>
@@ -2621,7 +2621,7 @@ Write modified data pages to disk (may be deferred — "steal/no-force")</code><
 <span id="cb30-683"><a href="#cb30-683" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Wait-Die**: older transactions wait; younger ones die (rollback and restart)</span>
 <span id="cb30-684"><a href="#cb30-684" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Wound-Wait**: older transactions wound (abort) younger ones; younger ones wait</span>
 <span id="cb30-685"><a href="#cb30-685" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-686"><a href="#cb30-686" aria-hidden="true" tabindex="-1"></a><span class="fu">## 12.8 Recovery: Logging and ARIES</span></span>
+<span id="cb30-686"><a href="#cb30-686" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recovery: Logging and ARIES</span></span>
 <span id="cb30-687"><a href="#cb30-687" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-688"><a href="#cb30-688" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why Recovery Is Needed</span></span>
 <span id="cb30-689"><a href="#cb30-689" aria-hidden="true" tabindex="-1"></a></span>

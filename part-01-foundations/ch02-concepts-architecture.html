@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-02-data-modeling/ch03-er-modeling.html" rel="next">
 <link href="../part-01-foundations/ch01-introduction.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -437,40 +437,40 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#the-database-design-lifecycle" id="toc-the-database-design-lifecycle" class="nav-link active" data-scroll-target="#the-database-design-lifecycle"><span class="header-section-number">2.1</span> 2.1 The Database Design Lifecycle</a>
+  <li><a href="#the-database-design-lifecycle" id="toc-the-database-design-lifecycle" class="nav-link active" data-scroll-target="#the-database-design-lifecycle"><span class="header-section-number">2.1</span> The Database Design Lifecycle</a>
   <ul class="collapse">
   <li><a href="#phase-deliverables" id="toc-phase-deliverables" class="nav-link" data-scroll-target="#phase-deliverables"><span class="header-section-number">2.1.1</span> Phase Deliverables</a></li>
   </ul></li>
-  <li><a href="#data-abstraction-levels" id="toc-data-abstraction-levels" class="nav-link" data-scroll-target="#data-abstraction-levels"><span class="header-section-number">2.2</span> 2.2 Data Abstraction Levels</a>
+  <li><a href="#data-abstraction-levels" id="toc-data-abstraction-levels" class="nav-link" data-scroll-target="#data-abstraction-levels"><span class="header-section-number">2.2</span> Data Abstraction Levels</a>
   <ul class="collapse">
   <li><a href="#physical-level-internal" id="toc-physical-level-internal" class="nav-link" data-scroll-target="#physical-level-internal"><span class="header-section-number">2.2.1</span> Physical Level (Internal)</a></li>
   <li><a href="#logical-level-conceptual" id="toc-logical-level-conceptual" class="nav-link" data-scroll-target="#logical-level-conceptual"><span class="header-section-number">2.2.2</span> Logical Level (Conceptual)</a></li>
   <li><a href="#view-level-external" id="toc-view-level-external" class="nav-link" data-scroll-target="#view-level-external"><span class="header-section-number">2.2.3</span> View Level (External)</a></li>
   </ul></li>
-  <li><a href="#dbms-deployment-architecture-practical-considerations" id="toc-dbms-deployment-architecture-practical-considerations" class="nav-link" data-scroll-target="#dbms-deployment-architecture-practical-considerations"><span class="header-section-number">2.3</span> 2.3 DBMS Deployment Architecture — Practical Considerations</a>
+  <li><a href="#dbms-deployment-architecture-practical-considerations" id="toc-dbms-deployment-architecture-practical-considerations" class="nav-link" data-scroll-target="#dbms-deployment-architecture-practical-considerations"><span class="header-section-number">2.3</span> DBMS Deployment Architecture — Practical Considerations</a>
   <ul class="collapse">
   <li><a href="#why-tier-count-matters" id="toc-why-tier-count-matters" class="nav-link" data-scroll-target="#why-tier-count-matters"><span class="header-section-number">2.3.1</span> Why Tier Count Matters</a></li>
   <li><a href="#connection-pooling-a-critical-optimisation-for-2-tier-and-3-tier" id="toc-connection-pooling-a-critical-optimisation-for-2-tier-and-3-tier" class="nav-link" data-scroll-target="#connection-pooling-a-critical-optimisation-for-2-tier-and-3-tier"><span class="header-section-number">2.3.2</span> Connection Pooling — A Critical Optimisation for 2-Tier and 3-Tier</a></li>
   <li><a href="#beyond-3-tier-distributed-and-cloud-deployments" id="toc-beyond-3-tier-distributed-and-cloud-deployments" class="nav-link" data-scroll-target="#beyond-3-tier-distributed-and-cloud-deployments"><span class="header-section-number">2.3.3</span> Beyond 3-Tier: Distributed and Cloud Deployments</a></li>
   <li><a href="#choosing-the-right-architecture" id="toc-choosing-the-right-architecture" class="nav-link" data-scroll-target="#choosing-the-right-architecture"><span class="header-section-number">2.3.4</span> Choosing the Right Architecture</a></li>
   </ul></li>
-  <li><a href="#dbms-component-architecture-detailed" id="toc-dbms-component-architecture-detailed" class="nav-link" data-scroll-target="#dbms-component-architecture-detailed"><span class="header-section-number">2.4</span> 2.4 DBMS Component Architecture (Detailed)</a>
+  <li><a href="#dbms-component-architecture-detailed" id="toc-dbms-component-architecture-detailed" class="nav-link" data-scroll-target="#dbms-component-architecture-detailed"><span class="header-section-number">2.4</span> DBMS Component Architecture (Detailed)</a>
   <ul class="collapse">
   <li><a href="#key-sub-components" id="toc-key-sub-components" class="nav-link" data-scroll-target="#key-sub-components"><span class="header-section-number">2.4.1</span> Key Sub-Components</a></li>
   <li><a href="#a-single-select-the-full-journey" id="toc-a-single-select-the-full-journey" class="nav-link" data-scroll-target="#a-single-select-the-full-journey"><span class="header-section-number">2.4.2</span> A Single SELECT — The Full Journey</a></li>
   </ul></li>
-  <li><a href="#the-system-catalog-data-dictionary" id="toc-the-system-catalog-data-dictionary" class="nav-link" data-scroll-target="#the-system-catalog-data-dictionary"><span class="header-section-number">2.5</span> 2.5 The System Catalog (Data Dictionary)</a>
+  <li><a href="#the-system-catalog-data-dictionary" id="toc-the-system-catalog-data-dictionary" class="nav-link" data-scroll-target="#the-system-catalog-data-dictionary"><span class="header-section-number">2.5</span> The System Catalog (Data Dictionary)</a>
   <ul class="collapse">
   <li><a href="#what-the-catalog-stores" id="toc-what-the-catalog-stores" class="nav-link" data-scroll-target="#what-the-catalog-stores"><span class="header-section-number">2.5.1</span> What the Catalog Stores</a></li>
   <li><a href="#why-catalog-statistics-matter" id="toc-why-catalog-statistics-matter" class="nav-link" data-scroll-target="#why-catalog-statistics-matter"><span class="header-section-number">2.5.2</span> Why Catalog Statistics Matter</a></li>
   </ul></li>
-  <li><a href="#types-of-database-systems" id="toc-types-of-database-systems" class="nav-link" data-scroll-target="#types-of-database-systems"><span class="header-section-number">2.6</span> 2.6 Types of Database Systems</a>
+  <li><a href="#types-of-database-systems" id="toc-types-of-database-systems" class="nav-link" data-scroll-target="#types-of-database-systems"><span class="header-section-number">2.6</span> Types of Database Systems</a>
   <ul class="collapse">
   <li><a href="#by-data-model" id="toc-by-data-model" class="nav-link" data-scroll-target="#by-data-model"><span class="header-section-number">2.6.1</span> By Data Model</a></li>
   <li><a href="#by-deployment-location" id="toc-by-deployment-location" class="nav-link" data-scroll-target="#by-deployment-location"><span class="header-section-number">2.6.2</span> By Deployment Location</a></li>
   <li><a href="#by-number-of-users" id="toc-by-number-of-users" class="nav-link" data-scroll-target="#by-number-of-users"><span class="header-section-number">2.6.3</span> By Number of Users</a></li>
   </ul></li>
-  <li><a href="#requirements-collection-and-analysis" id="toc-requirements-collection-and-analysis" class="nav-link" data-scroll-target="#requirements-collection-and-analysis"><span class="header-section-number">2.7</span> 2.7 Requirements Collection and Analysis</a>
+  <li><a href="#requirements-collection-and-analysis" id="toc-requirements-collection-and-analysis" class="nav-link" data-scroll-target="#requirements-collection-and-analysis"><span class="header-section-number">2.7</span> Requirements Collection and Analysis</a>
   <ul class="collapse">
   <li><a href="#what-to-gather" id="toc-what-to-gather" class="nav-link" data-scroll-target="#what-to-gather"><span class="header-section-number">2.7.1</span> What to Gather</a></li>
   <li><a href="#techniques" id="toc-techniques" class="nav-link" data-scroll-target="#techniques"><span class="header-section-number">2.7.2</span> Techniques</a></li>
@@ -515,7 +515,7 @@ window.Quarto = {
 <p>Chapter 1 answered <em>why</em> we use a database. This chapter answers <em>how</em> we build and structure one — tracing the full journey from a blank page to a running system, and then examining the internal machinery that makes that system work reliably.</p>
 <hr>
 <section id="the-database-design-lifecycle" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="the-database-design-lifecycle"><span class="header-section-number">2.1</span> 2.1 The Database Design Lifecycle</h2>
+<h2 data-number="2.1" class="anchored" data-anchor-id="the-database-design-lifecycle"><span class="header-section-number">2.1</span> The Database Design Lifecycle</h2>
 <p>No database should be designed from thin air. A well-established <strong>design lifecycle</strong> guides the process from understanding what users need to deploying a production system.</p>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
@@ -595,7 +595,7 @@ Note
 </section>
 </section>
 <section id="data-abstraction-levels" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="data-abstraction-levels"><span class="header-section-number">2.2</span> 2.2 Data Abstraction Levels</h2>
+<h2 data-number="2.2" class="anchored" data-anchor-id="data-abstraction-levels"><span class="header-section-number">2.2</span> Data Abstraction Levels</h2>
 <p>The three-schema architecture from Chapter 1 described <em>what</em> the three levels are. Here we go one level deeper and explain <em>how</em> each level is realized in a real DBMS.</p>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
@@ -637,7 +637,7 @@ Tip
 </section>
 </section>
 <section id="dbms-deployment-architecture-practical-considerations" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="dbms-deployment-architecture-practical-considerations"><span class="header-section-number">2.3</span> 2.3 DBMS Deployment Architecture — Practical Considerations</h2>
+<h2 data-number="2.3" class="anchored" data-anchor-id="dbms-deployment-architecture-practical-considerations"><span class="header-section-number">2.3</span> DBMS Deployment Architecture — Practical Considerations</h2>
 <p>Chapter 1 (Section 1.8) introduced the 1-tier, 2-tier, and 3-tier deployment architectures conceptually. Here we examine the engineering trade-offs each tier imposes and how modern systems extend beyond the basic three tiers.</p>
 <section id="why-tier-count-matters" class="level3" data-number="2.3.1">
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="why-tier-count-matters"><span class="header-section-number">2.3.1</span> Why Tier Count Matters</h3>
@@ -788,7 +788,7 @@ Tip
 </section>
 </section>
 <section id="dbms-component-architecture-detailed" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="dbms-component-architecture-detailed"><span class="header-section-number">2.4</span> 2.4 DBMS Component Architecture (Detailed)</h2>
+<h2 data-number="2.4" class="anchored" data-anchor-id="dbms-component-architecture-detailed"><span class="header-section-number">2.4</span> DBMS Component Architecture (Detailed)</h2>
 <p>A DBMS is a layered system of cooperating subsystems. Every SQL statement you write passes through each layer below:</p>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
@@ -887,7 +887,7 @@ Note
 </section>
 </section>
 <section id="the-system-catalog-data-dictionary" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="the-system-catalog-data-dictionary"><span class="header-section-number">2.5</span> 2.5 The System Catalog (Data Dictionary)</h2>
+<h2 data-number="2.5" class="anchored" data-anchor-id="the-system-catalog-data-dictionary"><span class="header-section-number">2.5</span> The System Catalog (Data Dictionary)</h2>
 <p>The <strong>system catalog</strong> is a special database-within-the-database that stores metadata about every object in the system. It is the backbone of the query optimizer and the DDL compiler.</p>
 <section id="what-the-catalog-stores" class="level3" data-number="2.5.1">
 <h3 data-number="2.5.1" class="anchored" data-anchor-id="what-the-catalog-stores"><span class="header-section-number">2.5.1</span> What the Catalog Stores</h3>
@@ -966,7 +966,7 @@ Note
 </section>
 </section>
 <section id="types-of-database-systems" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="types-of-database-systems"><span class="header-section-number">2.6</span> 2.6 Types of Database Systems</h2>
+<h2 data-number="2.6" class="anchored" data-anchor-id="types-of-database-systems"><span class="header-section-number">2.6</span> Types of Database Systems</h2>
 <section id="by-data-model" class="level3" data-number="2.6.1">
 <h3 data-number="2.6.1" class="anchored" data-anchor-id="by-data-model"><span class="header-section-number">2.6.1</span> By Data Model</h3>
 <table class="caption-top table">
@@ -1082,7 +1082,7 @@ Note
 </section>
 </section>
 <section id="requirements-collection-and-analysis" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="requirements-collection-and-analysis"><span class="header-section-number">2.7</span> 2.7 Requirements Collection and Analysis</h2>
+<h2 data-number="2.7" class="anchored" data-anchor-id="requirements-collection-and-analysis"><span class="header-section-number">2.7</span> Requirements Collection and Analysis</h2>
 <p>Before a single table can be designed, the analyst must understand exactly what the system must do. Skipping this phase is the single most common cause of costly database redesigns six months into a project.</p>
 <section id="what-to-gather" class="level3" data-number="2.7.1">
 <h3 data-number="2.7.1" class="anchored" data-anchor-id="what-to-gather"><span class="header-section-number">2.7.1</span> What to Gather</h3>
@@ -1723,7 +1723,7 @@ Note
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.1 The Database Design Lifecycle</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Database Design Lifecycle</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>No database should be designed from thin air. A well-established **design lifecycle** guides the process from understanding what users need to deploying a production system.</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
@@ -1763,7 +1763,7 @@ Note
 <span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.2 Data Abstraction Levels</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data Abstraction Levels</span></span>
 <span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>The three-schema architecture from Chapter 1 described *what* the three levels are. Here we go one level deeper and explain *how* each level is realized in a real DBMS.</span>
 <span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
@@ -1801,7 +1801,7 @@ Note
 <span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.3 DBMS Deployment Architecture — Practical Considerations</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## DBMS Deployment Architecture — Practical Considerations</span></span>
 <span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>Chapter 1 (Section 1.8) introduced the 1-tier, 2-tier, and 3-tier deployment architectures conceptually. Here we examine the engineering trade-offs each tier imposes and how modern systems extend beyond the basic three tiers.</span>
 <span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
@@ -1876,7 +1876,7 @@ Note
 <span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.4 DBMS Component Architecture (Detailed)</span></span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a><span class="fu">## DBMS Component Architecture (Detailed)</span></span>
 <span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>A DBMS is a layered system of cooperating subsystems. Every SQL statement you write passes through each layer below:</span>
 <span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a></span>
@@ -1951,7 +1951,7 @@ Note
 <span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.5 The System Catalog (Data Dictionary)</span></span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a><span class="fu">## The System Catalog (Data Dictionary)</span></span>
 <span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>The **system catalog** is a special database-within-the-database that stores metadata about every object in the system. It is the backbone of the query optimizer and the DDL compiler.</span>
 <span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a></span>
@@ -1994,7 +1994,7 @@ Note
 <span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.6 Types of Database Systems</span></span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a><span class="fu">## Types of Database Systems</span></span>
 <span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a><span class="fu">### By Data Model</span></span>
 <span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a></span>
@@ -2026,7 +2026,7 @@ Note
 <span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.7 Requirements Collection and Analysis</span></span>
+<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a><span class="fu">## Requirements Collection and Analysis</span></span>
 <span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a>Before a single table can be designed, the analyst must understand exactly what the system must do. Skipping this phase is the single most common cause of costly database redesigns six months into a project.</span>
 <span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a></span>

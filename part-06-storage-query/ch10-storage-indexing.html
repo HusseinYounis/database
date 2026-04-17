@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-06-storage-query/ch11-query-processing.html" rel="next">
 <link href="../part-05-design/ch09-normalization.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -439,42 +439,42 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#why-storage-matters" id="toc-why-storage-matters" class="nav-link active" data-scroll-target="#why-storage-matters"><span class="header-section-number">10.1</span> §10.0 Why Storage Matters</a></li>
-  <li><a href="#storage-hierarchy" id="toc-storage-hierarchy" class="nav-link" data-scroll-target="#storage-hierarchy"><span class="header-section-number">10.2</span> 10.1 Storage Hierarchy</a></li>
-  <li><a href="#records-and-page-layout" id="toc-records-and-page-layout" class="nav-link" data-scroll-target="#records-and-page-layout"><span class="header-section-number">10.3</span> 10.2 Records and Page Layout</a>
+  <li><a href="#why-storage-matters" id="toc-why-storage-matters" class="nav-link active" data-scroll-target="#why-storage-matters"><span class="header-section-number">10.1</span> Why Storage Matters</a></li>
+  <li><a href="#storage-hierarchy" id="toc-storage-hierarchy" class="nav-link" data-scroll-target="#storage-hierarchy"><span class="header-section-number">10.2</span> Storage Hierarchy</a></li>
+  <li><a href="#records-and-page-layout" id="toc-records-and-page-layout" class="nav-link" data-scroll-target="#records-and-page-layout"><span class="header-section-number">10.3</span> Records and Page Layout</a>
   <ul class="collapse">
   <li><a href="#record-formats" id="toc-record-formats" class="nav-link" data-scroll-target="#record-formats"><span class="header-section-number">10.3.1</span> Record Formats</a></li>
   <li><a href="#slotted-page" id="toc-slotted-page" class="nav-link" data-scroll-target="#slotted-page"><span class="header-section-number">10.3.2</span> Slotted Page</a></li>
   </ul></li>
-  <li><a href="#file-organizations" id="toc-file-organizations" class="nav-link" data-scroll-target="#file-organizations"><span class="header-section-number">10.4</span> 10.3 File Organizations</a></li>
-  <li><a href="#index-concepts" id="toc-index-concepts" class="nav-link" data-scroll-target="#index-concepts"><span class="header-section-number">10.5</span> 10.4 Index Concepts</a>
+  <li><a href="#file-organizations" id="toc-file-organizations" class="nav-link" data-scroll-target="#file-organizations"><span class="header-section-number">10.4</span> File Organizations</a></li>
+  <li><a href="#index-concepts" id="toc-index-concepts" class="nav-link" data-scroll-target="#index-concepts"><span class="header-section-number">10.5</span> Index Concepts</a>
   <ul class="collapse">
   <li><a href="#taxonomy" id="toc-taxonomy" class="nav-link" data-scroll-target="#taxonomy"><span class="header-section-number">10.5.1</span> Taxonomy</a></li>
   <li><a href="#clustered-vs-unclustered-io-impact" id="toc-clustered-vs-unclustered-io-impact" class="nav-link" data-scroll-target="#clustered-vs-unclustered-io-impact"><span class="header-section-number">10.5.2</span> Clustered vs Unclustered: I/O Impact</a></li>
   </ul></li>
-  <li><a href="#b-tree-index" id="toc-b-tree-index" class="nav-link" data-scroll-target="#b-tree-index"><span class="header-section-number">10.6</span> 10.5 B+ Tree Index</a>
+  <li><a href="#b-tree-index" id="toc-b-tree-index" class="nav-link" data-scroll-target="#b-tree-index"><span class="header-section-number">10.6</span> B+ Tree Index</a>
   <ul class="collapse">
   <li><a href="#structure" id="toc-structure" class="nav-link" data-scroll-target="#structure"><span class="header-section-number">10.6.1</span> Structure</a></li>
   <li><a href="#cost-analysis" id="toc-cost-analysis" class="nav-link" data-scroll-target="#cost-analysis"><span class="header-section-number">10.6.2</span> Cost Analysis</a></li>
   </ul></li>
-  <li><a href="#interactive-b-tree-order-explorer" id="toc-interactive-b-tree-order-explorer" class="nav-link" data-scroll-target="#interactive-b-tree-order-explorer"><span class="header-section-number">10.7</span> 10.6 Interactive: B+ Tree Order Explorer</a></li>
-  <li><a href="#hash-indexes" id="toc-hash-indexes" class="nav-link" data-scroll-target="#hash-indexes"><span class="header-section-number">10.8</span> 10.7 Hash Indexes</a>
+  <li><a href="#interactive-b-tree-order-explorer" id="toc-interactive-b-tree-order-explorer" class="nav-link" data-scroll-target="#interactive-b-tree-order-explorer"><span class="header-section-number">10.7</span> Interactive: B+ Tree Order Explorer</a></li>
+  <li><a href="#hash-indexes" id="toc-hash-indexes" class="nav-link" data-scroll-target="#hash-indexes"><span class="header-section-number">10.8</span> Hash Indexes</a>
   <ul class="collapse">
   <li><a href="#extendible-hashing" id="toc-extendible-hashing" class="nav-link" data-scroll-target="#extendible-hashing"><span class="header-section-number">10.8.1</span> Extendible Hashing</a></li>
   </ul></li>
-  <li><a href="#bitmap-indexes" id="toc-bitmap-indexes" class="nav-link" data-scroll-target="#bitmap-indexes"><span class="header-section-number">10.9</span> 10.8 Bitmap Indexes</a>
+  <li><a href="#bitmap-indexes" id="toc-bitmap-indexes" class="nav-link" data-scroll-target="#bitmap-indexes"><span class="header-section-number">10.9</span> Bitmap Indexes</a>
   <ul class="collapse">
   <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">10.9.1</span> Example</a></li>
   <li><a href="#bitwise-operations-for-multi-predicate-queries" id="toc-bitwise-operations-for-multi-predicate-queries" class="nav-link" data-scroll-target="#bitwise-operations-for-multi-predicate-queries"><span class="header-section-number">10.9.2</span> Bitwise Operations for Multi-Predicate Queries</a></li>
   <li><a href="#when-to-use-bitmap-indexes" id="toc-when-to-use-bitmap-indexes" class="nav-link" data-scroll-target="#when-to-use-bitmap-indexes"><span class="header-section-number">10.9.3</span> When to Use Bitmap Indexes</a></li>
   <li><a href="#oracle-bitmap-index" id="toc-oracle-bitmap-index" class="nav-link" data-scroll-target="#oracle-bitmap-index"><span class="header-section-number">10.9.4</span> Oracle Bitmap Index</a></li>
   </ul></li>
-  <li><a href="#index-selection-guidelines" id="toc-index-selection-guidelines" class="nav-link" data-scroll-target="#index-selection-guidelines"><span class="header-section-number">10.10</span> 10.9 Index Selection Guidelines</a>
+  <li><a href="#index-selection-guidelines" id="toc-index-selection-guidelines" class="nav-link" data-scroll-target="#index-selection-guidelines"><span class="header-section-number">10.10</span> Index Selection Guidelines</a>
   <ul class="collapse">
   <li><a href="#when-to-create-an-index" id="toc-when-to-create-an-index" class="nav-link" data-scroll-target="#when-to-create-an-index"><span class="header-section-number">10.10.1</span> When to Create an Index</a></li>
   <li><a href="#composite-multi-column-index" id="toc-composite-multi-column-index" class="nav-link" data-scroll-target="#composite-multi-column-index"><span class="header-section-number">10.10.2</span> Composite (Multi-Column) Index</a></li>
   </ul></li>
-  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">10.11</span> 10.10 Chapter Summary</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">10.11</span> Chapter Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">10.12</span> Review Questions</a>
   <ul class="collapse">
   <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">10.12.1</span> Conceptual</a></li>
@@ -484,33 +484,33 @@ window.Quarto = {
   <li><a href="#design" id="toc-design" class="nav-link" data-scroll-target="#design"><span class="header-section-number">10.12.5</span> Design</a></li>
   <li><a href="#synthesis" id="toc-synthesis" class="nav-link" data-scroll-target="#synthesis"><span class="header-section-number">10.12.6</span> Synthesis</a></li>
   </ul></li>
-  <li><a href="#storage-hierarchy-1" id="toc-storage-hierarchy-1" class="nav-link" data-scroll-target="#storage-hierarchy-1"><span class="header-section-number">10.13</span> 10.1 Storage Hierarchy</a>
+  <li><a href="#storage-hierarchy-1" id="toc-storage-hierarchy-1" class="nav-link" data-scroll-target="#storage-hierarchy-1"><span class="header-section-number">10.13</span> Storage Hierarchy</a>
   <ul class="collapse">
   <li><a href="#units-of-disk-transfer" id="toc-units-of-disk-transfer" class="nav-link" data-scroll-target="#units-of-disk-transfer"><span class="header-section-number">10.13.1</span> Units of Disk Transfer</a></li>
   </ul></li>
-  <li><a href="#records-and-pages" id="toc-records-and-pages" class="nav-link" data-scroll-target="#records-and-pages"><span class="header-section-number">10.14</span> 10.2 Records and Pages</a>
+  <li><a href="#records-and-pages" id="toc-records-and-pages" class="nav-link" data-scroll-target="#records-and-pages"><span class="header-section-number">10.14</span> Records and Pages</a>
   <ul class="collapse">
   <li><a href="#record-types" id="toc-record-types" class="nav-link" data-scroll-target="#record-types"><span class="header-section-number">10.14.1</span> Record Types</a></li>
   <li><a href="#page-block-layout" id="toc-page-block-layout" class="nav-link" data-scroll-target="#page-block-layout"><span class="header-section-number">10.14.2</span> Page / Block Layout</a></li>
   </ul></li>
-  <li><a href="#file-organizations-1" id="toc-file-organizations-1" class="nav-link" data-scroll-target="#file-organizations-1"><span class="header-section-number">10.15</span> 10.3 File Organizations</a></li>
-  <li><a href="#index-concepts-1" id="toc-index-concepts-1" class="nav-link" data-scroll-target="#index-concepts-1"><span class="header-section-number">10.16</span> 10.4 Index Concepts</a>
+  <li><a href="#file-organizations-1" id="toc-file-organizations-1" class="nav-link" data-scroll-target="#file-organizations-1"><span class="header-section-number">10.15</span> File Organizations</a></li>
+  <li><a href="#index-concepts-1" id="toc-index-concepts-1" class="nav-link" data-scroll-target="#index-concepts-1"><span class="header-section-number">10.16</span> Index Concepts</a>
   <ul class="collapse">
   <li><a href="#index-terminology" id="toc-index-terminology" class="nav-link" data-scroll-target="#index-terminology"><span class="header-section-number">10.16.1</span> Index Terminology</a></li>
   <li><a href="#clustered-vs.-unclustered" id="toc-clustered-vs.-unclustered" class="nav-link" data-scroll-target="#clustered-vs.-unclustered"><span class="header-section-number">10.16.2</span> Clustered vs.&nbsp;Unclustered</a></li>
   </ul></li>
-  <li><a href="#b-tree-index-1" id="toc-b-tree-index-1" class="nav-link" data-scroll-target="#b-tree-index-1"><span class="header-section-number">10.17</span> 10.5 B+ Tree Index</a>
+  <li><a href="#b-tree-index-1" id="toc-b-tree-index-1" class="nav-link" data-scroll-target="#b-tree-index-1"><span class="header-section-number">10.17</span> B+ Tree Index</a>
   <ul class="collapse">
   <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="header-section-number">10.17.1</span> Properties</a></li>
   <li><a href="#b-tree-operations" id="toc-b-tree-operations" class="nav-link" data-scroll-target="#b-tree-operations"><span class="header-section-number">10.17.2</span> B+ Tree Operations</a></li>
   <li><a href="#when-to-use-a-b-tree-index" id="toc-when-to-use-a-b-tree-index" class="nav-link" data-scroll-target="#when-to-use-a-b-tree-index"><span class="header-section-number">10.17.3</span> When to Use a B+ Tree Index</a></li>
   </ul></li>
-  <li><a href="#hash-index" id="toc-hash-index" class="nav-link" data-scroll-target="#hash-index"><span class="header-section-number">10.18</span> 10.6 Hash Index</a>
+  <li><a href="#hash-index" id="toc-hash-index" class="nav-link" data-scroll-target="#hash-index"><span class="header-section-number">10.18</span> Hash Index</a>
   <ul class="collapse">
   <li><a href="#static-hashing" id="toc-static-hashing" class="nav-link" data-scroll-target="#static-hashing"><span class="header-section-number">10.18.1</span> Static Hashing</a></li>
   <li><a href="#extendible-hashing-dynamic" id="toc-extendible-hashing-dynamic" class="nav-link" data-scroll-target="#extendible-hashing-dynamic"><span class="header-section-number">10.18.2</span> Extendible Hashing (Dynamic)</a></li>
   </ul></li>
-  <li><a href="#index-selection-guidelines-1" id="toc-index-selection-guidelines-1" class="nav-link" data-scroll-target="#index-selection-guidelines-1"><span class="header-section-number">10.19</span> 10.7 Index Selection Guidelines</a>
+  <li><a href="#index-selection-guidelines-1" id="toc-index-selection-guidelines-1" class="nav-link" data-scroll-target="#index-selection-guidelines-1"><span class="header-section-number">10.19</span> Index Selection Guidelines</a>
   <ul class="collapse">
   <li><a href="#when-to-create-an-index-1" id="toc-when-to-create-an-index-1" class="nav-link" data-scroll-target="#when-to-create-an-index-1"><span class="header-section-number">10.19.1</span> When to Create an Index</a></li>
   <li><a href="#multi-column-composite-indexes" id="toc-multi-column-composite-indexes" class="nav-link" data-scroll-target="#multi-column-composite-indexes"><span class="header-section-number">10.19.2</span> Multi-Column (Composite) Indexes</a></li>
@@ -546,12 +546,12 @@ window.Quarto = {
 
 
 <section id="why-storage-matters" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="why-storage-matters"><span class="header-section-number">10.1</span> §10.0 Why Storage Matters</h2>
+<h2 data-number="10.1" class="anchored" data-anchor-id="why-storage-matters"><span class="header-section-number">10.1</span> Why Storage Matters</h2>
 <p>Chapter 11 (Query Processing) will show you <em>how</em> a query executes. But all execution happens ultimately by reading <strong>pages</strong> from disk into memory. The number of page reads is the primary cost metric for query optimization — and indexes exist to reduce that count dramatically.</p>
 <hr>
 </section>
 <section id="storage-hierarchy" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="storage-hierarchy"><span class="header-section-number">10.2</span> 10.1 Storage Hierarchy</h2>
+<h2 data-number="10.2" class="anchored" data-anchor-id="storage-hierarchy"><span class="header-section-number">10.2</span> Storage Hierarchy</h2>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
 <div>
@@ -580,7 +580,7 @@ window.Quarto = {
 <hr>
 </section>
 <section id="records-and-page-layout" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="records-and-page-layout"><span class="header-section-number">10.3</span> 10.2 Records and Page Layout</h2>
+<h2 data-number="10.3" class="anchored" data-anchor-id="records-and-page-layout"><span class="header-section-number">10.3</span> Records and Page Layout</h2>
 <section id="record-formats" class="level3" data-number="10.3.1">
 <h3 data-number="10.3.1" class="anchored" data-anchor-id="record-formats"><span class="header-section-number">10.3.1</span> Record Formats</h3>
 <table class="caption-top table">
@@ -628,7 +628,7 @@ window.Quarto = {
 </section>
 </section>
 <section id="file-organizations" class="level2" data-number="10.4">
-<h2 data-number="10.4" class="anchored" data-anchor-id="file-organizations"><span class="header-section-number">10.4</span> 10.3 File Organizations</h2>
+<h2 data-number="10.4" class="anchored" data-anchor-id="file-organizations"><span class="header-section-number">10.4</span> File Organizations</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 43%">
@@ -668,7 +668,7 @@ window.Quarto = {
 <hr>
 </section>
 <section id="index-concepts" class="level2" data-number="10.5">
-<h2 data-number="10.5" class="anchored" data-anchor-id="index-concepts"><span class="header-section-number">10.5</span> 10.4 Index Concepts</h2>
+<h2 data-number="10.5" class="anchored" data-anchor-id="index-concepts"><span class="header-section-number">10.5</span> Index Concepts</h2>
 <p>An <strong>index</strong> is an auxiliary data structure that maps <strong>search key → record location (RID)</strong>. It is separate from the data file and maintained automatically on INSERT/UPDATE/DELETE.</p>
 <section id="taxonomy" class="level3" data-number="10.5.1">
 <h3 data-number="10.5.1" class="anchored" data-anchor-id="taxonomy"><span class="header-section-number">10.5.1</span> Taxonomy</h3>
@@ -739,7 +739,7 @@ Tip
 </section>
 </section>
 <section id="b-tree-index" class="level2" data-number="10.6">
-<h2 data-number="10.6" class="anchored" data-anchor-id="b-tree-index"><span class="header-section-number">10.6</span> 10.5 B+ Tree Index</h2>
+<h2 data-number="10.6" class="anchored" data-anchor-id="b-tree-index"><span class="header-section-number">10.6</span> B+ Tree Index</h2>
 <p>The <strong>B+ Tree</strong> is the dominant index structure across all major RDBMS (MySQL, PostgreSQL, Oracle, SQL Server).</p>
 <section id="structure" class="level3" data-number="10.6.1">
 <h3 data-number="10.6.1" class="anchored" data-anchor-id="structure"><span class="header-section-number">10.6.1</span> Structure</h3>
@@ -804,7 +804,7 @@ Tip
 </section>
 </section>
 <section id="interactive-b-tree-order-explorer" class="level2" data-number="10.7">
-<h2 data-number="10.7" class="anchored" data-anchor-id="interactive-b-tree-order-explorer"><span class="header-section-number">10.7</span> 10.6 Interactive: B+ Tree Order Explorer</h2>
+<h2 data-number="10.7" class="anchored" data-anchor-id="interactive-b-tree-order-explorer"><span class="header-section-number">10.7</span> Interactive: B+ Tree Order Explorer</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb1" data-startfrom="190" data-source-offset="-1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 189;"><span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>viewof d <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">2</span><span class="op">,</span> <span class="dv">500</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">100</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Order d (max keys per node)"</span>})</span>
 <span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>viewof n <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">range</span>([<span class="dv">1000</span><span class="op">,</span> <span class="dv">1_000_000_000</span>]<span class="op">,</span> {<span class="dt">value</span><span class="op">:</span> <span class="dv">10_000_000</span><span class="op">,</span> <span class="dt">step</span><span class="op">:</span> <span class="dv">1000</span><span class="op">,</span> <span class="dt">label</span><span class="op">:</span> <span class="st">"Number of records n"</span>})</span>
@@ -880,7 +880,7 @@ Figure&nbsp;10.1: Effect of B+ Tree order on tree height and fan-out
 <hr>
 </section>
 <section id="hash-indexes" class="level2" data-number="10.8">
-<h2 data-number="10.8" class="anchored" data-anchor-id="hash-indexes"><span class="header-section-number">10.8</span> 10.7 Hash Indexes</h2>
+<h2 data-number="10.8" class="anchored" data-anchor-id="hash-indexes"><span class="header-section-number">10.8</span> Hash Indexes</h2>
 <p>A <strong>hash index</strong> applies a hash function <span class="math inline">h(k)</span> to map a key to a <strong>bucket</strong> where matching records are stored.</p>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
@@ -923,7 +923,7 @@ Figure&nbsp;10.1: Effect of B+ Tree order on tree height and fan-out
 </section>
 </section>
 <section id="bitmap-indexes" class="level2" data-number="10.9">
-<h2 data-number="10.9" class="anchored" data-anchor-id="bitmap-indexes"><span class="header-section-number">10.9</span> 10.8 Bitmap Indexes</h2>
+<h2 data-number="10.9" class="anchored" data-anchor-id="bitmap-indexes"><span class="header-section-number">10.9</span> Bitmap Indexes</h2>
 <p>A <strong>bitmap index</strong> stores, for each distinct value <span class="math inline">v</span> of the indexed column, a <strong>bit vector</strong> of length <span class="math inline">N</span> (one bit per row), where bit <span class="math inline">i = 1</span> iff row <span class="math inline">i</span> has value <span class="math inline">v</span>.</p>
 <section id="example" class="level3" data-number="10.9.1">
 <h3 data-number="10.9.1" class="anchored" data-anchor-id="example"><span class="header-section-number">10.9.1</span> Example</h3>
@@ -1061,7 +1061,7 @@ Tip
 </section>
 </section>
 <section id="index-selection-guidelines" class="level2" data-number="10.10">
-<h2 data-number="10.10" class="anchored" data-anchor-id="index-selection-guidelines"><span class="header-section-number">10.10</span> 10.9 Index Selection Guidelines</h2>
+<h2 data-number="10.10" class="anchored" data-anchor-id="index-selection-guidelines"><span class="header-section-number">10.10</span> Index Selection Guidelines</h2>
 <section id="when-to-create-an-index" class="level3" data-number="10.10.1">
 <h3 data-number="10.10.1" class="anchored" data-anchor-id="when-to-create-an-index"><span class="header-section-number">10.10.1</span> When to Create an Index</h3>
 <table class="caption-top table">
@@ -1196,7 +1196,7 @@ Tip
 </section>
 </section>
 <section id="chapter-summary" class="level2" data-number="10.11">
-<h2 data-number="10.11" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">10.11</span> 10.10 Chapter Summary</h2>
+<h2 data-number="10.11" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">10.11</span> Chapter Summary</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1286,7 +1286,7 @@ Tip
 </section>
 </section>
 <section id="storage-hierarchy-1" class="level2" data-number="10.13">
-<h2 data-number="10.13" class="anchored" data-anchor-id="storage-hierarchy-1"><span class="header-section-number">10.13</span> 10.1 Storage Hierarchy</h2>
+<h2 data-number="10.13" class="anchored" data-anchor-id="storage-hierarchy-1"><span class="header-section-number">10.13</span> Storage Hierarchy</h2>
 <pre data-code-line-numbers=""><code>Register (&lt; 1 ns)
     └── L1/L2/L3 Cache (1–10 ns)
             └── Main Memory / RAM (50–100 ns)
@@ -1322,7 +1322,7 @@ Tip
 </section>
 </section>
 <section id="records-and-pages" class="level2" data-number="10.14">
-<h2 data-number="10.14" class="anchored" data-anchor-id="records-and-pages"><span class="header-section-number">10.14</span> 10.2 Records and Pages</h2>
+<h2 data-number="10.14" class="anchored" data-anchor-id="records-and-pages"><span class="header-section-number">10.14</span> Records and Pages</h2>
 <section id="record-types" class="level3" data-number="10.14.1">
 <h3 data-number="10.14.1" class="anchored" data-anchor-id="record-types"><span class="header-section-number">10.14.1</span> Record Types</h3>
 <table class="caption-top table">
@@ -1363,7 +1363,7 @@ Tip
 </section>
 </section>
 <section id="file-organizations-1" class="level2" data-number="10.15">
-<h2 data-number="10.15" class="anchored" data-anchor-id="file-organizations-1"><span class="header-section-number">10.15</span> 10.3 File Organizations</h2>
+<h2 data-number="10.15" class="anchored" data-anchor-id="file-organizations-1"><span class="header-section-number">10.15</span> File Organizations</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 37%">
@@ -1402,7 +1402,7 @@ Tip
 </table>
 </section>
 <section id="index-concepts-1" class="level2" data-number="10.16">
-<h2 data-number="10.16" class="anchored" data-anchor-id="index-concepts-1"><span class="header-section-number">10.16</span> 10.4 Index Concepts</h2>
+<h2 data-number="10.16" class="anchored" data-anchor-id="index-concepts-1"><span class="header-section-number">10.16</span> Index Concepts</h2>
 <p>An <strong>index</strong> is an auxiliary data structure that speeds up retrieval by mapping search key values to record locations.</p>
 <section id="index-terminology" class="level3" data-number="10.16.1">
 <h3 data-number="10.16.1" class="anchored" data-anchor-id="index-terminology"><span class="header-section-number">10.16.1</span> Index Terminology</h3>
@@ -1464,7 +1464,7 @@ Index leaf → page range                Index leaf → scattered pages
 </section>
 </section>
 <section id="b-tree-index-1" class="level2" data-number="10.17">
-<h2 data-number="10.17" class="anchored" data-anchor-id="b-tree-index-1"><span class="header-section-number">10.17</span> 10.5 B+ Tree Index</h2>
+<h2 data-number="10.17" class="anchored" data-anchor-id="b-tree-index-1"><span class="header-section-number">10.17</span> B+ Tree Index</h2>
 <p>The <strong>B+ Tree</strong> is the dominant index structure in all major RDBMS.</p>
 <section id="properties" class="level3" data-number="10.17.1">
 <h3 data-number="10.17.1" class="anchored" data-anchor-id="properties"><span class="header-section-number">10.17.1</span> Properties</h3>
@@ -1535,7 +1535,7 @@ Tip
 </section>
 </section>
 <section id="hash-index" class="level2" data-number="10.18">
-<h2 data-number="10.18" class="anchored" data-anchor-id="hash-index"><span class="header-section-number">10.18</span> 10.6 Hash Index</h2>
+<h2 data-number="10.18" class="anchored" data-anchor-id="hash-index"><span class="header-section-number">10.18</span> Hash Index</h2>
 <p>A <strong>hash index</strong> uses a hash function <span class="math inline">h(k)</span> to map search key <span class="math inline">k</span> to a <strong>bucket</strong>.</p>
 <section id="static-hashing" class="level3" data-number="10.18.1">
 <h3 data-number="10.18.1" class="anchored" data-anchor-id="static-hashing"><span class="header-section-number">10.18.1</span> Static Hashing</h3>
@@ -1559,7 +1559,7 @@ Bucket B: [records where h(key) = B]</code></pre>
 </section>
 </section>
 <section id="index-selection-guidelines-1" class="level2" data-number="10.19">
-<h2 data-number="10.19" class="anchored" data-anchor-id="index-selection-guidelines-1"><span class="header-section-number">10.19</span> 10.7 Index Selection Guidelines</h2>
+<h2 data-number="10.19" class="anchored" data-anchor-id="index-selection-guidelines-1"><span class="header-section-number">10.19</span> Index Selection Guidelines</h2>
 <section id="when-to-create-an-index-1" class="level3" data-number="10.19.1">
 <h3 data-number="10.19.1" class="anchored" data-anchor-id="when-to-create-an-index-1"><span class="header-section-number">10.19.1</span> When to Create an Index</h3>
 <table class="caption-top table">
@@ -2171,7 +2171,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 10"</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## §10.0 Why Storage Matters</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why Storage Matters</span></span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>Chapter 11 (Query Processing) will show you *how* a query executes.</span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>But all execution happens ultimately by reading **pages** from disk into memory.</span>
@@ -2180,7 +2180,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.1 Storage Hierarchy</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Storage Hierarchy</span></span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
 <span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
@@ -2209,7 +2209,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.2 Records and Page Layout</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Records and Page Layout</span></span>
 <span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="fu">### Record Formats</span></span>
 <span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a></span>
@@ -2242,7 +2242,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.3 File Organizations</span></span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## File Organizations</span></span>
 <span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Organization <span class="pp">|</span> Layout <span class="pp">|</span> Best For <span class="pp">|</span></span>
 <span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|--------|---------|</span></span>
@@ -2253,7 +2253,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.4 Index Concepts</span></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## Index Concepts</span></span>
 <span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>An **index** is an auxiliary data structure that maps **search key → record location (RID)**.</span>
 <span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>It is separate from the data file and maintained automatically on INSERT/UPDATE/DELETE.</span>
@@ -2290,7 +2290,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.5 B+ Tree Index</span></span>
+<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a><span class="fu">## B+ Tree Index</span></span>
 <span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a>The **B+ Tree** is the dominant index structure across all major RDBMS (MySQL, PostgreSQL, Oracle, SQL Server).</span>
 <span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a></span>
@@ -2348,7 +2348,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-190"><a href="#cb16-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.6 Interactive: B+ Tree Order Explorer</span></span>
+<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interactive: B+ Tree Order Explorer</span></span>
 <span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-195"><a href="#cb16-195" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
 <span id="cb16-196"><a href="#cb16-196" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
@@ -2378,7 +2378,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-220"><a href="#cb16-220" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-221"><a href="#cb16-221" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.7 Hash Indexes</span></span>
+<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hash Indexes</span></span>
 <span id="cb16-224"><a href="#cb16-224" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-225"><a href="#cb16-225" aria-hidden="true" tabindex="-1"></a>A **hash index** applies a hash function $h(k)$ to map a key to a **bucket** where matching records are stored.</span>
 <span id="cb16-226"><a href="#cb16-226" aria-hidden="true" tabindex="-1"></a></span>
@@ -2415,7 +2415,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-259"><a href="#cb16-259" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-260"><a href="#cb16-260" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-261"><a href="#cb16-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-262"><a href="#cb16-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.8 Bitmap Indexes</span></span>
+<span id="cb16-262"><a href="#cb16-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bitmap Indexes</span></span>
 <span id="cb16-263"><a href="#cb16-263" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-264"><a href="#cb16-264" aria-hidden="true" tabindex="-1"></a>A **bitmap index** stores, for each distinct value $v$ of the indexed column, a **bit vector** of length $N$ (one bit per row), where bit $i = 1$ iff row $i$ has value $v$.</span>
 <span id="cb16-265"><a href="#cb16-265" aria-hidden="true" tabindex="-1"></a></span>
@@ -2484,7 +2484,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-328"><a href="#cb16-328" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-329"><a href="#cb16-329" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-330"><a href="#cb16-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-331"><a href="#cb16-331" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.9 Index Selection Guidelines</span></span>
+<span id="cb16-331"><a href="#cb16-331" aria-hidden="true" tabindex="-1"></a><span class="fu">## Index Selection Guidelines</span></span>
 <span id="cb16-332"><a href="#cb16-332" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-333"><a href="#cb16-333" aria-hidden="true" tabindex="-1"></a><span class="fu">### When to Create an Index</span></span>
 <span id="cb16-334"><a href="#cb16-334" aria-hidden="true" tabindex="-1"></a></span>
@@ -2564,7 +2564,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-408"><a href="#cb16-408" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-409"><a href="#cb16-409" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb16-410"><a href="#cb16-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-411"><a href="#cb16-411" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.10 Chapter Summary</span></span>
+<span id="cb16-411"><a href="#cb16-411" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
 <span id="cb16-412"><a href="#cb16-412" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-413"><a href="#cb16-413" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb16-414"><a href="#cb16-414" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 10</span></span>
@@ -2658,7 +2658,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-502"><a href="#cb16-502" aria-hidden="true" tabindex="-1"></a>    bitmap behavior. What are the trade-offs compared to a native bitmap index?</span>
 <span id="cb16-503"><a href="#cb16-503" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-504"><a href="#cb16-504" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-505"><a href="#cb16-505" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.1 Storage Hierarchy</span></span>
+<span id="cb16-505"><a href="#cb16-505" aria-hidden="true" tabindex="-1"></a><span class="fu">## Storage Hierarchy</span></span>
 <span id="cb16-506"><a href="#cb16-506" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-507"><a href="#cb16-507" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-508"><a href="#cb16-508" aria-hidden="true" tabindex="-1"></a><span class="in">Register (&lt; 1 ns)</span></span>
@@ -2681,7 +2681,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-525"><a href="#cb16-525" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-526"><a href="#cb16-526" aria-hidden="true" tabindex="-1"></a>All disk I/O is in **pages**. The cost metric in query optimization is the number of page reads/writes.</span>
 <span id="cb16-527"><a href="#cb16-527" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-528"><a href="#cb16-528" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.2 Records and Pages</span></span>
+<span id="cb16-528"><a href="#cb16-528" aria-hidden="true" tabindex="-1"></a><span class="fu">## Records and Pages</span></span>
 <span id="cb16-529"><a href="#cb16-529" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-530"><a href="#cb16-530" aria-hidden="true" tabindex="-1"></a><span class="fu">### Record Types</span></span>
 <span id="cb16-531"><a href="#cb16-531" aria-hidden="true" tabindex="-1"></a></span>
@@ -2706,7 +2706,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-550"><a href="#cb16-550" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-551"><a href="#cb16-551" aria-hidden="true" tabindex="-1"></a>**Slotted page** design keeps a **slot array** at the end. This allows records to move within a page without changing their external address (page_id, slot_id).</span>
 <span id="cb16-552"><a href="#cb16-552" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-553"><a href="#cb16-553" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.3 File Organizations</span></span>
+<span id="cb16-553"><a href="#cb16-553" aria-hidden="true" tabindex="-1"></a><span class="fu">## File Organizations</span></span>
 <span id="cb16-554"><a href="#cb16-554" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-555"><a href="#cb16-555" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Organization <span class="pp">|</span> Description <span class="pp">|</span> Best For <span class="pp">|</span></span>
 <span id="cb16-556"><a href="#cb16-556" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|-------------|---------|</span></span>
@@ -2715,7 +2715,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-559"><a href="#cb16-559" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Hash** <span class="pp">|</span> Records in buckets by hash(key) <span class="pp">|</span> Exact-match equality <span class="pp">|</span></span>
 <span id="cb16-560"><a href="#cb16-560" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Clustered** <span class="pp">|</span> Records sorted to match a B+ tree index <span class="pp">|</span> Range queries + index access <span class="pp">|</span></span>
 <span id="cb16-561"><a href="#cb16-561" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-562"><a href="#cb16-562" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.4 Index Concepts</span></span>
+<span id="cb16-562"><a href="#cb16-562" aria-hidden="true" tabindex="-1"></a><span class="fu">## Index Concepts</span></span>
 <span id="cb16-563"><a href="#cb16-563" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-564"><a href="#cb16-564" aria-hidden="true" tabindex="-1"></a>An **index** is an auxiliary data structure that speeds up retrieval by mapping search key values to record locations.</span>
 <span id="cb16-565"><a href="#cb16-565" aria-hidden="true" tabindex="-1"></a></span>
@@ -2746,7 +2746,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-590"><a href="#cb16-590" aria-hidden="true" tabindex="-1"></a><span class="in">(sequential I/O — fast for ranges)     (random I/O — slow for ranges)</span></span>
 <span id="cb16-591"><a href="#cb16-591" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-592"><a href="#cb16-592" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-593"><a href="#cb16-593" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.5 B+ Tree Index</span></span>
+<span id="cb16-593"><a href="#cb16-593" aria-hidden="true" tabindex="-1"></a><span class="fu">## B+ Tree Index</span></span>
 <span id="cb16-594"><a href="#cb16-594" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-595"><a href="#cb16-595" aria-hidden="true" tabindex="-1"></a>The **B+ Tree** is the dominant index structure in all major RDBMS.</span>
 <span id="cb16-596"><a href="#cb16-596" aria-hidden="true" tabindex="-1"></a></span>
@@ -2788,7 +2788,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-632"><a href="#cb16-632" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**GROUP BY** on the indexed column — efficient grouping</span>
 <span id="cb16-633"><a href="#cb16-633" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb16-634"><a href="#cb16-634" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-635"><a href="#cb16-635" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.6 Hash Index</span></span>
+<span id="cb16-635"><a href="#cb16-635" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hash Index</span></span>
 <span id="cb16-636"><a href="#cb16-636" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-637"><a href="#cb16-637" aria-hidden="true" tabindex="-1"></a>A **hash index** uses a hash function $h(k)$ to map search key $k$ to a **bucket**.</span>
 <span id="cb16-638"><a href="#cb16-638" aria-hidden="true" tabindex="-1"></a></span>
@@ -2812,7 +2812,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb16-656"><a href="#cb16-656" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Split only the full bucket</span>
 <span id="cb16-657"><a href="#cb16-657" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Global depth grows only when needed (doubles directory)</span>
 <span id="cb16-658"><a href="#cb16-658" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-659"><a href="#cb16-659" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10.7 Index Selection Guidelines</span></span>
+<span id="cb16-659"><a href="#cb16-659" aria-hidden="true" tabindex="-1"></a><span class="fu">## Index Selection Guidelines</span></span>
 <span id="cb16-660"><a href="#cb16-660" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-661"><a href="#cb16-661" aria-hidden="true" tabindex="-1"></a><span class="fu">### When to Create an Index</span></span>
 <span id="cb16-662"><a href="#cb16-662" aria-hidden="true" tabindex="-1"></a></span>

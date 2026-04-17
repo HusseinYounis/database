@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-05-design/ch09-normalization.html" rel="next">
 <link href="../part-04-sql/ch07-sql-basics.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -391,45 +391,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#building-on-the-basics" id="toc-building-on-the-basics" class="nav-link active" data-scroll-target="#building-on-the-basics"><span class="header-section-number">8.1</span> §8.0 Building on the Basics</a></li>
-  <li><a href="#common-table-expressions-ctes" id="toc-common-table-expressions-ctes" class="nav-link" data-scroll-target="#common-table-expressions-ctes"><span class="header-section-number">8.2</span> 8.1 Common Table Expressions (CTEs)</a>
+  <li><a href="#building-on-the-basics" id="toc-building-on-the-basics" class="nav-link active" data-scroll-target="#building-on-the-basics"><span class="header-section-number">8.1</span> Building on the Basics</a></li>
+  <li><a href="#common-table-expressions-ctes" id="toc-common-table-expressions-ctes" class="nav-link" data-scroll-target="#common-table-expressions-ctes"><span class="header-section-number">8.2</span> Common Table Expressions (CTEs)</a>
   <ul class="collapse">
-  <li><a href="#single-cte-readable-subquery" id="toc-single-cte-readable-subquery" class="nav-link" data-scroll-target="#single-cte-readable-subquery"><span class="header-section-number">8.2.1</span> 8.1.1 Single CTE — Readable Subquery</a></li>
-  <li><a href="#multiple-ctes-chained-steps" id="toc-multiple-ctes-chained-steps" class="nav-link" data-scroll-target="#multiple-ctes-chained-steps"><span class="header-section-number">8.2.2</span> 8.1.2 Multiple CTEs — Chained Steps</a></li>
-  <li><a href="#recursive-cte" id="toc-recursive-cte" class="nav-link" data-scroll-target="#recursive-cte"><span class="header-section-number">8.2.3</span> 8.1.3 Recursive CTE</a></li>
+  <li><a href="#single-cte-readable-subquery" id="toc-single-cte-readable-subquery" class="nav-link" data-scroll-target="#single-cte-readable-subquery"><span class="header-section-number">8.2.1</span> Single CTE — Readable Subquery</a></li>
+  <li><a href="#multiple-ctes-chained-steps" id="toc-multiple-ctes-chained-steps" class="nav-link" data-scroll-target="#multiple-ctes-chained-steps"><span class="header-section-number">8.2.2</span> Multiple CTEs — Chained Steps</a></li>
+  <li><a href="#recursive-cte" id="toc-recursive-cte" class="nav-link" data-scroll-target="#recursive-cte"><span class="header-section-number">8.2.3</span> Recursive CTE</a></li>
   </ul></li>
-  <li><a href="#window-functions" id="toc-window-functions" class="nav-link" data-scroll-target="#window-functions"><span class="header-section-number">8.3</span> 8.2 Window Functions</a>
+  <li><a href="#window-functions" id="toc-window-functions" class="nav-link" data-scroll-target="#window-functions"><span class="header-section-number">8.3</span> Window Functions</a>
   <ul class="collapse">
-  <li><a href="#ranking-functions" id="toc-ranking-functions" class="nav-link" data-scroll-target="#ranking-functions"><span class="header-section-number">8.3.1</span> 8.2.1 Ranking Functions</a></li>
-  <li><a href="#analytic-offset-functions" id="toc-analytic-offset-functions" class="nav-link" data-scroll-target="#analytic-offset-functions"><span class="header-section-number">8.3.2</span> 8.2.2 Analytic / Offset Functions</a></li>
-  <li><a href="#running-aggregates" id="toc-running-aggregates" class="nav-link" data-scroll-target="#running-aggregates"><span class="header-section-number">8.3.3</span> 8.2.3 Running Aggregates</a></li>
-  <li><a href="#frame-specification-rows-vs-range" id="toc-frame-specification-rows-vs-range" class="nav-link" data-scroll-target="#frame-specification-rows-vs-range"><span class="header-section-number">8.3.4</span> 8.2.4 Frame Specification (ROWS vs RANGE)</a></li>
-  <li><a href="#window-functions-vs-group-by" id="toc-window-functions-vs-group-by" class="nav-link" data-scroll-target="#window-functions-vs-group-by"><span class="header-section-number">8.3.5</span> 8.2.5 Window Functions vs GROUP BY</a></li>
+  <li><a href="#ranking-functions" id="toc-ranking-functions" class="nav-link" data-scroll-target="#ranking-functions"><span class="header-section-number">8.3.1</span> Ranking Functions</a></li>
+  <li><a href="#analytic-offset-functions" id="toc-analytic-offset-functions" class="nav-link" data-scroll-target="#analytic-offset-functions"><span class="header-section-number">8.3.2</span> Analytic / Offset Functions</a></li>
+  <li><a href="#running-aggregates" id="toc-running-aggregates" class="nav-link" data-scroll-target="#running-aggregates"><span class="header-section-number">8.3.3</span> Running Aggregates</a></li>
+  <li><a href="#frame-specification-rows-vs-range" id="toc-frame-specification-rows-vs-range" class="nav-link" data-scroll-target="#frame-specification-rows-vs-range"><span class="header-section-number">8.3.4</span> Frame Specification (ROWS vs RANGE)</a></li>
+  <li><a href="#window-functions-vs-group-by" id="toc-window-functions-vs-group-by" class="nav-link" data-scroll-target="#window-functions-vs-group-by"><span class="header-section-number">8.3.5</span> Window Functions vs GROUP BY</a></li>
   </ul></li>
-  <li><a href="#views" id="toc-views" class="nav-link" data-scroll-target="#views"><span class="header-section-number">8.4</span> 8.3 Views</a>
+  <li><a href="#views" id="toc-views" class="nav-link" data-scroll-target="#views"><span class="header-section-number">8.4</span> Views</a>
   <ul class="collapse">
-  <li><a href="#creating-and-querying-views" id="toc-creating-and-querying-views" class="nav-link" data-scroll-target="#creating-and-querying-views"><span class="header-section-number">8.4.1</span> 8.3.1 Creating and Querying Views</a></li>
-  <li><a href="#updatable-vs-non-updatable-views" id="toc-updatable-vs-non-updatable-views" class="nav-link" data-scroll-target="#updatable-vs-non-updatable-views"><span class="header-section-number">8.4.2</span> 8.3.2 Updatable vs Non-Updatable Views</a></li>
+  <li><a href="#creating-and-querying-views" id="toc-creating-and-querying-views" class="nav-link" data-scroll-target="#creating-and-querying-views"><span class="header-section-number">8.4.1</span> Creating and Querying Views</a></li>
+  <li><a href="#updatable-vs-non-updatable-views" id="toc-updatable-vs-non-updatable-views" class="nav-link" data-scroll-target="#updatable-vs-non-updatable-views"><span class="header-section-number">8.4.2</span> Updatable vs Non-Updatable Views</a></li>
   </ul></li>
-  <li><a href="#stored-procedures-and-functions" id="toc-stored-procedures-and-functions" class="nav-link" data-scroll-target="#stored-procedures-and-functions"><span class="header-section-number">8.5</span> 8.4 Stored Procedures and Functions</a>
+  <li><a href="#stored-procedures-and-functions" id="toc-stored-procedures-and-functions" class="nav-link" data-scroll-target="#stored-procedures-and-functions"><span class="header-section-number">8.5</span> Stored Procedures and Functions</a>
   <ul class="collapse">
-  <li><a href="#stored-procedures" id="toc-stored-procedures" class="nav-link" data-scroll-target="#stored-procedures"><span class="header-section-number">8.5.1</span> 8.4.1 Stored Procedures</a></li>
-  <li><a href="#stored-functions" id="toc-stored-functions" class="nav-link" data-scroll-target="#stored-functions"><span class="header-section-number">8.5.2</span> 8.4.2 Stored Functions</a></li>
-  <li><a href="#procedures-vs-functions-vs-triggers" id="toc-procedures-vs-functions-vs-triggers" class="nav-link" data-scroll-target="#procedures-vs-functions-vs-triggers"><span class="header-section-number">8.5.3</span> 8.4.3 Procedures vs Functions vs Triggers</a></li>
+  <li><a href="#stored-procedures" id="toc-stored-procedures" class="nav-link" data-scroll-target="#stored-procedures"><span class="header-section-number">8.5.1</span> Stored Procedures</a></li>
+  <li><a href="#stored-functions" id="toc-stored-functions" class="nav-link" data-scroll-target="#stored-functions"><span class="header-section-number">8.5.2</span> Stored Functions</a></li>
+  <li><a href="#procedures-vs-functions-vs-triggers" id="toc-procedures-vs-functions-vs-triggers" class="nav-link" data-scroll-target="#procedures-vs-functions-vs-triggers"><span class="header-section-number">8.5.3</span> Procedures vs Functions vs Triggers</a></li>
   </ul></li>
-  <li><a href="#triggers" id="toc-triggers" class="nav-link" data-scroll-target="#triggers"><span class="header-section-number">8.6</span> 8.5 Triggers</a>
+  <li><a href="#triggers" id="toc-triggers" class="nav-link" data-scroll-target="#triggers"><span class="header-section-number">8.6</span> Triggers</a>
   <ul class="collapse">
-  <li><a href="#trigger-anatomy" id="toc-trigger-anatomy" class="nav-link" data-scroll-target="#trigger-anatomy"><span class="header-section-number">8.6.1</span> 8.5.1 Trigger Anatomy</a></li>
-  <li><a href="#audit-trigger-example" id="toc-audit-trigger-example" class="nav-link" data-scroll-target="#audit-trigger-example"><span class="header-section-number">8.6.2</span> 8.5.2 Audit Trigger Example</a></li>
-  <li><a href="#validation-trigger-rejecting-bad-data" id="toc-validation-trigger-rejecting-bad-data" class="nav-link" data-scroll-target="#validation-trigger-rejecting-bad-data"><span class="header-section-number">8.6.3</span> 8.5.3 Validation Trigger — Rejecting Bad Data</a></li>
+  <li><a href="#trigger-anatomy" id="toc-trigger-anatomy" class="nav-link" data-scroll-target="#trigger-anatomy"><span class="header-section-number">8.6.1</span> Trigger Anatomy</a></li>
+  <li><a href="#audit-trigger-example" id="toc-audit-trigger-example" class="nav-link" data-scroll-target="#audit-trigger-example"><span class="header-section-number">8.6.2</span> Audit Trigger Example</a></li>
+  <li><a href="#validation-trigger-rejecting-bad-data" id="toc-validation-trigger-rejecting-bad-data" class="nav-link" data-scroll-target="#validation-trigger-rejecting-bad-data"><span class="header-section-number">8.6.3</span> Validation Trigger — Rejecting Bad Data</a></li>
   </ul></li>
-  <li><a href="#json-functions" id="toc-json-functions" class="nav-link" data-scroll-target="#json-functions"><span class="header-section-number">8.7</span> 8.6 JSON Functions</a>
+  <li><a href="#json-functions" id="toc-json-functions" class="nav-link" data-scroll-target="#json-functions"><span class="header-section-number">8.7</span> JSON Functions</a>
   <ul class="collapse">
-  <li><a href="#json-storage" id="toc-json-storage" class="nav-link" data-scroll-target="#json-storage"><span class="header-section-number">8.7.1</span> 8.6.1 JSON Storage</a></li>
-  <li><a href="#reading-json-values" id="toc-reading-json-values" class="nav-link" data-scroll-target="#reading-json-values"><span class="header-section-number">8.7.2</span> 8.6.2 Reading JSON Values</a></li>
-  <li><a href="#modifying-json" id="toc-modifying-json" class="nav-link" data-scroll-target="#modifying-json"><span class="header-section-number">8.7.3</span> 8.6.3 Modifying JSON</a></li>
+  <li><a href="#json-storage" id="toc-json-storage" class="nav-link" data-scroll-target="#json-storage"><span class="header-section-number">8.7.1</span> JSON Storage</a></li>
+  <li><a href="#reading-json-values" id="toc-reading-json-values" class="nav-link" data-scroll-target="#reading-json-values"><span class="header-section-number">8.7.2</span> Reading JSON Values</a></li>
+  <li><a href="#modifying-json" id="toc-modifying-json" class="nav-link" data-scroll-target="#modifying-json"><span class="header-section-number">8.7.3</span> Modifying JSON</a></li>
   </ul></li>
-  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">8.8</span> 8.7 Chapter Summary</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">8.8</span> Chapter Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">8.9</span> Review Questions</a>
   <ul class="collapse">
   <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">8.9.1</span> Conceptual</a></li>
@@ -442,7 +442,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#right-outer-join" id="toc-right-outer-join" class="nav-link" data-scroll-target="#right-outer-join"><span class="header-section-number">8.9.8</span> RIGHT OUTER JOIN</a></li>
   <li><a href="#full-outer-join" id="toc-full-outer-join" class="nav-link" data-scroll-target="#full-outer-join"><span class="header-section-number">8.9.9</span> FULL OUTER JOIN</a></li>
   </ul></li>
-  <li><a href="#subqueries-nested-queries" id="toc-subqueries-nested-queries" class="nav-link" data-scroll-target="#subqueries-nested-queries"><span class="header-section-number">8.10</span> 8.2 Subqueries (Nested Queries)</a>
+  <li><a href="#subqueries-nested-queries" id="toc-subqueries-nested-queries" class="nav-link" data-scroll-target="#subqueries-nested-queries"><span class="header-section-number">8.10</span> Subqueries (Nested Queries)</a>
   <ul class="collapse">
   <li><a href="#scalar-subquery" id="toc-scalar-subquery" class="nav-link" data-scroll-target="#scalar-subquery"><span class="header-section-number">8.10.1</span> Scalar Subquery</a></li>
   <li><a href="#subquery-with-in-not-in" id="toc-subquery-with-in-not-in" class="nav-link" data-scroll-target="#subquery-with-in-not-in"><span class="header-section-number">8.10.2</span> Subquery with IN / NOT IN</a></li>
@@ -450,11 +450,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#correlated-subquery" id="toc-correlated-subquery" class="nav-link" data-scroll-target="#correlated-subquery"><span class="header-section-number">8.10.4</span> Correlated Subquery</a></li>
   <li><a href="#any-all" id="toc-any-all" class="nav-link" data-scroll-target="#any-all"><span class="header-section-number">8.10.5</span> ANY / ALL</a></li>
   </ul></li>
-  <li><a href="#common-table-expressions-cte" id="toc-common-table-expressions-cte" class="nav-link" data-scroll-target="#common-table-expressions-cte"><span class="header-section-number">8.11</span> 8.3 Common Table Expressions (CTE)</a>
+  <li><a href="#common-table-expressions-cte" id="toc-common-table-expressions-cte" class="nav-link" data-scroll-target="#common-table-expressions-cte"><span class="header-section-number">8.11</span> Common Table Expressions (CTE)</a>
   <ul class="collapse">
   <li><a href="#recursive-cte-1" id="toc-recursive-cte-1" class="nav-link" data-scroll-target="#recursive-cte-1"><span class="header-section-number">8.11.1</span> Recursive CTE</a></li>
   </ul></li>
-  <li><a href="#views-1" id="toc-views-1" class="nav-link" data-scroll-target="#views-1"><span class="header-section-number">8.12</span> 8.4 Views</a>
+  <li><a href="#views-1" id="toc-views-1" class="nav-link" data-scroll-target="#views-1"><span class="header-section-number">8.12</span> Views</a>
   <ul class="collapse">
   <li><a href="#creating-a-view" id="toc-creating-a-view" class="nav-link" data-scroll-target="#creating-a-view"><span class="header-section-number">8.12.1</span> Creating a View</a></li>
   <li><a href="#querying-a-view" id="toc-querying-a-view" class="nav-link" data-scroll-target="#querying-a-view"><span class="header-section-number">8.12.2</span> Querying a View</a></li>
@@ -462,19 +462,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#dropping-a-view" id="toc-dropping-a-view" class="nav-link" data-scroll-target="#dropping-a-view"><span class="header-section-number">8.12.4</span> Dropping a View</a></li>
   <li><a href="#updateable-views" id="toc-updateable-views" class="nav-link" data-scroll-target="#updateable-views"><span class="header-section-number">8.12.5</span> Updateable Views</a></li>
   </ul></li>
-  <li><a href="#triggers-1" id="toc-triggers-1" class="nav-link" data-scroll-target="#triggers-1"><span class="header-section-number">8.13</span> 8.5 Triggers</a>
+  <li><a href="#triggers-1" id="toc-triggers-1" class="nav-link" data-scroll-target="#triggers-1"><span class="header-section-number">8.13</span> Triggers</a>
   <ul class="collapse">
   <li><a href="#trigger-syntax-postgresql" id="toc-trigger-syntax-postgresql" class="nav-link" data-scroll-target="#trigger-syntax-postgresql"><span class="header-section-number">8.13.1</span> Trigger Syntax (PostgreSQL)</a></li>
   <li><a href="#trigger-timing-and-events" id="toc-trigger-timing-and-events" class="nav-link" data-scroll-target="#trigger-timing-and-events"><span class="header-section-number">8.13.2</span> Trigger Timing and Events</a></li>
   <li><a href="#old-and-new-pseudo-records" id="toc-old-and-new-pseudo-records" class="nav-link" data-scroll-target="#old-and-new-pseudo-records"><span class="header-section-number">8.13.3</span> OLD and NEW pseudo-records</a></li>
   </ul></li>
-  <li><a href="#stored-procedures-and-functions-1" id="toc-stored-procedures-and-functions-1" class="nav-link" data-scroll-target="#stored-procedures-and-functions-1"><span class="header-section-number">8.14</span> 8.6 Stored Procedures and Functions</a>
+  <li><a href="#stored-procedures-and-functions-1" id="toc-stored-procedures-and-functions-1" class="nav-link" data-scroll-target="#stored-procedures-and-functions-1"><span class="header-section-number">8.14</span> Stored Procedures and Functions</a>
   <ul class="collapse">
   <li><a href="#stored-procedure-postgresql" id="toc-stored-procedure-postgresql" class="nav-link" data-scroll-target="#stored-procedure-postgresql"><span class="header-section-number">8.14.1</span> Stored Procedure (PostgreSQL)</a></li>
   <li><a href="#function-returns-a-value" id="toc-function-returns-a-value" class="nav-link" data-scroll-target="#function-returns-a-value"><span class="header-section-number">8.14.2</span> Function (returns a value)</a></li>
   <li><a href="#stored-procedures-vs.-triggers-vs.-functions" id="toc-stored-procedures-vs.-triggers-vs.-functions" class="nav-link" data-scroll-target="#stored-procedures-vs.-triggers-vs.-functions"><span class="header-section-number">8.14.3</span> Stored Procedures vs.&nbsp;Triggers vs.&nbsp;Functions</a></li>
   </ul></li>
-  <li><a href="#window-functions-1" id="toc-window-functions-1" class="nav-link" data-scroll-target="#window-functions-1"><span class="header-section-number">8.15</span> 8.7 Window Functions</a>
+  <li><a href="#window-functions-1" id="toc-window-functions-1" class="nav-link" data-scroll-target="#window-functions-1"><span class="header-section-number">8.15</span> Window Functions</a>
   <ul class="collapse">
   <li><a href="#common-window-functions" id="toc-common-window-functions" class="nav-link" data-scroll-target="#common-window-functions"><span class="header-section-number">8.15.1</span> Common Window Functions</a></li>
   </ul></li>
@@ -507,7 +507,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <section id="building-on-the-basics" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="building-on-the-basics"><span class="header-section-number">8.1</span> §8.0 Building on the Basics</h2>
+<h2 data-number="8.1" class="anchored" data-anchor-id="building-on-the-basics"><span class="header-section-number">8.1</span> Building on the Basics</h2>
 <p>Chapter 7 covered the foundational SELECT–FROM–WHERE pipeline, joins, and aggregates. This chapter introduces the features that make SQL genuinely powerful for real-world applications:</p>
 <table class="caption-top table">
 <colgroup>
@@ -550,7 +550,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <hr>
 </section>
 <section id="common-table-expressions-ctes" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="common-table-expressions-ctes"><span class="header-section-number">8.2</span> 8.1 Common Table Expressions (CTEs)</h2>
+<h2 data-number="8.2" class="anchored" data-anchor-id="common-table-expressions-ctes"><span class="header-section-number">8.2</span> Common Table Expressions (CTEs)</h2>
 <p>A <strong>Common Table Expression</strong> names a temporary result set scoped to a single query. It replaces deeply nested subqueries with readable, layered logic.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Basic CTE syntax</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> cte_name <span class="kw">AS</span> (</span>
@@ -558,7 +558,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">..</span>. <span class="kw">FROM</span> cte_name <span class="op">..</span>.;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="single-cte-readable-subquery" class="level3" data-number="8.2.1">
-<h3 data-number="8.2.1" class="anchored" data-anchor-id="single-cte-readable-subquery"><span class="header-section-number">8.2.1</span> 8.1.1 Single CTE — Readable Subquery</h3>
+<h3 data-number="8.2.1" class="anchored" data-anchor-id="single-cte-readable-subquery"><span class="header-section-number">8.2.1</span> Single CTE — Readable Subquery</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Employees earning more than the overall average salary</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> AvgSalary <span class="kw">AS</span> (</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> <span class="fu">AVG</span>(Salary) <span class="kw">AS</span> <span class="fu">Avg</span> <span class="kw">FROM</span> Employee</span>
@@ -569,7 +569,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> E.Salary <span class="kw">DESC</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="multiple-ctes-chained-steps" class="level3" data-number="8.2.2">
-<h3 data-number="8.2.2" class="anchored" data-anchor-id="multiple-ctes-chained-steps"><span class="header-section-number">8.2.2</span> 8.1.2 Multiple CTEs — Chained Steps</h3>
+<h3 data-number="8.2.2" class="anchored" data-anchor-id="multiple-ctes-chained-steps"><span class="header-section-number">8.2.2</span> Multiple CTEs — Chained Steps</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Step 1: department headcount</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- Step 2: department total salary</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Step 3: combine and compute cost-per-head</span></span>
@@ -593,7 +593,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> CostPerHead <span class="kw">DESC</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="recursive-cte" class="level3" data-number="8.2.3">
-<h3 data-number="8.2.3" class="anchored" data-anchor-id="recursive-cte"><span class="header-section-number">8.2.3</span> 8.1.3 Recursive CTE</h3>
+<h3 data-number="8.2.3" class="anchored" data-anchor-id="recursive-cte"><span class="header-section-number">8.2.3</span> Recursive CTE</h3>
 <p>A recursive CTE has two parts joined by <code>UNION ALL</code>:</p>
 <table class="caption-top table">
 <colgroup>
@@ -696,7 +696,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="window-functions" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="window-functions"><span class="header-section-number">8.3</span> 8.2 Window Functions</h2>
+<h2 data-number="8.3" class="anchored" data-anchor-id="window-functions"><span class="header-section-number">8.3</span> Window Functions</h2>
 <p>Window functions compute values <em>across a set of rows related to the current row</em> <strong>without collapsing</strong> those rows into a single output row — unlike <code>GROUP BY</code>.</p>
 <pre data-code-line-numbers=""><code>FUNCTION_NAME() OVER (
     [PARTITION BY col, ...]   -- divide rows into groups (windows)
@@ -704,7 +704,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     [ROWS/RANGE BETWEEN ...]  -- optional frame specification
 )</code></pre>
 <section id="ranking-functions" class="level3" data-number="8.3.1">
-<h3 data-number="8.3.1" class="anchored" data-anchor-id="ranking-functions"><span class="header-section-number">8.3.1</span> 8.2.1 Ranking Functions</h3>
+<h3 data-number="8.3.1" class="anchored" data-anchor-id="ranking-functions"><span class="header-section-number">8.3.1</span> Ranking Functions</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname, Dno, Salary,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">ROW_NUMBER</span>()  <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> Dno <span class="kw">ORDER</span> <span class="kw">BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> <span class="kw">RowNum</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">RANK</span>()        <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> Dno <span class="kw">ORDER</span> <span class="kw">BY</span> Salary <span class="kw">DESC</span>) <span class="kw">AS</span> Rnk,</span>
@@ -750,7 +750,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </section>
 <section id="analytic-offset-functions" class="level3" data-number="8.3.2">
-<h3 data-number="8.3.2" class="anchored" data-anchor-id="analytic-offset-functions"><span class="header-section-number">8.3.2</span> 8.2.2 Analytic / Offset Functions</h3>
+<h3 data-number="8.3.2" class="anchored" data-anchor-id="analytic-offset-functions"><span class="header-section-number">8.3.2</span> Analytic / Offset Functions</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- For each employee: show salary, the previous hire's salary, and next hire's salary</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- (employees ordered by Bdate as a proxy for hire date)</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname, Bdate, Salary,</span>
@@ -760,7 +760,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span>   Employee;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="running-aggregates" class="level3" data-number="8.3.3">
-<h3 data-number="8.3.3" class="anchored" data-anchor-id="running-aggregates"><span class="header-section-number">8.3.3</span> 8.2.3 Running Aggregates</h3>
+<h3 data-number="8.3.3" class="anchored" data-anchor-id="running-aggregates"><span class="header-section-number">8.3.3</span> Running Aggregates</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Cumulative total salary spent, ordered by employee bdate</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname, Bdate, Salary,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">SUM</span>(Salary)  <span class="kw">OVER</span> (<span class="kw">ORDER</span> <span class="kw">BY</span> Bdate</span>
@@ -772,7 +772,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> Bdate;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="frame-specification-rows-vs-range" class="level3" data-number="8.3.4">
-<h3 data-number="8.3.4" class="anchored" data-anchor-id="frame-specification-rows-vs-range"><span class="header-section-number">8.3.4</span> 8.2.4 Frame Specification (ROWS vs RANGE)</h3>
+<h3 data-number="8.3.4" class="anchored" data-anchor-id="frame-specification-rows-vs-range"><span class="header-section-number">8.3.4</span> Frame Specification (ROWS vs RANGE)</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -811,7 +811,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="window-functions-vs-group-by" class="level3" data-number="8.3.5">
-<h3 data-number="8.3.5" class="anchored" data-anchor-id="window-functions-vs-group-by"><span class="header-section-number">8.3.5</span> 8.2.5 Window Functions vs GROUP BY</h3>
+<h3 data-number="8.3.5" class="anchored" data-anchor-id="window-functions-vs-group-by"><span class="header-section-number">8.3.5</span> Window Functions vs GROUP BY</h3>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -847,10 +847,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="views" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="views"><span class="header-section-number">8.4</span> 8.3 Views</h2>
+<h2 data-number="8.4" class="anchored" data-anchor-id="views"><span class="header-section-number">8.4</span> Views</h2>
 <p>A <strong>view</strong> is a stored SELECT statement with a name — a virtual table. When you query a view, the DBMS substitutes its definition (called <em>view expansion</em>).</p>
 <section id="creating-and-querying-views" class="level3" data-number="8.4.1">
-<h3 data-number="8.4.1" class="anchored" data-anchor-id="creating-and-querying-views"><span class="header-section-number">8.4.1</span> 8.3.1 Creating and Querying Views</h3>
+<h3 data-number="8.4.1" class="anchored" data-anchor-id="creating-and-querying-views"><span class="header-section-number">8.4.1</span> Creating and Querying Views</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -913,7 +913,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="updatable-vs-non-updatable-views" class="level3" data-number="8.4.2">
-<h3 data-number="8.4.2" class="anchored" data-anchor-id="updatable-vs-non-updatable-views"><span class="header-section-number">8.4.2</span> 8.3.2 Updatable vs Non-Updatable Views</h3>
+<h3 data-number="8.4.2" class="anchored" data-anchor-id="updatable-vs-non-updatable-views"><span class="header-section-number">8.4.2</span> Updatable vs Non-Updatable Views</h3>
 <p>A view supports DML (INSERT/UPDATE/DELETE) only under strict conditions:</p>
 <table class="caption-top table">
 <thead>
@@ -985,10 +985,10 @@ Tip
 </section>
 </section>
 <section id="stored-procedures-and-functions" class="level2" data-number="8.5">
-<h2 data-number="8.5" class="anchored" data-anchor-id="stored-procedures-and-functions"><span class="header-section-number">8.5</span> 8.4 Stored Procedures and Functions</h2>
+<h2 data-number="8.5" class="anchored" data-anchor-id="stored-procedures-and-functions"><span class="header-section-number">8.5</span> Stored Procedures and Functions</h2>
 <p>Stored programs run inside the database engine — they avoid round-trips and centralize business logic.</p>
 <section id="stored-procedures" class="level3" data-number="8.5.1">
-<h3 data-number="8.5.1" class="anchored" data-anchor-id="stored-procedures"><span class="header-section-number">8.5.1</span> 8.4.1 Stored Procedures</h3>
+<h3 data-number="8.5.1" class="anchored" data-anchor-id="stored-procedures"><span class="header-section-number">8.5.1</span> Stored Procedures</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -1065,7 +1065,7 @@ Tip
 </div>
 </section>
 <section id="stored-functions" class="level3" data-number="8.5.2">
-<h3 data-number="8.5.2" class="anchored" data-anchor-id="stored-functions"><span class="header-section-number">8.5.2</span> 8.4.2 Stored Functions</h3>
+<h3 data-number="8.5.2" class="anchored" data-anchor-id="stored-functions"><span class="header-section-number">8.5.2</span> Stored Functions</h3>
 <p>Functions return a value and can be used inside SQL expressions.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false" href="">Oracle</a></li></ul>
@@ -1112,7 +1112,7 @@ Tip
 </div>
 </section>
 <section id="procedures-vs-functions-vs-triggers" class="level3" data-number="8.5.3">
-<h3 data-number="8.5.3" class="anchored" data-anchor-id="procedures-vs-functions-vs-triggers"><span class="header-section-number">8.5.3</span> 8.4.3 Procedures vs Functions vs Triggers</h3>
+<h3 data-number="8.5.3" class="anchored" data-anchor-id="procedures-vs-functions-vs-triggers"><span class="header-section-number">8.5.3</span> Procedures vs Functions vs Triggers</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
@@ -1159,10 +1159,10 @@ Tip
 </section>
 </section>
 <section id="triggers" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="triggers"><span class="header-section-number">8.6</span> 8.5 Triggers</h2>
+<h2 data-number="8.6" class="anchored" data-anchor-id="triggers"><span class="header-section-number">8.6</span> Triggers</h2>
 <p>A <strong>trigger</strong> is a named database object that fires automatically when a specified DML event occurs on a table.</p>
 <section id="trigger-anatomy" class="level3" data-number="8.6.1">
-<h3 data-number="8.6.1" class="anchored" data-anchor-id="trigger-anatomy"><span class="header-section-number">8.6.1</span> 8.5.1 Trigger Anatomy</h3>
+<h3 data-number="8.6.1" class="anchored" data-anchor-id="trigger-anatomy"><span class="header-section-number">8.6.1</span> Trigger Anatomy</h3>
 <pre data-code-line-numbers=""><code>CREATE [OR REPLACE] TRIGGER trigger_name
     { BEFORE | AFTER | INSTEAD OF }
     { INSERT | UPDATE [OF col] | DELETE }
@@ -1202,7 +1202,7 @@ trigger_body</code></pre>
 </table>
 </section>
 <section id="audit-trigger-example" class="level3" data-number="8.6.2">
-<h3 data-number="8.6.2" class="anchored" data-anchor-id="audit-trigger-example"><span class="header-section-number">8.6.2</span> 8.5.2 Audit Trigger Example</h3>
+<h3 data-number="8.6.2" class="anchored" data-anchor-id="audit-trigger-example"><span class="header-section-number">8.6.2</span> Audit Trigger Example</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -1280,7 +1280,7 @@ trigger_body</code></pre>
 </div>
 </section>
 <section id="validation-trigger-rejecting-bad-data" class="level3" data-number="8.6.3">
-<h3 data-number="8.6.3" class="anchored" data-anchor-id="validation-trigger-rejecting-bad-data"><span class="header-section-number">8.6.3</span> 8.5.3 Validation Trigger — Rejecting Bad Data</h3>
+<h3 data-number="8.6.3" class="anchored" data-anchor-id="validation-trigger-rejecting-bad-data"><span class="header-section-number">8.6.3</span> Validation Trigger — Rejecting Bad Data</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- PostgreSQL: prevent salary reduction via trigger</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">OR</span> <span class="kw">REPLACE</span> <span class="kw">FUNCTION</span> fn_no_salary_cut()</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>RETURNS <span class="kw">TRIGGER</span> LANGUAGE plpgsql <span class="kw">AS</span> $$</span>
@@ -1318,10 +1318,10 @@ trigger_body</code></pre>
 </section>
 </section>
 <section id="json-functions" class="level2" data-number="8.7">
-<h2 data-number="8.7" class="anchored" data-anchor-id="json-functions"><span class="header-section-number">8.7</span> 8.6 JSON Functions</h2>
+<h2 data-number="8.7" class="anchored" data-anchor-id="json-functions"><span class="header-section-number">8.7</span> JSON Functions</h2>
 <p>Modern RDBMS supports querying and manipulating JSON data directly in SQL.</p>
 <section id="json-storage" class="level3" data-number="8.7.1">
-<h3 data-number="8.7.1" class="anchored" data-anchor-id="json-storage"><span class="header-section-number">8.7.1</span> 8.6.1 JSON Storage</h3>
+<h3 data-number="8.7.1" class="anchored" data-anchor-id="json-storage"><span class="header-section-number">8.7.1</span> JSON Storage</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -1360,7 +1360,7 @@ trigger_body</code></pre>
 </div>
 </section>
 <section id="reading-json-values" class="level3" data-number="8.7.2">
-<h3 data-number="8.7.2" class="anchored" data-anchor-id="reading-json-values"><span class="header-section-number">8.7.2</span> 8.6.2 Reading JSON Values</h3>
+<h3 data-number="8.7.2" class="anchored" data-anchor-id="reading-json-values"><span class="header-section-number">8.7.2</span> Reading JSON Values</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-3" role="tab" aria-controls="tabset-8-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -1419,7 +1419,7 @@ trigger_body</code></pre>
 </div>
 </section>
 <section id="modifying-json" class="level3" data-number="8.7.3">
-<h3 data-number="8.7.3" class="anchored" data-anchor-id="modifying-json"><span class="header-section-number">8.7.3</span> 8.6.3 Modifying JSON</h3>
+<h3 data-number="8.7.3" class="anchored" data-anchor-id="modifying-json"><span class="header-section-number">8.7.3</span> Modifying JSON</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false" href="">PostgreSQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-3" role="tab" aria-controls="tabset-9-3" aria-selected="false" href="">Oracle</a></li></ul>
 <div class="tab-content">
@@ -1467,7 +1467,7 @@ trigger_body</code></pre>
 </section>
 </section>
 <section id="chapter-summary" class="level2" data-number="8.8">
-<h2 data-number="8.8" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">8.8</span> 8.7 Chapter Summary</h2>
+<h2 data-number="8.8" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">8.8</span> Chapter Summary</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1576,7 +1576,7 @@ Write the DDL for the audit table, the trigger function (or procedure), and the 
 </section>
 </section>
 <section id="subqueries-nested-queries" class="level2" data-number="8.10">
-<h2 data-number="8.10" class="anchored" data-anchor-id="subqueries-nested-queries"><span class="header-section-number">8.10</span> 8.2 Subqueries (Nested Queries)</h2>
+<h2 data-number="8.10" class="anchored" data-anchor-id="subqueries-nested-queries"><span class="header-section-number">8.10</span> Subqueries (Nested Queries)</h2>
 <p>A <strong>subquery</strong> is a SELECT embedded within another SQL statement.</p>
 <section id="scalar-subquery" class="level3" data-number="8.10.1">
 <h3 data-number="8.10.1" class="anchored" data-anchor-id="scalar-subquery"><span class="header-section-number">8.10.1</span> Scalar Subquery</h3>
@@ -1657,7 +1657,7 @@ Tip
 </section>
 </section>
 <section id="common-table-expressions-cte" class="level2" data-number="8.11">
-<h2 data-number="8.11" class="anchored" data-anchor-id="common-table-expressions-cte"><span class="header-section-number">8.11</span> 8.3 Common Table Expressions (CTE)</h2>
+<h2 data-number="8.11" class="anchored" data-anchor-id="common-table-expressions-cte"><span class="header-section-number">8.11</span> Common Table Expressions (CTE)</h2>
 <p>CTEs make complex queries readable by naming intermediate results:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- WITH clause (CTE)</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> high_earners <span class="kw">AS</span> (</span>
@@ -1693,7 +1693,7 @@ Tip
 </section>
 </section>
 <section id="views-1" class="level2" data-number="8.12">
-<h2 data-number="8.12" class="anchored" data-anchor-id="views-1"><span class="header-section-number">8.12</span> 8.4 Views</h2>
+<h2 data-number="8.12" class="anchored" data-anchor-id="views-1"><span class="header-section-number">8.12</span> Views</h2>
 <p>A <strong>view</strong> is a <strong>named, saved SELECT statement</strong> — a virtual table.</p>
 <section id="creating-a-view" class="level3" data-number="8.12.1">
 <h3 data-number="8.12.1" class="anchored" data-anchor-id="creating-a-view"><span class="header-section-number">8.12.1</span> Creating a View</h3>
@@ -1734,7 +1734,7 @@ Tip
 </section>
 </section>
 <section id="triggers-1" class="level2" data-number="8.13">
-<h2 data-number="8.13" class="anchored" data-anchor-id="triggers-1"><span class="header-section-number">8.13</span> 8.5 Triggers</h2>
+<h2 data-number="8.13" class="anchored" data-anchor-id="triggers-1"><span class="header-section-number">8.13</span> Triggers</h2>
 <p>A <strong>trigger</strong> is a stored procedure that automatically executes in response to a table event (<code>INSERT</code>, <code>UPDATE</code>, or <code>DELETE</code>).</p>
 <section id="trigger-syntax-postgresql" class="level3" data-number="8.13.1">
 <h3 data-number="8.13.1" class="anchored" data-anchor-id="trigger-syntax-postgresql"><span class="header-section-number">8.13.1</span> Trigger Syntax (PostgreSQL)</h3>
@@ -1821,7 +1821,7 @@ Tip
 </section>
 </section>
 <section id="stored-procedures-and-functions-1" class="level2" data-number="8.14">
-<h2 data-number="8.14" class="anchored" data-anchor-id="stored-procedures-and-functions-1"><span class="header-section-number">8.14</span> 8.6 Stored Procedures and Functions</h2>
+<h2 data-number="8.14" class="anchored" data-anchor-id="stored-procedures-and-functions-1"><span class="header-section-number">8.14</span> Stored Procedures and Functions</h2>
 <section id="stored-procedure-postgresql" class="level3" data-number="8.14.1">
 <h3 data-number="8.14.1" class="anchored" data-anchor-id="stored-procedure-postgresql"><span class="header-section-number">8.14.1</span> Stored Procedure (PostgreSQL)</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Procedure: give a raise to all employees in a department</span></span>
@@ -1901,7 +1901,7 @@ Tip
 </section>
 </section>
 <section id="window-functions-1" class="level2" data-number="8.15">
-<h2 data-number="8.15" class="anchored" data-anchor-id="window-functions-1"><span class="header-section-number">8.15</span> 8.7 Window Functions</h2>
+<h2 data-number="8.15" class="anchored" data-anchor-id="window-functions-1"><span class="header-section-number">8.15</span> Window Functions</h2>
 <p>Window functions compute values across <em>related</em> rows without collapsing them into groups:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Rank employees by salary within each department</span></span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> fname, lname, dept_no, salary,</span>
@@ -2467,7 +2467,7 @@ Tip
 <span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 8"</span></span>
 <span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## §8.0 Building on the Basics</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Building on the Basics</span></span>
 <span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>Chapter 7 covered the foundational SELECT–FROM–WHERE pipeline, joins, and aggregates.</span>
 <span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>This chapter introduces the features that make SQL genuinely powerful for real-world applications:</span>
@@ -2483,7 +2483,7 @@ Tip
 <span id="cb61-19"><a href="#cb61-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-20"><a href="#cb61-20" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb61-21"><a href="#cb61-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-22"><a href="#cb61-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.1 Common Table Expressions (CTEs)</span></span>
+<span id="cb61-22"><a href="#cb61-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common Table Expressions (CTEs)</span></span>
 <span id="cb61-23"><a href="#cb61-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-24"><a href="#cb61-24" aria-hidden="true" tabindex="-1"></a>A **Common Table Expression** names a temporary result set scoped to a single query.</span>
 <span id="cb61-25"><a href="#cb61-25" aria-hidden="true" tabindex="-1"></a>It replaces deeply nested subqueries with readable, layered logic.</span>
@@ -2496,7 +2496,7 @@ Tip
 <span id="cb61-32"><a href="#cb61-32" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">..</span><span class="ch">.</span> <span class="kw">FROM</span> cte_name <span class="op">..</span><span class="ch">.</span>;</span>
 <span id="cb61-33"><a href="#cb61-33" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-34"><a href="#cb61-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-35"><a href="#cb61-35" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.1.1 Single CTE — Readable Subquery</span></span>
+<span id="cb61-35"><a href="#cb61-35" aria-hidden="true" tabindex="-1"></a><span class="fu">### Single CTE — Readable Subquery</span></span>
 <span id="cb61-36"><a href="#cb61-36" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-37"><a href="#cb61-37" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb61-38"><a href="#cb61-38" aria-hidden="true" tabindex="-1"></a><span class="co">-- Employees earning more than the overall average salary</span></span>
@@ -2509,7 +2509,7 @@ Tip
 <span id="cb61-45"><a href="#cb61-45" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> E<span class="ch">.</span>Salary <span class="kw">DESC</span>;</span>
 <span id="cb61-46"><a href="#cb61-46" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-47"><a href="#cb61-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-48"><a href="#cb61-48" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.1.2 Multiple CTEs — Chained Steps</span></span>
+<span id="cb61-48"><a href="#cb61-48" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiple CTEs — Chained Steps</span></span>
 <span id="cb61-49"><a href="#cb61-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-50"><a href="#cb61-50" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb61-51"><a href="#cb61-51" aria-hidden="true" tabindex="-1"></a><span class="co">-- Step 1: department headcount</span></span>
@@ -2535,7 +2535,7 @@ Tip
 <span id="cb61-71"><a href="#cb61-71" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> CostPerHead <span class="kw">DESC</span>;</span>
 <span id="cb61-72"><a href="#cb61-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-73"><a href="#cb61-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-74"><a href="#cb61-74" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.1.3 Recursive CTE</span></span>
+<span id="cb61-74"><a href="#cb61-74" aria-hidden="true" tabindex="-1"></a><span class="fu">### Recursive CTE</span></span>
 <span id="cb61-75"><a href="#cb61-75" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-76"><a href="#cb61-76" aria-hidden="true" tabindex="-1"></a>A recursive CTE has two parts joined by <span class="in">`UNION ALL`</span>:</span>
 <span id="cb61-77"><a href="#cb61-77" aria-hidden="true" tabindex="-1"></a></span>
@@ -2627,7 +2627,7 @@ Tip
 <span id="cb61-163"><a href="#cb61-163" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-164"><a href="#cb61-164" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb61-165"><a href="#cb61-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-166"><a href="#cb61-166" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.2 Window Functions</span></span>
+<span id="cb61-166"><a href="#cb61-166" aria-hidden="true" tabindex="-1"></a><span class="fu">## Window Functions</span></span>
 <span id="cb61-167"><a href="#cb61-167" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-168"><a href="#cb61-168" aria-hidden="true" tabindex="-1"></a>Window functions compute values *across a set of rows related to the current row* **without collapsing** those rows into a single output row — unlike <span class="in">`GROUP BY`</span>.</span>
 <span id="cb61-169"><a href="#cb61-169" aria-hidden="true" tabindex="-1"></a></span>
@@ -2639,7 +2639,7 @@ Tip
 <span id="cb61-175"><a href="#cb61-175" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb61-176"><a href="#cb61-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-177"><a href="#cb61-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-178"><a href="#cb61-178" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.2.1 Ranking Functions</span></span>
+<span id="cb61-178"><a href="#cb61-178" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ranking Functions</span></span>
 <span id="cb61-179"><a href="#cb61-179" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-180"><a href="#cb61-180" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb61-181"><a href="#cb61-181" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> Fname, Lname, Dno, Salary,</span>
@@ -2659,7 +2659,7 @@ Tip
 <span id="cb61-195"><a href="#cb61-195" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 38 000 <span class="pp">|</span> 3 <span class="pp">|</span> 2 <span class="pp">|</span> 2 <span class="pp">|</span></span>
 <span id="cb61-196"><a href="#cb61-196" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 35 000 <span class="pp">|</span> 4 <span class="pp">|</span> 4 *(gap!)* | 3 *(no gap)* <span class="pp">|</span></span>
 <span id="cb61-197"><a href="#cb61-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-198"><a href="#cb61-198" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.2.2 Analytic / Offset Functions</span></span>
+<span id="cb61-198"><a href="#cb61-198" aria-hidden="true" tabindex="-1"></a><span class="fu">### Analytic / Offset Functions</span></span>
 <span id="cb61-199"><a href="#cb61-199" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-200"><a href="#cb61-200" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb61-201"><a href="#cb61-201" aria-hidden="true" tabindex="-1"></a><span class="co">-- For each employee: show salary, the previous hire's salary, and next hire's salary</span></span>
@@ -2671,7 +2671,7 @@ Tip
 <span id="cb61-207"><a href="#cb61-207" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span>   Employee;</span>
 <span id="cb61-208"><a href="#cb61-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-209"><a href="#cb61-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-210"><a href="#cb61-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.2.3 Running Aggregates</span></span>
+<span id="cb61-210"><a href="#cb61-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### Running Aggregates</span></span>
 <span id="cb61-211"><a href="#cb61-211" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-212"><a href="#cb61-212" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb61-213"><a href="#cb61-213" aria-hidden="true" tabindex="-1"></a><span class="co">-- Cumulative total salary spent, ordered by employee bdate</span></span>
@@ -2685,7 +2685,7 @@ Tip
 <span id="cb61-221"><a href="#cb61-221" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span>  <span class="kw">BY</span> Bdate;</span>
 <span id="cb61-222"><a href="#cb61-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-223"><a href="#cb61-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-224"><a href="#cb61-224" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.2.4 Frame Specification (ROWS vs RANGE)</span></span>
+<span id="cb61-224"><a href="#cb61-224" aria-hidden="true" tabindex="-1"></a><span class="fu">### Frame Specification (ROWS vs RANGE)</span></span>
 <span id="cb61-225"><a href="#cb61-225" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-226"><a href="#cb61-226" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb61-227"><a href="#cb61-227" aria-hidden="true" tabindex="-1"></a></span>
@@ -2731,7 +2731,7 @@ Tip
 <span id="cb61-267"><a href="#cb61-267" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-268"><a href="#cb61-268" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb61-269"><a href="#cb61-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-270"><a href="#cb61-270" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.2.5 Window Functions vs GROUP BY</span></span>
+<span id="cb61-270"><a href="#cb61-270" aria-hidden="true" tabindex="-1"></a><span class="fu">### Window Functions vs GROUP BY</span></span>
 <span id="cb61-271"><a href="#cb61-271" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-272"><a href="#cb61-272" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Aspect <span class="pp">|</span> GROUP BY <span class="pp">|</span> Window Function <span class="pp">|</span></span>
 <span id="cb61-273"><a href="#cb61-273" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------|----------------|</span></span>
@@ -2742,12 +2742,12 @@ Tip
 <span id="cb61-278"><a href="#cb61-278" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-279"><a href="#cb61-279" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb61-280"><a href="#cb61-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-281"><a href="#cb61-281" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.3 Views</span></span>
+<span id="cb61-281"><a href="#cb61-281" aria-hidden="true" tabindex="-1"></a><span class="fu">## Views</span></span>
 <span id="cb61-282"><a href="#cb61-282" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-283"><a href="#cb61-283" aria-hidden="true" tabindex="-1"></a>A **view** is a stored SELECT statement with a name — a virtual table.</span>
 <span id="cb61-284"><a href="#cb61-284" aria-hidden="true" tabindex="-1"></a>When you query a view, the DBMS substitutes its definition (called *view expansion*).</span>
 <span id="cb61-285"><a href="#cb61-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-286"><a href="#cb61-286" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.3.1 Creating and Querying Views</span></span>
+<span id="cb61-286"><a href="#cb61-286" aria-hidden="true" tabindex="-1"></a><span class="fu">### Creating and Querying Views</span></span>
 <span id="cb61-287"><a href="#cb61-287" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-288"><a href="#cb61-288" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb61-289"><a href="#cb61-289" aria-hidden="true" tabindex="-1"></a></span>
@@ -2817,7 +2817,7 @@ Tip
 <span id="cb61-353"><a href="#cb61-353" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-354"><a href="#cb61-354" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb61-355"><a href="#cb61-355" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-356"><a href="#cb61-356" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.3.2 Updatable vs Non-Updatable Views</span></span>
+<span id="cb61-356"><a href="#cb61-356" aria-hidden="true" tabindex="-1"></a><span class="fu">### Updatable vs Non-Updatable Views</span></span>
 <span id="cb61-357"><a href="#cb61-357" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-358"><a href="#cb61-358" aria-hidden="true" tabindex="-1"></a>A view supports DML (INSERT/UPDATE/DELETE) only under strict conditions:</span>
 <span id="cb61-359"><a href="#cb61-359" aria-hidden="true" tabindex="-1"></a></span>
@@ -2855,11 +2855,11 @@ Tip
 <span id="cb61-391"><a href="#cb61-391" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-392"><a href="#cb61-392" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb61-393"><a href="#cb61-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-394"><a href="#cb61-394" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.4 Stored Procedures and Functions</span></span>
+<span id="cb61-394"><a href="#cb61-394" aria-hidden="true" tabindex="-1"></a><span class="fu">## Stored Procedures and Functions</span></span>
 <span id="cb61-395"><a href="#cb61-395" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-396"><a href="#cb61-396" aria-hidden="true" tabindex="-1"></a>Stored programs run inside the database engine — they avoid round-trips and centralize business logic.</span>
 <span id="cb61-397"><a href="#cb61-397" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-398"><a href="#cb61-398" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.4.1 Stored Procedures</span></span>
+<span id="cb61-398"><a href="#cb61-398" aria-hidden="true" tabindex="-1"></a><span class="fu">### Stored Procedures</span></span>
 <span id="cb61-399"><a href="#cb61-399" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-400"><a href="#cb61-400" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb61-401"><a href="#cb61-401" aria-hidden="true" tabindex="-1"></a></span>
@@ -2943,7 +2943,7 @@ Tip
 <span id="cb61-479"><a href="#cb61-479" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-480"><a href="#cb61-480" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb61-481"><a href="#cb61-481" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-482"><a href="#cb61-482" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.4.2 Stored Functions</span></span>
+<span id="cb61-482"><a href="#cb61-482" aria-hidden="true" tabindex="-1"></a><span class="fu">### Stored Functions</span></span>
 <span id="cb61-483"><a href="#cb61-483" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-484"><a href="#cb61-484" aria-hidden="true" tabindex="-1"></a>Functions return a value and can be used inside SQL expressions.</span>
 <span id="cb61-485"><a href="#cb61-485" aria-hidden="true" tabindex="-1"></a></span>
@@ -2998,7 +2998,7 @@ Tip
 <span id="cb61-534"><a href="#cb61-534" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-535"><a href="#cb61-535" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb61-536"><a href="#cb61-536" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-537"><a href="#cb61-537" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.4.3 Procedures vs Functions vs Triggers</span></span>
+<span id="cb61-537"><a href="#cb61-537" aria-hidden="true" tabindex="-1"></a><span class="fu">### Procedures vs Functions vs Triggers</span></span>
 <span id="cb61-538"><a href="#cb61-538" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-539"><a href="#cb61-539" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> Stored Procedure <span class="pp">|</span> Stored Function <span class="pp">|</span> Trigger <span class="pp">|</span></span>
 <span id="cb61-540"><a href="#cb61-540" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>--<span class="pp">|-----------------|----------------|---------|</span></span>
@@ -3009,11 +3009,11 @@ Tip
 <span id="cb61-545"><a href="#cb61-545" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-546"><a href="#cb61-546" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb61-547"><a href="#cb61-547" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-548"><a href="#cb61-548" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.5 Triggers</span></span>
+<span id="cb61-548"><a href="#cb61-548" aria-hidden="true" tabindex="-1"></a><span class="fu">## Triggers</span></span>
 <span id="cb61-549"><a href="#cb61-549" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-550"><a href="#cb61-550" aria-hidden="true" tabindex="-1"></a>A **trigger** is a named database object that fires automatically when a specified DML event occurs on a table.</span>
 <span id="cb61-551"><a href="#cb61-551" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-552"><a href="#cb61-552" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.5.1 Trigger Anatomy</span></span>
+<span id="cb61-552"><a href="#cb61-552" aria-hidden="true" tabindex="-1"></a><span class="fu">### Trigger Anatomy</span></span>
 <span id="cb61-553"><a href="#cb61-553" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-554"><a href="#cb61-554" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-555"><a href="#cb61-555" aria-hidden="true" tabindex="-1"></a><span class="in">CREATE [OR REPLACE] TRIGGER trigger_name</span></span>
@@ -3030,7 +3030,7 @@ Tip
 <span id="cb61-566"><a href="#cb61-566" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`OLD`</span> / <span class="in">`:OLD`</span> <span class="pp">|</span> — (NULL) <span class="pp">|</span> Row before change <span class="pp">|</span> Row being deleted <span class="pp">|</span></span>
 <span id="cb61-567"><a href="#cb61-567" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`NEW`</span> / <span class="in">`:NEW`</span> <span class="pp">|</span> Inserted row <span class="pp">|</span> Row after change <span class="pp">|</span> — (NULL) <span class="pp">|</span></span>
 <span id="cb61-568"><a href="#cb61-568" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-569"><a href="#cb61-569" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.5.2 Audit Trigger Example</span></span>
+<span id="cb61-569"><a href="#cb61-569" aria-hidden="true" tabindex="-1"></a><span class="fu">### Audit Trigger Example</span></span>
 <span id="cb61-570"><a href="#cb61-570" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-571"><a href="#cb61-571" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb61-572"><a href="#cb61-572" aria-hidden="true" tabindex="-1"></a></span>
@@ -3115,7 +3115,7 @@ Tip
 <span id="cb61-651"><a href="#cb61-651" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-652"><a href="#cb61-652" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb61-653"><a href="#cb61-653" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-654"><a href="#cb61-654" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.5.3 Validation Trigger — Rejecting Bad Data</span></span>
+<span id="cb61-654"><a href="#cb61-654" aria-hidden="true" tabindex="-1"></a><span class="fu">### Validation Trigger — Rejecting Bad Data</span></span>
 <span id="cb61-655"><a href="#cb61-655" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-656"><a href="#cb61-656" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb61-657"><a href="#cb61-657" aria-hidden="true" tabindex="-1"></a><span class="co">-- PostgreSQL: prevent salary reduction via trigger</span></span>
@@ -3146,11 +3146,11 @@ Tip
 <span id="cb61-682"><a href="#cb61-682" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-683"><a href="#cb61-683" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb61-684"><a href="#cb61-684" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-685"><a href="#cb61-685" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.6 JSON Functions</span></span>
+<span id="cb61-685"><a href="#cb61-685" aria-hidden="true" tabindex="-1"></a><span class="fu">## JSON Functions</span></span>
 <span id="cb61-686"><a href="#cb61-686" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-687"><a href="#cb61-687" aria-hidden="true" tabindex="-1"></a>Modern RDBMS supports querying and manipulating JSON data directly in SQL.</span>
 <span id="cb61-688"><a href="#cb61-688" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-689"><a href="#cb61-689" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.6.1 JSON Storage</span></span>
+<span id="cb61-689"><a href="#cb61-689" aria-hidden="true" tabindex="-1"></a><span class="fu">### JSON Storage</span></span>
 <span id="cb61-690"><a href="#cb61-690" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-691"><a href="#cb61-691" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb61-692"><a href="#cb61-692" aria-hidden="true" tabindex="-1"></a></span>
@@ -3196,7 +3196,7 @@ Tip
 <span id="cb61-732"><a href="#cb61-732" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-733"><a href="#cb61-733" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb61-734"><a href="#cb61-734" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-735"><a href="#cb61-735" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.6.2 Reading JSON Values</span></span>
+<span id="cb61-735"><a href="#cb61-735" aria-hidden="true" tabindex="-1"></a><span class="fu">### Reading JSON Values</span></span>
 <span id="cb61-736"><a href="#cb61-736" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-737"><a href="#cb61-737" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb61-738"><a href="#cb61-738" aria-hidden="true" tabindex="-1"></a></span>
@@ -3262,7 +3262,7 @@ Tip
 <span id="cb61-798"><a href="#cb61-798" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-799"><a href="#cb61-799" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb61-800"><a href="#cb61-800" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-801"><a href="#cb61-801" aria-hidden="true" tabindex="-1"></a><span class="fu">### 8.6.3 Modifying JSON</span></span>
+<span id="cb61-801"><a href="#cb61-801" aria-hidden="true" tabindex="-1"></a><span class="fu">### Modifying JSON</span></span>
 <span id="cb61-802"><a href="#cb61-802" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-803"><a href="#cb61-803" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
 <span id="cb61-804"><a href="#cb61-804" aria-hidden="true" tabindex="-1"></a></span>
@@ -3317,7 +3317,7 @@ Tip
 <span id="cb61-853"><a href="#cb61-853" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-854"><a href="#cb61-854" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb61-855"><a href="#cb61-855" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-856"><a href="#cb61-856" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.7 Chapter Summary</span></span>
+<span id="cb61-856"><a href="#cb61-856" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
 <span id="cb61-857"><a href="#cb61-857" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-858"><a href="#cb61-858" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb61-859"><a href="#cb61-859" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 8</span></span>
@@ -3449,7 +3449,7 @@ Tip
 <span id="cb61-985"><a href="#cb61-985" aria-hidden="true" tabindex="-1"></a>FULL <span class="kw">OUTER</span> <span class="kw">JOIN</span> department d <span class="kw">ON</span> e<span class="ch">.</span>dept_no <span class="op">=</span> d<span class="ch">.</span>dept_no;</span>
 <span id="cb61-986"><a href="#cb61-986" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-987"><a href="#cb61-987" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-988"><a href="#cb61-988" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.2 Subqueries (Nested Queries)</span></span>
+<span id="cb61-988"><a href="#cb61-988" aria-hidden="true" tabindex="-1"></a><span class="fu">## Subqueries (Nested Queries)</span></span>
 <span id="cb61-989"><a href="#cb61-989" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-990"><a href="#cb61-990" aria-hidden="true" tabindex="-1"></a>A **subquery** is a SELECT embedded within another SQL statement.</span>
 <span id="cb61-991"><a href="#cb61-991" aria-hidden="true" tabindex="-1"></a></span>
@@ -3534,7 +3534,7 @@ Tip
 <span id="cb61-1070"><a href="#cb61-1070" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> salary <span class="op">&gt;</span> <span class="kw">ALL</span> (<span class="kw">SELECT</span> salary <span class="kw">FROM</span> employee <span class="kw">WHERE</span> dept_no <span class="op">=</span> <span class="dv">5</span>);</span>
 <span id="cb61-1071"><a href="#cb61-1071" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-1072"><a href="#cb61-1072" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-1073"><a href="#cb61-1073" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.3 Common Table Expressions (CTE)</span></span>
+<span id="cb61-1073"><a href="#cb61-1073" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common Table Expressions (CTE)</span></span>
 <span id="cb61-1074"><a href="#cb61-1074" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-1075"><a href="#cb61-1075" aria-hidden="true" tabindex="-1"></a>CTEs make complex queries readable by naming intermediate results:</span>
 <span id="cb61-1076"><a href="#cb61-1076" aria-hidden="true" tabindex="-1"></a></span>
@@ -3576,7 +3576,7 @@ Tip
 <span id="cb61-1112"><a href="#cb61-1112" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> org_chart;</span>
 <span id="cb61-1113"><a href="#cb61-1113" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-1114"><a href="#cb61-1114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-1115"><a href="#cb61-1115" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.4 Views</span></span>
+<span id="cb61-1115"><a href="#cb61-1115" aria-hidden="true" tabindex="-1"></a><span class="fu">## Views</span></span>
 <span id="cb61-1116"><a href="#cb61-1116" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-1117"><a href="#cb61-1117" aria-hidden="true" tabindex="-1"></a>A **view** is a **named, saved SELECT statement** — a virtual table.</span>
 <span id="cb61-1118"><a href="#cb61-1118" aria-hidden="true" tabindex="-1"></a></span>
@@ -3628,7 +3628,7 @@ Tip
 <span id="cb61-1164"><a href="#cb61-1164" aria-hidden="true" tabindex="-1"></a><span class="co">-- Allowed if the view is simple and updateable</span></span>
 <span id="cb61-1165"><a href="#cb61-1165" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb61-1166"><a href="#cb61-1166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-1167"><a href="#cb61-1167" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.5 Triggers</span></span>
+<span id="cb61-1167"><a href="#cb61-1167" aria-hidden="true" tabindex="-1"></a><span class="fu">## Triggers</span></span>
 <span id="cb61-1168"><a href="#cb61-1168" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-1169"><a href="#cb61-1169" aria-hidden="true" tabindex="-1"></a>A **trigger** is a stored procedure that automatically executes in response to a table event (<span class="in">`INSERT`</span>, <span class="in">`UPDATE`</span>, or <span class="in">`DELETE`</span>).</span>
 <span id="cb61-1170"><a href="#cb61-1170" aria-hidden="true" tabindex="-1"></a></span>
@@ -3670,7 +3670,7 @@ Tip
 <span id="cb61-1206"><a href="#cb61-1206" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> UPDATE <span class="pp">|</span> Row before update <span class="pp">|</span> Row after update <span class="pp">|</span></span>
 <span id="cb61-1207"><a href="#cb61-1207" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> DELETE <span class="pp">|</span> Deleted row <span class="pp">|</span> NULL <span class="pp">|</span></span>
 <span id="cb61-1208"><a href="#cb61-1208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-1209"><a href="#cb61-1209" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.6 Stored Procedures and Functions</span></span>
+<span id="cb61-1209"><a href="#cb61-1209" aria-hidden="true" tabindex="-1"></a><span class="fu">## Stored Procedures and Functions</span></span>
 <span id="cb61-1210"><a href="#cb61-1210" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-1211"><a href="#cb61-1211" aria-hidden="true" tabindex="-1"></a><span class="fu">### Stored Procedure (PostgreSQL)</span></span>
 <span id="cb61-1212"><a href="#cb61-1212" aria-hidden="true" tabindex="-1"></a></span>
@@ -3717,7 +3717,7 @@ Tip
 <span id="cb61-1253"><a href="#cb61-1253" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can commit/rollback <span class="pp">|</span> Yes <span class="pp">|</span> No (usually) <span class="pp">|</span> Subject to transaction <span class="pp">|</span></span>
 <span id="cb61-1254"><a href="#cb61-1254" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Use case <span class="pp">|</span> Business operations <span class="pp">|</span> Computed values <span class="pp">|</span> Automatic audit/validation <span class="pp">|</span></span>
 <span id="cb61-1255"><a href="#cb61-1255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-1256"><a href="#cb61-1256" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8.7 Window Functions</span></span>
+<span id="cb61-1256"><a href="#cb61-1256" aria-hidden="true" tabindex="-1"></a><span class="fu">## Window Functions</span></span>
 <span id="cb61-1257"><a href="#cb61-1257" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-1258"><a href="#cb61-1258" aria-hidden="true" tabindex="-1"></a>Window functions compute values across *related* rows without collapsing them into groups:</span>
 <span id="cb61-1259"><a href="#cb61-1259" aria-hidden="true" tabindex="-1"></a></span>

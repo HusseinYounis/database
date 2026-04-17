@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-03-relational-model/ch06-relational-algebra.html" rel="next">
 <link href="../part-02-data-modeling/ch04-eer-modeling.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -437,34 +437,34 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#mathematical-foundation" id="toc-mathematical-foundation" class="nav-link active" data-scroll-target="#mathematical-foundation"><span class="header-section-number">5.1</span> 5.1 Mathematical Foundation</a></li>
-  <li><a href="#key-terminology" id="toc-key-terminology" class="nav-link" data-scroll-target="#key-terminology"><span class="header-section-number">5.2</span> 5.2 Key Terminology</a></li>
-  <li><a href="#properties-of-relations" id="toc-properties-of-relations" class="nav-link" data-scroll-target="#properties-of-relations"><span class="header-section-number">5.3</span> 5.3 Properties of Relations</a></li>
-  <li><a href="#formal-schema-notation" id="toc-formal-schema-notation" class="nav-link" data-scroll-target="#formal-schema-notation"><span class="header-section-number">5.4</span> 5.4 Formal Schema Notation</a></li>
-  <li><a href="#complete-key-taxonomy" id="toc-complete-key-taxonomy" class="nav-link" data-scroll-target="#complete-key-taxonomy"><span class="header-section-number">5.5</span> 5.5 Complete Key Taxonomy</a>
+  <li><a href="#mathematical-foundation" id="toc-mathematical-foundation" class="nav-link active" data-scroll-target="#mathematical-foundation"><span class="header-section-number">5.1</span> Mathematical Foundation</a></li>
+  <li><a href="#key-terminology" id="toc-key-terminology" class="nav-link" data-scroll-target="#key-terminology"><span class="header-section-number">5.2</span> Key Terminology</a></li>
+  <li><a href="#properties-of-relations" id="toc-properties-of-relations" class="nav-link" data-scroll-target="#properties-of-relations"><span class="header-section-number">5.3</span> Properties of Relations</a></li>
+  <li><a href="#formal-schema-notation" id="toc-formal-schema-notation" class="nav-link" data-scroll-target="#formal-schema-notation"><span class="header-section-number">5.4</span> Formal Schema Notation</a></li>
+  <li><a href="#complete-key-taxonomy" id="toc-complete-key-taxonomy" class="nav-link" data-scroll-target="#complete-key-taxonomy"><span class="header-section-number">5.5</span> Complete Key Taxonomy</a>
   <ul class="collapse">
   <li><a href="#definitions" id="toc-definitions" class="nav-link" data-scroll-target="#definitions"><span class="header-section-number">5.5.1</span> Definitions</a></li>
   </ul></li>
-  <li><a href="#fd-based-key-identification" id="toc-fd-based-key-identification" class="nav-link" data-scroll-target="#fd-based-key-identification"><span class="header-section-number">5.6</span> 5.6 FD-Based Key Identification</a>
+  <li><a href="#fd-based-key-identification" id="toc-fd-based-key-identification" class="nav-link" data-scroll-target="#fd-based-key-identification"><span class="header-section-number">5.6</span> FD-Based Key Identification</a>
   <ul class="collapse">
   <li><a href="#what-is-a-functional-dependency" id="toc-what-is-a-functional-dependency" class="nav-link" data-scroll-target="#what-is-a-functional-dependency"><span class="header-section-number">5.6.1</span> What is a Functional Dependency?</a></li>
   <li><a href="#identifying-candidate-keys-via-fds" id="toc-identifying-candidate-keys-via-fds" class="nav-link" data-scroll-target="#identifying-candidate-keys-via-fds"><span class="header-section-number">5.6.2</span> Identifying Candidate Keys via FDs</a></li>
   <li><a href="#example-key-extraction" id="toc-example-key-extraction" class="nav-link" data-scroll-target="#example-key-extraction"><span class="header-section-number">5.6.3</span> Example: Key Extraction</a></li>
   </ul></li>
-  <li><a href="#choosing-a-primary-key" id="toc-choosing-a-primary-key" class="nav-link" data-scroll-target="#choosing-a-primary-key"><span class="header-section-number">5.7</span> 5.7 Choosing a Primary Key</a></li>
-  <li><a href="#integrity-constraints" id="toc-integrity-constraints" class="nav-link" data-scroll-target="#integrity-constraints"><span class="header-section-number">5.8</span> 5.8 Integrity Constraints</a>
+  <li><a href="#choosing-a-primary-key" id="toc-choosing-a-primary-key" class="nav-link" data-scroll-target="#choosing-a-primary-key"><span class="header-section-number">5.7</span> Choosing a Primary Key</a></li>
+  <li><a href="#integrity-constraints" id="toc-integrity-constraints" class="nav-link" data-scroll-target="#integrity-constraints"><span class="header-section-number">5.8</span> Integrity Constraints</a>
   <ul class="collapse">
   <li><a href="#domain-constraint" id="toc-domain-constraint" class="nav-link" data-scroll-target="#domain-constraint"><span class="header-section-number">5.8.1</span> Domain Constraint</a></li>
   <li><a href="#entity-integrity-constraint" id="toc-entity-integrity-constraint" class="nav-link" data-scroll-target="#entity-integrity-constraint"><span class="header-section-number">5.8.2</span> Entity Integrity Constraint</a></li>
   <li><a href="#referential-integrity-constraint" id="toc-referential-integrity-constraint" class="nav-link" data-scroll-target="#referential-integrity-constraint"><span class="header-section-number">5.8.3</span> Referential Integrity Constraint</a></li>
   <li><a href="#key-uniqueness-constraint" id="toc-key-uniqueness-constraint" class="nav-link" data-scroll-target="#key-uniqueness-constraint"><span class="header-section-number">5.8.4</span> Key Uniqueness Constraint</a></li>
   </ul></li>
-  <li><a href="#foreign-key-actions" id="toc-foreign-key-actions" class="nav-link" data-scroll-target="#foreign-key-actions"><span class="header-section-number">5.9</span> 5.9 Foreign Key Actions</a></li>
-  <li><a href="#null-values-and-three-valued-logic" id="toc-null-values-and-three-valued-logic" class="nav-link" data-scroll-target="#null-values-and-three-valued-logic"><span class="header-section-number">5.10</span> 5.10 NULL Values and Three-Valued Logic</a>
+  <li><a href="#foreign-key-actions" id="toc-foreign-key-actions" class="nav-link" data-scroll-target="#foreign-key-actions"><span class="header-section-number">5.9</span> Foreign Key Actions</a></li>
+  <li><a href="#null-values-and-three-valued-logic" id="toc-null-values-and-three-valued-logic" class="nav-link" data-scroll-target="#null-values-and-three-valued-logic"><span class="header-section-number">5.10</span> NULL Values and Three-Valued Logic</a>
   <ul class="collapse">
   <li><a href="#three-valued-logic" id="toc-three-valued-logic" class="nav-link" data-scroll-target="#three-valued-logic"><span class="header-section-number">5.10.1</span> Three-Valued Logic</a></li>
   </ul></li>
-  <li><a href="#business-rules-db-constraints-vs.-application-logic" id="toc-business-rules-db-constraints-vs.-application-logic" class="nav-link" data-scroll-target="#business-rules-db-constraints-vs.-application-logic"><span class="header-section-number">5.11</span> 5.11 Business Rules: DB Constraints vs.&nbsp;Application Logic</a></li>
+  <li><a href="#business-rules-db-constraints-vs.-application-logic" id="toc-business-rules-db-constraints-vs.-application-logic" class="nav-link" data-scroll-target="#business-rules-db-constraints-vs.-application-logic"><span class="header-section-number">5.11</span> Business Rules: DB Constraints vs.&nbsp;Application Logic</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.12</span> Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">5.13</span> Review Questions</a>
   <ul class="collapse">
@@ -517,7 +517,7 @@ Important
 </div>
 <hr>
 <section id="mathematical-foundation" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="mathematical-foundation"><span class="header-section-number">5.1</span> 5.1 Mathematical Foundation</h2>
+<h2 data-number="5.1" class="anchored" data-anchor-id="mathematical-foundation"><span class="header-section-number">5.1</span> Mathematical Foundation</h2>
 <p>The relational model was proposed by <strong>E.F. Codd</strong> in 1970 and grounded in <strong>set theory</strong> and <strong>first-order predicate logic</strong>.</p>
 <p>A <strong>relation</strong> <span class="math inline">R</span> of degree <span class="math inline">n</span> is a subset of the Cartesian product of <span class="math inline">n</span> domains:</p>
 <p><span class="math display">R \subseteq D_1 \times D_2 \times \cdots \times D_n</span></p>
@@ -526,7 +526,7 @@ Important
 <hr>
 </section>
 <section id="key-terminology" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="key-terminology"><span class="header-section-number">5.2</span> 5.2 Key Terminology</h2>
+<h2 data-number="5.2" class="anchored" data-anchor-id="key-terminology"><span class="header-section-number">5.2</span> Key Terminology</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 40%">
@@ -596,7 +596,7 @@ Important
 <hr>
 </section>
 <section id="properties-of-relations" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="properties-of-relations"><span class="header-section-number">5.3</span> 5.3 Properties of Relations</h2>
+<h2 data-number="5.3" class="anchored" data-anchor-id="properties-of-relations"><span class="header-section-number">5.3</span> Properties of Relations</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 27%">
@@ -654,7 +654,7 @@ Note
 <hr>
 </section>
 <section id="formal-schema-notation" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="formal-schema-notation"><span class="header-section-number">5.4</span> 5.4 Formal Schema Notation</h2>
+<h2 data-number="5.4" class="anchored" data-anchor-id="formal-schema-notation"><span class="header-section-number">5.4</span> Formal Schema Notation</h2>
 <p>Throughout this book we use the following notation for relational schemas:</p>
 <table class="caption-top table">
 <thead>
@@ -703,7 +703,7 @@ DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)</code></
 <hr>
 </section>
 <section id="complete-key-taxonomy" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="complete-key-taxonomy"><span class="header-section-number">5.5</span> 5.5 Complete Key Taxonomy</h2>
+<h2 data-number="5.5" class="anchored" data-anchor-id="complete-key-taxonomy"><span class="header-section-number">5.5</span> Complete Key Taxonomy</h2>
 <p>The word “key” is overloaded in database terminology. Here is the complete hierarchy:</p>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
@@ -730,7 +730,7 @@ DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)</code></
 </section>
 </section>
 <section id="fd-based-key-identification" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="fd-based-key-identification"><span class="header-section-number">5.6</span> 5.6 FD-Based Key Identification</h2>
+<h2 data-number="5.6" class="anchored" data-anchor-id="fd-based-key-identification"><span class="header-section-number">5.6</span> FD-Based Key Identification</h2>
 <section id="what-is-a-functional-dependency" class="level3" data-number="5.6.1">
 <h3 data-number="5.6.1" class="anchored" data-anchor-id="what-is-a-functional-dependency"><span class="header-section-number">5.6.1</span> What is a Functional Dependency?</h3>
 <p>A <strong>functional dependency (FD)</strong> <span class="math inline">X \to Y</span> on relation <span class="math inline">R</span> means: for every valid instance of <span class="math inline">R</span>, if two tuples agree on the value(s) of <span class="math inline">X</span>, they must also agree on the value(s) of <span class="math inline">Y</span>. In other words, <span class="math inline">X</span> <strong>determines</strong> <span class="math inline">Y</span>.</p>
@@ -772,7 +772,7 @@ Important
 </section>
 </section>
 <section id="choosing-a-primary-key" class="level2" data-number="5.7">
-<h2 data-number="5.7" class="anchored" data-anchor-id="choosing-a-primary-key"><span class="header-section-number">5.7</span> 5.7 Choosing a Primary Key</h2>
+<h2 data-number="5.7" class="anchored" data-anchor-id="choosing-a-primary-key"><span class="header-section-number">5.7</span> Choosing a Primary Key</h2>
 <p>When multiple candidate keys exist, use this guide:</p>
 <table class="caption-top table">
 <colgroup>
@@ -831,7 +831,7 @@ Important
 <hr>
 </section>
 <section id="integrity-constraints" class="level2" data-number="5.8">
-<h2 data-number="5.8" class="anchored" data-anchor-id="integrity-constraints"><span class="header-section-number">5.8</span> 5.8 Integrity Constraints</h2>
+<h2 data-number="5.8" class="anchored" data-anchor-id="integrity-constraints"><span class="header-section-number">5.8</span> Integrity Constraints</h2>
 <section id="domain-constraint" class="level3" data-number="5.8.1">
 <h3 data-number="5.8.1" class="anchored" data-anchor-id="domain-constraint"><span class="header-section-number">5.8.1</span> Domain Constraint</h3>
 <p>Every attribute value must belong to the attribute’s domain.</p>
@@ -906,7 +906,7 @@ Important
 </section>
 </section>
 <section id="foreign-key-actions" class="level2" data-number="5.9">
-<h2 data-number="5.9" class="anchored" data-anchor-id="foreign-key-actions"><span class="header-section-number">5.9</span> 5.9 Foreign Key Actions</h2>
+<h2 data-number="5.9" class="anchored" data-anchor-id="foreign-key-actions"><span class="header-section-number">5.9</span> Foreign Key Actions</h2>
 <p>When a referenced PK is deleted or updated, the DBMS executes the declared <strong>referential action</strong>:</p>
 <table class="caption-top table">
 <colgroup>
@@ -973,7 +973,7 @@ Tip
 <hr>
 </section>
 <section id="null-values-and-three-valued-logic" class="level2" data-number="5.10">
-<h2 data-number="5.10" class="anchored" data-anchor-id="null-values-and-three-valued-logic"><span class="header-section-number">5.10</span> 5.10 NULL Values and Three-Valued Logic</h2>
+<h2 data-number="5.10" class="anchored" data-anchor-id="null-values-and-three-valued-logic"><span class="header-section-number">5.10</span> NULL Values and Three-Valued Logic</h2>
 <p><strong>NULL</strong> represents <em>unknown</em>, <em>missing</em>, or <em>not applicable</em>. Different NULLs express different real-world meanings:</p>
 <table class="caption-top table">
 <thead>
@@ -1051,7 +1051,7 @@ Important
 </section>
 </section>
 <section id="business-rules-db-constraints-vs.-application-logic" class="level2" data-number="5.11">
-<h2 data-number="5.11" class="anchored" data-anchor-id="business-rules-db-constraints-vs.-application-logic"><span class="header-section-number">5.11</span> 5.11 Business Rules: DB Constraints vs.&nbsp;Application Logic</h2>
+<h2 data-number="5.11" class="anchored" data-anchor-id="business-rules-db-constraints-vs.-application-logic"><span class="header-section-number">5.11</span> Business Rules: DB Constraints vs.&nbsp;Application Logic</h2>
 <p>A <strong>business rule</strong> is a statement about the organization that must always be true.</p>
 <table class="caption-top table">
 <colgroup>
@@ -1707,7 +1707,7 @@ Tip
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.1 Mathematical Foundation</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mathematical Foundation</span></span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>The relational model was proposed by **E.F. Codd** in 1970 and grounded in **set theory** and **first-order predicate logic**.</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
@@ -1723,7 +1723,7 @@ Tip
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.2 Key Terminology</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Terminology</span></span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Formal Term <span class="pp">|</span> SQL Term <span class="pp">|</span> Meaning <span class="pp">|</span></span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|---------|---------|</span></span>
@@ -1740,7 +1740,7 @@ Tip
 <span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.3 Properties of Relations</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Properties of Relations</span></span>
 <span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Formal Relation <span class="pp">|</span> SQL Table <span class="pp">|</span></span>
 <span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|----------------|-----------|</span></span>
@@ -1756,7 +1756,7 @@ Tip
 <span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.4 Formal Schema Notation</span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Formal Schema Notation</span></span>
 <span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>Throughout this book we use the following notation for relational schemas:</span>
 <span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
@@ -1789,7 +1789,7 @@ Tip
 <span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.5 Complete Key Taxonomy</span></span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## Complete Key Taxonomy</span></span>
 <span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>The word "key" is overloaded in database terminology. Here is the complete hierarchy:</span>
 <span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a></span>
@@ -1835,7 +1835,7 @@ Tip
 <span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.6 FD-Based Key Identification</span></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## FD-Based Key Identification</span></span>
 <span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a><span class="fu">### What is a Functional Dependency?</span></span>
 <span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a></span>
@@ -1874,7 +1874,7 @@ Tip
 <span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.7 Choosing a Primary Key</span></span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## Choosing a Primary Key</span></span>
 <span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>When multiple candidate keys exist, use this guide:</span>
 <span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a></span>
@@ -1904,7 +1904,7 @@ Tip
 <span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.8 Integrity Constraints</span></span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a><span class="fu">## Integrity Constraints</span></span>
 <span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a><span class="fu">### Domain Constraint</span></span>
 <span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a></span>
@@ -1946,7 +1946,7 @@ Tip
 <span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-253"><a href="#cb6-253" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-254"><a href="#cb6-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.9 Foreign Key Actions</span></span>
+<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a><span class="fu">## Foreign Key Actions</span></span>
 <span id="cb6-256"><a href="#cb6-256" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-257"><a href="#cb6-257" aria-hidden="true" tabindex="-1"></a>When a referenced PK is deleted or updated, the DBMS executes the declared **referential action**:</span>
 <span id="cb6-258"><a href="#cb6-258" aria-hidden="true" tabindex="-1"></a></span>
@@ -1976,7 +1976,7 @@ Tip
 <span id="cb6-282"><a href="#cb6-282" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-283"><a href="#cb6-283" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-284"><a href="#cb6-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-285"><a href="#cb6-285" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.10 NULL Values and Three-Valued Logic</span></span>
+<span id="cb6-285"><a href="#cb6-285" aria-hidden="true" tabindex="-1"></a><span class="fu">## NULL Values and Three-Valued Logic</span></span>
 <span id="cb6-286"><a href="#cb6-286" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-287"><a href="#cb6-287" aria-hidden="true" tabindex="-1"></a>**NULL** represents *unknown*, *missing*, or *not applicable*. Different NULLs express different real-world meanings:</span>
 <span id="cb6-288"><a href="#cb6-288" aria-hidden="true" tabindex="-1"></a></span>
@@ -2009,7 +2009,7 @@ Tip
 <span id="cb6-315"><a href="#cb6-315" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-316"><a href="#cb6-316" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb6-317"><a href="#cb6-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-318"><a href="#cb6-318" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5.11 Business Rules: DB Constraints vs. Application Logic</span></span>
+<span id="cb6-318"><a href="#cb6-318" aria-hidden="true" tabindex="-1"></a><span class="fu">## Business Rules: DB Constraints vs. Application Logic</span></span>
 <span id="cb6-319"><a href="#cb6-319" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-320"><a href="#cb6-320" aria-hidden="true" tabindex="-1"></a>A **business rule** is a statement about the organization that must always be true.</span>
 <span id="cb6-321"><a href="#cb6-321" aria-hidden="true" tabindex="-1"></a></span>

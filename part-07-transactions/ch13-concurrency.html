@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-08-nosql/ch14-nosql-intro.html" rel="next">
 <link href="../part-07-transactions/ch12-transactions.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -439,53 +439,53 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#from-problem-to-protocol" id="toc-from-problem-to-protocol" class="nav-link active" data-scroll-target="#from-problem-to-protocol"><span class="header-section-number">13.1</span> §13.0 From Problem to Protocol</a></li>
-  <li><a href="#schedules" id="toc-schedules" class="nav-link" data-scroll-target="#schedules"><span class="header-section-number">13.2</span> 13.1 Schedules</a>
+  <li><a href="#from-problem-to-protocol" id="toc-from-problem-to-protocol" class="nav-link active" data-scroll-target="#from-problem-to-protocol"><span class="header-section-number">13.1</span> From Problem to Protocol</a></li>
+  <li><a href="#schedules" id="toc-schedules" class="nav-link" data-scroll-target="#schedules"><span class="header-section-number">13.2</span> Schedules</a>
   <ul class="collapse">
   <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">13.2.1</span> Notation</a></li>
   <li><a href="#serial-vs-concurrent" id="toc-serial-vs-concurrent" class="nav-link" data-scroll-target="#serial-vs-concurrent"><span class="header-section-number">13.2.2</span> Serial vs Concurrent</a></li>
   </ul></li>
-  <li><a href="#conflict-serializability" id="toc-conflict-serializability" class="nav-link" data-scroll-target="#conflict-serializability"><span class="header-section-number">13.3</span> 13.2 Conflict Serializability</a>
+  <li><a href="#conflict-serializability" id="toc-conflict-serializability" class="nav-link" data-scroll-target="#conflict-serializability"><span class="header-section-number">13.3</span> Conflict Serializability</a>
   <ul class="collapse">
   <li><a href="#conflicting-operations" id="toc-conflicting-operations" class="nav-link" data-scroll-target="#conflicting-operations"><span class="header-section-number">13.3.1</span> Conflicting Operations</a></li>
   <li><a href="#conflict-equivalent-schedules" id="toc-conflict-equivalent-schedules" class="nav-link" data-scroll-target="#conflict-equivalent-schedules"><span class="header-section-number">13.3.2</span> Conflict-Equivalent Schedules</a></li>
   <li><a href="#precedence-serialization-graph" id="toc-precedence-serialization-graph" class="nav-link" data-scroll-target="#precedence-serialization-graph"><span class="header-section-number">13.3.3</span> Precedence (Serialization) Graph</a></li>
   <li><a href="#worked-example" id="toc-worked-example" class="nav-link" data-scroll-target="#worked-example"><span class="header-section-number">13.3.4</span> Worked Example</a></li>
   </ul></li>
-  <li><a href="#view-serializability" id="toc-view-serializability" class="nav-link" data-scroll-target="#view-serializability"><span class="header-section-number">13.4</span> 13.3 View Serializability</a></li>
-  <li><a href="#recoverability" id="toc-recoverability" class="nav-link" data-scroll-target="#recoverability"><span class="header-section-number">13.5</span> 13.4 Recoverability</a>
+  <li><a href="#view-serializability" id="toc-view-serializability" class="nav-link" data-scroll-target="#view-serializability"><span class="header-section-number">13.4</span> View Serializability</a></li>
+  <li><a href="#recoverability" id="toc-recoverability" class="nav-link" data-scroll-target="#recoverability"><span class="header-section-number">13.5</span> Recoverability</a>
   <ul class="collapse">
   <li><a href="#recoverable-schedules" id="toc-recoverable-schedules" class="nav-link" data-scroll-target="#recoverable-schedules"><span class="header-section-number">13.5.1</span> Recoverable Schedules</a></li>
   <li><a href="#cascading-rollback" id="toc-cascading-rollback" class="nav-link" data-scroll-target="#cascading-rollback"><span class="header-section-number">13.5.2</span> Cascading Rollback</a></li>
   <li><a href="#cascadeless-schedules" id="toc-cascadeless-schedules" class="nav-link" data-scroll-target="#cascadeless-schedules"><span class="header-section-number">13.5.3</span> Cascadeless Schedules</a></li>
   </ul></li>
-  <li><a href="#two-phase-locking-2pl-full-protocol" id="toc-two-phase-locking-2pl-full-protocol" class="nav-link" data-scroll-target="#two-phase-locking-2pl-full-protocol"><span class="header-section-number">13.6</span> 13.5 Two-Phase Locking (2PL) — Full Protocol</a>
+  <li><a href="#two-phase-locking-2pl-full-protocol" id="toc-two-phase-locking-2pl-full-protocol" class="nav-link" data-scroll-target="#two-phase-locking-2pl-full-protocol"><span class="header-section-number">13.6</span> Two-Phase Locking (2PL) — Full Protocol</a>
   <ul class="collapse">
   <li><a href="#lock-types" id="toc-lock-types" class="nav-link" data-scroll-target="#lock-types"><span class="header-section-number">13.6.1</span> Lock Types</a></li>
   <li><a href="#the-two-phases" id="toc-the-two-phases" class="nav-link" data-scroll-target="#the-two-phases"><span class="header-section-number">13.6.2</span> The Two Phases</a></li>
   <li><a href="#pl-variants" id="toc-pl-variants" class="nav-link" data-scroll-target="#pl-variants"><span class="header-section-number">13.6.3</span> 2PL Variants</a></li>
   </ul></li>
-  <li><a href="#deadlocks" id="toc-deadlocks" class="nav-link" data-scroll-target="#deadlocks"><span class="header-section-number">13.7</span> 13.6 Deadlocks</a>
+  <li><a href="#deadlocks" id="toc-deadlocks" class="nav-link" data-scroll-target="#deadlocks"><span class="header-section-number">13.7</span> Deadlocks</a>
   <ul class="collapse">
   <li><a href="#wait-for-graph" id="toc-wait-for-graph" class="nav-link" data-scroll-target="#wait-for-graph"><span class="header-section-number">13.7.1</span> Wait-For Graph</a></li>
   <li><a href="#deadlock-resolution" id="toc-deadlock-resolution" class="nav-link" data-scroll-target="#deadlock-resolution"><span class="header-section-number">13.7.2</span> Deadlock Resolution</a></li>
   <li><a href="#deadlock-prevention-strategies" id="toc-deadlock-prevention-strategies" class="nav-link" data-scroll-target="#deadlock-prevention-strategies"><span class="header-section-number">13.7.3</span> Deadlock Prevention Strategies</a></li>
   </ul></li>
-  <li><a href="#timestamp-based-concurrency-control" id="toc-timestamp-based-concurrency-control" class="nav-link" data-scroll-target="#timestamp-based-concurrency-control"><span class="header-section-number">13.8</span> 13.7 Timestamp-Based Concurrency Control</a>
+  <li><a href="#timestamp-based-concurrency-control" id="toc-timestamp-based-concurrency-control" class="nav-link" data-scroll-target="#timestamp-based-concurrency-control"><span class="header-section-number">13.8</span> Timestamp-Based Concurrency Control</a>
   <ul class="collapse">
   <li><a href="#rules" id="toc-rules" class="nav-link" data-scroll-target="#rules"><span class="header-section-number">13.8.1</span> Rules</a></li>
   </ul></li>
-  <li><a href="#multiversion-concurrency-control-mvcc" id="toc-multiversion-concurrency-control-mvcc" class="nav-link" data-scroll-target="#multiversion-concurrency-control-mvcc"><span class="header-section-number">13.9</span> 13.8 Multiversion Concurrency Control (MVCC)</a>
+  <li><a href="#multiversion-concurrency-control-mvcc" id="toc-multiversion-concurrency-control-mvcc" class="nav-link" data-scroll-target="#multiversion-concurrency-control-mvcc"><span class="header-section-number">13.9</span> Multiversion Concurrency Control (MVCC)</a>
   <ul class="collapse">
   <li><a href="#core-idea" id="toc-core-idea" class="nav-link" data-scroll-target="#core-idea"><span class="header-section-number">13.9.1</span> Core Idea</a></li>
   <li><a href="#mvcc-and-isolation-levels" id="toc-mvcc-and-isolation-levels" class="nav-link" data-scroll-target="#mvcc-and-isolation-levels"><span class="header-section-number">13.9.2</span> MVCC and Isolation Levels</a></li>
   </ul></li>
-  <li><a href="#optimistic-concurrency-control-occ" id="toc-optimistic-concurrency-control-occ" class="nav-link" data-scroll-target="#optimistic-concurrency-control-occ"><span class="header-section-number">13.10</span> 13.9 Optimistic Concurrency Control (OCC)</a>
+  <li><a href="#optimistic-concurrency-control-occ" id="toc-optimistic-concurrency-control-occ" class="nav-link" data-scroll-target="#optimistic-concurrency-control-occ"><span class="header-section-number">13.10</span> Optimistic Concurrency Control (OCC)</a>
   <ul class="collapse">
   <li><a href="#three-phases" id="toc-three-phases" class="nav-link" data-scroll-target="#three-phases"><span class="header-section-number">13.10.1</span> Three Phases</a></li>
   </ul></li>
-  <li><a href="#interactive-isolation-level-anomaly-explorer" id="toc-interactive-isolation-level-anomaly-explorer" class="nav-link" data-scroll-target="#interactive-isolation-level-anomaly-explorer"><span class="header-section-number">13.11</span> 13.10 Interactive: Isolation Level Anomaly Explorer</a></li>
-  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">13.12</span> 13.11 Chapter Summary</a></li>
+  <li><a href="#interactive-isolation-level-anomaly-explorer" id="toc-interactive-isolation-level-anomaly-explorer" class="nav-link" data-scroll-target="#interactive-isolation-level-anomaly-explorer"><span class="header-section-number">13.11</span> Interactive: Isolation Level Anomaly Explorer</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">13.12</span> Chapter Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">13.13</span> Review Questions</a>
   <ul class="collapse">
   <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">13.13.1</span> Conceptual</a></li>
@@ -495,26 +495,26 @@ window.Quarto = {
   <li><a href="#design" id="toc-design" class="nav-link" data-scroll-target="#design"><span class="header-section-number">13.13.5</span> Design</a></li>
   <li><a href="#synthesis" id="toc-synthesis" class="nav-link" data-scroll-target="#synthesis"><span class="header-section-number">13.13.6</span> Synthesis</a></li>
   </ul></li>
-  <li><a href="#serializability" id="toc-serializability" class="nav-link" data-scroll-target="#serializability"><span class="header-section-number">13.14</span> 13.2 Serializability</a>
+  <li><a href="#serializability" id="toc-serializability" class="nav-link" data-scroll-target="#serializability"><span class="header-section-number">13.14</span> Serializability</a>
   <ul class="collapse">
   <li><a href="#conflict-serializability-1" id="toc-conflict-serializability-1" class="nav-link" data-scroll-target="#conflict-serializability-1"><span class="header-section-number">13.14.1</span> Conflict Serializability</a></li>
   <li><a href="#precedence-graph-serialization-graph" id="toc-precedence-graph-serialization-graph" class="nav-link" data-scroll-target="#precedence-graph-serialization-graph"><span class="header-section-number">13.14.2</span> Precedence Graph (Serialization Graph)</a></li>
   </ul></li>
-  <li><a href="#view-serializability-1" id="toc-view-serializability-1" class="nav-link" data-scroll-target="#view-serializability-1"><span class="header-section-number">13.15</span> 13.3 View Serializability</a></li>
-  <li><a href="#recoverability-1" id="toc-recoverability-1" class="nav-link" data-scroll-target="#recoverability-1"><span class="header-section-number">13.16</span> 13.4 Recoverability</a>
+  <li><a href="#view-serializability-1" id="toc-view-serializability-1" class="nav-link" data-scroll-target="#view-serializability-1"><span class="header-section-number">13.15</span> View Serializability</a></li>
+  <li><a href="#recoverability-1" id="toc-recoverability-1" class="nav-link" data-scroll-target="#recoverability-1"><span class="header-section-number">13.16</span> Recoverability</a>
   <ul class="collapse">
   <li><a href="#cascading-rollback-1" id="toc-cascading-rollback-1" class="nav-link" data-scroll-target="#cascading-rollback-1"><span class="header-section-number">13.16.1</span> Cascading Rollback</a></li>
   <li><a href="#cascadeless-schedules-1" id="toc-cascadeless-schedules-1" class="nav-link" data-scroll-target="#cascadeless-schedules-1"><span class="header-section-number">13.16.2</span> Cascadeless Schedules</a></li>
   </ul></li>
-  <li><a href="#concurrency-control-protocols" id="toc-concurrency-control-protocols" class="nav-link" data-scroll-target="#concurrency-control-protocols"><span class="header-section-number">13.17</span> 13.5 Concurrency Control Protocols</a>
+  <li><a href="#concurrency-control-protocols" id="toc-concurrency-control-protocols" class="nav-link" data-scroll-target="#concurrency-control-protocols"><span class="header-section-number">13.17</span> Concurrency Control Protocols</a>
   <ul class="collapse">
   <li><a href="#pl-variants-review-and-extension" id="toc-pl-variants-review-and-extension" class="nav-link" data-scroll-target="#pl-variants-review-and-extension"><span class="header-section-number">13.17.1</span> 2PL Variants (Review and Extension)</a></li>
   <li><a href="#timestamp-based-concurrency-control-1" id="toc-timestamp-based-concurrency-control-1" class="nav-link" data-scroll-target="#timestamp-based-concurrency-control-1"><span class="header-section-number">13.17.2</span> Timestamp-Based Concurrency Control</a></li>
   <li><a href="#multiversion-concurrency-control-mvcc-1" id="toc-multiversion-concurrency-control-mvcc-1" class="nav-link" data-scroll-target="#multiversion-concurrency-control-mvcc-1"><span class="header-section-number">13.17.3</span> Multiversion Concurrency Control (MVCC)</a></li>
   <li><a href="#optimistic-concurrency-control-occ-1" id="toc-optimistic-concurrency-control-occ-1" class="nav-link" data-scroll-target="#optimistic-concurrency-control-occ-1"><span class="header-section-number">13.17.4</span> Optimistic Concurrency Control (OCC)</a></li>
   </ul></li>
-  <li><a href="#summary-isolation-implementations" id="toc-summary-isolation-implementations" class="nav-link" data-scroll-target="#summary-isolation-implementations"><span class="header-section-number">13.18</span> 13.6 Summary: Isolation Implementations</a></li>
-  <li><a href="#timestamp-protocol-example" id="toc-timestamp-protocol-example" class="nav-link" data-scroll-target="#timestamp-protocol-example"><span class="header-section-number">13.19</span> 13.7 Timestamp Protocol Example</a></li>
+  <li><a href="#summary-isolation-implementations" id="toc-summary-isolation-implementations" class="nav-link" data-scroll-target="#summary-isolation-implementations"><span class="header-section-number">13.18</span> Summary: Isolation Implementations</a></li>
+  <li><a href="#timestamp-protocol-example" id="toc-timestamp-protocol-example" class="nav-link" data-scroll-target="#timestamp-protocol-example"><span class="header-section-number">13.19</span> Timestamp Protocol Example</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">13.20</span> Summary</a></li>
   <li><a href="#review-questions-1" id="toc-review-questions-1" class="nav-link" data-scroll-target="#review-questions-1"><span class="header-section-number">13.21</span> Review Questions</a></li>
   </ul>
@@ -544,12 +544,12 @@ window.Quarto = {
 
 
 <section id="from-problem-to-protocol" class="level2" data-number="13.1">
-<h2 data-number="13.1" class="anchored" data-anchor-id="from-problem-to-protocol"><span class="header-section-number">13.1</span> §13.0 From Problem to Protocol</h2>
+<h2 data-number="13.1" class="anchored" data-anchor-id="from-problem-to-protocol"><span class="header-section-number">13.1</span> From Problem to Protocol</h2>
 <p>Chapter 12 identified four concurrency anomalies (lost update, dirty read, non-repeatable read, phantom read) and four isolation levels that prevent them. This chapter explains <em>how</em> DBMS implementations actually achieve isolation: by controlling the schedule in which operations execute.</p>
 <hr>
 </section>
 <section id="schedules" class="level2" data-number="13.2">
-<h2 data-number="13.2" class="anchored" data-anchor-id="schedules"><span class="header-section-number">13.2</span> 13.1 Schedules</h2>
+<h2 data-number="13.2" class="anchored" data-anchor-id="schedules"><span class="header-section-number">13.2</span> Schedules</h2>
 <p>A <strong>schedule</strong> (or <em>history</em>) <span class="math inline">S</span> is a total ordering of all operations from a set of concurrent transactions that preserves the intra-transaction order within each transaction.</p>
 <section id="notation" class="level3" data-number="13.2.1">
 <h3 data-number="13.2.1" class="anchored" data-anchor-id="notation"><span class="header-section-number">13.2.1</span> Notation</h3>
@@ -593,7 +593,7 @@ S_{\text{concurrent}}: \quad r_1(A)\; r_2(A)\; w_1(A)\; w_2(A)\; c_1\; c_2
 </section>
 </section>
 <section id="conflict-serializability" class="level2" data-number="13.3">
-<h2 data-number="13.3" class="anchored" data-anchor-id="conflict-serializability"><span class="header-section-number">13.3</span> 13.2 Conflict Serializability</h2>
+<h2 data-number="13.3" class="anchored" data-anchor-id="conflict-serializability"><span class="header-section-number">13.3</span> Conflict Serializability</h2>
 <section id="conflicting-operations" class="level3" data-number="13.3.1">
 <h3 data-number="13.3.1" class="anchored" data-anchor-id="conflicting-operations"><span class="header-section-number">13.3.1</span> Conflicting Operations</h3>
 <p>Two operations <strong>conflict</strong> iff: 1. They belong to <strong>different</strong> transactions 2. They access the <strong>same data item</strong> <span class="math inline">X</span> 3. At least <strong>one is a write</strong></p>
@@ -674,7 +674,7 @@ Tip
 </section>
 </section>
 <section id="view-serializability" class="level2" data-number="13.4">
-<h2 data-number="13.4" class="anchored" data-anchor-id="view-serializability"><span class="header-section-number">13.4</span> 13.3 View Serializability</h2>
+<h2 data-number="13.4" class="anchored" data-anchor-id="view-serializability"><span class="header-section-number">13.4</span> View Serializability</h2>
 <p><strong>View serializability</strong> is a weaker (more permissive) criterion than conflict serializability. Two schedules are <strong>view-equivalent</strong> iff:</p>
 <ol type="1">
 <li>If <span class="math inline">T_i</span> reads the <strong>initial value</strong> of <span class="math inline">X</span> in <span class="math inline">S</span>, it also does so in <span class="math inline">S'</span></li>
@@ -687,7 +687,7 @@ View serializability is NP-complete to test → not used in practice.</code></pr
 <hr>
 </section>
 <section id="recoverability" class="level2" data-number="13.5">
-<h2 data-number="13.5" class="anchored" data-anchor-id="recoverability"><span class="header-section-number">13.5</span> 13.4 Recoverability</h2>
+<h2 data-number="13.5" class="anchored" data-anchor-id="recoverability"><span class="header-section-number">13.5</span> Recoverability</h2>
 <section id="recoverable-schedules" class="level3" data-number="13.5.1">
 <h3 data-number="13.5.1" class="anchored" data-anchor-id="recoverable-schedules"><span class="header-section-number">13.5.1</span> Recoverable Schedules</h3>
 <p>A schedule is <strong>recoverable</strong> iff: if <span class="math inline">T_j</span> reads data written by <span class="math inline">T_i</span>, then <span class="math inline">T_i</span> must commit before <span class="math inline">T_j</span> commits.</p>
@@ -752,7 +752,7 @@ View serializability is NP-complete to test → not used in practice.</code></pr
 </section>
 </section>
 <section id="two-phase-locking-2pl-full-protocol" class="level2" data-number="13.6">
-<h2 data-number="13.6" class="anchored" data-anchor-id="two-phase-locking-2pl-full-protocol"><span class="header-section-number">13.6</span> 13.5 Two-Phase Locking (2PL) — Full Protocol</h2>
+<h2 data-number="13.6" class="anchored" data-anchor-id="two-phase-locking-2pl-full-protocol"><span class="header-section-number">13.6</span> Two-Phase Locking (2PL) — Full Protocol</h2>
 <section id="lock-types" class="level3" data-number="13.6.1">
 <h3 data-number="13.6.1" class="anchored" data-anchor-id="lock-types"><span class="header-section-number">13.6.1</span> Lock Types</h3>
 <table class="caption-top table">
@@ -870,7 +870,7 @@ View serializability is NP-complete to test → not used in practice.</code></pr
 </section>
 </section>
 <section id="deadlocks" class="level2" data-number="13.7">
-<h2 data-number="13.7" class="anchored" data-anchor-id="deadlocks"><span class="header-section-number">13.7</span> 13.6 Deadlocks</h2>
+<h2 data-number="13.7" class="anchored" data-anchor-id="deadlocks"><span class="header-section-number">13.7</span> Deadlocks</h2>
 <p>A <strong>deadlock</strong> is a circular wait where each transaction holds a lock that another transaction is waiting for.</p>
 <section id="wait-for-graph" class="level3" data-number="13.7.1">
 <h3 data-number="13.7.1" class="anchored" data-anchor-id="wait-for-graph"><span class="header-section-number">13.7.1</span> Wait-For Graph</h3>
@@ -966,7 +966,7 @@ Important
 </section>
 </section>
 <section id="timestamp-based-concurrency-control" class="level2" data-number="13.8">
-<h2 data-number="13.8" class="anchored" data-anchor-id="timestamp-based-concurrency-control"><span class="header-section-number">13.8</span> 13.7 Timestamp-Based Concurrency Control</h2>
+<h2 data-number="13.8" class="anchored" data-anchor-id="timestamp-based-concurrency-control"><span class="header-section-number">13.8</span> Timestamp-Based Concurrency Control</h2>
 <p>Every transaction receives a timestamp <span class="math inline">TS(T)</span> at start. Two additional timestamps are maintained per data item <span class="math inline">X</span>:</p>
 <ul>
 <li><span class="math inline">R\_TS(X)</span>: timestamp of the last transaction that successfully <strong>read</strong> <span class="math inline">X</span></li>
@@ -1021,7 +1021,7 @@ Important
 </section>
 </section>
 <section id="multiversion-concurrency-control-mvcc" class="level2" data-number="13.9">
-<h2 data-number="13.9" class="anchored" data-anchor-id="multiversion-concurrency-control-mvcc"><span class="header-section-number">13.9</span> 13.8 Multiversion Concurrency Control (MVCC)</h2>
+<h2 data-number="13.9" class="anchored" data-anchor-id="multiversion-concurrency-control-mvcc"><span class="header-section-number">13.9</span> Multiversion Concurrency Control (MVCC)</h2>
 <p>MVCC is used by the majority of modern DBMS (PostgreSQL, MySQL InnoDB, Oracle, CockroachDB).</p>
 <section id="core-idea" class="level3" data-number="13.9.1">
 <h3 data-number="13.9.1" class="anchored" data-anchor-id="core-idea"><span class="header-section-number">13.9.1</span> Core Idea</h3>
@@ -1072,7 +1072,7 @@ Important
 </section>
 </section>
 <section id="optimistic-concurrency-control-occ" class="level2" data-number="13.10">
-<h2 data-number="13.10" class="anchored" data-anchor-id="optimistic-concurrency-control-occ"><span class="header-section-number">13.10</span> 13.9 Optimistic Concurrency Control (OCC)</h2>
+<h2 data-number="13.10" class="anchored" data-anchor-id="optimistic-concurrency-control-occ"><span class="header-section-number">13.10</span> Optimistic Concurrency Control (OCC)</h2>
 <p>OCC assumes conflicts are <strong>rare</strong> — so validate only at commit time rather than locking proactively.</p>
 <section id="three-phases" class="level3" data-number="13.10.1">
 <h3 data-number="13.10.1" class="anchored" data-anchor-id="three-phases"><span class="header-section-number">13.10.1</span> Three Phases</h3>
@@ -1107,7 +1107,7 @@ Important
 </section>
 </section>
 <section id="interactive-isolation-level-anomaly-explorer" class="level2" data-number="13.11">
-<h2 data-number="13.11" class="anchored" data-anchor-id="interactive-isolation-level-anomaly-explorer"><span class="header-section-number">13.11</span> 13.10 Interactive: Isolation Level Anomaly Explorer</h2>
+<h2 data-number="13.11" class="anchored" data-anchor-id="interactive-isolation-level-anomaly-explorer"><span class="header-section-number">13.11</span> Interactive: Isolation Level Anomaly Explorer</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb5" data-startfrom="354" data-source-offset="-1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 353;"><span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a>viewof level <span class="op">=</span> Inputs<span class="op">.</span><span class="fu">select</span>(</span>
 <span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a>  [<span class="st">"READ UNCOMMITTED"</span><span class="op">,</span> <span class="st">"READ COMMITTED"</span><span class="op">,</span> <span class="st">"REPEATABLE READ"</span><span class="op">,</span> <span class="st">"SERIALIZABLE"</span>]<span class="op">,</span></span>
@@ -1173,7 +1173,7 @@ Figure&nbsp;13.1: Which anomalies are possible at each isolation level?
 <hr>
 </section>
 <section id="chapter-summary" class="level2" data-number="13.12">
-<h2 data-number="13.12" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">13.12</span> 13.11 Chapter Summary</h2>
+<h2 data-number="13.12" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">13.12</span> Chapter Summary</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1276,7 +1276,7 @@ S_2: r_1(X)\; r_2(X)\; w_1(X)\; w_2(X)\; c_1\; c_2
 </section>
 </section>
 <section id="serializability" class="level2" data-number="13.14">
-<h2 data-number="13.14" class="anchored" data-anchor-id="serializability"><span class="header-section-number">13.14</span> 13.2 Serializability</h2>
+<h2 data-number="13.14" class="anchored" data-anchor-id="serializability"><span class="header-section-number">13.14</span> Serializability</h2>
 <section id="conflict-serializability-1" class="level3" data-number="13.14.1">
 <h3 data-number="13.14.1" class="anchored" data-anchor-id="conflict-serializability-1"><span class="header-section-number">13.14.1</span> Conflict Serializability</h3>
 <p>Two operations <strong>conflict</strong> if they: 1. Belong to <strong>different</strong> transactions 2. Access the <strong>same data item</strong> <span class="math inline">X</span> 3. At least <strong>one is a write</strong></p>
@@ -1300,7 +1300,7 @@ S: r_1(A)\; w_2(A)\; r_1(B)\; w_2(B)\; c_1\; c_2
 </section>
 </section>
 <section id="view-serializability-1" class="level2" data-number="13.15">
-<h2 data-number="13.15" class="anchored" data-anchor-id="view-serializability-1"><span class="header-section-number">13.15</span> 13.3 View Serializability</h2>
+<h2 data-number="13.15" class="anchored" data-anchor-id="view-serializability-1"><span class="header-section-number">13.15</span> View Serializability</h2>
 <p><strong>View serializability</strong> is a weaker (more permissive) notion:</p>
 <p>Two schedules <span class="math inline">S</span> and <span class="math inline">S'</span> are <strong>view-equivalent</strong> iff for each data item <span class="math inline">X</span>:</p>
 <ol type="1">
@@ -1324,7 +1324,7 @@ Note
 </div>
 </section>
 <section id="recoverability-1" class="level2" data-number="13.16">
-<h2 data-number="13.16" class="anchored" data-anchor-id="recoverability-1"><span class="header-section-number">13.16</span> 13.4 Recoverability</h2>
+<h2 data-number="13.16" class="anchored" data-anchor-id="recoverability-1"><span class="header-section-number">13.16</span> Recoverability</h2>
 <p>A schedule is <strong>recoverable</strong> iff no transaction <span class="math inline">T_i</span> commits before all transactions <span class="math inline">T_j</span> that wrote data read by <span class="math inline">T_i</span> have committed.</p>
 <p><strong>Non-recoverable example:</strong></p>
 <pre data-code-line-numbers=""><code>T1: w(X)
@@ -1351,7 +1351,7 @@ T1: a    ← T1 aborts! But T2 already committed based on T1's data → non-reco
 </section>
 </section>
 <section id="concurrency-control-protocols" class="level2" data-number="13.17">
-<h2 data-number="13.17" class="anchored" data-anchor-id="concurrency-control-protocols"><span class="header-section-number">13.17</span> 13.5 Concurrency Control Protocols</h2>
+<h2 data-number="13.17" class="anchored" data-anchor-id="concurrency-control-protocols"><span class="header-section-number">13.17</span> Concurrency Control Protocols</h2>
 <section id="pl-variants-review-and-extension" class="level3" data-number="13.17.1">
 <h3 data-number="13.17.1" class="anchored" data-anchor-id="pl-variants-review-and-extension"><span class="header-section-number">13.17.1</span> 2PL Variants (Review and Extension)</h3>
 <table class="caption-top table">
@@ -1451,7 +1451,7 @@ T1: a    ← T1 aborts! But T2 already committed based on T1's data → non-reco
 </section>
 </section>
 <section id="summary-isolation-implementations" class="level2" data-number="13.18">
-<h2 data-number="13.18" class="anchored" data-anchor-id="summary-isolation-implementations"><span class="header-section-number">13.18</span> 13.6 Summary: Isolation Implementations</h2>
+<h2 data-number="13.18" class="anchored" data-anchor-id="summary-isolation-implementations"><span class="header-section-number">13.18</span> Summary: Isolation Implementations</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -1490,7 +1490,7 @@ T1: a    ← T1 aborts! But T2 already committed based on T1's data → non-reco
 </table>
 </section>
 <section id="timestamp-protocol-example" class="level2" data-number="13.19">
-<h2 data-number="13.19" class="anchored" data-anchor-id="timestamp-protocol-example"><span class="header-section-number">13.19</span> 13.7 Timestamp Protocol Example</h2>
+<h2 data-number="13.19" class="anchored" data-anchor-id="timestamp-protocol-example"><span class="header-section-number">13.19</span> Timestamp Protocol Example</h2>
 <pre data-code-line-numbers=""><code>Transactions: T1 (TS=1), T2 (TS=2)
 Initial state: R_TS(X)=0, W_TS(X)=0
 
@@ -2032,7 +2032,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 13"</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## §13.0 From Problem to Protocol</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## From Problem to Protocol</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>Chapter 12 identified four concurrency anomalies (lost update, dirty read, non-repeatable read,</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>phantom read) and four isolation levels that prevent them.</span>
@@ -2041,7 +2041,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.1 Schedules</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Schedules</span></span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>A **schedule** (or *history*) $S$ is a total ordering of all operations from a set of concurrent</span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>transactions that preserves the intra-transaction order within each transaction.</span>
@@ -2070,7 +2070,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.2 Conflict Serializability</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conflict Serializability</span></span>
 <span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conflicting Operations</span></span>
 <span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
@@ -2127,7 +2127,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.3 View Serializability</span></span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## View Serializability</span></span>
 <span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a>**View serializability** is a weaker (more permissive) criterion than conflict serializability.</span>
 <span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a>Two schedules are **view-equivalent** iff:</span>
@@ -2144,7 +2144,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.4 Recoverability</span></span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recoverability</span></span>
 <span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a><span class="fu">### Recoverable Schedules</span></span>
 <span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a></span>
@@ -2193,7 +2193,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.5 Two-Phase Locking (2PL) — Full Protocol</span></span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## Two-Phase Locking (2PL) — Full Protocol</span></span>
 <span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a><span class="fu">### Lock Types</span></span>
 <span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a></span>
@@ -2257,7 +2257,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.6 Deadlocks</span></span>
+<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## Deadlocks</span></span>
 <span id="cb10-238"><a href="#cb10-238" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-239"><a href="#cb10-239" aria-hidden="true" tabindex="-1"></a>A **deadlock** is a circular wait where each transaction holds a lock that another transaction is waiting for.</span>
 <span id="cb10-240"><a href="#cb10-240" aria-hidden="true" tabindex="-1"></a></span>
@@ -2305,7 +2305,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-284"><a href="#cb10-284" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-285"><a href="#cb10-285" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-286"><a href="#cb10-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-287"><a href="#cb10-287" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.7 Timestamp-Based Concurrency Control</span></span>
+<span id="cb10-287"><a href="#cb10-287" aria-hidden="true" tabindex="-1"></a><span class="fu">## Timestamp-Based Concurrency Control</span></span>
 <span id="cb10-288"><a href="#cb10-288" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-289"><a href="#cb10-289" aria-hidden="true" tabindex="-1"></a>Every transaction receives a timestamp $TS(T)$ at start. Two additional timestamps are maintained per data item $X$:</span>
 <span id="cb10-290"><a href="#cb10-290" aria-hidden="true" tabindex="-1"></a></span>
@@ -2327,7 +2327,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-306"><a href="#cb10-306" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-307"><a href="#cb10-307" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-308"><a href="#cb10-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-309"><a href="#cb10-309" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.8 Multiversion Concurrency Control (MVCC)</span></span>
+<span id="cb10-309"><a href="#cb10-309" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multiversion Concurrency Control (MVCC)</span></span>
 <span id="cb10-310"><a href="#cb10-310" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-311"><a href="#cb10-311" aria-hidden="true" tabindex="-1"></a>MVCC is used by the majority of modern DBMS (PostgreSQL, MySQL InnoDB, Oracle, CockroachDB).</span>
 <span id="cb10-312"><a href="#cb10-312" aria-hidden="true" tabindex="-1"></a></span>
@@ -2357,7 +2357,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-336"><a href="#cb10-336" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-337"><a href="#cb10-337" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-338"><a href="#cb10-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-339"><a href="#cb10-339" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.9 Optimistic Concurrency Control (OCC)</span></span>
+<span id="cb10-339"><a href="#cb10-339" aria-hidden="true" tabindex="-1"></a><span class="fu">## Optimistic Concurrency Control (OCC)</span></span>
 <span id="cb10-340"><a href="#cb10-340" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-341"><a href="#cb10-341" aria-hidden="true" tabindex="-1"></a>OCC assumes conflicts are **rare** — so validate only at commit time rather than locking proactively.</span>
 <span id="cb10-342"><a href="#cb10-342" aria-hidden="true" tabindex="-1"></a></span>
@@ -2373,7 +2373,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-352"><a href="#cb10-352" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-353"><a href="#cb10-353" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-354"><a href="#cb10-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-355"><a href="#cb10-355" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.10 Interactive: Isolation Level Anomaly Explorer</span></span>
+<span id="cb10-355"><a href="#cb10-355" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interactive: Isolation Level Anomaly Explorer</span></span>
 <span id="cb10-356"><a href="#cb10-356" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-359"><a href="#cb10-359" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
 <span id="cb10-360"><a href="#cb10-360" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
@@ -2407,7 +2407,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-388"><a href="#cb10-388" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-389"><a href="#cb10-389" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb10-390"><a href="#cb10-390" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-391"><a href="#cb10-391" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.11 Chapter Summary</span></span>
+<span id="cb10-391"><a href="#cb10-391" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
 <span id="cb10-392"><a href="#cb10-392" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-393"><a href="#cb10-393" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb10-394"><a href="#cb10-394" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 13</span></span>
@@ -2527,7 +2527,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-508"><a href="#cb10-508" aria-hidden="true" tabindex="-1"></a>S_2: r_1(X)\; r_2(X)\; w_1(X)\; w_2(X)\; c_1\; c_2</span>
 <span id="cb10-509"><a href="#cb10-509" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb10-510"><a href="#cb10-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-511"><a href="#cb10-511" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.2 Serializability</span></span>
+<span id="cb10-511"><a href="#cb10-511" aria-hidden="true" tabindex="-1"></a><span class="fu">## Serializability</span></span>
 <span id="cb10-512"><a href="#cb10-512" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-513"><a href="#cb10-513" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conflict Serializability</span></span>
 <span id="cb10-514"><a href="#cb10-514" aria-hidden="true" tabindex="-1"></a></span>
@@ -2564,7 +2564,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-545"><a href="#cb10-545" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-546"><a href="#cb10-546" aria-hidden="true" tabindex="-1"></a>Graph: $T_1 \to T_2$ — no cycle → **conflict-serializable** (equivalent to serial order $T_1, T_2$).</span>
 <span id="cb10-547"><a href="#cb10-547" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-548"><a href="#cb10-548" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.3 View Serializability</span></span>
+<span id="cb10-548"><a href="#cb10-548" aria-hidden="true" tabindex="-1"></a><span class="fu">## View Serializability</span></span>
 <span id="cb10-549"><a href="#cb10-549" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-550"><a href="#cb10-550" aria-hidden="true" tabindex="-1"></a>**View serializability** is a weaker (more permissive) notion:</span>
 <span id="cb10-551"><a href="#cb10-551" aria-hidden="true" tabindex="-1"></a></span>
@@ -2580,7 +2580,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-561"><a href="#cb10-561" aria-hidden="true" tabindex="-1"></a>View serializability is NP-complete to check, so most DBMS use conflict-serializability (which is polynomial via precedence graphs).</span>
 <span id="cb10-562"><a href="#cb10-562" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb10-563"><a href="#cb10-563" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-564"><a href="#cb10-564" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.4 Recoverability</span></span>
+<span id="cb10-564"><a href="#cb10-564" aria-hidden="true" tabindex="-1"></a><span class="fu">## Recoverability</span></span>
 <span id="cb10-565"><a href="#cb10-565" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-566"><a href="#cb10-566" aria-hidden="true" tabindex="-1"></a>A schedule is **recoverable** iff no transaction $T_i$ commits before all transactions $T_j$ that wrote data read by $T_i$ have committed.</span>
 <span id="cb10-567"><a href="#cb10-567" aria-hidden="true" tabindex="-1"></a></span>
@@ -2618,7 +2618,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-599"><a href="#cb10-599" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-600"><a href="#cb10-600" aria-hidden="true" tabindex="-1"></a>All practical DBMS implement (at minimum) recoverable, cascadeless schedules.</span>
 <span id="cb10-601"><a href="#cb10-601" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-602"><a href="#cb10-602" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.5 Concurrency Control Protocols</span></span>
+<span id="cb10-602"><a href="#cb10-602" aria-hidden="true" tabindex="-1"></a><span class="fu">## Concurrency Control Protocols</span></span>
 <span id="cb10-603"><a href="#cb10-603" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-604"><a href="#cb10-604" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2PL Variants (Review and Extension)</span></span>
 <span id="cb10-605"><a href="#cb10-605" aria-hidden="true" tabindex="-1"></a></span>
@@ -2670,7 +2670,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-651"><a href="#cb10-651" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-652"><a href="#cb10-652" aria-hidden="true" tabindex="-1"></a>**Good for** read-heavy workloads with few conflicts.</span>
 <span id="cb10-653"><a href="#cb10-653" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-654"><a href="#cb10-654" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.6 Summary: Isolation Implementations</span></span>
+<span id="cb10-654"><a href="#cb10-654" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary: Isolation Implementations</span></span>
 <span id="cb10-655"><a href="#cb10-655" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-656"><a href="#cb10-656" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Approach <span class="pp">|</span> Mechanism <span class="pp">|</span> Used By <span class="pp">|</span></span>
 <span id="cb10-657"><a href="#cb10-657" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|-----------|---------|</span></span>
@@ -2679,7 +2679,7 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb10-660"><a href="#cb10-660" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Optimistic <span class="pp">|</span> Validate before commit <span class="pp">|</span> In-memory DBs, some NoSQL <span class="pp">|</span></span>
 <span id="cb10-661"><a href="#cb10-661" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Serializable Snapshot Isolation (SSI) <span class="pp">|</span> MVCC + conflict detection <span class="pp">|</span> PostgreSQL ≥9.1, serializable level <span class="pp">|</span></span>
 <span id="cb10-662"><a href="#cb10-662" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-663"><a href="#cb10-663" aria-hidden="true" tabindex="-1"></a><span class="fu">## 13.7 Timestamp Protocol Example</span></span>
+<span id="cb10-663"><a href="#cb10-663" aria-hidden="true" tabindex="-1"></a><span class="fu">## Timestamp Protocol Example</span></span>
 <span id="cb10-664"><a href="#cb10-664" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-665"><a href="#cb10-665" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb10-666"><a href="#cb10-666" aria-hidden="true" tabindex="-1"></a><span class="in">Transactions: T1 (TS=1), T2 (TS=2)</span></span>

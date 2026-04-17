@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-06-storage-query/ch10-storage-indexing.html" rel="next">
 <link href="../part-04-sql/ch08-advanced-sql.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -437,20 +437,20 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#the-problem-everything-in-one-table" id="toc-the-problem-everything-in-one-table" class="nav-link active" data-scroll-target="#the-problem-everything-in-one-table"><span class="header-section-number">9.1</span> §9.0 The Problem: Everything in One Table</a></li>
-  <li><a href="#update-anomalies" id="toc-update-anomalies" class="nav-link" data-scroll-target="#update-anomalies"><span class="header-section-number">9.2</span> 9.1 Update Anomalies</a></li>
-  <li><a href="#functional-dependencies" id="toc-functional-dependencies" class="nav-link" data-scroll-target="#functional-dependencies"><span class="header-section-number">9.3</span> 9.2 Functional Dependencies</a>
+  <li><a href="#the-problem-everything-in-one-table" id="toc-the-problem-everything-in-one-table" class="nav-link active" data-scroll-target="#the-problem-everything-in-one-table"><span class="header-section-number">9.1</span> The Problem: Everything in One Table</a></li>
+  <li><a href="#update-anomalies" id="toc-update-anomalies" class="nav-link" data-scroll-target="#update-anomalies"><span class="header-section-number">9.2</span> Update Anomalies</a></li>
+  <li><a href="#functional-dependencies" id="toc-functional-dependencies" class="nav-link" data-scroll-target="#functional-dependencies"><span class="header-section-number">9.3</span> Functional Dependencies</a>
   <ul class="collapse">
   <li><a href="#fds-in-the-orderline-table" id="toc-fds-in-the-orderline-table" class="nav-link" data-scroll-target="#fds-in-the-orderline-table"><span class="header-section-number">9.3.1</span> FDs in the OrderLine Table</a></li>
   <li><a href="#types-of-fds" id="toc-types-of-fds" class="nav-link" data-scroll-target="#types-of-fds"><span class="header-section-number">9.3.2</span> Types of FDs</a></li>
   </ul></li>
-  <li><a href="#armstrongs-axioms" id="toc-armstrongs-axioms" class="nav-link" data-scroll-target="#armstrongs-axioms"><span class="header-section-number">9.4</span> 9.3 Armstrong’s Axioms</a>
+  <li><a href="#armstrongs-axioms" id="toc-armstrongs-axioms" class="nav-link" data-scroll-target="#armstrongs-axioms"><span class="header-section-number">9.4</span> Armstrong’s Axioms</a>
   <ul class="collapse">
   <li><a href="#derived-rules-from-the-axioms" id="toc-derived-rules-from-the-axioms" class="nav-link" data-scroll-target="#derived-rules-from-the-axioms"><span class="header-section-number">9.4.1</span> Derived Rules (from the axioms)</a></li>
   <li><a href="#attribute-closure-x" id="toc-attribute-closure-x" class="nav-link" data-scroll-target="#attribute-closure-x"><span class="header-section-number">9.4.2</span> Attribute Closure <span class="math inline">X^+</span></a></li>
   </ul></li>
-  <li><a href="#keys-from-closures" id="toc-keys-from-closures" class="nav-link" data-scroll-target="#keys-from-closures"><span class="header-section-number">9.5</span> 9.4 Keys from Closures</a></li>
-  <li><a href="#step-by-step-normalization-of-orderline" id="toc-step-by-step-normalization-of-orderline" class="nav-link" data-scroll-target="#step-by-step-normalization-of-orderline"><span class="header-section-number">9.6</span> 9.5 Step-by-Step Normalization of OrderLine</a>
+  <li><a href="#keys-from-closures" id="toc-keys-from-closures" class="nav-link" data-scroll-target="#keys-from-closures"><span class="header-section-number">9.5</span> Keys from Closures</a></li>
+  <li><a href="#step-by-step-normalization-of-orderline" id="toc-step-by-step-normalization-of-orderline" class="nav-link" data-scroll-target="#step-by-step-normalization-of-orderline"><span class="header-section-number">9.6</span> Step-by-Step Normalization of OrderLine</a>
   <ul class="collapse">
   <li><a href="#step-1-is-orderline-in-1nf" id="toc-step-1-is-orderline-in-1nf" class="nav-link" data-scroll-target="#step-1-is-orderline-in-1nf"><span class="header-section-number">9.6.1</span> Step 1 — Is OrderLine in 1NF?</a></li>
   <li><a href="#step-2-check-for-2nf-eliminate-partial-dependencies" id="toc-step-2-check-for-2nf-eliminate-partial-dependencies" class="nav-link" data-scroll-target="#step-2-check-for-2nf-eliminate-partial-dependencies"><span class="header-section-number">9.6.2</span> Step 2 — Check for 2NF (Eliminate Partial Dependencies)</a></li>
@@ -459,12 +459,12 @@ window.Quarto = {
   <li><a href="#step-5-verify-lossless-decomposition" id="toc-step-5-verify-lossless-decomposition" class="nav-link" data-scroll-target="#step-5-verify-lossless-decomposition"><span class="header-section-number">9.6.5</span> Step 5 — Verify Lossless Decomposition</a></li>
   <li><a href="#final-normalized-schema" id="toc-final-normalized-schema" class="nav-link" data-scroll-target="#final-normalized-schema"><span class="header-section-number">9.6.6</span> Final Normalized Schema</a></li>
   </ul></li>
-  <li><a href="#normal-form-summary" id="toc-normal-form-summary" class="nav-link" data-scroll-target="#normal-form-summary"><span class="header-section-number">9.7</span> 9.6 Normal Form Summary</a></li>
-  <li><a href="#bcnf-decomposition-a-case-where-3nf-bcnf" id="toc-bcnf-decomposition-a-case-where-3nf-bcnf" class="nav-link" data-scroll-target="#bcnf-decomposition-a-case-where-3nf-bcnf"><span class="header-section-number">9.8</span> 9.7 BCNF Decomposition — A Case Where 3NF ≠ BCNF</a></li>
-  <li><a href="#multivalued-dependencies-and-4nf" id="toc-multivalued-dependencies-and-4nf" class="nav-link" data-scroll-target="#multivalued-dependencies-and-4nf"><span class="header-section-number">9.9</span> 9.8 Multivalued Dependencies and 4NF</a></li>
-  <li><a href="#canonical-cover-minimal-cover" id="toc-canonical-cover-minimal-cover" class="nav-link" data-scroll-target="#canonical-cover-minimal-cover"><span class="header-section-number">9.10</span> 9.9 Canonical Cover (Minimal Cover)</a></li>
-  <li><a href="#dependency-preservation" id="toc-dependency-preservation" class="nav-link" data-scroll-target="#dependency-preservation"><span class="header-section-number">9.11</span> 9.10 Dependency Preservation</a></li>
-  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">9.12</span> 9.11 Chapter Summary</a></li>
+  <li><a href="#normal-form-summary" id="toc-normal-form-summary" class="nav-link" data-scroll-target="#normal-form-summary"><span class="header-section-number">9.7</span> Normal Form Summary</a></li>
+  <li><a href="#bcnf-decomposition-a-case-where-3nf-bcnf" id="toc-bcnf-decomposition-a-case-where-3nf-bcnf" class="nav-link" data-scroll-target="#bcnf-decomposition-a-case-where-3nf-bcnf"><span class="header-section-number">9.8</span> BCNF Decomposition — A Case Where 3NF ≠ BCNF</a></li>
+  <li><a href="#multivalued-dependencies-and-4nf" id="toc-multivalued-dependencies-and-4nf" class="nav-link" data-scroll-target="#multivalued-dependencies-and-4nf"><span class="header-section-number">9.9</span> Multivalued Dependencies and 4NF</a></li>
+  <li><a href="#canonical-cover-minimal-cover" id="toc-canonical-cover-minimal-cover" class="nav-link" data-scroll-target="#canonical-cover-minimal-cover"><span class="header-section-number">9.10</span> Canonical Cover (Minimal Cover)</a></li>
+  <li><a href="#dependency-preservation" id="toc-dependency-preservation" class="nav-link" data-scroll-target="#dependency-preservation"><span class="header-section-number">9.11</span> Dependency Preservation</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">9.12</span> Chapter Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">9.13</span> Review Questions</a>
   <ul class="collapse">
   <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">9.13.1</span> Conceptual</a></li>
@@ -474,19 +474,19 @@ window.Quarto = {
   <li><a href="#design" id="toc-design" class="nav-link" data-scroll-target="#design"><span class="header-section-number">9.13.5</span> Design</a></li>
   <li><a href="#synthesis" id="toc-synthesis" class="nav-link" data-scroll-target="#synthesis"><span class="header-section-number">9.13.6</span> Synthesis</a></li>
   </ul></li>
-  <li><a href="#motivation-problems-with-bad-design" id="toc-motivation-problems-with-bad-design" class="nav-link" data-scroll-target="#motivation-problems-with-bad-design"><span class="header-section-number">9.14</span> 9.1 Motivation: Problems with Bad Design</a></li>
-  <li><a href="#functional-dependencies-1" id="toc-functional-dependencies-1" class="nav-link" data-scroll-target="#functional-dependencies-1"><span class="header-section-number">9.15</span> 9.2 Functional Dependencies</a>
+  <li><a href="#motivation-problems-with-bad-design" id="toc-motivation-problems-with-bad-design" class="nav-link" data-scroll-target="#motivation-problems-with-bad-design"><span class="header-section-number">9.14</span> Motivation: Problems with Bad Design</a></li>
+  <li><a href="#functional-dependencies-1" id="toc-functional-dependencies-1" class="nav-link" data-scroll-target="#functional-dependencies-1"><span class="header-section-number">9.15</span> Functional Dependencies</a>
   <ul class="collapse">
   <li><a href="#types-of-fds-1" id="toc-types-of-fds-1" class="nav-link" data-scroll-target="#types-of-fds-1"><span class="header-section-number">9.15.1</span> Types of FDs</a></li>
   </ul></li>
-  <li><a href="#armstrongs-axioms-1" id="toc-armstrongs-axioms-1" class="nav-link" data-scroll-target="#armstrongs-axioms-1"><span class="header-section-number">9.16</span> 9.3 Armstrong’s Axioms</a>
+  <li><a href="#armstrongs-axioms-1" id="toc-armstrongs-axioms-1" class="nav-link" data-scroll-target="#armstrongs-axioms-1"><span class="header-section-number">9.16</span> Armstrong’s Axioms</a>
   <ul class="collapse">
   <li><a href="#derived-rules" id="toc-derived-rules" class="nav-link" data-scroll-target="#derived-rules"><span class="header-section-number">9.16.1</span> Derived Rules</a></li>
   <li><a href="#attribute-closure-x-1" id="toc-attribute-closure-x-1" class="nav-link" data-scroll-target="#attribute-closure-x-1"><span class="header-section-number">9.16.2</span> Attribute Closure <span class="math inline">X^+</span></a></li>
   </ul></li>
-  <li><a href="#keys-from-fds" id="toc-keys-from-fds" class="nav-link" data-scroll-target="#keys-from-fds"><span class="header-section-number">9.17</span> 9.4 Keys from FDs</a></li>
-  <li><a href="#canonical-cover-minimal-cover-f_c" id="toc-canonical-cover-minimal-cover-f_c" class="nav-link" data-scroll-target="#canonical-cover-minimal-cover-f_c"><span class="header-section-number">9.18</span> 9.5 Canonical Cover (Minimal Cover) <span class="math inline">F_c</span></a></li>
-  <li><a href="#normal-forms" id="toc-normal-forms" class="nav-link" data-scroll-target="#normal-forms"><span class="header-section-number">9.19</span> 9.6 Normal Forms</a>
+  <li><a href="#keys-from-fds" id="toc-keys-from-fds" class="nav-link" data-scroll-target="#keys-from-fds"><span class="header-section-number">9.17</span> Keys from FDs</a></li>
+  <li><a href="#canonical-cover-minimal-cover-f_c" id="toc-canonical-cover-minimal-cover-f_c" class="nav-link" data-scroll-target="#canonical-cover-minimal-cover-f_c"><span class="header-section-number">9.18</span> Canonical Cover (Minimal Cover) <span class="math inline">F_c</span></a></li>
+  <li><a href="#normal-forms" id="toc-normal-forms" class="nav-link" data-scroll-target="#normal-forms"><span class="header-section-number">9.19</span> Normal Forms</a>
   <ul class="collapse">
   <li><a href="#first-normal-form-1nf" id="toc-first-normal-form-1nf" class="nav-link" data-scroll-target="#first-normal-form-1nf"><span class="header-section-number">9.19.1</span> First Normal Form (1NF)</a></li>
   <li><a href="#second-normal-form-2nf" id="toc-second-normal-form-2nf" class="nav-link" data-scroll-target="#second-normal-form-2nf"><span class="header-section-number">9.19.2</span> Second Normal Form (2NF)</a></li>
@@ -494,8 +494,8 @@ window.Quarto = {
   <li><a href="#boyce-codd-normal-form-bcnf" id="toc-boyce-codd-normal-form-bcnf" class="nav-link" data-scroll-target="#boyce-codd-normal-form-bcnf"><span class="header-section-number">9.19.4</span> Boyce-Codd Normal Form (BCNF)</a></li>
   <li><a href="#fourth-normal-form-4nf" id="toc-fourth-normal-form-4nf" class="nav-link" data-scroll-target="#fourth-normal-form-4nf"><span class="header-section-number">9.19.5</span> Fourth Normal Form (4NF)</a></li>
   </ul></li>
-  <li><a href="#lossless-decomposition" id="toc-lossless-decomposition" class="nav-link" data-scroll-target="#lossless-decomposition"><span class="header-section-number">9.20</span> 9.7 Lossless Decomposition</a></li>
-  <li><a href="#dependency-preservation-1" id="toc-dependency-preservation-1" class="nav-link" data-scroll-target="#dependency-preservation-1"><span class="header-section-number">9.21</span> 9.8 Dependency Preservation</a></li>
+  <li><a href="#lossless-decomposition" id="toc-lossless-decomposition" class="nav-link" data-scroll-target="#lossless-decomposition"><span class="header-section-number">9.20</span> Lossless Decomposition</a></li>
+  <li><a href="#dependency-preservation-1" id="toc-dependency-preservation-1" class="nav-link" data-scroll-target="#dependency-preservation-1"><span class="header-section-number">9.21</span> Dependency Preservation</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">9.22</span> Summary</a></li>
   <li><a href="#review-questions-1" id="toc-review-questions-1" class="nav-link" data-scroll-target="#review-questions-1"><span class="header-section-number">9.23</span> Review Questions</a></li>
   </ul>
@@ -525,7 +525,7 @@ window.Quarto = {
 
 
 <section id="the-problem-everything-in-one-table" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="the-problem-everything-in-one-table"><span class="header-section-number">9.1</span> §9.0 The Problem: Everything in One Table</h2>
+<h2 data-number="9.1" class="anchored" data-anchor-id="the-problem-everything-in-one-table"><span class="header-section-number">9.1</span> The Problem: Everything in One Table</h2>
 <p>Before diving into theory, start with a concrete problem.</p>
 <p>Imagine a small e-commerce database where someone created a single table to “keep things simple”:</p>
 <pre data-code-line-numbers=""><code>OrderLine(
@@ -622,7 +622,7 @@ window.Quarto = {
 <hr>
 </section>
 <section id="update-anomalies" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="update-anomalies"><span class="header-section-number">9.2</span> 9.1 Update Anomalies</h2>
+<h2 data-number="9.2" class="anchored" data-anchor-id="update-anomalies"><span class="header-section-number">9.2</span> Update Anomalies</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -658,7 +658,7 @@ window.Quarto = {
 <hr>
 </section>
 <section id="functional-dependencies" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="functional-dependencies"><span class="header-section-number">9.3</span> 9.2 Functional Dependencies</h2>
+<h2 data-number="9.3" class="anchored" data-anchor-id="functional-dependencies"><span class="header-section-number">9.3</span> Functional Dependencies</h2>
 <p>A <strong>functional dependency (FD)</strong> <span class="math inline">X \to Y</span> states: whenever two rows have the same values for the attribute set <span class="math inline">X</span>, they must have the same values for <span class="math inline">Y</span>.</p>
 <p><span class="math display">
 X \to Y: \quad \forall t_1, t_2 \in R: \; t_1[X] = t_2[X] \;\Rightarrow\; t_1[Y] = t_2[Y]
@@ -714,7 +714,7 @@ OrderId → CustomerId, Discount                    -- order header depends on o
 </section>
 </section>
 <section id="armstrongs-axioms" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="armstrongs-axioms"><span class="header-section-number">9.4</span> 9.3 Armstrong’s Axioms</h2>
+<h2 data-number="9.4" class="anchored" data-anchor-id="armstrongs-axioms"><span class="header-section-number">9.4</span> Armstrong’s Axioms</h2>
 <p><strong>Armstrong’s Axioms</strong> are a complete and sound set of inference rules — using only these three, you can derive every valid FD.</p>
 <table class="caption-top table">
 <colgroup>
@@ -828,7 +828,7 @@ return closure</code></pre>
 </section>
 </section>
 <section id="keys-from-closures" class="level2" data-number="9.5">
-<h2 data-number="9.5" class="anchored" data-anchor-id="keys-from-closures"><span class="header-section-number">9.5</span> 9.4 Keys from Closures</h2>
+<h2 data-number="9.5" class="anchored" data-anchor-id="keys-from-closures"><span class="header-section-number">9.5</span> Keys from Closures</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 45%">
@@ -868,7 +868,7 @@ return closure</code></pre>
 <hr>
 </section>
 <section id="step-by-step-normalization-of-orderline" class="level2" data-number="9.6">
-<h2 data-number="9.6" class="anchored" data-anchor-id="step-by-step-normalization-of-orderline"><span class="header-section-number">9.6</span> 9.5 Step-by-Step Normalization of OrderLine</h2>
+<h2 data-number="9.6" class="anchored" data-anchor-id="step-by-step-normalization-of-orderline"><span class="header-section-number">9.6</span> Step-by-Step Normalization of OrderLine</h2>
 <section id="step-1-is-orderline-in-1nf" class="level3" data-number="9.6.1">
 <h3 data-number="9.6.1" class="anchored" data-anchor-id="step-1-is-orderline-in-1nf"><span class="header-section-number">9.6.1</span> Step 1 — Is OrderLine in 1NF?</h3>
 <blockquote class="blockquote">
@@ -1023,7 +1023,7 @@ OrderLine(OrderId FK, ProductId FK, Qty, TotalPrice)   -- PK = {OrderId, Product
 </section>
 </section>
 <section id="normal-form-summary" class="level2" data-number="9.7">
-<h2 data-number="9.7" class="anchored" data-anchor-id="normal-form-summary"><span class="header-section-number">9.7</span> 9.6 Normal Form Summary</h2>
+<h2 data-number="9.7" class="anchored" data-anchor-id="normal-form-summary"><span class="header-section-number">9.7</span> Normal Form Summary</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 28%">
@@ -1112,7 +1112,7 @@ OrderLine(OrderId FK, ProductId FK, Qty, TotalPrice)   -- PK = {OrderId, Product
 <hr>
 </section>
 <section id="bcnf-decomposition-a-case-where-3nf-bcnf" class="level2" data-number="9.8">
-<h2 data-number="9.8" class="anchored" data-anchor-id="bcnf-decomposition-a-case-where-3nf-bcnf"><span class="header-section-number">9.8</span> 9.7 BCNF Decomposition — A Case Where 3NF ≠ BCNF</h2>
+<h2 data-number="9.8" class="anchored" data-anchor-id="bcnf-decomposition-a-case-where-3nf-bcnf"><span class="header-section-number">9.8</span> BCNF Decomposition — A Case Where 3NF ≠ BCNF</h2>
 <p>The BCNF and 3NF distinction matters when there are <strong>multiple overlapping candidate keys</strong>.</p>
 <p><strong>Classic example:</strong></p>
 <pre data-code-line-numbers=""><code>Enrolment(Student, Course, Teacher)</code></pre>
@@ -1128,7 +1128,7 @@ StudentTeacher(Student, Teacher)        -- PK: {Student, Teacher}</code></pre>
 <hr>
 </section>
 <section id="multivalued-dependencies-and-4nf" class="level2" data-number="9.9">
-<h2 data-number="9.9" class="anchored" data-anchor-id="multivalued-dependencies-and-4nf"><span class="header-section-number">9.9</span> 9.8 Multivalued Dependencies and 4NF</h2>
+<h2 data-number="9.9" class="anchored" data-anchor-id="multivalued-dependencies-and-4nf"><span class="header-section-number">9.9</span> Multivalued Dependencies and 4NF</h2>
 <p>A <strong>multivalued dependency (MVD)</strong> <span class="math inline">X \twoheadrightarrow Y</span> holds when, for each value of <span class="math inline">X</span>, the set of <span class="math inline">Y</span> values is independent of the remaining attributes <span class="math inline">Z</span>.</p>
 <p><strong>Example:</strong></p>
 <pre data-code-line-numbers=""><code>EmployeeSkillHobby(Ssn, Skill, Hobby)</code></pre>
@@ -1172,7 +1172,7 @@ EmployeeHobby(Ssn, Hobby)</code></pre>
 <hr>
 </section>
 <section id="canonical-cover-minimal-cover" class="level2" data-number="9.10">
-<h2 data-number="9.10" class="anchored" data-anchor-id="canonical-cover-minimal-cover"><span class="header-section-number">9.10</span> 9.9 Canonical Cover (Minimal Cover)</h2>
+<h2 data-number="9.10" class="anchored" data-anchor-id="canonical-cover-minimal-cover"><span class="header-section-number">9.10</span> Canonical Cover (Minimal Cover)</h2>
 <p>The <strong>canonical cover</strong> <span class="math inline">F_c</span> of an FD set <span class="math inline">F</span> is an equivalent, minimal FD set:</p>
 <ol type="1">
 <li>Every FD has a <strong>single attribute on the right side</strong> (decompose all compound RHS)</li>
@@ -1183,7 +1183,7 @@ EmployeeHobby(Ssn, Hobby)</code></pre>
 <hr>
 </section>
 <section id="dependency-preservation" class="level2" data-number="9.11">
-<h2 data-number="9.11" class="anchored" data-anchor-id="dependency-preservation"><span class="header-section-number">9.11</span> 9.10 Dependency Preservation</h2>
+<h2 data-number="9.11" class="anchored" data-anchor-id="dependency-preservation"><span class="header-section-number">9.11</span> Dependency Preservation</h2>
 <p>A decomposition <span class="math inline">\{R_1, R_2, \ldots, R_k\}</span> of <span class="math inline">R</span> is <strong>dependency-preserving</strong> iff every FD in <span class="math inline">F^+</span> can be verified in at least one <span class="math inline">R_i</span> without performing a join:</p>
 <p><span class="math display">
 \left(\bigcup_{i=1}^{k} F_i\right)^+ = F^+
@@ -1193,7 +1193,7 @@ EmployeeHobby(Ssn, Hobby)</code></pre>
 <hr>
 </section>
 <section id="chapter-summary" class="level2" data-number="9.12">
-<h2 data-number="9.12" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">9.12</span> 9.11 Chapter Summary</h2>
+<h2 data-number="9.12" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">9.12</span> Chapter Summary</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1282,7 +1282,7 @@ Assumed FDs:
 </section>
 </section>
 <section id="motivation-problems-with-bad-design" class="level2" data-number="9.14">
-<h2 data-number="9.14" class="anchored" data-anchor-id="motivation-problems-with-bad-design"><span class="header-section-number">9.14</span> 9.1 Motivation: Problems with Bad Design</h2>
+<h2 data-number="9.14" class="anchored" data-anchor-id="motivation-problems-with-bad-design"><span class="header-section-number">9.14</span> Motivation: Problems with Bad Design</h2>
 <p>Consider a poorly designed relation <code>EMP_DEPT</code>:</p>
 <pre data-code-line-numbers=""><code>EMP_DEPT(SSN, EName, BDate, Addr, DeptNo, DName, MGRSSN)</code></pre>
 <p>This schema suffers from <strong>update anomalies</strong>:</p>
@@ -1321,7 +1321,7 @@ Assumed FDs:
 <p><strong>Solution:</strong> <strong>Decompose</strong> the relation and normalize it.</p>
 </section>
 <section id="functional-dependencies-1" class="level2" data-number="9.15">
-<h2 data-number="9.15" class="anchored" data-anchor-id="functional-dependencies-1"><span class="header-section-number">9.15</span> 9.2 Functional Dependencies</h2>
+<h2 data-number="9.15" class="anchored" data-anchor-id="functional-dependencies-1"><span class="header-section-number">9.15</span> Functional Dependencies</h2>
 <p>A <strong>functional dependency (FD)</strong> <span class="math inline">X \to Y</span> holds on relation <span class="math inline">R</span> if whenever two tuples agree on the attribute set <span class="math inline">X</span>, they must agree on the attribute set <span class="math inline">Y</span>.</p>
 <p><span class="math display">
 X \to Y: \; \forall t_1, t_2 \in R: \; t_1[X] = t_2[X] \;\Rightarrow\; t_1[Y] = t_2[Y]
@@ -1372,7 +1372,7 @@ DeptNo → {DName, MGRSSN}              -- DeptNo determines department details
 </section>
 </section>
 <section id="armstrongs-axioms-1" class="level2" data-number="9.16">
-<h2 data-number="9.16" class="anchored" data-anchor-id="armstrongs-axioms-1"><span class="header-section-number">9.16</span> 9.3 Armstrong’s Axioms</h2>
+<h2 data-number="9.16" class="anchored" data-anchor-id="armstrongs-axioms-1"><span class="header-section-number">9.16</span> Armstrong’s Axioms</h2>
 <p><strong>Armstrong’s Axioms</strong> are a complete and sound set of inference rules for FDs:</p>
 <table class="caption-top table">
 <colgroup>
@@ -1455,7 +1455,7 @@ return closure</code></pre>
 </section>
 </section>
 <section id="keys-from-fds" class="level2" data-number="9.17">
-<h2 data-number="9.17" class="anchored" data-anchor-id="keys-from-fds"><span class="header-section-number">9.17</span> 9.4 Keys from FDs</h2>
+<h2 data-number="9.17" class="anchored" data-anchor-id="keys-from-fds"><span class="header-section-number">9.17</span> Keys from FDs</h2>
 <p>Using closure:</p>
 <ul>
 <li><strong>Superkey</strong>: <span class="math inline">X</span> is a superkey of <span class="math inline">R</span> iff <span class="math inline">X^+ = R</span> (all attributes)</li>
@@ -1464,7 +1464,7 @@ return closure</code></pre>
 </ul>
 </section>
 <section id="canonical-cover-minimal-cover-f_c" class="level2" data-number="9.18">
-<h2 data-number="9.18" class="anchored" data-anchor-id="canonical-cover-minimal-cover-f_c"><span class="header-section-number">9.18</span> 9.5 Canonical Cover (Minimal Cover) <span class="math inline">F_c</span></h2>
+<h2 data-number="9.18" class="anchored" data-anchor-id="canonical-cover-minimal-cover-f_c"><span class="header-section-number">9.18</span> Canonical Cover (Minimal Cover) <span class="math inline">F_c</span></h2>
 <p>The <strong>canonical cover</strong> <span class="math inline">F_c</span> of an FD set <span class="math inline">F</span> is an equivalent set of FDs that is:</p>
 <ol type="1">
 <li>Every FD has a single attribute on the right side</li>
@@ -1479,7 +1479,7 @@ return closure</code></pre>
 </ol>
 </section>
 <section id="normal-forms" class="level2" data-number="9.19">
-<h2 data-number="9.19" class="anchored" data-anchor-id="normal-forms"><span class="header-section-number">9.19</span> 9.6 Normal Forms</h2>
+<h2 data-number="9.19" class="anchored" data-anchor-id="normal-forms"><span class="header-section-number">9.19</span> Normal Forms</h2>
 <section id="first-normal-form-1nf" class="level3" data-number="9.19.1">
 <h3 data-number="9.19.1" class="anchored" data-anchor-id="first-normal-form-1nf"><span class="header-section-number">9.19.1</span> First Normal Form (1NF)</h3>
 <blockquote class="blockquote">
@@ -1594,7 +1594,7 @@ EMP_HOBBY(SSN, Hobby)</code></pre>
 </section>
 </section>
 <section id="lossless-decomposition" class="level2" data-number="9.20">
-<h2 data-number="9.20" class="anchored" data-anchor-id="lossless-decomposition"><span class="header-section-number">9.20</span> 9.7 Lossless Decomposition</h2>
+<h2 data-number="9.20" class="anchored" data-anchor-id="lossless-decomposition"><span class="header-section-number">9.20</span> Lossless Decomposition</h2>
 <p>A decomposition of <span class="math inline">R</span> into <span class="math inline">(R_1, R_2)</span> is <strong>lossless</strong> iff:</p>
 <p><span class="math display">
 R_1 \bowtie R_2 = R
@@ -1604,7 +1604,7 @@ R_1 \bowtie R_2 = R
 </span> i.e., the shared attributes form a key in at least one of the sub-relations.</p>
 </section>
 <section id="dependency-preservation-1" class="level2" data-number="9.21">
-<h2 data-number="9.21" class="anchored" data-anchor-id="dependency-preservation-1"><span class="header-section-number">9.21</span> 9.8 Dependency Preservation</h2>
+<h2 data-number="9.21" class="anchored" data-anchor-id="dependency-preservation-1"><span class="header-section-number">9.21</span> Dependency Preservation</h2>
 <p>A decomposition preserves FDs if every FD in <span class="math inline">F^+</span> can be checked in some sub-relation without joining. Formally:</p>
 <p><span class="math display">
 (F_1 \cup F_2 \cup \cdots \cup F_k)^+ = F^+
@@ -2127,7 +2127,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 9"</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## §9.0 The Problem: Everything in One Table</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Problem: Everything in One Table</span></span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>Before diving into theory, start with a concrete problem.</span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
@@ -2155,7 +2155,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.1 Update Anomalies</span></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## Update Anomalies</span></span>
 <span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Anomaly <span class="pp">|</span> What it means <span class="pp">|</span> Example in OrderLine <span class="pp">|</span></span>
 <span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|--------------|---------------------|</span></span>
@@ -2167,7 +2167,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.2 Functional Dependencies</span></span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Functional Dependencies</span></span>
 <span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>A **functional dependency (FD)** $X \to Y$ states: whenever two rows have the same values for the attribute set $X$, they must have the same values for $Y$.</span>
 <span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a></span>
@@ -2199,7 +2199,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-75"><a href="#cb21-75" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-76"><a href="#cb21-76" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-77"><a href="#cb21-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-78"><a href="#cb21-78" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.3 Armstrong's Axioms</span></span>
+<span id="cb21-78"><a href="#cb21-78" aria-hidden="true" tabindex="-1"></a><span class="fu">## Armstrong's Axioms</span></span>
 <span id="cb21-79"><a href="#cb21-79" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-80"><a href="#cb21-80" aria-hidden="true" tabindex="-1"></a>**Armstrong's Axioms** are a complete and sound set of inference rules — using only these three, you can derive every valid FD.</span>
 <span id="cb21-81"><a href="#cb21-81" aria-hidden="true" tabindex="-1"></a></span>
@@ -2251,7 +2251,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-127"><a href="#cb21-127" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-128"><a href="#cb21-128" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-129"><a href="#cb21-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-130"><a href="#cb21-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.4 Keys from Closures</span></span>
+<span id="cb21-130"><a href="#cb21-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## Keys from Closures</span></span>
 <span id="cb21-131"><a href="#cb21-131" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-132"><a href="#cb21-132" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Concept <span class="pp">|</span> Definition <span class="pp">|</span></span>
 <span id="cb21-133"><a href="#cb21-133" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-----------|</span></span>
@@ -2268,7 +2268,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-144"><a href="#cb21-144" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-145"><a href="#cb21-145" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-146"><a href="#cb21-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-147"><a href="#cb21-147" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.5 Step-by-Step Normalization of OrderLine</span></span>
+<span id="cb21-147"><a href="#cb21-147" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step-by-Step Normalization of OrderLine</span></span>
 <span id="cb21-148"><a href="#cb21-148" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-149"><a href="#cb21-149" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 1 — Is OrderLine in 1NF?</span></span>
 <span id="cb21-150"><a href="#cb21-150" aria-hidden="true" tabindex="-1"></a></span>
@@ -2406,7 +2406,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-284"><a href="#cb21-284" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-285"><a href="#cb21-285" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-286"><a href="#cb21-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-287"><a href="#cb21-287" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.6 Normal Form Summary</span></span>
+<span id="cb21-287"><a href="#cb21-287" aria-hidden="true" tabindex="-1"></a><span class="fu">## Normal Form Summary</span></span>
 <span id="cb21-288"><a href="#cb21-288" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-289"><a href="#cb21-289" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Normal Form <span class="pp">|</span> Condition <span class="pp">|</span> What it eliminates <span class="pp">|</span></span>
 <span id="cb21-290"><a href="#cb21-290" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-----------|-------------------|</span></span>
@@ -2431,7 +2431,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-309"><a href="#cb21-309" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-310"><a href="#cb21-310" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-311"><a href="#cb21-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-312"><a href="#cb21-312" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.7 BCNF Decomposition — A Case Where 3NF ≠ BCNF</span></span>
+<span id="cb21-312"><a href="#cb21-312" aria-hidden="true" tabindex="-1"></a><span class="fu">## BCNF Decomposition — A Case Where 3NF ≠ BCNF</span></span>
 <span id="cb21-313"><a href="#cb21-313" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-314"><a href="#cb21-314" aria-hidden="true" tabindex="-1"></a>The BCNF and 3NF distinction matters when there are **multiple overlapping candidate keys**.</span>
 <span id="cb21-315"><a href="#cb21-315" aria-hidden="true" tabindex="-1"></a></span>
@@ -2469,7 +2469,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-347"><a href="#cb21-347" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-348"><a href="#cb21-348" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-349"><a href="#cb21-349" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-350"><a href="#cb21-350" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.8 Multivalued Dependencies and 4NF</span></span>
+<span id="cb21-350"><a href="#cb21-350" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multivalued Dependencies and 4NF</span></span>
 <span id="cb21-351"><a href="#cb21-351" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-352"><a href="#cb21-352" aria-hidden="true" tabindex="-1"></a>A **multivalued dependency (MVD)** $X \twoheadrightarrow Y$ holds when, for each value of $X$,</span>
 <span id="cb21-353"><a href="#cb21-353" aria-hidden="true" tabindex="-1"></a>the set of $Y$ values is independent of the remaining attributes $Z$.</span>
@@ -2503,7 +2503,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-381"><a href="#cb21-381" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-382"><a href="#cb21-382" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-383"><a href="#cb21-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-384"><a href="#cb21-384" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.9 Canonical Cover (Minimal Cover)</span></span>
+<span id="cb21-384"><a href="#cb21-384" aria-hidden="true" tabindex="-1"></a><span class="fu">## Canonical Cover (Minimal Cover)</span></span>
 <span id="cb21-385"><a href="#cb21-385" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-386"><a href="#cb21-386" aria-hidden="true" tabindex="-1"></a>The **canonical cover** $F_c$ of an FD set $F$ is an equivalent, minimal FD set:</span>
 <span id="cb21-387"><a href="#cb21-387" aria-hidden="true" tabindex="-1"></a></span>
@@ -2515,7 +2515,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-393"><a href="#cb21-393" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-394"><a href="#cb21-394" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-395"><a href="#cb21-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-396"><a href="#cb21-396" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.10 Dependency Preservation</span></span>
+<span id="cb21-396"><a href="#cb21-396" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dependency Preservation</span></span>
 <span id="cb21-397"><a href="#cb21-397" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-398"><a href="#cb21-398" aria-hidden="true" tabindex="-1"></a>A decomposition $<span class="sc">\{</span>R_1, R_2, \ldots, R_k<span class="sc">\}</span>$ of $R$ is **dependency-preserving** iff every FD in $F^+$ can be verified in at least one $R_i$ without performing a join:</span>
 <span id="cb21-399"><a href="#cb21-399" aria-hidden="true" tabindex="-1"></a></span>
@@ -2530,7 +2530,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-408"><a href="#cb21-408" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-409"><a href="#cb21-409" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb21-410"><a href="#cb21-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-411"><a href="#cb21-411" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.11 Chapter Summary</span></span>
+<span id="cb21-411"><a href="#cb21-411" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
 <span id="cb21-412"><a href="#cb21-412" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-413"><a href="#cb21-413" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb21-414"><a href="#cb21-414" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 9</span></span>
@@ -2631,7 +2631,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-509"><a href="#cb21-509" aria-hidden="true" tabindex="-1"></a>    be justified?</span>
 <span id="cb21-510"><a href="#cb21-510" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-511"><a href="#cb21-511" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-512"><a href="#cb21-512" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.1 Motivation: Problems with Bad Design</span></span>
+<span id="cb21-512"><a href="#cb21-512" aria-hidden="true" tabindex="-1"></a><span class="fu">## Motivation: Problems with Bad Design</span></span>
 <span id="cb21-513"><a href="#cb21-513" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-514"><a href="#cb21-514" aria-hidden="true" tabindex="-1"></a>Consider a poorly designed relation <span class="in">`EMP_DEPT`</span>:</span>
 <span id="cb21-515"><a href="#cb21-515" aria-hidden="true" tabindex="-1"></a></span>
@@ -2651,7 +2651,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-529"><a href="#cb21-529" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-530"><a href="#cb21-530" aria-hidden="true" tabindex="-1"></a>**Solution:** **Decompose** the relation and normalize it.</span>
 <span id="cb21-531"><a href="#cb21-531" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-532"><a href="#cb21-532" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.2 Functional Dependencies</span></span>
+<span id="cb21-532"><a href="#cb21-532" aria-hidden="true" tabindex="-1"></a><span class="fu">## Functional Dependencies</span></span>
 <span id="cb21-533"><a href="#cb21-533" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-534"><a href="#cb21-534" aria-hidden="true" tabindex="-1"></a>A **functional dependency (FD)** $X \to Y$ holds on relation $R$ if whenever two tuples agree on the attribute set $X$, they must agree on the attribute set $Y$.</span>
 <span id="cb21-535"><a href="#cb21-535" aria-hidden="true" tabindex="-1"></a></span>
@@ -2678,7 +2678,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-556"><a href="#cb21-556" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Trivial FD** <span class="pp">|</span> $X \to Y$ where $Y \subseteq X$ <span class="pp">|</span> <span class="in">`{SSN, Name} → SSN`</span> <span class="pp">|</span></span>
 <span id="cb21-557"><a href="#cb21-557" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Transitive FD** <span class="pp">|</span> $X \to Z$ via $X \to Y \to Z$ where $Y$ is not a key <span class="pp">|</span> <span class="in">`SSN → DeptNo → DName`</span> <span class="pp">|</span></span>
 <span id="cb21-558"><a href="#cb21-558" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-559"><a href="#cb21-559" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.3 Armstrong's Axioms</span></span>
+<span id="cb21-559"><a href="#cb21-559" aria-hidden="true" tabindex="-1"></a><span class="fu">## Armstrong's Axioms</span></span>
 <span id="cb21-560"><a href="#cb21-560" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-561"><a href="#cb21-561" aria-hidden="true" tabindex="-1"></a>**Armstrong's Axioms** are a complete and sound set of inference rules for FDs:</span>
 <span id="cb21-562"><a href="#cb21-562" aria-hidden="true" tabindex="-1"></a></span>
@@ -2722,7 +2722,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-600"><a href="#cb21-600" aria-hidden="true" tabindex="-1"></a><span class="sc">\{</span>A<span class="sc">\}</span>^+ = <span class="sc">\{</span>A<span class="sc">\}</span> \cup <span class="sc">\{</span>B<span class="sc">\}</span> \cup <span class="sc">\{</span>D<span class="sc">\}</span> \cup <span class="sc">\{</span>C<span class="sc">\}</span> = <span class="sc">\{</span>A, B, C, D<span class="sc">\}</span></span>
 <span id="cb21-601"><a href="#cb21-601" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb21-602"><a href="#cb21-602" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-603"><a href="#cb21-603" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.4 Keys from FDs</span></span>
+<span id="cb21-603"><a href="#cb21-603" aria-hidden="true" tabindex="-1"></a><span class="fu">## Keys from FDs</span></span>
 <span id="cb21-604"><a href="#cb21-604" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-605"><a href="#cb21-605" aria-hidden="true" tabindex="-1"></a>Using closure:</span>
 <span id="cb21-606"><a href="#cb21-606" aria-hidden="true" tabindex="-1"></a></span>
@@ -2730,7 +2730,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-608"><a href="#cb21-608" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Candidate key**: a minimal superkey (no proper subset is a superkey)</span>
 <span id="cb21-609"><a href="#cb21-609" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Primary key**: chosen candidate key</span>
 <span id="cb21-610"><a href="#cb21-610" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-611"><a href="#cb21-611" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.5 Canonical Cover (Minimal Cover) $F_c$</span></span>
+<span id="cb21-611"><a href="#cb21-611" aria-hidden="true" tabindex="-1"></a><span class="fu">## Canonical Cover (Minimal Cover) $F_c$</span></span>
 <span id="cb21-612"><a href="#cb21-612" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-613"><a href="#cb21-613" aria-hidden="true" tabindex="-1"></a>The **canonical cover** $F_c$ of an FD set $F$ is an equivalent set of FDs that is:</span>
 <span id="cb21-614"><a href="#cb21-614" aria-hidden="true" tabindex="-1"></a></span>
@@ -2744,7 +2744,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-622"><a href="#cb21-622" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Remove extraneous LHS attributes: check if $X \to A$ can be replaced by $X' \to A$ where $X' \subset X$</span>
 <span id="cb21-623"><a href="#cb21-623" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Remove redundant FDs: remove $X \to A$ if it can be derived from remaining FDs</span>
 <span id="cb21-624"><a href="#cb21-624" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-625"><a href="#cb21-625" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.6 Normal Forms</span></span>
+<span id="cb21-625"><a href="#cb21-625" aria-hidden="true" tabindex="-1"></a><span class="fu">## Normal Forms</span></span>
 <span id="cb21-626"><a href="#cb21-626" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-627"><a href="#cb21-627" aria-hidden="true" tabindex="-1"></a><span class="fu">### First Normal Form (1NF)</span></span>
 <span id="cb21-628"><a href="#cb21-628" aria-hidden="true" tabindex="-1"></a></span>
@@ -2844,7 +2844,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-722"><a href="#cb21-722" aria-hidden="true" tabindex="-1"></a><span class="in">EMP_HOBBY(SSN, Hobby)</span></span>
 <span id="cb21-723"><a href="#cb21-723" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb21-724"><a href="#cb21-724" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-725"><a href="#cb21-725" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.7 Lossless Decomposition</span></span>
+<span id="cb21-725"><a href="#cb21-725" aria-hidden="true" tabindex="-1"></a><span class="fu">## Lossless Decomposition</span></span>
 <span id="cb21-726"><a href="#cb21-726" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-727"><a href="#cb21-727" aria-hidden="true" tabindex="-1"></a>A decomposition of $R$ into $(R_1, R_2)$ is **lossless** iff:</span>
 <span id="cb21-728"><a href="#cb21-728" aria-hidden="true" tabindex="-1"></a></span>
@@ -2858,7 +2858,7 @@ R_1 \bowtie R_2 = R
 <span id="cb21-736"><a href="#cb21-736" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb21-737"><a href="#cb21-737" aria-hidden="true" tabindex="-1"></a>i.e., the shared attributes form a key in at least one of the sub-relations.</span>
 <span id="cb21-738"><a href="#cb21-738" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-739"><a href="#cb21-739" aria-hidden="true" tabindex="-1"></a><span class="fu">## 9.8 Dependency Preservation</span></span>
+<span id="cb21-739"><a href="#cb21-739" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dependency Preservation</span></span>
 <span id="cb21-740"><a href="#cb21-740" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-741"><a href="#cb21-741" aria-hidden="true" tabindex="-1"></a>A decomposition preserves FDs if every FD in $F^+$ can be checked in some sub-relation without joining. Formally:</span>
 <span id="cb21-742"><a href="#cb21-742" aria-hidden="true" tabindex="-1"></a></span>

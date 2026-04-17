@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../part-07-transactions/ch12-transactions.html" rel="next">
 <link href="../part-06-storage-query/ch10-storage-indexing.html" rel="prev">
-<link href="../images/cover.png" rel="icon" type="image/png">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -437,41 +437,41 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#the-journey-of-a-select" id="toc-the-journey-of-a-select" class="nav-link active" data-scroll-target="#the-journey-of-a-select"><span class="header-section-number">11.1</span> §11.0 The Journey of a SELECT</a></li>
-  <li><a href="#query-processing-pipeline" id="toc-query-processing-pipeline" class="nav-link" data-scroll-target="#query-processing-pipeline"><span class="header-section-number">11.2</span> 11.1 Query Processing Pipeline</a>
+  <li><a href="#the-journey-of-a-select" id="toc-the-journey-of-a-select" class="nav-link active" data-scroll-target="#the-journey-of-a-select"><span class="header-section-number">11.1</span> The Journey of a SELECT</a></li>
+  <li><a href="#query-processing-pipeline" id="toc-query-processing-pipeline" class="nav-link" data-scroll-target="#query-processing-pipeline"><span class="header-section-number">11.2</span> Query Processing Pipeline</a>
   <ul class="collapse">
   <li><a href="#stage-1-parser" id="toc-stage-1-parser" class="nav-link" data-scroll-target="#stage-1-parser"><span class="header-section-number">11.2.1</span> Stage 1 — Parser</a></li>
   <li><a href="#stage-2-rewriter" id="toc-stage-2-rewriter" class="nav-link" data-scroll-target="#stage-2-rewriter"><span class="header-section-number">11.2.2</span> Stage 2 — Rewriter</a></li>
   <li><a href="#stage-3-optimizer" id="toc-stage-3-optimizer" class="nav-link" data-scroll-target="#stage-3-optimizer"><span class="header-section-number">11.2.3</span> Stage 3 — Optimizer</a></li>
   <li><a href="#stage-4-execution-engine" id="toc-stage-4-execution-engine" class="nav-link" data-scroll-target="#stage-4-execution-engine"><span class="header-section-number">11.2.4</span> Stage 4 — Execution Engine</a></li>
   </ul></li>
-  <li><a href="#translation-to-relational-algebra" id="toc-translation-to-relational-algebra" class="nav-link" data-scroll-target="#translation-to-relational-algebra"><span class="header-section-number">11.3</span> 11.2 Translation to Relational Algebra</a></li>
-  <li><a href="#logical-optimization-equivalence-rules" id="toc-logical-optimization-equivalence-rules" class="nav-link" data-scroll-target="#logical-optimization-equivalence-rules"><span class="header-section-number">11.4</span> 11.3 Logical Optimization: Equivalence Rules</a></li>
-  <li><a href="#cost-model" id="toc-cost-model" class="nav-link" data-scroll-target="#cost-model"><span class="header-section-number">11.5</span> 11.4 Cost Model</a>
+  <li><a href="#translation-to-relational-algebra" id="toc-translation-to-relational-algebra" class="nav-link" data-scroll-target="#translation-to-relational-algebra"><span class="header-section-number">11.3</span> Translation to Relational Algebra</a></li>
+  <li><a href="#logical-optimization-equivalence-rules" id="toc-logical-optimization-equivalence-rules" class="nav-link" data-scroll-target="#logical-optimization-equivalence-rules"><span class="header-section-number">11.4</span> Logical Optimization: Equivalence Rules</a></li>
+  <li><a href="#cost-model" id="toc-cost-model" class="nav-link" data-scroll-target="#cost-model"><span class="header-section-number">11.5</span> Cost Model</a>
   <ul class="collapse">
   <li><a href="#key-statistics" id="toc-key-statistics" class="nav-link" data-scroll-target="#key-statistics"><span class="header-section-number">11.5.1</span> Key Statistics</a></li>
   <li><a href="#operator-cost-estimates" id="toc-operator-cost-estimates" class="nav-link" data-scroll-target="#operator-cost-estimates"><span class="header-section-number">11.5.2</span> Operator Cost Estimates</a></li>
   </ul></li>
-  <li><a href="#selection-algorithms" id="toc-selection-algorithms" class="nav-link" data-scroll-target="#selection-algorithms"><span class="header-section-number">11.6</span> 11.5 Selection Algorithms</a>
+  <li><a href="#selection-algorithms" id="toc-selection-algorithms" class="nav-link" data-scroll-target="#selection-algorithms"><span class="header-section-number">11.6</span> Selection Algorithms</a>
   <ul class="collapse">
   <li><a href="#sequential-scan" id="toc-sequential-scan" class="nav-link" data-scroll-target="#sequential-scan"><span class="header-section-number">11.6.1</span> Sequential Scan</a></li>
   <li><a href="#binary-search-sorted-file" id="toc-binary-search-sorted-file" class="nav-link" data-scroll-target="#binary-search-sorted-file"><span class="header-section-number">11.6.2</span> Binary Search (Sorted File)</a></li>
   <li><a href="#b-tree-index-scan" id="toc-b-tree-index-scan" class="nav-link" data-scroll-target="#b-tree-index-scan"><span class="header-section-number">11.6.3</span> B+ Tree Index Scan</a></li>
   </ul></li>
-  <li><a href="#join-algorithms" id="toc-join-algorithms" class="nav-link" data-scroll-target="#join-algorithms"><span class="header-section-number">11.7</span> 11.6 Join Algorithms</a>
+  <li><a href="#join-algorithms" id="toc-join-algorithms" class="nav-link" data-scroll-target="#join-algorithms"><span class="header-section-number">11.7</span> Join Algorithms</a>
   <ul class="collapse">
-  <li><a href="#nested-loop-join" id="toc-nested-loop-join" class="nav-link" data-scroll-target="#nested-loop-join"><span class="header-section-number">11.7.1</span> 11.6.1 Nested-Loop Join</a></li>
-  <li><a href="#sort-merge-join" id="toc-sort-merge-join" class="nav-link" data-scroll-target="#sort-merge-join"><span class="header-section-number">11.7.2</span> 11.6.2 Sort-Merge Join</a></li>
-  <li><a href="#hash-join" id="toc-hash-join" class="nav-link" data-scroll-target="#hash-join"><span class="header-section-number">11.7.3</span> 11.6.3 Hash Join</a></li>
+  <li><a href="#nested-loop-join" id="toc-nested-loop-join" class="nav-link" data-scroll-target="#nested-loop-join"><span class="header-section-number">11.7.1</span> Nested-Loop Join</a></li>
+  <li><a href="#sort-merge-join" id="toc-sort-merge-join" class="nav-link" data-scroll-target="#sort-merge-join"><span class="header-section-number">11.7.2</span> Sort-Merge Join</a></li>
+  <li><a href="#hash-join" id="toc-hash-join" class="nav-link" data-scroll-target="#hash-join"><span class="header-section-number">11.7.3</span> Hash Join</a></li>
   <li><a href="#algorithm-selection-guide" id="toc-algorithm-selection-guide" class="nav-link" data-scroll-target="#algorithm-selection-guide"><span class="header-section-number">11.7.4</span> Algorithm Selection Guide</a></li>
   </ul></li>
-  <li><a href="#pipeline-vs-materialization" id="toc-pipeline-vs-materialization" class="nav-link" data-scroll-target="#pipeline-vs-materialization"><span class="header-section-number">11.8</span> 11.7 Pipeline vs Materialization</a></li>
-  <li><a href="#explain-and-explain-analyze" id="toc-explain-and-explain-analyze" class="nav-link" data-scroll-target="#explain-and-explain-analyze"><span class="header-section-number">11.9</span> 11.8 EXPLAIN and EXPLAIN ANALYZE</a>
+  <li><a href="#pipeline-vs-materialization" id="toc-pipeline-vs-materialization" class="nav-link" data-scroll-target="#pipeline-vs-materialization"><span class="header-section-number">11.8</span> Pipeline vs Materialization</a></li>
+  <li><a href="#explain-and-explain-analyze" id="toc-explain-and-explain-analyze" class="nav-link" data-scroll-target="#explain-and-explain-analyze"><span class="header-section-number">11.9</span> EXPLAIN and EXPLAIN ANALYZE</a>
   <ul class="collapse">
   <li><a href="#reading-an-explain-output" id="toc-reading-an-explain-output" class="nav-link" data-scroll-target="#reading-an-explain-output"><span class="header-section-number">11.9.1</span> Reading an EXPLAIN Output</a></li>
   </ul></li>
-  <li><a href="#putting-it-all-together-a-worked-plan" id="toc-putting-it-all-together-a-worked-plan" class="nav-link" data-scroll-target="#putting-it-all-together-a-worked-plan"><span class="header-section-number">11.10</span> 11.9 Putting It All Together: A Worked Plan</a></li>
-  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">11.11</span> 11.10 Chapter Summary</a></li>
+  <li><a href="#putting-it-all-together-a-worked-plan" id="toc-putting-it-all-together-a-worked-plan" class="nav-link" data-scroll-target="#putting-it-all-together-a-worked-plan"><span class="header-section-number">11.10</span> Putting It All Together: A Worked Plan</a></li>
+  <li><a href="#chapter-summary" id="toc-chapter-summary" class="nav-link" data-scroll-target="#chapter-summary"><span class="header-section-number">11.11</span> Chapter Summary</a></li>
   <li><a href="#review-questions" id="toc-review-questions" class="nav-link" data-scroll-target="#review-questions"><span class="header-section-number">11.12</span> Review Questions</a>
   <ul class="collapse">
   <li><a href="#conceptual" id="toc-conceptual" class="nav-link" data-scroll-target="#conceptual"><span class="header-section-number">11.12.1</span> Conceptual</a></li>
@@ -480,36 +480,36 @@ window.Quarto = {
   <li><a href="#diagram" id="toc-diagram" class="nav-link" data-scroll-target="#diagram"><span class="header-section-number">11.12.4</span> Diagram</a></li>
   <li><a href="#design-synthesis" id="toc-design-synthesis" class="nav-link" data-scroll-target="#design-synthesis"><span class="header-section-number">11.12.5</span> Design / Synthesis</a></li>
   </ul></li>
-  <li><a href="#query-processing-pipeline-1" id="toc-query-processing-pipeline-1" class="nav-link" data-scroll-target="#query-processing-pipeline-1"><span class="header-section-number">11.13</span> 11.1 Query Processing Pipeline</a></li>
-  <li><a href="#parsing-and-translation" id="toc-parsing-and-translation" class="nav-link" data-scroll-target="#parsing-and-translation"><span class="header-section-number">11.14</span> 11.2 Parsing and Translation</a></li>
-  <li><a href="#query-optimization-overview" id="toc-query-optimization-overview" class="nav-link" data-scroll-target="#query-optimization-overview"><span class="header-section-number">11.15</span> 11.3 Query Optimization Overview</a>
+  <li><a href="#query-processing-pipeline-1" id="toc-query-processing-pipeline-1" class="nav-link" data-scroll-target="#query-processing-pipeline-1"><span class="header-section-number">11.13</span> Query Processing Pipeline</a></li>
+  <li><a href="#parsing-and-translation" id="toc-parsing-and-translation" class="nav-link" data-scroll-target="#parsing-and-translation"><span class="header-section-number">11.14</span> Parsing and Translation</a></li>
+  <li><a href="#query-optimization-overview" id="toc-query-optimization-overview" class="nav-link" data-scroll-target="#query-optimization-overview"><span class="header-section-number">11.15</span> Query Optimization Overview</a>
   <ul class="collapse">
   <li><a href="#why-optimization-is-hard" id="toc-why-optimization-is-hard" class="nav-link" data-scroll-target="#why-optimization-is-hard"><span class="header-section-number">11.15.1</span> Why Optimization Is Hard</a></li>
   <li><a href="#two-phases-of-optimization" id="toc-two-phases-of-optimization" class="nav-link" data-scroll-target="#two-phases-of-optimization"><span class="header-section-number">11.15.2</span> Two Phases of Optimization</a></li>
   </ul></li>
-  <li><a href="#cost-model-1" id="toc-cost-model-1" class="nav-link" data-scroll-target="#cost-model-1"><span class="header-section-number">11.16</span> 11.4 Cost Model</a>
+  <li><a href="#cost-model-1" id="toc-cost-model-1" class="nav-link" data-scroll-target="#cost-model-1"><span class="header-section-number">11.16</span> Cost Model</a>
   <ul class="collapse">
   <li><a href="#statistics-in-the-system-catalog" id="toc-statistics-in-the-system-catalog" class="nav-link" data-scroll-target="#statistics-in-the-system-catalog"><span class="header-section-number">11.16.1</span> Statistics in the System Catalog</a></li>
   </ul></li>
-  <li><a href="#selection-algorithms-1" id="toc-selection-algorithms-1" class="nav-link" data-scroll-target="#selection-algorithms-1"><span class="header-section-number">11.17</span> 11.5 Selection Algorithms</a>
+  <li><a href="#selection-algorithms-1" id="toc-selection-algorithms-1" class="nav-link" data-scroll-target="#selection-algorithms-1"><span class="header-section-number">11.17</span> Selection Algorithms</a>
   <ul class="collapse">
   <li><a href="#linear-scan-sequential-scan" id="toc-linear-scan-sequential-scan" class="nav-link" data-scroll-target="#linear-scan-sequential-scan"><span class="header-section-number">11.17.1</span> Linear Scan (Sequential Scan)</a></li>
   <li><a href="#binary-search" id="toc-binary-search" class="nav-link" data-scroll-target="#binary-search"><span class="header-section-number">11.17.2</span> Binary Search</a></li>
   <li><a href="#index-based-selection" id="toc-index-based-selection" class="nav-link" data-scroll-target="#index-based-selection"><span class="header-section-number">11.17.3</span> Index-Based Selection</a></li>
   </ul></li>
-  <li><a href="#join-algorithms-1" id="toc-join-algorithms-1" class="nav-link" data-scroll-target="#join-algorithms-1"><span class="header-section-number">11.18</span> 11.6 Join Algorithms</a>
+  <li><a href="#join-algorithms-1" id="toc-join-algorithms-1" class="nav-link" data-scroll-target="#join-algorithms-1"><span class="header-section-number">11.18</span> Join Algorithms</a>
   <ul class="collapse">
   <li><a href="#nested-loop-join-nlj" id="toc-nested-loop-join-nlj" class="nav-link" data-scroll-target="#nested-loop-join-nlj"><span class="header-section-number">11.18.1</span> 1. Nested-Loop Join (NLJ)</a></li>
   <li><a href="#sort-merge-join-smj" id="toc-sort-merge-join-smj" class="nav-link" data-scroll-target="#sort-merge-join-smj"><span class="header-section-number">11.18.2</span> 2. Sort-Merge Join (SMJ)</a></li>
   <li><a href="#hash-join-1" id="toc-hash-join-1" class="nav-link" data-scroll-target="#hash-join-1"><span class="header-section-number">11.18.3</span> 3. Hash Join</a></li>
   <li><a href="#algorithm-comparison" id="toc-algorithm-comparison" class="nav-link" data-scroll-target="#algorithm-comparison"><span class="header-section-number">11.18.4</span> Algorithm Comparison</a></li>
   </ul></li>
-  <li><a href="#join-ordering-and-plan-enumeration" id="toc-join-ordering-and-plan-enumeration" class="nav-link" data-scroll-target="#join-ordering-and-plan-enumeration"><span class="header-section-number">11.19</span> 11.7 Join Ordering and Plan Enumeration</a>
+  <li><a href="#join-ordering-and-plan-enumeration" id="toc-join-ordering-and-plan-enumeration" class="nav-link" data-scroll-target="#join-ordering-and-plan-enumeration"><span class="header-section-number">11.19</span> Join Ordering and Plan Enumeration</a>
   <ul class="collapse">
   <li><a href="#left-deep-vs.-right-deep-vs.-bushy-trees" id="toc-left-deep-vs.-right-deep-vs.-bushy-trees" class="nav-link" data-scroll-target="#left-deep-vs.-right-deep-vs.-bushy-trees"><span class="header-section-number">11.19.1</span> Left-Deep vs.&nbsp;Right-Deep vs.&nbsp;Bushy Trees</a></li>
   <li><a href="#dynamic-programming-optimization" id="toc-dynamic-programming-optimization" class="nav-link" data-scroll-target="#dynamic-programming-optimization"><span class="header-section-number">11.19.2</span> Dynamic Programming Optimization</a></li>
   </ul></li>
-  <li><a href="#query-plan-reading-explain" id="toc-query-plan-reading-explain" class="nav-link" data-scroll-target="#query-plan-reading-explain"><span class="header-section-number">11.20</span> 11.8 Query Plan Reading (EXPLAIN)</a></li>
+  <li><a href="#query-plan-reading-explain" id="toc-query-plan-reading-explain" class="nav-link" data-scroll-target="#query-plan-reading-explain"><span class="header-section-number">11.20</span> Query Plan Reading (EXPLAIN)</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">11.21</span> Summary</a></li>
   <li><a href="#review-questions-1" id="toc-review-questions-1" class="nav-link" data-scroll-target="#review-questions-1"><span class="header-section-number">11.22</span> Review Questions</a></li>
   </ul>
@@ -539,13 +539,13 @@ window.Quarto = {
 
 
 <section id="the-journey-of-a-select" class="level2" data-number="11.1">
-<h2 data-number="11.1" class="anchored" data-anchor-id="the-journey-of-a-select"><span class="header-section-number">11.1</span> §11.0 The Journey of a SELECT</h2>
+<h2 data-number="11.1" class="anchored" data-anchor-id="the-journey-of-a-select"><span class="header-section-number">11.1</span> The Journey of a SELECT</h2>
 <p>In Chapter 10 you learned <em>where</em> data lives (pages, B+ trees, bitmap bitmaps). In Chapter 6 you learned <em>what</em> operations transform data (relational algebra). This chapter connects them: how does a DBMS take your <code>SELECT</code> and produce a result <em>efficiently</em>?</p>
 <p>The answer is a four-stage pipeline that every major RDBMS follows.</p>
 <hr>
 </section>
 <section id="query-processing-pipeline" class="level2" data-number="11.2">
-<h2 data-number="11.2" class="anchored" data-anchor-id="query-processing-pipeline"><span class="header-section-number">11.2</span> 11.1 Query Processing Pipeline</h2>
+<h2 data-number="11.2" class="anchored" data-anchor-id="query-processing-pipeline"><span class="header-section-number">11.2</span> Query Processing Pipeline</h2>
 <div class="cell" data-eval="true" data-layout-align="center">
 <div class="cell-output-display">
 <div>
@@ -588,7 +588,7 @@ window.Quarto = {
 </section>
 </section>
 <section id="translation-to-relational-algebra" class="level2" data-number="11.3">
-<h2 data-number="11.3" class="anchored" data-anchor-id="translation-to-relational-algebra"><span class="header-section-number">11.3</span> 11.2 Translation to Relational Algebra</h2>
+<h2 data-number="11.3" class="anchored" data-anchor-id="translation-to-relational-algebra"><span class="header-section-number">11.3</span> Translation to Relational Algebra</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> E.Fname, D.Dname</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span>   Employee E</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       <span class="kw">JOIN</span> Department D <span class="kw">ON</span> E.Dno <span class="op">=</span> D.Dnumber</span>
@@ -605,7 +605,7 @@ window.Quarto = {
 <hr>
 </section>
 <section id="logical-optimization-equivalence-rules" class="level2" data-number="11.4">
-<h2 data-number="11.4" class="anchored" data-anchor-id="logical-optimization-equivalence-rules"><span class="header-section-number">11.4</span> 11.3 Logical Optimization: Equivalence Rules</h2>
+<h2 data-number="11.4" class="anchored" data-anchor-id="logical-optimization-equivalence-rules"><span class="header-section-number">11.4</span> Logical Optimization: Equivalence Rules</h2>
 <p>The optimizer systematically applies these rules to push work closer to the leaves:</p>
 <table class="caption-top table">
 <colgroup>
@@ -668,7 +668,7 @@ window.Quarto = {
 <hr>
 </section>
 <section id="cost-model" class="level2" data-number="11.5">
-<h2 data-number="11.5" class="anchored" data-anchor-id="cost-model"><span class="header-section-number">11.5</span> 11.4 Cost Model</h2>
+<h2 data-number="11.5" class="anchored" data-anchor-id="cost-model"><span class="header-section-number">11.5</span> Cost Model</h2>
 <p>The optimizer estimates every operator’s I/O cost using <strong>catalog statistics</strong>.</p>
 <section id="key-statistics" class="level3" data-number="11.5.1">
 <h3 data-number="11.5.1" class="anchored" data-anchor-id="key-statistics"><span class="header-section-number">11.5.1</span> Key Statistics</h3>
@@ -766,7 +766,7 @@ Tip
 </section>
 </section>
 <section id="selection-algorithms" class="level2" data-number="11.6">
-<h2 data-number="11.6" class="anchored" data-anchor-id="selection-algorithms"><span class="header-section-number">11.6</span> 11.5 Selection Algorithms</h2>
+<h2 data-number="11.6" class="anchored" data-anchor-id="selection-algorithms"><span class="header-section-number">11.6</span> Selection Algorithms</h2>
 <section id="sequential-scan" class="level3" data-number="11.6.1">
 <h3 data-number="11.6.1" class="anchored" data-anchor-id="sequential-scan"><span class="header-section-number">11.6.1</span> Sequential Scan</h3>
 <p>Read every page of <span class="math inline">R</span>: cost = <span class="math inline">B(R)</span>.</p>
@@ -787,10 +787,10 @@ Tip
 </section>
 </section>
 <section id="join-algorithms" class="level2" data-number="11.7">
-<h2 data-number="11.7" class="anchored" data-anchor-id="join-algorithms"><span class="header-section-number">11.7</span> 11.6 Join Algorithms</h2>
+<h2 data-number="11.7" class="anchored" data-anchor-id="join-algorithms"><span class="header-section-number">11.7</span> Join Algorithms</h2>
 <p>Joins are the most expensive operation. Three fundamental algorithms:</p>
 <section id="nested-loop-join" class="level3" data-number="11.7.1">
-<h3 data-number="11.7.1" class="anchored" data-anchor-id="nested-loop-join"><span class="header-section-number">11.7.1</span> 11.6.1 Nested-Loop Join</h3>
+<h3 data-number="11.7.1" class="anchored" data-anchor-id="nested-loop-join"><span class="header-section-number">11.7.1</span> Nested-Loop Join</h3>
 <pre data-code-line-numbers=""><code>for each tuple r in R (outer):
     for each tuple s in S (inner):
         if r.key = s.key: output (r, s)</code></pre>
@@ -827,7 +827,7 @@ Tip
 </table>
 </section>
 <section id="sort-merge-join" class="level3" data-number="11.7.2">
-<h3 data-number="11.7.2" class="anchored" data-anchor-id="sort-merge-join"><span class="header-section-number">11.7.2</span> 11.6.2 Sort-Merge Join</h3>
+<h3 data-number="11.7.2" class="anchored" data-anchor-id="sort-merge-join"><span class="header-section-number">11.7.2</span> Sort-Merge Join</h3>
 <pre data-code-line-numbers=""><code>Phase 1: External sort R on join key → R'   (cost: 2 B(R) per pass)
 Phase 2: External sort S on join key → S'   (cost: 2 B(S) per pass)
 Phase 3: Merge R' and S' once              (cost: B(R) + B(S))</code></pre>
@@ -835,7 +835,7 @@ Phase 3: Merge R' and S' once              (cost: B(R) + B(S))</code></pre>
 <p>Benefits: excellent when data is already sorted, or when the output needs to be sorted (avoids a second sort).</p>
 </section>
 <section id="hash-join" class="level3" data-number="11.7.3">
-<h3 data-number="11.7.3" class="anchored" data-anchor-id="hash-join"><span class="header-section-number">11.7.3</span> 11.6.3 Hash Join</h3>
+<h3 data-number="11.7.3" class="anchored" data-anchor-id="hash-join"><span class="header-section-number">11.7.3</span> Hash Join</h3>
 <pre data-code-line-numbers=""><code>Build phase:   partition R into h buckets via h1(key)
 Partition:     partition S into same h buckets via h1(key)
 Probe phase:   for each bucket i:
@@ -891,7 +891,7 @@ Probe phase:   for each bucket i:
 </section>
 </section>
 <section id="pipeline-vs-materialization" class="level2" data-number="11.8">
-<h2 data-number="11.8" class="anchored" data-anchor-id="pipeline-vs-materialization"><span class="header-section-number">11.8</span> 11.7 Pipeline vs Materialization</h2>
+<h2 data-number="11.8" class="anchored" data-anchor-id="pipeline-vs-materialization"><span class="header-section-number">11.8</span> Pipeline vs Materialization</h2>
 <p>When executing a multi-operator plan, the engine can transmit rows between operators in two ways:</p>
 <table class="caption-top table">
 <colgroup>
@@ -938,7 +938,7 @@ Probe phase:   for each bucket i:
 <hr>
 </section>
 <section id="explain-and-explain-analyze" class="level2" data-number="11.9">
-<h2 data-number="11.9" class="anchored" data-anchor-id="explain-and-explain-analyze"><span class="header-section-number">11.9</span> 11.8 EXPLAIN and EXPLAIN ANALYZE</h2>
+<h2 data-number="11.9" class="anchored" data-anchor-id="explain-and-explain-analyze"><span class="header-section-number">11.9</span> EXPLAIN and EXPLAIN ANALYZE</h2>
 <p><code>EXPLAIN</code> shows the optimizer’s chosen plan without executing the query. <code>EXPLAIN ANALYZE</code> executes the query and reports both estimated and actual statistics.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">MySQL</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">PostgreSQL</a></li></ul>
@@ -1010,7 +1010,7 @@ Execution Time: 1.421 ms</code></pre>
 </section>
 </section>
 <section id="putting-it-all-together-a-worked-plan" class="level2" data-number="11.10">
-<h2 data-number="11.10" class="anchored" data-anchor-id="putting-it-all-together-a-worked-plan"><span class="header-section-number">11.10</span> 11.9 Putting It All Together: A Worked Plan</h2>
+<h2 data-number="11.10" class="anchored" data-anchor-id="putting-it-all-together-a-worked-plan"><span class="header-section-number">11.10</span> Putting It All Together: A Worked Plan</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Q: Names + total hours for Research dept employees working &gt; 20 h</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span>   E.Fname, E.Lname, <span class="fu">SUM</span>(WO.Hours) <span class="kw">AS</span> TotalHours</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span>     Employee E</span>
@@ -1038,7 +1038,7 @@ Execution Time: 1.421 ms</code></pre>
 <hr>
 </section>
 <section id="chapter-summary" class="level2" data-number="11.11">
-<h2 data-number="11.11" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">11.11</span> 11.10 Chapter Summary</h2>
+<h2 data-number="11.11" class="anchored" data-anchor-id="chapter-summary"><span class="header-section-number">11.11</span> Chapter Summary</h2>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1140,7 +1140,7 @@ Execution Time: 1.421 ms</code></pre>
 </section>
 </section>
 <section id="query-processing-pipeline-1" class="level2" data-number="11.13">
-<h2 data-number="11.13" class="anchored" data-anchor-id="query-processing-pipeline-1"><span class="header-section-number">11.13</span> 11.1 Query Processing Pipeline</h2>
+<h2 data-number="11.13" class="anchored" data-anchor-id="query-processing-pipeline-1"><span class="header-section-number">11.13</span> Query Processing Pipeline</h2>
 <pre data-code-line-numbers=""><code>SQL Query (text)
       │
   ┌───▼─────────┐
@@ -1162,7 +1162,7 @@ Execution Time: 1.421 ms</code></pre>
    Result set</code></pre>
 </section>
 <section id="parsing-and-translation" class="level2" data-number="11.14">
-<h2 data-number="11.14" class="anchored" data-anchor-id="parsing-and-translation"><span class="header-section-number">11.14</span> 11.2 Parsing and Translation</h2>
+<h2 data-number="11.14" class="anchored" data-anchor-id="parsing-and-translation"><span class="header-section-number">11.14</span> Parsing and Translation</h2>
 <p>The parser checks SQL syntax and builds a <strong>parse tree</strong>. The translator converts it to an initial <strong>relational algebra (RA) expression</strong>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> e.fname, d.dept_name</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employee e <span class="kw">JOIN</span> department d <span class="kw">ON</span> e.dept_no <span class="op">=</span> d.dept_no</span>
@@ -1173,7 +1173,7 @@ Execution Time: 1.421 ms</code></pre>
 </span></p>
 </section>
 <section id="query-optimization-overview" class="level2" data-number="11.15">
-<h2 data-number="11.15" class="anchored" data-anchor-id="query-optimization-overview"><span class="header-section-number">11.15</span> 11.3 Query Optimization Overview</h2>
+<h2 data-number="11.15" class="anchored" data-anchor-id="query-optimization-overview"><span class="header-section-number">11.15</span> Query Optimization Overview</h2>
 <p>The optimizer’s job: find the <strong>cheapest execution plan</strong> from the many equivalent RA expressions.</p>
 <section id="why-optimization-is-hard" class="level3" data-number="11.15.1">
 <h3 data-number="11.15.1" class="anchored" data-anchor-id="why-optimization-is-hard"><span class="header-section-number">11.15.1</span> Why Optimization Is Hard</h3>
@@ -1192,7 +1192,7 @@ Execution Time: 1.421 ms</code></pre>
 </section>
 </section>
 <section id="cost-model-1" class="level2" data-number="11.16">
-<h2 data-number="11.16" class="anchored" data-anchor-id="cost-model-1"><span class="header-section-number">11.16</span> 11.4 Cost Model</h2>
+<h2 data-number="11.16" class="anchored" data-anchor-id="cost-model-1"><span class="header-section-number">11.16</span> Cost Model</h2>
 <p>The optimizer uses a <strong>cost model</strong> to estimate the cost of each plan:</p>
 <p><span class="math display">
 \text{Total Cost} = \text{I/O cost} + \text{CPU cost} + \text{Communication cost}
@@ -1240,7 +1240,7 @@ Execution Time: 1.421 ms</code></pre>
 </section>
 </section>
 <section id="selection-algorithms-1" class="level2" data-number="11.17">
-<h2 data-number="11.17" class="anchored" data-anchor-id="selection-algorithms-1"><span class="header-section-number">11.17</span> 11.5 Selection Algorithms</h2>
+<h2 data-number="11.17" class="anchored" data-anchor-id="selection-algorithms-1"><span class="header-section-number">11.17</span> Selection Algorithms</h2>
 <section id="linear-scan-sequential-scan" class="level3" data-number="11.17.1">
 <h3 data-number="11.17.1" class="anchored" data-anchor-id="linear-scan-sequential-scan"><span class="header-section-number">11.17.1</span> Linear Scan (Sequential Scan)</h3>
 <p>Read every page of the table: cost = <span class="math inline">B(R)</span>.</p>
@@ -1262,7 +1262,7 @@ Range: σ_{A ≥ v}(R)
 </section>
 </section>
 <section id="join-algorithms-1" class="level2" data-number="11.18">
-<h2 data-number="11.18" class="anchored" data-anchor-id="join-algorithms-1"><span class="header-section-number">11.18</span> 11.6 Join Algorithms</h2>
+<h2 data-number="11.18" class="anchored" data-anchor-id="join-algorithms-1"><span class="header-section-number">11.18</span> Join Algorithms</h2>
 <p>Joins are the most expensive operations. Three fundamental algorithms:</p>
 <section id="nested-loop-join-nlj" class="level3" data-number="11.18.1">
 <h3 data-number="11.18.1" class="anchored" data-anchor-id="nested-loop-join-nlj"><span class="header-section-number">11.18.1</span> 1. Nested-Loop Join (NLJ)</h3>
@@ -1339,7 +1339,7 @@ Phase 3 (Probe):   For each bucket i, build in-memory hash table on R_i,
 </section>
 </section>
 <section id="join-ordering-and-plan-enumeration" class="level2" data-number="11.19">
-<h2 data-number="11.19" class="anchored" data-anchor-id="join-ordering-and-plan-enumeration"><span class="header-section-number">11.19</span> 11.7 Join Ordering and Plan Enumeration</h2>
+<h2 data-number="11.19" class="anchored" data-anchor-id="join-ordering-and-plan-enumeration"><span class="header-section-number">11.19</span> Join Ordering and Plan Enumeration</h2>
 <section id="left-deep-vs.-right-deep-vs.-bushy-trees" class="level3" data-number="11.19.1">
 <h3 data-number="11.19.1" class="anchored" data-anchor-id="left-deep-vs.-right-deep-vs.-bushy-trees"><span class="header-section-number">11.19.1</span> Left-Deep vs.&nbsp;Right-Deep vs.&nbsp;Bushy Trees</h3>
 <pre data-code-line-numbers=""><code>Left-deep:          Right-deep:          Bushy:
@@ -1359,7 +1359,7 @@ A   B                       C   D</code></pre>
 </section>
 </section>
 <section id="query-plan-reading-explain" class="level2" data-number="11.20">
-<h2 data-number="11.20" class="anchored" data-anchor-id="query-plan-reading-explain"><span class="header-section-number">11.20</span> 11.8 Query Plan Reading (EXPLAIN)</h2>
+<h2 data-number="11.20" class="anchored" data-anchor-id="query-plan-reading-explain"><span class="header-section-number">11.20</span> Query Plan Reading (EXPLAIN)</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">EXPLAIN</span> <span class="kw">ANALYZE</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> e.fname, d.dept_name</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employee e</span>
@@ -1907,7 +1907,7 @@ Tip
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 11"</span></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## §11.0 The Journey of a SELECT</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Journey of a SELECT</span></span>
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>In Chapter 10 you learned *where* data lives (pages, B+ trees, bitmap bitmaps).</span>
 <span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>In Chapter 6 you learned *what* operations transform data (relational algebra).</span>
@@ -1917,7 +1917,7 @@ Tip
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.1 Query Processing Pipeline</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## Query Processing Pipeline</span></span>
 <span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
 <span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
@@ -1966,7 +1966,7 @@ Tip
 <span id="cb26-64"><a href="#cb26-64" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-65"><a href="#cb26-65" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-66"><a href="#cb26-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-67"><a href="#cb26-67" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.2 Translation to Relational Algebra</span></span>
+<span id="cb26-67"><a href="#cb26-67" aria-hidden="true" tabindex="-1"></a><span class="fu">## Translation to Relational Algebra</span></span>
 <span id="cb26-68"><a href="#cb26-68" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-69"><a href="#cb26-69" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb26-70"><a href="#cb26-70" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> E<span class="ch">.</span>Fname, D<span class="ch">.</span>Dname</span>
@@ -1991,7 +1991,7 @@ Tip
 <span id="cb26-89"><a href="#cb26-89" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-90"><a href="#cb26-90" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-91"><a href="#cb26-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.3 Logical Optimization: Equivalence Rules</span></span>
+<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## Logical Optimization: Equivalence Rules</span></span>
 <span id="cb26-93"><a href="#cb26-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-94"><a href="#cb26-94" aria-hidden="true" tabindex="-1"></a>The optimizer systematically applies these rules to push work closer to the leaves:</span>
 <span id="cb26-95"><a href="#cb26-95" aria-hidden="true" tabindex="-1"></a></span>
@@ -2035,7 +2035,7 @@ Tip
 <span id="cb26-135"><a href="#cb26-135" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-136"><a href="#cb26-136" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-137"><a href="#cb26-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-138"><a href="#cb26-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.4 Cost Model</span></span>
+<span id="cb26-138"><a href="#cb26-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cost Model</span></span>
 <span id="cb26-139"><a href="#cb26-139" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-140"><a href="#cb26-140" aria-hidden="true" tabindex="-1"></a>The optimizer estimates every operator's I/O cost using **catalog statistics**.</span>
 <span id="cb26-141"><a href="#cb26-141" aria-hidden="true" tabindex="-1"></a></span>
@@ -2066,7 +2066,7 @@ Tip
 <span id="cb26-166"><a href="#cb26-166" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-167"><a href="#cb26-167" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-168"><a href="#cb26-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.5 Selection Algorithms</span></span>
+<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a><span class="fu">## Selection Algorithms</span></span>
 <span id="cb26-170"><a href="#cb26-170" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-171"><a href="#cb26-171" aria-hidden="true" tabindex="-1"></a><span class="fu">### Sequential Scan</span></span>
 <span id="cb26-172"><a href="#cb26-172" aria-hidden="true" tabindex="-1"></a></span>
@@ -2094,11 +2094,11 @@ Tip
 <span id="cb26-194"><a href="#cb26-194" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-195"><a href="#cb26-195" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-196"><a href="#cb26-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-197"><a href="#cb26-197" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.6 Join Algorithms</span></span>
+<span id="cb26-197"><a href="#cb26-197" aria-hidden="true" tabindex="-1"></a><span class="fu">## Join Algorithms</span></span>
 <span id="cb26-198"><a href="#cb26-198" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-199"><a href="#cb26-199" aria-hidden="true" tabindex="-1"></a>Joins are the most expensive operation. Three fundamental algorithms:</span>
 <span id="cb26-200"><a href="#cb26-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-201"><a href="#cb26-201" aria-hidden="true" tabindex="-1"></a><span class="fu">### 11.6.1 Nested-Loop Join</span></span>
+<span id="cb26-201"><a href="#cb26-201" aria-hidden="true" tabindex="-1"></a><span class="fu">### Nested-Loop Join</span></span>
 <span id="cb26-202"><a href="#cb26-202" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-203"><a href="#cb26-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-204"><a href="#cb26-204" aria-hidden="true" tabindex="-1"></a><span class="in">for each tuple r in R (outer):</span></span>
@@ -2112,7 +2112,7 @@ Tip
 <span id="cb26-212"><a href="#cb26-212" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Block NLJ ($M$ buffers) <span class="pp">|</span> $\lceil B(R)/(M-2) \rceil \cdot B(S) + B(R)$ <span class="pp">|</span> Inner scanned once per outer *block* <span class="pp">|</span></span>
 <span id="cb26-213"><a href="#cb26-213" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Index NLJ <span class="pp">|</span> $B(R) + T(R) \cdot C_{idx}$ <span class="pp">|</span> Uses index on inner; $C_{idx}$ ≈ 3–5 for B+ tree <span class="pp">|</span></span>
 <span id="cb26-214"><a href="#cb26-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-215"><a href="#cb26-215" aria-hidden="true" tabindex="-1"></a><span class="fu">### 11.6.2 Sort-Merge Join</span></span>
+<span id="cb26-215"><a href="#cb26-215" aria-hidden="true" tabindex="-1"></a><span class="fu">### Sort-Merge Join</span></span>
 <span id="cb26-216"><a href="#cb26-216" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-217"><a href="#cb26-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-218"><a href="#cb26-218" aria-hidden="true" tabindex="-1"></a><span class="in">Phase 1: External sort R on join key → R'   (cost: 2 B(R) per pass)</span></span>
@@ -2124,7 +2124,7 @@ Tip
 <span id="cb26-224"><a href="#cb26-224" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-225"><a href="#cb26-225" aria-hidden="true" tabindex="-1"></a>Benefits: excellent when data is already sorted, or when the output needs to be sorted (avoids a second sort).</span>
 <span id="cb26-226"><a href="#cb26-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-227"><a href="#cb26-227" aria-hidden="true" tabindex="-1"></a><span class="fu">### 11.6.3 Hash Join</span></span>
+<span id="cb26-227"><a href="#cb26-227" aria-hidden="true" tabindex="-1"></a><span class="fu">### Hash Join</span></span>
 <span id="cb26-228"><a href="#cb26-228" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-229"><a href="#cb26-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-230"><a href="#cb26-230" aria-hidden="true" tabindex="-1"></a><span class="in">Build phase:   partition R into h buckets via h1(key)</span></span>
@@ -2171,7 +2171,7 @@ Tip
 <span id="cb26-273"><a href="#cb26-273" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-274"><a href="#cb26-274" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-275"><a href="#cb26-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-276"><a href="#cb26-276" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.7 Pipeline vs Materialization</span></span>
+<span id="cb26-276"><a href="#cb26-276" aria-hidden="true" tabindex="-1"></a><span class="fu">## Pipeline vs Materialization</span></span>
 <span id="cb26-277"><a href="#cb26-277" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-278"><a href="#cb26-278" aria-hidden="true" tabindex="-1"></a>When executing a multi-operator plan, the engine can transmit rows between operators in two ways:</span>
 <span id="cb26-279"><a href="#cb26-279" aria-hidden="true" tabindex="-1"></a></span>
@@ -2198,7 +2198,7 @@ Tip
 <span id="cb26-302"><a href="#cb26-302" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-303"><a href="#cb26-303" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-304"><a href="#cb26-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-305"><a href="#cb26-305" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.8 EXPLAIN and EXPLAIN ANALYZE</span></span>
+<span id="cb26-305"><a href="#cb26-305" aria-hidden="true" tabindex="-1"></a><span class="fu">## EXPLAIN and EXPLAIN ANALYZE</span></span>
 <span id="cb26-306"><a href="#cb26-306" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-307"><a href="#cb26-307" aria-hidden="true" tabindex="-1"></a><span class="in">`EXPLAIN`</span> shows the optimizer's chosen plan without executing the query.</span>
 <span id="cb26-308"><a href="#cb26-308" aria-hidden="true" tabindex="-1"></a><span class="in">`EXPLAIN ANALYZE`</span> executes the query and reports both estimated and actual statistics.</span>
@@ -2278,7 +2278,7 @@ Tip
 <span id="cb26-382"><a href="#cb26-382" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-383"><a href="#cb26-383" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-384"><a href="#cb26-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-385"><a href="#cb26-385" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.9 Putting It All Together: A Worked Plan</span></span>
+<span id="cb26-385"><a href="#cb26-385" aria-hidden="true" tabindex="-1"></a><span class="fu">## Putting It All Together: A Worked Plan</span></span>
 <span id="cb26-386"><a href="#cb26-386" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-387"><a href="#cb26-387" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb26-388"><a href="#cb26-388" aria-hidden="true" tabindex="-1"></a><span class="co">-- Q: Names + total hours for Research dept employees working &gt; 20 h</span></span>
@@ -2325,7 +2325,7 @@ Tip
 <span id="cb26-431"><a href="#cb26-431" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-432"><a href="#cb26-432" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb26-433"><a href="#cb26-433" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-434"><a href="#cb26-434" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.10 Chapter Summary</span></span>
+<span id="cb26-434"><a href="#cb26-434" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter Summary</span></span>
 <span id="cb26-435"><a href="#cb26-435" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-436"><a href="#cb26-436" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
 <span id="cb26-437"><a href="#cb26-437" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways — Chapter 11</span></span>
@@ -2428,7 +2428,7 @@ Tip
 <span id="cb26-534"><a href="#cb26-534" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>What cardinality statistic would the optimizer need to correctly estimate the benefit?</span>
 <span id="cb26-535"><a href="#cb26-535" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-536"><a href="#cb26-536" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-537"><a href="#cb26-537" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.1 Query Processing Pipeline</span></span>
+<span id="cb26-537"><a href="#cb26-537" aria-hidden="true" tabindex="-1"></a><span class="fu">## Query Processing Pipeline</span></span>
 <span id="cb26-538"><a href="#cb26-538" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-539"><a href="#cb26-539" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-540"><a href="#cb26-540" aria-hidden="true" tabindex="-1"></a><span class="in">SQL Query (text)</span></span>
@@ -2452,7 +2452,7 @@ Tip
 <span id="cb26-558"><a href="#cb26-558" aria-hidden="true" tabindex="-1"></a><span class="in">   Result set</span></span>
 <span id="cb26-559"><a href="#cb26-559" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-560"><a href="#cb26-560" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-561"><a href="#cb26-561" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.2 Parsing and Translation</span></span>
+<span id="cb26-561"><a href="#cb26-561" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parsing and Translation</span></span>
 <span id="cb26-562"><a href="#cb26-562" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-563"><a href="#cb26-563" aria-hidden="true" tabindex="-1"></a>The parser checks SQL syntax and builds a **parse tree**. The translator converts it to an initial **relational algebra (RA) expression**:</span>
 <span id="cb26-564"><a href="#cb26-564" aria-hidden="true" tabindex="-1"></a></span>
@@ -2468,7 +2468,7 @@ Tip
 <span id="cb26-574"><a href="#cb26-574" aria-hidden="true" tabindex="-1"></a>\pi_{\text{fname, dept<span class="sc">\_</span>name}}\bigl(\sigma_{\text{salary} &gt; 50000}(\text{employee} \bowtie_{\text{dept<span class="sc">\_</span>no}} \text{department})\bigr)</span>
 <span id="cb26-575"><a href="#cb26-575" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb26-576"><a href="#cb26-576" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-577"><a href="#cb26-577" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.3 Query Optimization Overview</span></span>
+<span id="cb26-577"><a href="#cb26-577" aria-hidden="true" tabindex="-1"></a><span class="fu">## Query Optimization Overview</span></span>
 <span id="cb26-578"><a href="#cb26-578" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-579"><a href="#cb26-579" aria-hidden="true" tabindex="-1"></a>The optimizer's job: find the **cheapest execution plan** from the many equivalent RA expressions.</span>
 <span id="cb26-580"><a href="#cb26-580" aria-hidden="true" tabindex="-1"></a></span>
@@ -2483,7 +2483,7 @@ Tip
 <span id="cb26-589"><a href="#cb26-589" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Logical optimization**: Apply algebraic equivalences to improve the RA tree (push selections down, push projections)</span>
 <span id="cb26-590"><a href="#cb26-590" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Physical optimization**: Choose algorithms for each logical operator (which join algorithm? which access path?)</span>
 <span id="cb26-591"><a href="#cb26-591" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-592"><a href="#cb26-592" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.4 Cost Model</span></span>
+<span id="cb26-592"><a href="#cb26-592" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cost Model</span></span>
 <span id="cb26-593"><a href="#cb26-593" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-594"><a href="#cb26-594" aria-hidden="true" tabindex="-1"></a>The optimizer uses a **cost model** to estimate the cost of each plan:</span>
 <span id="cb26-595"><a href="#cb26-595" aria-hidden="true" tabindex="-1"></a></span>
@@ -2518,7 +2518,7 @@ Tip
 <span id="cb26-624"><a href="#cb26-624" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$V(A, R)$: domain cardinality (distinct values)</span>
 <span id="cb26-625"><a href="#cb26-625" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Histogram: distribution of attribute values</span>
 <span id="cb26-626"><a href="#cb26-626" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-627"><a href="#cb26-627" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.5 Selection Algorithms</span></span>
+<span id="cb26-627"><a href="#cb26-627" aria-hidden="true" tabindex="-1"></a><span class="fu">## Selection Algorithms</span></span>
 <span id="cb26-628"><a href="#cb26-628" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-629"><a href="#cb26-629" aria-hidden="true" tabindex="-1"></a><span class="fu">### Linear Scan (Sequential Scan)</span></span>
 <span id="cb26-630"><a href="#cb26-630" aria-hidden="true" tabindex="-1"></a></span>
@@ -2542,7 +2542,7 @@ Tip
 <span id="cb26-648"><a href="#cb26-648" aria-hidden="true" tabindex="-1"></a><span class="in">└── Unclustered B+ tree: may be slower than full scan if many matches</span></span>
 <span id="cb26-649"><a href="#cb26-649" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-650"><a href="#cb26-650" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-651"><a href="#cb26-651" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.6 Join Algorithms</span></span>
+<span id="cb26-651"><a href="#cb26-651" aria-hidden="true" tabindex="-1"></a><span class="fu">## Join Algorithms</span></span>
 <span id="cb26-652"><a href="#cb26-652" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-653"><a href="#cb26-653" aria-hidden="true" tabindex="-1"></a>Joins are the most expensive operations. Three fundamental algorithms:</span>
 <span id="cb26-654"><a href="#cb26-654" aria-hidden="true" tabindex="-1"></a></span>
@@ -2591,7 +2591,7 @@ Tip
 <span id="cb26-697"><a href="#cb26-697" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sort-Merge <span class="pp">|</span> $B(R) + B(S)$ (pre-sorted) <span class="pp">|</span> Sort cost + merge <span class="pp">|</span> Data pre-sorted, output sorted <span class="pp">|</span></span>
 <span id="cb26-698"><a href="#cb26-698" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Hash Join <span class="pp">|</span> $B(R) + B(S)$ (build fits in mem) <span class="pp">|</span> $3(B(R)+B(S))$ <span class="pp">|</span> Large unsorted equijoins <span class="pp">|</span></span>
 <span id="cb26-699"><a href="#cb26-699" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-700"><a href="#cb26-700" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.7 Join Ordering and Plan Enumeration</span></span>
+<span id="cb26-700"><a href="#cb26-700" aria-hidden="true" tabindex="-1"></a><span class="fu">## Join Ordering and Plan Enumeration</span></span>
 <span id="cb26-701"><a href="#cb26-701" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-702"><a href="#cb26-702" aria-hidden="true" tabindex="-1"></a><span class="fu">### Left-Deep vs. Right-Deep vs. Bushy Trees</span></span>
 <span id="cb26-703"><a href="#cb26-703" aria-hidden="true" tabindex="-1"></a></span>
@@ -2617,7 +2617,7 @@ Tip
 <span id="cb26-723"><a href="#cb26-723" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-724"><a href="#cb26-724" aria-hidden="true" tabindex="-1"></a>This finds the global optimum in $O(3^n)$ time instead of $O(n!)$.</span>
 <span id="cb26-725"><a href="#cb26-725" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-726"><a href="#cb26-726" aria-hidden="true" tabindex="-1"></a><span class="fu">## 11.8 Query Plan Reading (EXPLAIN)</span></span>
+<span id="cb26-726"><a href="#cb26-726" aria-hidden="true" tabindex="-1"></a><span class="fu">## Query Plan Reading (EXPLAIN)</span></span>
 <span id="cb26-727"><a href="#cb26-727" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-728"><a href="#cb26-728" aria-hidden="true" tabindex="-1"></a><span class="in">```sql</span></span>
 <span id="cb26-729"><a href="#cb26-729" aria-hidden="true" tabindex="-1"></a><span class="kw">EXPLAIN</span> <span class="kw">ANALYZE</span></span>
