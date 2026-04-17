@@ -6,12 +6,12 @@ book:
   title: "Fundamentals of Database Systems"
   subtitle: "A Comprehensive Course: Relational Databases & NoSQL"
   author:
-    - name: "Course Instructor"
+    - name: "Mr. Hussein Younis"
       affiliation: "Computer Engineering Department"
   date: "2026"
   date-format: "YYYY"
-  cover-image: images/cover.png
-  favicon: images/cover.png
+  cover-image: images/cover.jpeg
+  favicon: images/cover.jpeg
   repo-url: ""
   downloads: [pdf]
   search: true

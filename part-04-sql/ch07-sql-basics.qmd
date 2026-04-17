@@ -3,7 +3,7 @@ title: "SQL Basics"
 subtitle: "Chapter 7"
 ---
 
-## §7.0 From Algebra to Executable Queries
+## From Algebra to Executable Queries
 
 In Chapter 6 you wrote relational algebra expressions — precise mathematical statements like
 $\pi_{\text{Fname,Lname}}(\sigma_{\text{Salary}>60000}(\text{Employee}))$.
@@ -38,7 +38,7 @@ Tabs labelled **MySQL | PostgreSQL | Oracle** appear wherever syntax diverges si
 
 
 
-## 7.1 SQL Overview
+## SQL Overview
 
 **SQL** (Structured Query Language) was originally developed at IBM (SEQUEL, 1974) and standardized by ANSI/ISO. It is:
 
@@ -56,7 +56,7 @@ Tabs labelled **MySQL | PostgreSQL | Oracle** appear wherever syntax diverges si
 | Data Control | DCL | `GRANT`, `REVOKE` | Permissions |
 | Transaction Control | TCL | `COMMIT`, `ROLLBACK`, `SAVEPOINT` | Atomicity |
 
-## 7.2 Data Types
+## Data Types
 
 Choosing the right type affects storage, performance, and data integrity. The table below compares the three target dialects.
 
@@ -83,12 +83,12 @@ Oracle's `VARCHAR` is technically reserved; always use `VARCHAR2`.
 PostgreSQL's `TEXT` is unlimited and identical in performance to `VARCHAR(n)` without a length limit.
 :::
 
-## 7.3 DDL — Data Definition Language
+## DDL — Data Definition Language
 
 DDL commands define or modify the *structure* of the database (schema objects).
 They implicitly commit any open transaction.
 
-### 7.3.1 CREATE TABLE
+### CREATE TABLE
 
 The Company DB will be our running example. Below is the `Employee` table written in all three dialects, illustrating the most important syntactic differences.
 
@@ -181,7 +181,7 @@ CREATE TABLE Employee (
 
 :::
 
-### 7.3.2 Constraint Summary
+### Constraint Summary
 
 | Constraint | Column-level example | Table-level example |
 |-----------|---------------------|-------------------|
@@ -207,7 +207,7 @@ When a referenced row is deleted or updated, three actions are available:
 Oracle only supports `ON DELETE CASCADE` and `ON DELETE SET NULL` — no `ON UPDATE` referential actions.
 :::
 
-### 7.3.3 Auto-Increment / Identity Columns
+### Auto-Increment / Identity Columns
 
 Auto-generated surrogate keys are handled differently across dialects.
 
@@ -272,7 +272,7 @@ CREATE TABLE Orders (
 
 :::
 
-### 7.3.4 ALTER TABLE
+### ALTER TABLE
 
 ```sql
 -- Add a column
@@ -294,7 +294,7 @@ ALTER TABLE Employee RENAME COLUMN Fname TO FirstName;      -- PG / Oracle
 ALTER TABLE Employee CHANGE Fname FirstName VARCHAR(15);    -- MySQL
 ```
 
-### 7.3.5 DROP and TRUNCATE
+### DROP and TRUNCATE
 
 ::: {.panel-tabset}
 
@@ -348,9 +348,9 @@ TRUNCATE TABLE Employee;
 
 ---
 
-## 7.4 DML — Manipulating Data
+## DML — Manipulating Data
 
-### 7.4.1 INSERT
+### INSERT
 
 ```sql
 -- Single row
@@ -374,7 +374,7 @@ INSERT ALL
 SELECT 1 FROM DUAL;
 ```
 
-### 7.4.2 UPDATE
+### UPDATE
 
 ```sql
 -- 10 % raise for all Research department employees
@@ -389,7 +389,7 @@ SET    Address = '731 Fondren, Houston TX',
 WHERE  Ssn = '123456789';
 ```
 
-### 7.4.3 DELETE
+### DELETE
 
 ```sql
 -- Remove a specific employee
@@ -403,9 +403,9 @@ WHERE  Dno = (SELECT Dnumber FROM Department WHERE Dname = 'Headquarters');
 
 ---
 
-## 7.5 SELECT — Querying Data
+## SELECT — Querying Data
 
-### 7.5.1 Logical Evaluation Order
+### Logical Evaluation Order
 
 SQL is *written* in SELECT–FROM–WHERE order but *evaluated* in a different order:
 
@@ -436,7 +436,7 @@ SELECT Salary * 12 AS annual FROM Employee WHERE Salary * 12 > 600000;
 ```
 :::
 
-### 7.5.2 Basic SELECT
+### Basic SELECT
 
 ```sql
 -- All columns
@@ -458,7 +458,7 @@ SELECT 1 + 1;                       -- MySQL / PostgreSQL
 SELECT 1 + 1 FROM DUAL;             -- Oracle requires FROM DUAL for scalar queries
 ```
 
-### 7.5.3 WHERE — Filtering Rows
+### WHERE — Filtering Rows
 
 | Operator | Example | Notes |
 |---------|---------|-------|
@@ -484,7 +484,7 @@ SELECT Fname, Lname FROM Employee WHERE Lname LIKE '_a%';
 SELECT Fname, Lname FROM Employee WHERE Super_ssn IS NULL;
 ```
 
-### 7.5.4 ORDER BY
+### ORDER BY
 
 ```sql
 -- Sort by salary descending, then last name ascending (tie-breaker)
@@ -493,7 +493,7 @@ FROM   Employee
 ORDER  BY Salary DESC, Lname ASC;
 ```
 
-### 7.5.5 Limiting Rows / Pagination
+### Limiting Rows / Pagination
 
 ::: {.panel-tabset}
 
@@ -564,7 +564,7 @@ WHERE rn > 10;
 
 ---
 
-## 7.6 Aggregate Functions
+## Aggregate Functions
 
 Aggregate functions collapse a set of rows into a single value.
 
@@ -583,7 +583,7 @@ Aggregate functions collapse a set of rows into a single value.
 If some employees have a NULL salary, `AVG` quietly excludes them — use `COUNT(*) vs COUNT(Salary)` to detect this.
 :::
 
-### 7.6.1 GROUP BY and HAVING
+### GROUP BY and HAVING
 
 ```sql
 -- Number of employees and average salary per department
@@ -635,12 +635,12 @@ HAVING COUNT(*) >= 2;   -- then filter groups (≥ 2 female employees)
 
 ---
 
-## 7.7 Joins
+## Joins
 
 A join combines rows from two or more tables based on a related column.
 All examples use the Company DB.
 
-### 7.7.1 CROSS JOIN (Cartesian Product)
+### CROSS JOIN (Cartesian Product)
 
 ```sql
 SELECT E.Fname, D.Dname
@@ -649,7 +649,7 @@ FROM   Employee E CROSS JOIN Department D;
 -- Useful only for generating test data or combinatorial problems
 ```
 
-### 7.7.2 INNER JOIN
+### INNER JOIN
 
 Returns only rows where the join condition is satisfied in **both** tables.
 
@@ -679,7 +679,7 @@ WHERE  D.Dname = 'Research'
 ORDER  BY E.Lname, P.Pname;
 ```
 
-### 7.7.3 OUTER JOINs
+### OUTER JOINs
 
 An outer join preserves rows from one (or both) sides that have **no match**.
 
@@ -737,7 +737,7 @@ FROM   Employee E
 
 :::
 
-### 7.7.4 SELF JOIN
+### SELF JOIN
 
 A table joined to itself using different aliases — useful for hierarchical data.
 
@@ -762,7 +762,7 @@ String concatenation syntax varies:
 MySQL also supports `||` when `PIPES_AS_CONCAT` SQL mode is enabled.
 :::
 
-### 7.7.5 Join Type Visual Summary
+### Join Type Visual Summary
 
 ```{mermaid}
 %%| eval: true
@@ -790,11 +790,11 @@ flowchart LR
 
 ---
 
-## 7.8 Subqueries
+## Subqueries
 
 A **subquery** (nested query) is a `SELECT` statement inside another SQL statement.
 
-### 7.8.1 Scalar Subquery
+### Scalar Subquery
 
 Returns exactly one row and one column; can be used wherever a single value is expected.
 
@@ -805,7 +805,7 @@ FROM   Employee
 WHERE  Salary > (SELECT AVG(Salary) FROM Employee);
 ```
 
-### 7.8.2 Row / Table Subquery in WHERE
+### Row / Table Subquery in WHERE
 
 ```sql
 -- Employees who work in the same department as 'John Smith'
@@ -821,7 +821,7 @@ WHERE  Dno IN (SELECT Dnumber FROM Department
                                   WHERE  Dlocation = 'Houston'));
 ```
 
-### 7.8.3 Correlated Subquery
+### Correlated Subquery
 
 A subquery that references a column from the outer query — re-evaluated once per outer row.
 
@@ -843,7 +843,7 @@ Correlated subqueries are conceptually clear but can be slow on large tables bec
 Chapter 8 introduces **Common Table Expressions (CTEs)** and **window functions** — more efficient alternatives for the pattern above.
 :::
 
-### 7.8.4 EXISTS and NOT EXISTS
+### EXISTS and NOT EXISTS
 
 `EXISTS(subquery)` is `TRUE` if the subquery returns **at least one row**.
 It is typically faster than `IN` when the subquery result set is large, because it short-circuits at the first match.
@@ -866,7 +866,7 @@ WHERE  EXISTS (SELECT 1 FROM Works_On W
                WHERE  W.Pno = P.Pnumber AND W.Hours > 20);
 ```
 
-### 7.8.5 Set Operators: UNION, INTERSECT, EXCEPT
+### Set Operators: UNION, INTERSECT, EXCEPT
 
 ::: {.panel-tabset}
 
@@ -932,7 +932,7 @@ SELECT Essn FROM Works_On WHERE Pno = 1;
 
 ---
 
-## 7.9 Interactive: Join Type Explorer
+## Interactive: Join Type Explorer
 
 ```{ojs}
 //| echo: false
@@ -979,7 +979,7 @@ viewof joinType  = Inputs.select(
 
 ---
 
-## 7.10 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 7

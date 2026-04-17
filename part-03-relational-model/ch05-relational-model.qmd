@@ -11,7 +11,7 @@ Chapters 3 and 4 produced an ER/EER diagram — a conceptual design that is deli
 
 ---
 
-## 5.1 Mathematical Foundation
+## Mathematical Foundation
 
 The relational model was proposed by **E.F. Codd** in 1970 and grounded in **set theory** and **first-order predicate logic**.
 
@@ -27,7 +27,7 @@ A **domain** $D_i$ is a set of **atomic** (indivisible) values of the same type.
 
 ---
 
-## 5.2 Key Terminology
+## Key Terminology
 
 | Formal Term | SQL Term | Meaning |
 |------------|---------|---------|
@@ -44,7 +44,7 @@ A **domain** $D_i$ is a set of **atomic** (indivisible) values of the same type.
 
 ---
 
-## 5.3 Properties of Relations
+## Properties of Relations
 
 | Property | Formal Relation | SQL Table |
 |----------|----------------|-----------|
@@ -60,7 +60,7 @@ SQL tables are **multisets** (bags), not sets. Without a primary key, SQL allows
 
 ---
 
-## 5.4 Formal Schema Notation
+## Formal Schema Notation
 
 Throughout this book we use the following notation for relational schemas:
 
@@ -93,7 +93,7 @@ Primary keys are underlined. Foreign keys show the referenced table. Constraints
 
 ---
 
-## 5.5 Complete Key Taxonomy
+## Complete Key Taxonomy
 
 The word "key" is overloaded in database terminology. Here is the complete hierarchy:
 
@@ -139,7 +139,7 @@ flowchart TD
 
 ---
 
-## 5.6 FD-Based Key Identification
+## FD-Based Key Identification
 
 ### What is a Functional Dependency?
 
@@ -178,7 +178,7 @@ Therefore `{Essn, Pno}` is the candidate key (and is chosen as PK). This is a **
 
 ---
 
-## 5.7 Choosing a Primary Key
+## Choosing a Primary Key
 
 When multiple candidate keys exist, use this guide:
 
@@ -208,7 +208,7 @@ CREATE TABLE Employee (
 
 ---
 
-## 5.8 Integrity Constraints
+## Integrity Constraints
 
 ### Domain Constraint
 
@@ -250,7 +250,7 @@ Every candidate key must hold distinct non-NULL values across all tuples.
 
 ---
 
-## 5.9 Foreign Key Actions
+## Foreign Key Actions
 
 When a referenced PK is deleted or updated, the DBMS executes the declared **referential action**:
 
@@ -280,7 +280,7 @@ CREATE TABLE Employee (
 
 ---
 
-## 5.10 NULL Values and Three-Valued Logic
+## NULL Values and Three-Valued Logic
 
 **NULL** represents *unknown*, *missing*, or *not applicable*. Different NULLs express different real-world meanings:
 
@@ -313,7 +313,7 @@ Aggregate functions (`SUM`, `AVG`, `MAX`, `MIN`) **ignore NULL values**. `COUNT(
 
 ---
 
-## 5.11 Business Rules: DB Constraints vs. Application Logic
+## Business Rules: DB Constraints vs. Application Logic
 
 A **business rule** is a statement about the organization that must always be true.
 

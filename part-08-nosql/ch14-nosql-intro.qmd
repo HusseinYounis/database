@@ -3,7 +3,7 @@ title: "Introduction to NoSQL Databases"
 subtitle: "Chapter 14"
 ---
 
-## §14.0 Beyond the Relational Model
+## Beyond the Relational Model
 
 Chapters 5–13 showed how relational databases guarantee ACID transactions, enforce declarative
 constraints, and answer ad-hoc queries through SQL.
@@ -16,7 +16,7 @@ This chapter introduces the *NoSQL* family of databases that emerged to address 
 
 ---
 
-## 14.1 Motivation: Challenges at Internet Scale
+## Motivation: Challenges at Internet Scale
 
 | Challenge | Relational Model's Weakness |
 |-----------|-----------------------------|
@@ -32,7 +32,7 @@ This chapter introduces the *NoSQL* family of databases that emerged to address 
 
 ---
 
-## 14.2 The CAP Theorem
+## The CAP Theorem
 
 Proposed by Eric Brewer (PODC 2000) and formally proved by Gilbert & Lynch (2002):
 
@@ -72,7 +72,7 @@ Therefore, the practical design choice is always between **CP** and **AP** — n
 
 ---
 
-## 14.3 BASE vs. ACID
+## BASE vs. ACID
 
 NoSQL systems replace ACID with **BASE**:
 
@@ -88,9 +88,9 @@ The window of inconsistency is typically milliseconds to seconds.
 
 ---
 
-## 14.4 The Four NoSQL Data Models
+## The Four NoSQL Data Models
 
-### 14.4.1 Key-Value Stores
+### Key-Value Stores
 
 The simplest model: a distributed hash map. Each key maps to an opaque **value** (blob, string, JSON, binary).
 
@@ -135,7 +135,7 @@ ZREVRANGE leaderboard 0 9 WITHSCORES  -- top 10
 | Distributed lock | `SET key value NX EX 30` (SETNX + expire) |
 :::
 
-### 14.4.2 Document Stores
+### Document Stores
 
 Each record is a **self-describing document** (JSON/BSON). Documents in the same collection may have different fields.
 
@@ -158,7 +158,7 @@ Each record is a **self-describing document** (JSON/BSON). Documents in the same
 | **Examples** | MongoDB, CouchDB, Firestore, Couchbase |
 | **Best for** | Catalogs, user profiles, content management, event logging |
 
-### 14.4.3 Column-Family Stores (Wide-Column)
+### Column-Family Stores (Wide-Column)
 
 Data is stored in rows where each row can have a different set of columns within a **column family**.
 
@@ -212,7 +212,7 @@ WHERE dept_id = ? AND hire_date > '2022-01-01';
 | Primary key = row identity | Partition key → which node; clustering key → sort order within partition |
 :::
 
-### 14.4.4 Graph Databases
+### Graph Databases
 
 Data is stored as **nodes** (entities) and **edges** (relationships), each with properties.
 
@@ -272,7 +272,7 @@ RETURN path
 
 ---
 
-## 14.5 NoSQL vs. RDBMS: Full Comparison
+## NoSQL vs. RDBMS: Full Comparison
 
 | Dimension | RDBMS | Document (MongoDB) | Column-Family (Cassandra) | Graph (Neo4j) |
 |-----------|-------|-------------------|--------------------------|--------------|
@@ -299,7 +299,7 @@ Modern architectures combine multiple database types for different workloads in 
 
 ---
 
-## 14.6 When to Choose NoSQL
+## When to Choose NoSQL
 
 ```{mermaid}
 %%| eval: true
@@ -318,7 +318,7 @@ flowchart TD
 
 ---
 
-## 14.7 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 14

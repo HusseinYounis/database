@@ -103,7 +103,7 @@ This engineered solution — the DBMS — is what this book is about. Every chap
 
 ---
 
-## 1.1 What Is a Database?
+## What Is a Database?
 
 A **database** is an organized collection of interrelated data that models some aspect of the real world. A **Database Management System (DBMS)** is the software layer that manages, stores, retrieves, and controls access to that data.
 
@@ -128,7 +128,7 @@ The database model introduced in this chapter becomes your foundation. All the t
 
 ---
 
-## 1.2 File Systems vs. DBMS
+## File Systems vs. DBMS
 
 The motivation section showed the problems with ad-hoc file storage through a concrete story. Here we name and formalize those problems so you can recognize them in any system you encounter:
 
@@ -148,7 +148,7 @@ Having seen *why* a DBMS is needed, we now need a vocabulary for *describing* th
 
 ---
 
-## 1.3 Data Models
+## Data Models
 
 A **data model** is a collection of concepts for describing the structure of a database — including the data types, relationships among data, and constraints that must hold on the data.
 
@@ -193,7 +193,7 @@ The relational model is elegant because it is mathematically grounded in **set t
 
 ---
 
-## 1.4 Database Schema vs. Instance
+## Database Schema vs. Instance
 
 Every database has two faces at any moment in time: its *structure* and its *current data*.
 
@@ -229,7 +229,7 @@ The distinction between schema and instance is the first of several **abstractio
 
 ---
 
-## 1.5 Three-Schema Architecture (ANSI/SPARC)
+## Three-Schema Architecture (ANSI/SPARC)
 
 As a database grows, different people interact with it differently: end users care about a grade-entry form; the application developer cares about the logical table structure; the storage engineer cares about disk blocks and indexes. The **three-schema architecture** separates these concerns.
 
@@ -273,7 +273,7 @@ The three-schema architecture explains *how* a DBMS provides data independence. 
 
 ---
 
-## 1.6 Database Languages
+## Database Languages
 
 A DBMS provides structured languages for every interaction. Modern SQL unifies all of these into a single language, but the conceptual separation matters for understanding what each statement is doing.
 
@@ -292,7 +292,7 @@ With a language defined, we need to understand who uses it.
 
 ---
 
-## 1.7 Database Users and Administrators
+## Database Users and Administrators
 
 Different people interact with a database system in fundamentally different ways, with different tools, different technical knowledge, and different responsibilities.
 
@@ -315,20 +315,11 @@ With users and roles defined, we can look inside the DBMS to understand the soft
 
 ---
 
-## 1.8 DBMS Deployment Architecture
+## DBMS Deployment Architecture
 
 A DBMS does not always run on the same machine as the application that uses it. **Deployment architecture** describes how many independent layers (*tiers*) exist between the end user and the DBMS engine. More tiers increase security and scalability at the cost of added complexity.
 
-```{mermaid}
-%%| eval: true
-%%| echo: false
-flowchart LR
-    T1["1-Tier<br/>User + App + DB<br/>on one machine"]
-    T2["2-Tier<br/>Client ↔ DB Server"]
-    T3["3-Tier<br/>Client ↔ App Server ↔ DB Server"]
-    T1 -.->|"add DB server"| T2
-    T2 -.->|"add app layer"| T3
-```
+![DBMS Tier Architecture Overview](../images/dbms-tier-architecture.png){fig-align="center" width="80%"}
 
 ---
 
@@ -336,16 +327,9 @@ flowchart LR
 
 All components — user interface, application logic, and the DBMS — reside on a **single machine**. The user interacts directly with the database with no network involvement.
 
-```{mermaid}
-%%| eval: true
-%%| echo: false
-flowchart TD
-    U["👤 User"]
-    APP["Application +<br/>Business Logic"]
-    DB["🗄️ DBMS + Database"]
-    U --> APP --> DB
-    style DB fill:#fdf2e9,stroke:#e67e22,stroke-width:2px
-```
+![1-Tier (Single-Tier) Architecture](../images/1tier-architecture.png){fig-align="center" width="80%"}
+
+![Example of Single Tier DBMS Architecture](../images/1tier-architecture-example.png){fig-align="center" width="80%"}
 
 **When to use:** Learning environments, local development, single-user desktop tools (e.g., a SQLite-backed app, MS Access on a single laptop).
 
@@ -371,6 +355,8 @@ flowchart LR
     style C fill:#e8f4fd,stroke:#2980b9,stroke-width:2px
     style S fill:#fdf2e9,stroke:#e67e22,stroke-width:2px
 ```
+
+![Example of 2-Tier (Client-Server) Architecture](../images/2tier-architecture-example.png){fig-align="center" width="80%"}
 
 **When to use:** Departmental applications, internal tools where the developer controls all clients (e.g., a bank teller terminal, a clinic management desktop app).
 
@@ -400,6 +386,8 @@ flowchart TD
     style D fill:#fdf2e9,stroke:#e67e22,stroke-width:2px
 ```
 
+![Example of 3-Tier Architecture](../images/3tier-architecture-example.png){fig-align="center" width="80%"}
+
 **When to use:** Virtually all modern web applications — e-commerce, banking portals, social media, ERP systems.
 
 | Concern | How 3-tier addresses it |
@@ -428,7 +416,7 @@ The tier architecture describes *where* the DBMS engine runs relative to the use
 
 ---
 
-## 1.9 Advantages of Using a DBMS
+## Advantages of Using a DBMS
 
 ::: callout-tip
 ## Key Advantages (exam-ready list)

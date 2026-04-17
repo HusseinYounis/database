@@ -7,7 +7,7 @@ The ER model of Chapter 3 handles most real-world data structures, but it lacks 
 
 ---
 
-## 4.1 Subclasses, Superclasses, and Inheritance
+## Subclasses, Superclasses, and Inheritance
 
 An entity type $S$ is a **subclass** of entity type $C$ if:
 - Every entity instance of $S$ is *also* an instance of $C$
@@ -41,7 +41,7 @@ With the IS-A relationship established, we can now distinguish between two desig
 
 ---
 
-## 4.2 Specialization
+## Specialization
 
 **Specialization** is a **top-down** design process: starting with a superclass, the designer defines subclasses that represent better-defined subsets of the superclass.
 
@@ -84,7 +84,7 @@ A specialization carries two independent constraints, each with two options:
 
 ---
 
-## 4.3 Generalization
+## Generalization
 
 **Generalization** is the **bottom-up** process: the designer observes that several entity types share common attributes and abstracts those into a new superclass.
 
@@ -108,7 +108,7 @@ With hierarchies defined, the next structural concept addresses how entities org
 
 ---
 
-## 4.4 Specialization Hierarchies and Lattices
+## Specialization Hierarchies and Lattices
 
 | Structure | Description | Constraint |
 |-----------|-------------|-----------|
@@ -135,7 +135,7 @@ A `STUDENT_EMPLOYEE` entity must simultaneously be an instance of both `EMPLOYEE
 
 ---
 
-## 4.5 Aggregation
+## Aggregation
 
 **Aggregation** promotes an existing *relationship type* to a higher-level entity, allowing that relationship to participate in another relationship.
 
@@ -163,7 +163,7 @@ When mapped to relational tables, the aggregation maps to its junction table (`W
 
 ---
 
-## 4.6 Category (UNION) Types
+## Category (UNION) Types
 
 A **category** (or *Union type*) is a subclass that can come from **different, unrelated superclass types**. The key difference from a lattice node:
 
@@ -195,7 +195,7 @@ Categories require a **surrogate key** (`OwnerId`) because the natural keys of d
 
 ---
 
-## 4.7 EER-to-Relational Mapping
+## EER-to-Relational Mapping
 
 ### Mapping Specialization — Four Options
 
@@ -249,7 +249,7 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)
 
 ---
 
-## 4.8 EER vs. Object-Oriented Mapping
+## EER vs. Object-Oriented Mapping
 
 The EER specialization/generalization hierarchy closely resembles inheritance in object-oriented languages. The correspondences are:
 

@@ -3,7 +3,7 @@ title: "Concurrency Control & Scheduling"
 subtitle: "Chapter 13"
 ---
 
-## §13.0 From Problem to Protocol
+## From Problem to Protocol
 
 Chapter 12 identified four concurrency anomalies (lost update, dirty read, non-repeatable read,
 phantom read) and four isolation levels that prevent them.
@@ -12,7 +12,7 @@ by controlling the schedule in which operations execute.
 
 ---
 
-## 13.1 Schedules
+## Schedules
 
 A **schedule** (or *history*) $S$ is a total ordering of all operations from a set of concurrent
 transactions that preserves the intra-transaction order within each transaction.
@@ -41,7 +41,7 @@ The goal of concurrency control is to allow non-serial schedules that are still 
 
 ---
 
-## 13.2 Conflict Serializability
+## Conflict Serializability
 
 ### Conflicting Operations
 
@@ -98,7 +98,7 @@ If the graph were acyclic, the topological sort of the graph gives the equivalen
 
 ---
 
-## 13.3 View Serializability
+## View Serializability
 
 **View serializability** is a weaker (more permissive) criterion than conflict serializability.
 Two schedules are **view-equivalent** iff:
@@ -115,7 +115,7 @@ View serializability is NP-complete to test → not used in practice.
 
 ---
 
-## 13.4 Recoverability
+## Recoverability
 
 ### Recoverable Schedules
 
@@ -164,7 +164,7 @@ flowchart LR
 
 ---
 
-## 13.5 Two-Phase Locking (2PL) — Full Protocol
+## Two-Phase Locking (2PL) — Full Protocol
 
 ### Lock Types
 
@@ -228,7 +228,7 @@ SELECT * FROM Employee FOR SHARE NOWAIT;
 
 ---
 
-## 13.6 Deadlocks
+## Deadlocks
 
 A **deadlock** is a circular wait where each transaction holds a lock that another transaction is waiting for.
 
@@ -276,7 +276,7 @@ Instead of detection + abort, prevent cycles from forming:
 
 ---
 
-## 13.7 Timestamp-Based Concurrency Control
+## Timestamp-Based Concurrency Control
 
 Every transaction receives a timestamp $TS(T)$ at start. Two additional timestamps are maintained per data item $X$:
 
@@ -298,7 +298,7 @@ Every transaction receives a timestamp $TS(T)$ at start. Two additional timestam
 
 ---
 
-## 13.8 Multiversion Concurrency Control (MVCC)
+## Multiversion Concurrency Control (MVCC)
 
 MVCC is used by the majority of modern DBMS (PostgreSQL, MySQL InnoDB, Oracle, CockroachDB).
 
@@ -328,7 +328,7 @@ PostgreSQL's **Serializable Snapshot Isolation (SSI)** extends MVCC with anti-de
 
 ---
 
-## 13.9 Optimistic Concurrency Control (OCC)
+## Optimistic Concurrency Control (OCC)
 
 OCC assumes conflicts are **rare** — so validate only at commit time rather than locking proactively.
 
@@ -344,7 +344,7 @@ OCC is ideal for **read-heavy, low-conflict** workloads. It can cause high abort
 
 ---
 
-## 13.10 Interactive: Isolation Level Anomaly Explorer
+## Interactive: Isolation Level Anomaly Explorer
 
 ```{ojs}
 //| echo: false
@@ -378,7 +378,7 @@ viewof level = Inputs.select(
 
 ---
 
-## 13.11 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 13
@@ -498,7 +498,7 @@ $$
 S_2: r_1(X)\; r_2(X)\; w_1(X)\; w_2(X)\; c_1\; c_2
 $$
 
-## 13.2 Serializability
+## Serializability
 
 ### Conflict Serializability
 
@@ -535,7 +535,7 @@ Conflicts:
 
 Graph: $T_1 \to T_2$ — no cycle → **conflict-serializable** (equivalent to serial order $T_1, T_2$).
 
-## 13.3 View Serializability
+## View Serializability
 
 **View serializability** is a weaker (more permissive) notion:
 
@@ -551,7 +551,7 @@ Two schedules $S$ and $S'$ are **view-equivalent** iff for each data item $X$:
 View serializability is NP-complete to check, so most DBMS use conflict-serializability (which is polynomial via precedence graphs).
 :::
 
-## 13.4 Recoverability
+## Recoverability
 
 A schedule is **recoverable** iff no transaction $T_i$ commits before all transactions $T_j$ that wrote data read by $T_i$ have committed.
 
@@ -589,7 +589,7 @@ $$
 
 All practical DBMS implement (at minimum) recoverable, cascadeless schedules.
 
-## 13.5 Concurrency Control Protocols
+## Concurrency Control Protocols
 
 ### 2PL Variants (Review and Extension)
 
@@ -641,7 +641,7 @@ Assumes conflicts are rare. Three phases per transaction:
 
 **Good for** read-heavy workloads with few conflicts.
 
-## 13.6 Summary: Isolation Implementations
+## Summary: Isolation Implementations
 
 | Approach | Mechanism | Used By |
 |----------|-----------|---------|
@@ -650,7 +650,7 @@ Assumes conflicts are rare. Three phases per transaction:
 | Optimistic | Validate before commit | In-memory DBs, some NoSQL |
 | Serializable Snapshot Isolation (SSI) | MVCC + conflict detection | PostgreSQL ≥9.1, serializable level |
 
-## 13.7 Timestamp Protocol Example
+## Timestamp Protocol Example
 
 ```
 Transactions: T1 (TS=1), T2 (TS=2)

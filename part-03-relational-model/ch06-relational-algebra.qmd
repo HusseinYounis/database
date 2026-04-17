@@ -17,7 +17,7 @@ To load the Company Database, paste the **inline-relation schema** from §6.1 in
 
 ---
 
-## 6.1 Company Database Schema for RELAX
+## Company Database Schema for RELAX
 
 The following schema loads the complete Enhanced Company Database — 30 employees, 8 departments, 12 projects — directly into RELAX.
 
@@ -196,7 +196,7 @@ erDiagram
 
 ---
 
-## 6.2 What Is Relational Algebra?
+## What Is Relational Algebra?
 
 **Relational algebra** is a **procedural formal query language** for relations. Each *operation* takes one or two relations as input and returns a new relation as output.
 
@@ -213,7 +213,7 @@ There are **6 fundamental operations** (from which all others can be derived) an
 
 ---
 
-## 6.3 Result Schema Notation
+## Result Schema Notation
 
 For every operation in this chapter, we track the **result schema** — the column names and degree of the output relation. This is exactly what the DBMS query optimizer computes before execution.
 
@@ -227,7 +227,7 @@ Column names in a result use **qualified notation** `Table.Column` when there is
 
 ---
 
-## 6.4 Fundamental Operations
+## Fundamental Operations
 
 ### 1. Select — $\sigma$ (Filter Rows)
 
@@ -424,7 +424,7 @@ This is especially useful for **self-joins** (joining a table with itself), wher
 
 ---
 
-## 6.5 Additional (Derived) Operations
+## Additional (Derived) Operations
 
 ### 7. Intersection — $\cap$
 
@@ -554,7 +554,7 @@ Returns SSNs of employees who work on **all** projects controlled by department 
 
 ---
 
-## 6.6 Composed Queries — Company Database Examples
+## Composed Queries — Company Database Examples
 
 ### Q1: Names of employees who work in the 'Research' department
 
@@ -631,7 +631,7 @@ WHERE Ssn NOT IN (SELECT Essn FROM Works_On);
 
 ---
 
-## 6.7 Algebra → Execution Plan and Query Optimization
+## Algebra → Execution Plan and Query Optimization
 
 When the DBMS receives a SQL query, the **DML compiler** translates it into a relational algebra expression tree. The **query optimizer** then applies **equivalence rules** to rewrite the tree into a cheaper form.
 
@@ -703,7 +703,7 @@ The optimization reduces tuples processed from **240 to 30** — and that ratio 
 
 ---
 
-## 6.8 Relational Algebra vs. SQL — Correspondence
+## Relational Algebra vs. SQL — Correspondence
 
 | Relational Algebra | SQL Equivalent |
 |-------------------|----------------|

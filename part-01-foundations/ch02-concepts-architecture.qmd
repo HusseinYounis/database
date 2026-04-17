@@ -7,7 +7,7 @@ Chapter 1 answered *why* we use a database. This chapter answers *how* we build 
 
 ---
 
-## 2.1 The Database Design Lifecycle
+## The Database Design Lifecycle
 
 No database should be designed from thin air. A well-established **design lifecycle** guides the process from understanding what users need to deploying a production system.
 
@@ -47,7 +47,7 @@ With the lifecycle established, we now look more closely at one of its most impo
 
 ---
 
-## 2.2 Data Abstraction Levels
+## Data Abstraction Levels
 
 The three-schema architecture from Chapter 1 described *what* the three levels are. Here we go one level deeper and explain *how* each level is realized in a real DBMS.
 
@@ -85,7 +85,7 @@ The abstraction levels are defined in the *design* of the database. When the dat
 
 ---
 
-## 2.3 DBMS Deployment Architecture — Practical Considerations
+## DBMS Deployment Architecture — Practical Considerations
 
 Chapter 1 (Section 1.8) introduced the 1-tier, 2-tier, and 3-tier deployment architectures conceptually. Here we examine the engineering trade-offs each tier imposes and how modern systems extend beyond the basic three tiers.
 
@@ -160,7 +160,7 @@ Understanding *where* the DBMS runs in the deployment topology clarifies *what* 
 
 ---
 
-## 2.4 DBMS Component Architecture (Detailed)
+## DBMS Component Architecture (Detailed)
 
 A DBMS is a layered system of cooperating subsystems. Every SQL statement you write passes through each layer below:
 
@@ -235,7 +235,7 @@ All of these components rely on metadata stored in the system catalog.
 
 ---
 
-## 2.5 The System Catalog (Data Dictionary)
+## The System Catalog (Data Dictionary)
 
 The **system catalog** is a special database-within-the-database that stores metadata about every object in the system. It is the backbone of the query optimizer and the DDL compiler.
 
@@ -278,7 +278,7 @@ For `WHERE Dno = 5`, if the catalog says `Dno` has 8 distinct values over 30,000
 
 ---
 
-## 2.6 Types of Database Systems
+## Types of Database Systems
 
 ### By Data Model
 
@@ -310,7 +310,7 @@ For `WHERE Dno = 5`, if the catalog says `Dno` has 8 distinct values over 30,000
 
 ---
 
-## 2.7 Requirements Collection and Analysis
+## Requirements Collection and Analysis
 
 Before a single table can be designed, the analyst must understand exactly what the system must do. Skipping this phase is the single most common cause of costly database redesigns six months into a project.
 

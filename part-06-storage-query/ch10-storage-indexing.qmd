@@ -3,7 +3,7 @@ title: "Storage & Indexing"
 subtitle: "Chapter 10"
 ---
 
-## §10.0 Why Storage Matters
+## Why Storage Matters
 
 Chapter 11 (Query Processing) will show you *how* a query executes.
 But all execution happens ultimately by reading **pages** from disk into memory.
@@ -12,7 +12,7 @@ and indexes exist to reduce that count dramatically.
 
 ---
 
-## 10.1 Storage Hierarchy
+## Storage Hierarchy
 
 ```{mermaid}
 %%| eval: true
@@ -41,7 +41,7 @@ Query cost is measured in **number of page I/Os**, not rows accessed.
 
 ---
 
-## 10.2 Records and Page Layout
+## Records and Page Layout
 
 ### Record Formats
 
@@ -74,7 +74,7 @@ This allows records to be moved within the page during compaction without changi
 
 ---
 
-## 10.3 File Organizations
+## File Organizations
 
 | Organization | Layout | Best For |
 |-------------|--------|---------|
@@ -85,7 +85,7 @@ This allows records to be moved within the page during compaction without changi
 
 ---
 
-## 10.4 Index Concepts
+## Index Concepts
 
 An **index** is an auxiliary data structure that maps **search key → record location (RID)**.
 It is separate from the data file and maintained automatically on INSERT/UPDATE/DELETE.
@@ -122,7 +122,7 @@ Every secondary index stores the primary key as the RID — requiring one extra 
 
 ---
 
-## 10.5 B+ Tree Index
+## B+ Tree Index
 
 The **B+ Tree** is the dominant index structure across all major RDBMS (MySQL, PostgreSQL, Oracle, SQL Server).
 
@@ -180,7 +180,7 @@ Four page reads to find any record in a 100-million-row table.
 
 ---
 
-## 10.6 Interactive: B+ Tree Order Explorer
+## Interactive: B+ Tree Order Explorer
 
 ```{ojs}
 //| echo: false
@@ -210,7 +210,7 @@ viewof n = Inputs.range([1000, 1_000_000_000], {value: 10_000_000, step: 1000, l
 
 ---
 
-## 10.7 Hash Indexes
+## Hash Indexes
 
 A **hash index** applies a hash function $h(k)$ to map a key to a **bucket** where matching records are stored.
 
@@ -247,7 +247,7 @@ Hash indexes are available as `USING HASH` in PostgreSQL and as `MEMORY` storage
 
 ---
 
-## 10.8 Bitmap Indexes
+## Bitmap Indexes
 
 A **bitmap index** stores, for each distinct value $v$ of the indexed column, a **bit vector** of length $N$ (one bit per row), where bit $i = 1$ iff row $i$ has value $v$.
 
@@ -316,7 +316,7 @@ PostgreSQL does not have a native `CREATE BITMAP INDEX`, but the query planner p
 
 ---
 
-## 10.9 Index Selection Guidelines
+## Index Selection Guidelines
 
 ### When to Create an Index
 
@@ -396,7 +396,7 @@ A composite index on `(A, B, C)` is usable for:
 
 ---
 
-## 10.10 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 10
@@ -490,7 +490,7 @@ A composite index on `(A, B, C)` is usable for:
     bitmap behavior. What are the trade-offs compared to a native bitmap index?
 
 
-## 10.1 Storage Hierarchy
+## Storage Hierarchy
 
 ```
 Register (< 1 ns)
@@ -513,7 +513,7 @@ The DBMS **buffer manager** bridges RAM and disk, caching frequently used pages.
 
 All disk I/O is in **pages**. The cost metric in query optimization is the number of page reads/writes.
 
-## 10.2 Records and Pages
+## Records and Pages
 
 ### Record Types
 
@@ -538,7 +538,7 @@ All disk I/O is in **pages**. The cost metric in query optimization is the numbe
 
 **Slotted page** design keeps a **slot array** at the end. This allows records to move within a page without changing their external address (page_id, slot_id).
 
-## 10.3 File Organizations
+## File Organizations
 
 | Organization | Description | Best For |
 |-------------|-------------|---------|
@@ -547,7 +547,7 @@ All disk I/O is in **pages**. The cost metric in query optimization is the numbe
 | **Hash** | Records in buckets by hash(key) | Exact-match equality |
 | **Clustered** | Records sorted to match a B+ tree index | Range queries + index access |
 
-## 10.4 Index Concepts
+## Index Concepts
 
 An **index** is an auxiliary data structure that speeds up retrieval by mapping search key values to record locations.
 
@@ -578,7 +578,7 @@ Index leaf → page range                Index leaf → scattered pages
 (sequential I/O — fast for ranges)     (random I/O — slow for ranges)
 ```
 
-## 10.5 B+ Tree Index
+## B+ Tree Index
 
 The **B+ Tree** is the dominant index structure in all major RDBMS.
 
@@ -620,7 +620,7 @@ Use a B+ Tree index for:
 - **GROUP BY** on the indexed column — efficient grouping
 :::
 
-## 10.6 Hash Index
+## Hash Index
 
 A **hash index** uses a hash function $h(k)$ to map search key $k$ to a **bucket**.
 
@@ -644,7 +644,7 @@ Uses a **global depth** and **directory** to grow buckets without reorganizing t
 - Split only the full bucket
 - Global depth grows only when needed (doubles directory)
 
-## 10.7 Index Selection Guidelines
+## Index Selection Guidelines
 
 ### When to Create an Index
 

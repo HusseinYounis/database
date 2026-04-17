@@ -3,7 +3,7 @@ title: "Query Processing & Optimization"
 subtitle: "Chapter 11"
 ---
 
-## §11.0 The Journey of a SELECT
+## The Journey of a SELECT
 
 In Chapter 10 you learned *where* data lives (pages, B+ trees, bitmap bitmaps).
 In Chapter 6 you learned *what* operations transform data (relational algebra).
@@ -13,7 +13,7 @@ The answer is a four-stage pipeline that every major RDBMS follows.
 
 ---
 
-## 11.1 Query Processing Pipeline
+## Query Processing Pipeline
 
 ```{mermaid}
 %%| eval: true
@@ -62,7 +62,7 @@ Executes the physical plan:
 
 ---
 
-## 11.2 Translation to Relational Algebra
+## Translation to Relational Algebra
 
 ```sql
 SELECT E.Fname, D.Dname
@@ -87,7 +87,7 @@ This is better — the filter reduces Employee rows *before* the join (fewer row
 
 ---
 
-## 11.3 Logical Optimization: Equivalence Rules
+## Logical Optimization: Equivalence Rules
 
 The optimizer systematically applies these rules to push work closer to the leaves:
 
@@ -131,7 +131,7 @@ flowchart TD
 
 ---
 
-## 11.4 Cost Model
+## Cost Model
 
 The optimizer estimates every operator's I/O cost using **catalog statistics**.
 
@@ -162,7 +162,7 @@ On NVMe SSDs, CPU cost becomes more relevant — some modern optimizers model bo
 
 ---
 
-## 11.5 Selection Algorithms
+## Selection Algorithms
 
 ### Sequential Scan
 
@@ -190,11 +190,11 @@ Range query `σ_{Salary > 50000}(Employee)`:
 
 ---
 
-## 11.6 Join Algorithms
+## Join Algorithms
 
 Joins are the most expensive operation. Three fundamental algorithms:
 
-### 11.6.1 Nested-Loop Join
+### Nested-Loop Join
 
 ```
 for each tuple r in R (outer):
@@ -208,7 +208,7 @@ for each tuple r in R (outer):
 | Block NLJ ($M$ buffers) | $\lceil B(R)/(M-2) \rceil \cdot B(S) + B(R)$ | Inner scanned once per outer *block* |
 | Index NLJ | $B(R) + T(R) \cdot C_{idx}$ | Uses index on inner; $C_{idx}$ ≈ 3–5 for B+ tree |
 
-### 11.6.2 Sort-Merge Join
+### Sort-Merge Join
 
 ```
 Phase 1: External sort R on join key → R'   (cost: 2 B(R) per pass)
@@ -220,7 +220,7 @@ Total cost ≈ $3(B(R) + B(S))$ for the common two-pass case.
 
 Benefits: excellent when data is already sorted, or when the output needs to be sorted (avoids a second sort).
 
-### 11.6.3 Hash Join
+### Hash Join
 
 ```
 Build phase:   partition R into h buckets via h1(key)
@@ -267,7 +267,7 @@ flowchart TD
 
 ---
 
-## 11.7 Pipeline vs Materialization
+## Pipeline vs Materialization
 
 When executing a multi-operator plan, the engine can transmit rows between operators in two ways:
 
@@ -294,7 +294,7 @@ flowchart TD
 
 ---
 
-## 11.8 EXPLAIN and EXPLAIN ANALYZE
+## EXPLAIN and EXPLAIN ANALYZE
 
 `EXPLAIN` shows the optimizer's chosen plan without executing the query.
 `EXPLAIN ANALYZE` executes the query and reports both estimated and actual statistics.
@@ -374,7 +374,7 @@ Fix: run `ANALYZE Employee;` (PostgreSQL) or `ANALYZE TABLE Employee;` (MySQL) t
 
 ---
 
-## 11.9 Putting It All Together: A Worked Plan
+## Putting It All Together: A Worked Plan
 
 ```sql
 -- Q: Names + total hours for Research dept employees working > 20 h
@@ -421,7 +421,7 @@ Key optimization choices:
 
 ---
 
-## 11.10 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 11
@@ -524,7 +524,7 @@ Key optimization choices:
     - What cardinality statistic would the optimizer need to correctly estimate the benefit?
 
 
-## 11.1 Query Processing Pipeline
+## Query Processing Pipeline
 
 ```
 SQL Query (text)
@@ -548,7 +548,7 @@ SQL Query (text)
    Result set
 ```
 
-## 11.2 Parsing and Translation
+## Parsing and Translation
 
 The parser checks SQL syntax and builds a **parse tree**. The translator converts it to an initial **relational algebra (RA) expression**:
 
@@ -564,7 +564,7 @@ $$
 \pi_{\text{fname, dept\_name}}\bigl(\sigma_{\text{salary} > 50000}(\text{employee} \bowtie_{\text{dept\_no}} \text{department})\bigr)
 $$
 
-## 11.3 Query Optimization Overview
+## Query Optimization Overview
 
 The optimizer's job: find the **cheapest execution plan** from the many equivalent RA expressions.
 
@@ -579,7 +579,7 @@ The optimizer's job: find the **cheapest execution plan** from the many equivale
 1. **Logical optimization**: Apply algebraic equivalences to improve the RA tree (push selections down, push projections)
 2. **Physical optimization**: Choose algorithms for each logical operator (which join algorithm? which access path?)
 
-## 11.4 Cost Model
+## Cost Model
 
 The optimizer uses a **cost model** to estimate the cost of each plan:
 
@@ -614,7 +614,7 @@ The optimizer reads statistics to estimate costs:
 - $V(A, R)$: domain cardinality (distinct values)
 - Histogram: distribution of attribute values
 
-## 11.5 Selection Algorithms
+## Selection Algorithms
 
 ### Linear Scan (Sequential Scan)
 
@@ -638,7 +638,7 @@ Range: σ_{A ≥ v}(R)
 └── Unclustered B+ tree: may be slower than full scan if many matches
 ```
 
-## 11.6 Join Algorithms
+## Join Algorithms
 
 Joins are the most expensive operations. Three fundamental algorithms:
 
@@ -687,7 +687,7 @@ Phase 3 (Probe):   For each bucket i, build in-memory hash table on R_i,
 | Sort-Merge | $B(R) + B(S)$ (pre-sorted) | Sort cost + merge | Data pre-sorted, output sorted |
 | Hash Join | $B(R) + B(S)$ (build fits in mem) | $3(B(R)+B(S))$ | Large unsorted equijoins |
 
-## 11.7 Join Ordering and Plan Enumeration
+## Join Ordering and Plan Enumeration
 
 ### Left-Deep vs. Right-Deep vs. Bushy Trees
 
@@ -713,7 +713,7 @@ For each subset of relations $S$:
 
 This finds the global optimum in $O(3^n)$ time instead of $O(n!)$.
 
-## 11.8 Query Plan Reading (EXPLAIN)
+## Query Plan Reading (EXPLAIN)
 
 ```sql
 EXPLAIN ANALYZE

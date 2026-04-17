@@ -3,7 +3,7 @@ title: "Advanced SQL"
 subtitle: "Chapter 8"
 ---
 
-## §8.0 Building on the Basics
+## Building on the Basics
 
 Chapter 7 covered the foundational SELECT–FROM–WHERE pipeline, joins, and aggregates.
 This chapter introduces the features that make SQL genuinely powerful for real-world applications:
@@ -19,7 +19,7 @@ This chapter introduces the features that make SQL genuinely powerful for real-w
 
 ---
 
-## 8.1 Common Table Expressions (CTEs)
+## Common Table Expressions (CTEs)
 
 A **Common Table Expression** names a temporary result set scoped to a single query.
 It replaces deeply nested subqueries with readable, layered logic.
@@ -32,7 +32,7 @@ WITH cte_name AS (
 SELECT ... FROM cte_name ...;
 ```
 
-### 8.1.1 Single CTE — Readable Subquery
+### Single CTE — Readable Subquery
 
 ```sql
 -- Employees earning more than the overall average salary
@@ -45,7 +45,7 @@ WHERE  E.Salary > A.Avg
 ORDER  BY E.Salary DESC;
 ```
 
-### 8.1.2 Multiple CTEs — Chained Steps
+### Multiple CTEs — Chained Steps
 
 ```sql
 -- Step 1: department headcount
@@ -71,7 +71,7 @@ FROM   Department D
 ORDER  BY CostPerHead DESC;
 ```
 
-### 8.1.3 Recursive CTE
+### Recursive CTE
 
 A recursive CTE has two parts joined by `UNION ALL`:
 
@@ -163,7 +163,7 @@ Oracle's `CONNECT BY` automatically detects cycles when `NOCYCLE` is specified.
 
 ---
 
-## 8.2 Window Functions
+## Window Functions
 
 Window functions compute values *across a set of rows related to the current row* **without collapsing** those rows into a single output row — unlike `GROUP BY`.
 
@@ -175,7 +175,7 @@ FUNCTION_NAME() OVER (
 )
 ```
 
-### 8.2.1 Ranking Functions
+### Ranking Functions
 
 ```sql
 SELECT Fname, Lname, Dno, Salary,
@@ -195,7 +195,7 @@ FROM   Employee;
 | 38 000 | 3 | 2 | 2 |
 | 35 000 | 4 | 4 *(gap!)* | 3 *(no gap)* |
 
-### 8.2.2 Analytic / Offset Functions
+### Analytic / Offset Functions
 
 ```sql
 -- For each employee: show salary, the previous hire's salary, and next hire's salary
@@ -207,7 +207,7 @@ SELECT Fname, Lname, Bdate, Salary,
 FROM   Employee;
 ```
 
-### 8.2.3 Running Aggregates
+### Running Aggregates
 
 ```sql
 -- Cumulative total salary spent, ordered by employee bdate
@@ -221,7 +221,7 @@ FROM   Employee
 ORDER  BY Bdate;
 ```
 
-### 8.2.4 Frame Specification (ROWS vs RANGE)
+### Frame Specification (ROWS vs RANGE)
 
 ::: {.panel-tabset}
 
@@ -267,7 +267,7 @@ FROM Employee;
 
 :::
 
-### 8.2.5 Window Functions vs GROUP BY
+### Window Functions vs GROUP BY
 
 | Aspect | GROUP BY | Window Function |
 |--------|---------|----------------|
@@ -278,12 +278,12 @@ FROM Employee;
 
 ---
 
-## 8.3 Views
+## Views
 
 A **view** is a stored SELECT statement with a name — a virtual table.
 When you query a view, the DBMS substitutes its definition (called *view expansion*).
 
-### 8.3.1 Creating and Querying Views
+### Creating and Querying Views
 
 ::: {.panel-tabset}
 
@@ -353,7 +353,7 @@ SELECT Dno, COUNT(*) AS n, AVG(Salary) AS avg_sal FROM Employee GROUP BY Dno;
 
 :::
 
-### 8.3.2 Updatable vs Non-Updatable Views
+### Updatable vs Non-Updatable Views
 
 A view supports DML (INSERT/UPDATE/DELETE) only under strict conditions:
 
@@ -391,11 +391,11 @@ UPDATE HighEarners SET Salary = 30000 WHERE Ssn = '123456789';  -- ERROR
 
 ---
 
-## 8.4 Stored Procedures and Functions
+## Stored Procedures and Functions
 
 Stored programs run inside the database engine — they avoid round-trips and centralize business logic.
 
-### 8.4.1 Stored Procedures
+### Stored Procedures
 
 ::: {.panel-tabset}
 
@@ -479,7 +479,7 @@ END;
 
 :::
 
-### 8.4.2 Stored Functions
+### Stored Functions
 
 Functions return a value and can be used inside SQL expressions.
 
@@ -534,7 +534,7 @@ SELECT Dname, DeptHeadcount(Dnumber) AS Headcount FROM Department;
 
 :::
 
-### 8.4.3 Procedures vs Functions vs Triggers
+### Procedures vs Functions vs Triggers
 
 | | Stored Procedure | Stored Function | Trigger |
 |--|-----------------|----------------|---------|
@@ -545,11 +545,11 @@ SELECT Dname, DeptHeadcount(Dnumber) AS Headcount FROM Department;
 
 ---
 
-## 8.5 Triggers
+## Triggers
 
 A **trigger** is a named database object that fires automatically when a specified DML event occurs on a table.
 
-### 8.5.1 Trigger Anatomy
+### Trigger Anatomy
 
 ```
 CREATE [OR REPLACE] TRIGGER trigger_name
@@ -566,7 +566,7 @@ trigger_body
 | `OLD` / `:OLD` | — (NULL) | Row before change | Row being deleted |
 | `NEW` / `:NEW` | Inserted row | Row after change | — (NULL) |
 
-### 8.5.2 Audit Trigger Example
+### Audit Trigger Example
 
 ::: {.panel-tabset}
 
@@ -651,7 +651,7 @@ END;
 
 :::
 
-### 8.5.3 Validation Trigger — Rejecting Bad Data
+### Validation Trigger — Rejecting Bad Data
 
 ```sql
 -- PostgreSQL: prevent salary reduction via trigger
@@ -682,11 +682,11 @@ FOR EACH ROW EXECUTE FUNCTION fn_no_salary_cut();
 
 ---
 
-## 8.6 JSON Functions
+## JSON Functions
 
 Modern RDBMS supports querying and manipulating JSON data directly in SQL.
 
-### 8.6.1 JSON Storage
+### JSON Storage
 
 ::: {.panel-tabset}
 
@@ -732,7 +732,7 @@ VALUES ('Laptop', '{"brand":"Dell","ram_gb":16,"tags":["work","portable"]}');
 
 :::
 
-### 8.6.2 Reading JSON Values
+### Reading JSON Values
 
 ::: {.panel-tabset}
 
@@ -798,7 +798,7 @@ FROM   Products P,
 
 :::
 
-### 8.6.3 Modifying JSON
+### Modifying JSON
 
 ::: {.panel-tabset}
 
@@ -853,7 +853,7 @@ WHERE  Id = 1;
 
 ---
 
-## 8.7 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 8
@@ -985,7 +985,7 @@ FROM employee e
 FULL OUTER JOIN department d ON e.dept_no = d.dept_no;
 ```
 
-## 8.2 Subqueries (Nested Queries)
+## Subqueries (Nested Queries)
 
 A **subquery** is a SELECT embedded within another SQL statement.
 
@@ -1070,7 +1070,7 @@ SELECT fname, salary FROM employee
 WHERE salary > ALL (SELECT salary FROM employee WHERE dept_no = 5);
 ```
 
-## 8.3 Common Table Expressions (CTE)
+## Common Table Expressions (CTE)
 
 CTEs make complex queries readable by naming intermediate results:
 
@@ -1112,7 +1112,7 @@ WITH RECURSIVE org_chart AS (
 SELECT * FROM org_chart;
 ```
 
-## 8.4 Views
+## Views
 
 A **view** is a **named, saved SELECT statement** — a virtual table.
 
@@ -1164,7 +1164,7 @@ UPDATE research_employees SET salary = 70000 WHERE ssn = '123456789';
 -- Allowed if the view is simple and updateable
 ```
 
-## 8.5 Triggers
+## Triggers
 
 A **trigger** is a stored procedure that automatically executes in response to a table event (`INSERT`, `UPDATE`, or `DELETE`).
 
@@ -1206,7 +1206,7 @@ EXECUTE FUNCTION log_salary_change();
 | UPDATE | Row before update | Row after update |
 | DELETE | Deleted row | NULL |
 
-## 8.6 Stored Procedures and Functions
+## Stored Procedures and Functions
 
 ### Stored Procedure (PostgreSQL)
 
@@ -1253,7 +1253,7 @@ FROM department;
 | Can commit/rollback | Yes | No (usually) | Subject to transaction |
 | Use case | Business operations | Computed values | Automatic audit/validation |
 
-## 8.7 Window Functions
+## Window Functions
 
 Window functions compute values across *related* rows without collapsing them into groups:
 

@@ -3,7 +3,7 @@ title: "Normalization & Functional Dependencies"
 subtitle: "Chapter 9"
 ---
 
-## §9.0 The Problem: Everything in One Table
+## The Problem: Everything in One Table
 
 Before diving into theory, start with a concrete problem.
 
@@ -31,7 +31,7 @@ Let us identify the **update anomalies** it creates and then systematically fix 
 
 ---
 
-## 9.1 Update Anomalies
+## Update Anomalies
 
 | Anomaly | What it means | Example in OrderLine |
 |---------|--------------|---------------------|
@@ -43,7 +43,7 @@ Let us identify the **update anomalies** it creates and then systematically fix 
 
 ---
 
-## 9.2 Functional Dependencies
+## Functional Dependencies
 
 A **functional dependency (FD)** $X \to Y$ states: whenever two rows have the same values for the attribute set $X$, they must have the same values for $Y$.
 
@@ -75,7 +75,7 @@ The *intended* primary key of `OrderLine` is the composite `{OrderId, ProductId}
 
 ---
 
-## 9.3 Armstrong's Axioms
+## Armstrong's Axioms
 
 **Armstrong's Axioms** are a complete and sound set of inference rules — using only these three, you can derive every valid FD.
 
@@ -127,7 +127,7 @@ Since $\{A\}^+ = \{A,B,C,D,E\}$ covers all attributes, $A$ alone is a **candidat
 
 ---
 
-## 9.4 Keys from Closures
+## Keys from Closures
 
 | Concept | Definition |
 |---------|-----------|
@@ -144,7 +144,7 @@ In `OrderLine`:
 
 ---
 
-## 9.5 Step-by-Step Normalization of OrderLine
+## Step-by-Step Normalization of OrderLine
 
 ### Step 1 — Is OrderLine in 1NF?
 
@@ -282,7 +282,7 @@ erDiagram
 
 ---
 
-## 9.6 Normal Form Summary
+## Normal Form Summary
 
 | Normal Form | Condition | What it eliminates |
 |------------|-----------|-------------------|
@@ -307,7 +307,7 @@ Use BCNF when possible; fall back to 3NF when you must preserve a specific depen
 
 ---
 
-## 9.7 BCNF Decomposition — A Case Where 3NF ≠ BCNF
+## BCNF Decomposition — A Case Where 3NF ≠ BCNF
 
 The BCNF and 3NF distinction matters when there are **multiple overlapping candidate keys**.
 
@@ -345,7 +345,7 @@ That is the dependency-preservation loss inherent to BCNF decomposition.
 
 ---
 
-## 9.8 Multivalued Dependencies and 4NF
+## Multivalued Dependencies and 4NF
 
 A **multivalued dependency (MVD)** $X \twoheadrightarrow Y$ holds when, for each value of $X$,
 the set of $Y$ values is independent of the remaining attributes $Z$.
@@ -379,7 +379,7 @@ EmployeeHobby(Ssn, Hobby)
 
 ---
 
-## 9.9 Canonical Cover (Minimal Cover)
+## Canonical Cover (Minimal Cover)
 
 The **canonical cover** $F_c$ of an FD set $F$ is an equivalent, minimal FD set:
 
@@ -391,7 +391,7 @@ The **canonical cover** $F_c$ of an FD set $F$ is an equivalent, minimal FD set:
 
 ---
 
-## 9.10 Dependency Preservation
+## Dependency Preservation
 
 A decomposition $\{R_1, R_2, \ldots, R_k\}$ of $R$ is **dependency-preserving** iff every FD in $F^+$ can be verified in at least one $R_i$ without performing a join:
 
@@ -406,7 +406,7 @@ The **3NF synthesis algorithm** always produces a lossless, dependency-preservin
 
 ---
 
-## 9.11 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 9
@@ -507,7 +507,7 @@ The **3NF synthesis algorithm** always produces a lossless, dependency-preservin
     be justified?
 
 
-## 9.1 Motivation: Problems with Bad Design
+## Motivation: Problems with Bad Design
 
 Consider a poorly designed relation `EMP_DEPT`:
 
@@ -527,7 +527,7 @@ This schema suffers from **update anomalies**:
 
 **Solution:** **Decompose** the relation and normalize it.
 
-## 9.2 Functional Dependencies
+## Functional Dependencies
 
 A **functional dependency (FD)** $X \to Y$ holds on relation $R$ if whenever two tuples agree on the attribute set $X$, they must agree on the attribute set $Y$.
 
@@ -554,7 +554,7 @@ DeptNo → {DName, MGRSSN}              -- DeptNo determines department details
 | **Trivial FD** | $X \to Y$ where $Y \subseteq X$ | `{SSN, Name} → SSN` |
 | **Transitive FD** | $X \to Z$ via $X \to Y \to Z$ where $Y$ is not a key | `SSN → DeptNo → DName` |
 
-## 9.3 Armstrong's Axioms
+## Armstrong's Axioms
 
 **Armstrong's Axioms** are a complete and sound set of inference rules for FDs:
 
@@ -598,7 +598,7 @@ $$
 \{A\}^+ = \{A\} \cup \{B\} \cup \{D\} \cup \{C\} = \{A, B, C, D\}
 $$
 
-## 9.4 Keys from FDs
+## Keys from FDs
 
 Using closure:
 
@@ -606,7 +606,7 @@ Using closure:
 - **Candidate key**: a minimal superkey (no proper subset is a superkey)
 - **Primary key**: chosen candidate key
 
-## 9.5 Canonical Cover (Minimal Cover) $F_c$
+## Canonical Cover (Minimal Cover) $F_c$
 
 The **canonical cover** $F_c$ of an FD set $F$ is an equivalent set of FDs that is:
 
@@ -620,7 +620,7 @@ The **canonical cover** $F_c$ of an FD set $F$ is an equivalent set of FDs that 
 2. Remove extraneous LHS attributes: check if $X \to A$ can be replaced by $X' \to A$ where $X' \subset X$
 3. Remove redundant FDs: remove $X \to A$ if it can be derived from remaining FDs
 
-## 9.6 Normal Forms
+## Normal Forms
 
 ### First Normal Form (1NF)
 
@@ -720,7 +720,7 @@ EMP_SKILL(SSN, Skill)
 EMP_HOBBY(SSN, Hobby)
 ```
 
-## 9.7 Lossless Decomposition
+## Lossless Decomposition
 
 A decomposition of $R$ into $(R_1, R_2)$ is **lossless** iff:
 
@@ -734,7 +734,7 @@ $$
 $$
 i.e., the shared attributes form a key in at least one of the sub-relations.
 
-## 9.8 Dependency Preservation
+## Dependency Preservation
 
 A decomposition preserves FDs if every FD in $F^+$ can be checked in some sub-relation without joining. Formally:
 

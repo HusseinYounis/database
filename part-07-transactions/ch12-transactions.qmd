@@ -3,7 +3,7 @@ title: "Transaction Processing"
 subtitle: "Chapter 12"
 ---
 
-## §12.0 Why Transactions?
+## Why Transactions?
 
 Chapters 7–8 showed you *how* to read and write data with SQL.
 But two problems arise in any real system:
@@ -18,7 +18,7 @@ durability after commit and recovery after failure.
 
 ---
 
-## 12.1 What Is a Transaction?
+## What Is a Transaction?
 
 A **transaction** is a sequence of one or more SQL operations that the DBMS treats as a single,
 indivisible unit of work.
@@ -37,7 +37,7 @@ first update automatically — money never disappears.
 
 ---
 
-## 12.2 ACID Properties
+## ACID Properties
 
 | Property | One-line definition |
 |---------|-------------------|
@@ -93,7 +93,7 @@ UPDATE Accounts SET Balance = Balance + 500 WHERE Id = 'B';
 
 ---
 
-## 12.3 Transaction States
+## Transaction States
 
 ```{mermaid}
 %%| eval: true
@@ -120,11 +120,11 @@ stateDiagram-v2
 
 ---
 
-## 12.4 Concurrency Anomalies
+## Concurrency Anomalies
 
 When multiple transactions run without coordination, four classes of anomaly can occur.
 
-### 12.4.1 Lost Update
+### Lost Update
 
 Two transactions both read a value, modify it independently, and write back — the second write overwrites the first.
 
@@ -137,7 +137,7 @@ Two transactions both read a value, modify it independently, and write back — 
 
 Correct result should be 80. T1's update is *lost*.
 
-### 12.4.2 Dirty Read (Reading Uncommitted Data)
+### Dirty Read (Reading Uncommitted Data)
 
 ```
 T1: Write(X = 200)    -- not yet committed
@@ -146,7 +146,7 @@ T1: ROLLBACK          -- X reverts to 100
 T2: uses X = 200      -- now based on data that never officially existed
 ```
 
-### 12.4.3 Non-Repeatable Read
+### Non-Repeatable Read
 
 ```
 T1: Read(X) = 100
@@ -154,7 +154,7 @@ T1: Read(X) = 100
 T1: Read(X) = 200   -- same query, different result within same transaction
 ```
 
-### 12.4.4 Phantom Read
+### Phantom Read
 
 ```
 T1: SELECT COUNT(*) WHERE Salary > 50000  →  10
@@ -164,7 +164,7 @@ T1: SELECT COUNT(*) WHERE Salary > 50000  →  11  -- new row "appeared"
 
 ---
 
-## 12.5 Isolation Levels
+## Isolation Levels
 
 SQL:1992 defines four standard isolation levels, each preventing progressively more anomalies.
 
@@ -231,7 +231,7 @@ Oracle supports only **READ COMMITTED** and **SERIALIZABLE** (no READ UNCOMMITTE
 
 ---
 
-## 12.6 Write-Ahead Logging (WAL)
+## Write-Ahead Logging (WAL)
 
 WAL is the mechanism that implements both **Atomicity** (rollback) and **Durability** (recovery after crash).
 
@@ -288,7 +288,7 @@ This maximises performance but requires recovery to handle both:
 
 ---
 
-## 12.7 Recovery: Undo and Redo
+## Recovery: Undo and Redo
 
 After a crash, the recovery manager reads the log and restores a consistent state.
 
@@ -334,7 +334,7 @@ After a crash, recovery only needs to examine log records from the last checkpoi
 
 ---
 
-## 12.8 Savepoints
+## Savepoints
 
 Savepoints allow partial rollback within a transaction without aborting the entire unit:
 
@@ -381,7 +381,7 @@ END;
 
 ---
 
-## 12.9 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 12
@@ -482,7 +482,7 @@ END;
     Which is better for a high-throughput OLTP system, and why?
 
 
-## 12.1 What Is a Transaction?
+## What Is a Transaction?
 
 A **transaction** is a logical unit of work that consists of one or more database operations that must be executed as an **indivisible whole** — either all succeed or none do.
 
@@ -497,7 +497,7 @@ COMMIT;
 
 If the system crashes after the first UPDATE but before the second, the transfer **must be rolled back** — we cannot allow money to vanish.
 
-## 12.2 ACID Properties
+## ACID Properties
 
 | Property | Definition |
 |---------|-----------|
@@ -506,7 +506,7 @@ If the system crashes after the first UPDATE but before the second, the transfer
 | **Isolation** | Concurrent transactions execute as if they were serial. Intermediate states not visible to others. |
 | **Durability** | Once a transaction is committed, its effects survive system failures (written to stable storage). |
 
-## 12.3 Transaction States
+## Transaction States
 
 ```
                 ┌─────────────────────────────┐
@@ -529,7 +529,7 @@ If the system crashes after the first UPDATE but before the second, the transfer
 | **Aborted** | Transaction rolled back; database restored to pre-transaction state |
 | **Terminated** | Either committed or aborted; leaves the system |
 
-## 12.4 Concurrency Issues
+## Concurrency Issues
 
 When multiple transactions run concurrently without control, several **anomalies** can arise:
 
@@ -568,7 +568,7 @@ T1: SELECT COUNT(*) WHERE salary>50000  → 10
 T1: SELECT COUNT(*) WHERE salary>50000  → 11  ← phantom row appeared!
 ```
 
-## 12.5 Transaction Isolation Levels
+## Transaction Isolation Levels
 
 SQL defines four standard isolation levels:
 
@@ -595,7 +595,7 @@ COMMIT;
 - Oracle: `READ COMMITTED`
 :::
 
-## 12.6 Concurrency Control: Two-Phase Locking (2PL)
+## Concurrency Control: Two-Phase Locking (2PL)
 
 **Two-Phase Locking** is the most widely used protocol for guaranteeing serializability.
 
@@ -644,7 +644,7 @@ SELECT * FROM employee WHERE dept_no = 5 FOR UPDATE;  -- Acquires X lock
 COMMIT;  -- Releases all locks
 ```
 
-## 12.7 Deadlocks
+## Deadlocks
 
 A **deadlock** occurs when two or more transactions wait for each other's locks indefinitely:
 
@@ -677,7 +677,7 @@ T3 → T1 (T3 waits for T1) ← cycle! deadlock
 - **Wait-Die**: older transactions wait; younger ones die (rollback and restart)
 - **Wound-Wait**: older transactions wound (abort) younger ones; younger ones wait
 
-## 12.8 Recovery: Logging and ARIES
+## Recovery: Logging and ARIES
 
 ### Why Recovery Is Needed
 

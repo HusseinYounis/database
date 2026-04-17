@@ -3,7 +3,7 @@ title: "MongoDB — Document Databases"
 subtitle: "Chapter 15"
 ---
 
-## §15.0 From Concepts to Queries
+## From Concepts to Queries
 
 Chapter 14 introduced the four NoSQL data models and positioned document stores as the right choice
 for flexible-schema, nested-data workloads.
@@ -11,7 +11,7 @@ This chapter drills into **MongoDB** — the world's most popular document datab
 lifecycle: document structure, CRUD operations, the aggregation pipeline, indexing, schema design
 patterns, and multi-document ACID transactions.
 
-## 15.1 MongoDB Architecture
+## MongoDB Architecture
 
 ### Core Concepts
 
@@ -46,7 +46,7 @@ MongoDB stores documents in **BSON** (Binary JSON):
 }
 ```
 
-## 15.2 Getting Started with MongoDB Shell
+## Getting Started with MongoDB Shell
 
 ```javascript
 // Show all databases
@@ -62,7 +62,7 @@ show collections
 db.getName()
 ```
 
-## 15.3 CRUD Operations
+## CRUD Operations
 
 ### Create — Inserting Documents
 
@@ -218,7 +218,7 @@ db.students.deleteMany({})
 db.students.drop()
 ```
 
-## 15.4 Aggregation Pipeline
+## Aggregation Pipeline
 
 The **aggregation pipeline** is MongoDB's most powerful feature — a sequence of **stages** that transform documents, similar to a Unix pipe:
 
@@ -329,7 +329,7 @@ db.students.aggregate([
 ```
 ```
 
-## 15.5 Indexing in MongoDB
+## Indexing in MongoDB
 
 ### Creating Indexes
 
@@ -371,7 +371,7 @@ db.students.find({ gpa: { $gte: 3.5 } }).explain("executionStats")
 // winningPlan.stage == "IXSCAN" → good!
 ```
 
-## 15.6 Schema Design Patterns
+## Schema Design Patterns
 
 Unlike SQL, MongoDB documents can **embed** related data. The key design decision: **embed vs. reference**.
 
@@ -422,7 +422,7 @@ Unlike SQL, MongoDB documents can **embed** related data. The key design decisio
 | **Computed** | Cache computed values to avoid repeated aggregation | `total_orders` field on customer |
 | **Extended Reference** | Copy frequently-read fields from referenced doc | Embed `product_name` in order items |
 
-## 15.7 MongoDB vs. SQL — Side-by-Side
+## MongoDB vs. SQL — Side-by-Side
 
 ```javascript
 // SQL: SELECT * FROM students WHERE gpa > 3.5 ORDER BY name ASC LIMIT 10
@@ -443,7 +443,7 @@ db.students.updateOne({ name: "Sara Ali" }, { $set: { gpa: 4.0 } })
 db.students.deleteMany({ gpa: { $lt: 2.0 } })
 ```
 
-## 15.8 Transactions in MongoDB
+## Transactions in MongoDB
 
 Since MongoDB 4.0, **multi-document ACID transactions** are supported:
 
@@ -465,7 +465,7 @@ try {
 }
 ```
 
-## 15.8 Chapter Summary
+## Chapter Summary
 
 ::: callout-important
 ## Key Takeaways — Chapter 15
