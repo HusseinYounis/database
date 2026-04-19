@@ -590,9 +590,9 @@ try {
 
     **SQL Schema:**
     ```sql
-    Employee(Ssn PK, Name, Salary, Dno FK→Department)
+    Employee(Ssn PK, Name, Salary, Dno FK→Department(Dnumber))
     Department(Dnumber PK, Dname)
-    Works_On(Essn FK→Employee, Pno FK→Project, Hours)
+    Works_On(Essn FK→Employee(Ssn), Pno FK→Project(Pnumber), Hours)
     Project(Pnumber PK, Pname, Plocation)
     ```
 

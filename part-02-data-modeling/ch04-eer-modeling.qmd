@@ -3,6 +3,8 @@ title: "Enhanced Entity-Relationship (EER) Modeling"
 subtitle: "Chapter 4"
 ---
 
+{{< epigraph "A good model is a simplification of reality that retains exactly those details that matter for the question at hand." source="George E. P. Box (adapted)" >}}
+
 The ER model of Chapter 3 handles most real-world data structures, but it lacks one critical capability: **type hierarchies**. When some employees are engineers, some are managers, and a few are engineer-managers, the basic ER model forces you to bundle everything into one bloated entity type or fragment the design artificially. The Enhanced ER (EER) model adds three mechanisms — *specialization/generalization*, *aggregation*, and *union types* — to handle these situations cleanly.
 
 ---

@@ -1,0 +1,6 @@
+part-01-foundations/ch02-concepts-architecture.qmd:52:## Three-Schema Architecture (ANSI/SPARC) {#sec-three-schema}
+part-01-foundations/ch02-concepts-architecture.qmd:179:## DBMS Deployment Architecture {#sec-deployment}
+part-03-relational-model/ch05-relational-model.qmd:146:## FD-Based Key Identification {#sec-fd-theory}
+appendix/appendixA-apis.qmd:6:# Database APIs and Connectivity {#sec-appA}
+appendix/appendixB-database-families.qmd:6:# A Guided Tour of Database Families {#sec-appB}
+appendix/appendixC-advanced-constraints.qmd:6:# Advanced Constraint Enforcement {#sec-appC}

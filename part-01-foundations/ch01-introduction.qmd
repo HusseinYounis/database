@@ -3,6 +3,8 @@ title: "Introduction to Database Systems"
 subtitle: "Chapter 1"
 ---
 
+{{< epigraph "Without data, you're just another person with an opinion." source="W. Edwards Deming" >}}
+
 ## Motivation: Why Not Just Use a Text File?
 
 You have data. Lots of it. Where do you put it?
@@ -45,16 +47,36 @@ Simple. Clean. Until it is not.
 
 To find Ahmed's grades, your program reads every line of `grades.txt` from top to bottom until it finds `001`. With 1,000 students that is manageable. With 1,000,000 students — a national exam registry — that scan takes several *seconds* per query, every query.
 
-**Example — the real issue:**
+**Search flow — how the scan actually works:**
 
-```python
-# Linear scan — reads every single line
-with open("grades.txt") as f:
-    for line in f:                         # ← 1,000,000 iterations
-        sid, course, grade = line.split(",")
-        if sid.strip() == "001":
-            print(line)
-# 1 M rows × ~1 µs/row ≈ 1–3 seconds PER QUERY
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    A([Start]) --> B[Open file]
+    B --> C{End of file?}
+    C -- Yes --> G([Not found — exit])
+    C -- No --> D[Search by Student ID]
+    D --> E{Match?}
+    E -- Yes --> H([Return record — exit])
+    E -- No --> F[Read next line]
+    F --> C
+    style C fill:#fff4d6,stroke:#b7791f
+    style E fill:#fde2e2,stroke:#c0392b
+```
+
+**Pseudocode — linear search:**
+
+```
+Algorithm LINEAR_SEARCH(file, key):
+    open file
+    for each line in file:                 // worst case: N iterations
+        fields ← split(line, ",")
+        if fields[0] == key:
+            output line                    // match found
+    close file
+    // Cost:  best = O(1), average = O(N/2), worst = O(N)
+    // 1 M rows × ~1 µs/row  ≈  1–3 seconds PER QUERY
 ```
 :::
 
@@ -91,6 +113,29 @@ Two users edit `grades.txt` at the same time. The last save wins — the earlier
 | 09:05 | adds row 11, **saves** | editing row 4... |
 | 09:06 | — | **saves** (only 10 rows) |
 | 09:07 | Registrar's row 11 is **gone**. No error. No warning. |
+
+**Timeline of the Lost Update:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+sequenceDiagram
+    autonumber
+    participant R as Registrar
+    participant F as grades.txt
+    participant S as Secretary
+
+    Note over F: initial state: 10 rows
+    R->>F: 09:00 open (reads 10 rows into memory)
+    S->>F: 09:00 open (reads 10 rows into memory)
+    Note right of R: adds row 11 locally
+    Note left of S: edits row 4 locally
+    R->>F: 09:05 SAVE (writes 11 rows)
+    Note over F: file now has 11 rows
+    S->>F: 09:06 SAVE (writes 10 rows — its stale copy)
+    Note over F: file overwritten — back to 10 rows
+    Note over R,S: Registrar's row 11 is silently LOST ❌
+```
 
 This is the classic [Lost Update]{fg="#c0392b" .bold} anomaly — one transaction's work vanishes because another transaction overwrote the same file.
 :::
@@ -248,54 +293,6 @@ Think of it exactly like programs and operating systems:
 - A `.exe` file on disk is just bytes — it cannot "run" anything by itself. The **operating system** loads it into memory, gives it CPU time, manages its files, and protects it from other programs.
 - A `.ibd` / `.frm` / `.mdf` database file on disk is just bytes — it cannot "query" anything by itself. The **DBMS** loads pages into a buffer cache, schedules queries, isolates transactions, and protects data from other users.
 
-```{mermaid}
-%%| eval: true
-%%| echo: false
-flowchart TB
-    subgraph APP ["👥 Users &amp; Applications"]
-      U1["Student portal"]
-      U2["Workbench"]
-      U3["Analytics script"]
-    end
-
-    subgraph DBMS ["🛡️ DBMS — the container around the data files"]
-      direction TB
-      Q["Query processor<br/>(parser, optimizer, executor)"]
-      B["Buffer manager<br/>(memory cache of disk pages)"]
-      T["Transaction &amp; lock manager<br/>(ACID, isolation, recovery)"]
-      S["Security / user manager<br/>(auth, roles, GRANT/REVOKE)"]
-      C["System catalog<br/>(self-describing metadata)"]
-    end
-
-    subgraph OS ["🖥️ Operating System services"]
-      FS["File system"]
-      MM["Virtual memory"]
-      NET["TCP / sockets"]
-      SCH["Process / CPU scheduler"]
-    end
-
-    subgraph DISK ["💾 Disk — the database itself"]
-      F1["employee.ibd"]
-      F2["department.ibd"]
-      F3["WAL / redo log"]
-      F4["system catalog files"]
-    end
-
-    APP -->|SQL| Q
-    Q --> B
-    Q --> T
-    Q --> S
-    Q --> C
-    B  --> FS
-    T  --> FS
-    S  --> FS
-    C  --> FS
-    FS --> DISK
-    B  --> MM
-    APP --> NET
-    DBMS --> SCH
-```
-
 **What the DBMS adds on top of the raw files:**
 
 | {{< fa layer-group >}} Concern | What "just files" give you | What the DBMS gives you |
@@ -330,26 +327,6 @@ Think of the DBMS as a well-organized university library. The catalog (data dict
 :::
 
 The database model introduced in this chapter becomes your foundation. All the tools you will build later — ER diagrams, relational algebra, SQL, indexes, transactions — are ways of working with precisely this structure.
-
----
-
-## File Systems vs. DBMS
-
-The motivation section showed the problems with ad-hoc file storage through a concrete story. Here we name and formalize those problems so you can recognize them in any system you encounter:
-
-| Problem | Description |
-|---------|-------------|
-| **Data redundancy** | Same data stored multiple times in different files |
-| **Data inconsistency** | Updates in one file not reflected elsewhere |
-| **Data isolation** | Data scattered across files; hard to retrieve across them |
-| **Integrity constraints** | Enforced (or not) in scattered application code, not centrally |
-| **Atomicity problems** | Partial updates due to crashes leave data inconsistent |
-| **Concurrent access anomalies** | Multiple users overwrite each other's changes |
-| **Security problems** | No fine-grained access control below file level |
-
-A DBMS eliminates every one of these by providing a **unified data model**, **centralized constraint enforcement**, **transaction management**, and **role-based access control**.
-
-Having seen *why* a DBMS is needed, we now need a vocabulary for *describing* the data it manages — that vocabulary is the data model.
 
 ---
 
@@ -388,6 +365,8 @@ flowchart TD
 
 Proposed by **E.F. Codd in 1970** [@codd1970relational], the relational model represents data as a collection of **tables (relations)**, each with named columns of fixed types. It remains the dominant model in enterprise software more than 50 years later.
 
+![Anatomy of a relation: rows are *tuples*, columns are *attributes*, and the primary key uniquely identifies each row.](../images/relational-model-table.png){#fig-relational-model-table width=70% fig-align="center"}
+
 ::: callout-note
 ## Fun Fact
 
@@ -396,262 +375,22 @@ Codd's 1970 paper, *"A Relational Model of Data for Large Shared Data Banks"*, i
 
 The relational model is elegant because it is mathematically grounded in **set theory** and **first-order logic**. That foundation is what makes SQL queries predictable and composable — and what makes relational algebra (Chapter 6) a rigorous optimization tool.
 
-The relational model is not the only data model in use, though — the next section surveys the main families and where each one is still used today.
+The relational model is not the only data model in use. A wider ecosystem of database *families* has grown up around it — hierarchical and network models that predate it, object-oriented and object-relational extensions that generalize it, and the NoSQL and NewSQL families that answer modern scale and flexibility requirements.
 
----
-
-## Types of Database Models — A Guided Tour
-
-The relational model dominates today, but it is not the only data model in use. Understanding the main families — and *why* each one was invented — helps you pick the right tool for a given problem.
-
-```{mermaid}
-%%| eval: true
-%%| echo: false
-timeline
-    title 70 Years of Database Models
-    1960s : Flat file
-          : Hierarchical (IMS)
-    1970s : Network (CODASYL)
-          : Relational (Codd)
-    1980s : SQL standardized
-          : Object-oriented
-    1990s : Object-relational (ORDBMS)
-          : XML databases
-    2000s : NoSQL wave
-          : Key-value · Document · Column-family · Graph
-    2010s : NewSQL
-          : Cloud-native distributed SQL
-```
-
-### 1. Flat File Model {{< fa file-lines >}}
-
-One file, one record per line, delimited columns. No relationships, no constraints.
-
-**Real-world examples:** Excel / Google Sheets, CSV exports, `/etc/passwd`, Windows `.ini` files, small `.log` files.
-
-**Advantages**
-
-- Extremely simple and human-readable
-- Works in any tool (Notepad, Excel, any language's string library)
-
-**Disadvantages**
-
-- All the Notepad Scenario problems: no integrity, no concurrency, redundancy
-- Cannot scale beyond a few thousand rows
-
-### 2. Hierarchical Model {{< fa sitemap >}}
-
-Data is organized as a **tree** — each record has exactly **one parent**. Developed in the 1960s for mainframe systems.
-
-```{mermaid}
-%%| eval: true
-%%| echo: false
-flowchart TD
-    U["AAUP"] --> F1["Faculty: Engineering"]
-    U --> F2["Faculty: Medicine"]
-    F1 --> D1["Dept: Computer Eng"]
-    F1 --> D2["Dept: Civil Eng"]
-    D1 --> S1["Student 001"]
-    D1 --> S2["Student 002"]
-    D2 --> S3["Student 101"]
-```
-
-**Used by:** IBM **IMS** (still runs many banks and airlines today!), XML documents, JSON trees, LDAP directories, the Windows Registry.
-**Strengths:** very fast for tree-shaped traversals (org charts, file systems, bill-of-materials).
-**Weaknesses:** awkward for **many-to-many** relationships — a student enrolled in two departments would need to be duplicated.
-
-### 3. Network Model (CODASYL) {{< fa diagram-project >}}
-
-Like the hierarchical model, but a record can have **many parents** — so many-to-many relationships are supported directly through explicit pointers.
-
-**Real-world examples:** IDMS (still running inside some European banks and insurance companies), Raima DB, older mainframe systems at airlines and telecoms.
-
-**Advantages**
-
-- Supports many-to-many relationships without duplication
-- Very fast when the access paths are known in advance
-
-**Disadvantages**
-
-- No declarative query language — the programmer navigates pointers by hand
-- Schema changes are extremely painful
-- Largely replaced by relational databases since the 1980s
+You do not need a complete tour of those families to follow the rest of this book. A short preview follows here; the full guided tour — with industry examples, advantages, and disadvantages of every family — lives in **Appendix B: A Guided Tour of Database Families** ([`@sec-appB`](../appendix/appendixB-database-families.qmd)).
 
 ::: callout-note
-Both hierarchical and network models were displaced by the relational model because Codd's math-based foundation allowed **declarative queries** ("what" instead of "how") and automatic query optimization.
+## {{< fa compass >}} Quick preview
+
+- **Relational** (MySQL, PostgreSQL, Oracle) — tables + foreign keys + SQL. Dominant in enterprise software; the model used in Parts III–VII of this book.
+- **Document** (MongoDB) — JSON-shaped records with flexible schemas. Covered in Chapter 15.
+- **Key-value** (Redis, DynamoDB) — fast `get`/`put` on a distributed hash table.
+- **Column-family** (Cassandra, HBase) — huge sparse tables optimized for write throughput.
+- **Graph** (Neo4j) — nodes and edges; fast relationship traversal.
+- **NewSQL** (Spanner, CockroachDB) — SQL + ACID at global scale.
+
+Real systems often combine several of these — called **polyglot persistence**.
 :::
-
-### 4. Relational Model {{< fa table >}}
-
-Data as **tables** (rows + columns); relationships via **foreign keys**; queries via **SQL**. Invented by E.F. Codd in 1970, still the #1 database model today.
-
-**Real-world examples:** Facebook (MySQL), Instagram (PostgreSQL), Booking.com (Oracle + MySQL), Uber's core services (PostgreSQL + MySQL), most banks worldwide, AAUP's own student portal.
-
-**Advantages**
-
-- Declarative SQL — you say *what*, the database figures out *how*
-- Strong ACID guarantees (safe for money, grades, medical records)
-- Huge ecosystem: tools, drivers, hosting, experts everywhere
-
-**Disadvantages**
-
-- Rigid schema — changing columns on a live table is expensive
-- Joins get slow on very large datasets
-- Not ideal for deeply nested JSON or graph-shaped data
-
-This is the model that dominates **Parts III – VII** of this book.
-
-### 5. Object-Oriented (OODB) {{< fa cube >}}
-
-Stores objects exactly as they exist in a Java / C++ / C# program — no mapping to tables.
-
-**Real-world examples:** ObjectDB (used inside some CAD and telecom systems), db4o (embedded in apps), Gemstone/S (financial trading). Niche today.
-
-**Advantages**
-
-- No impedance mismatch between code and database
-- Natural fit for inheritance and complex nested types
-
-**Disadvantages**
-
-- No dominant query language (OQL never caught on)
-- Tiny ecosystem; lost the market to **relational + ORM** (Hibernate, Django ORM, Entity Framework)
-
-### 6. Object-Relational (ORDBMS) {{< fa cubes-stacked >}}
-
-A relational database with object-like extras: user-defined types, arrays, JSON columns, spatial types, inheritance.
-
-**Real-world examples:** **PostgreSQL** (the gold standard — used by Apple, Instagram, Reddit), Oracle Database, modern SQL Server and MySQL (JSON columns, `GEOMETRY`, arrays).
-
-**Advantages**
-
-- Keeps SQL + ACID but adds rich types (`JSONB`, `ARRAY`, `GEOMETRY`, `UUID`)
-- Single database can handle both traditional and document-style data
-
-**Disadvantages**
-
-- Extensions are vendor-specific — moving from Oracle to PostgreSQL is harder than moving pure SQL
-
-### 7. NoSQL Models {{< fa database >}}
-
-A family of **non-relational** databases born in the 2000s at web-scale companies (Google, Amazon, Facebook) to handle data volumes and write rates that single-server relational databases could not match. Four main sub-families:
-
-#### 7a. Key-Value Stores {{< fa key >}}
-
-A giant distributed hash table: `get(key)` / `put(key, value)`. The simplest NoSQL model.
-
-**Real-world examples:** **Redis** (Twitter timeline cache, Stack Overflow, GitHub, Shopify), **Memcached** (Facebook), **Amazon DynamoDB** (Amazon's own shopping cart, Lyft, Airbnb sessions), etcd (inside Kubernetes).
-
-**Advantages**
-
-- Blazingly fast (often in-memory, microsecond latency)
-- Scales horizontally to millions of operations per second
-
-**Disadvantages**
-
-- No queries across values — you can only fetch by key
-- No joins, no `WHERE`, no rich schema
-
-#### 7b. Document Stores {{< fa file-code >}}
-
-Store self-contained **JSON-like documents**; each document can have a different shape. Query on any nested field.
-
-**Real-world examples:** **MongoDB** (The New York Times, Forbes, eBay, Adobe), **Couchbase** (LinkedIn, PayPal), **Firebase Firestore** (many mobile apps), Amazon DocumentDB.
-
-**Advantages**
-
-- Flexible schema — add fields without migrations
-- Natural fit for JSON from web and mobile APIs
-- Good horizontal scalability
-
-**Disadvantages**
-
-- Cross-document joins are awkward (or absent)
-- Easy to end up with inconsistent document shapes over time
-
-MongoDB is covered in depth in **Chapter 15**.
-
-#### 7c. Column-Family (Wide-Column) Stores {{< fa table-columns >}}
-
-Data is stored by **column families** rather than whole rows; optimized for huge, sparse tables and write-heavy workloads. Inspired by Google's **Bigtable** paper (2006).
-
-**Real-world examples:** **Apache Cassandra** (Netflix viewing history, Apple iCloud, Instagram messaging), **HBase** (Facebook Messenger, Pinterest), **Google Bigtable** (Google Search, Gmail, Google Analytics), **ScyllaDB** (Discord messages).
-
-**Advantages**
-
-- Massive write throughput — millions of writes/sec across a cluster
-- Linear horizontal scaling by adding nodes
-- Great for time-series, IoT, logs
-
-**Disadvantages**
-
-- Ad-hoc queries are limited — you must design around known access patterns
-- No joins, weaker consistency by default
-
-#### 7d. Graph Databases {{< fa circle-nodes >}}
-
-First-class support for **nodes** (entities) and **edges** (relationships). Queries are traversals like *"friends of friends within 3 hops"*.
-
-**Real-world examples:** **Neo4j** (NASA's lessons-learned graph, eBay delivery routing, UBS fraud detection), **Amazon Neptune** (Amazon product recommendations), **TigerGraph** (Jaguar, China Mobile), LinkedIn's own social graph engine.
-
-**Advantages**
-
-- Relationship queries are orders of magnitude faster than SQL joins
-- Natural fit for social networks, recommendations, fraud detection, knowledge graphs
-
-**Disadvantages**
-
-- Poor fit for plain tabular analytics
-- Smaller ecosystem than relational or document stores
-
-### 8. NewSQL & Cloud-Native Distributed SQL {{< fa cloud >}}
-
-A 2010s answer to: *"Can we get NoSQL's horizontal scalability **and** relational SQL + ACID?"* Yes — at the cost of more complex infrastructure.
-
-**Real-world examples:** **Google Spanner** (Google Ads, Gmail metadata), **CockroachDB** (DoorDash, Netflix billing), **YugabyteDB**, **TiDB** (Shopee, Bank of China), **Amazon Aurora** (most large AWS customers).
-
-**Advantages**
-
-- Standard SQL and ACID transactions
-- Scales horizontally across regions / continents
-- No need to re-learn a new query language
-
-**Disadvantages**
-
-- Operationally complex — more moving parts than a single MySQL server
-- Young ecosystem; fewer DBAs with deep experience
-- Cross-region writes still have latency costs
-
-### Side-by-Side Comparison
-
-| Family | Shape of data | Query style | ACID | Horizontal scale | Example |
-|---|---|---|---|---|---|
-| Flat file | Rows in one file | Parse by hand | ❌ | ❌ | CSV |
-| Hierarchical | Tree (one parent) | Navigate | Partial | Limited | IBM IMS, XML |
-| Network (CODASYL) | Graph via pointers | Navigate | Partial | Limited | IDMS |
-| **Relational** | Tables + FKs | **SQL (declarative)** | **✅** | Medium | MySQL, Postgres, Oracle |
-| Object-oriented | Objects | OQL / API | Partial | Limited | ObjectDB |
-| Object-relational | Tables + rich types | SQL + extensions | ✅ | Medium | PostgreSQL |
-| Key-value | `(key, value)` blobs | `get` / `put` | Per-key | ✅✅✅ | Redis, DynamoDB |
-| Document | JSON documents | Query DSL over JSON | Per-document | ✅✅ | **MongoDB** |
-| Column-family | Sparse wide rows | CQL / API | Tunable | ✅✅✅ | Cassandra, HBase |
-| Graph | Nodes + edges | Cypher / Gremlin | ✅ | ✅ | Neo4j |
-| NewSQL | Tables + FKs | SQL | ✅ | ✅✅✅ | Spanner, CockroachDB |
-
-::: callout-tip
-## {{< fa compass >}} How to choose (rule of thumb)
-
-- **Tabular data with real relationships?** → Relational (start here by default).
-- **Each record is a self-contained document with nested fields?** → Document (MongoDB).
-- **Distributed cache or session store?** → Key-value (Redis).
-- **Relationships between entities are the main query pattern?** → Graph (Neo4j).
-- **Petabyte-scale writes, time series, telemetry?** → Column-family (Cassandra).
-- **SQL + ACID *and* global horizontal scale?** → NewSQL (Spanner, CockroachDB).
-
-Modern systems often combine **several** of these — this is called **polyglot persistence**. The AAUP portal might use PostgreSQL for grades, Redis for sessions, and Elasticsearch for search, all in the same application.
-:::
-
-NoSQL families are covered in depth in **Part VIII (Chapters 14–15)**.
 
 ---
 
@@ -687,103 +426,9 @@ Employee:  ('001', 'Ahmed', 'Khalidi', 62000, 1)
 
 If we add a column `Email` to `Employee`, the *schema* changes. The existing rows get a NULL email until populated — the *instance* changes only when we insert or update data.
 
-The distinction between schema and instance is the first of several **abstraction layers** in database systems. The next section adds two more.
+The distinction between schema and instance is the first of several **abstraction layers** in database systems. A DBMS actually separates *three* layers — the user's view, the logical tables, and the physical storage — so that each can evolve independently. This three-schema architecture and the **data independence** it provides are central to how databases are designed, so they are treated in full in [Chapter 2, §Three-Schema Architecture](../part-01-foundations/ch02-concepts-architecture.qmd#sec-three-schema).
 
----
-
-## Three-Schema Architecture (ANSI/SPARC)
-
-As a database grows, different people interact with it differently: end users care about a grade-entry form; the application developer cares about the logical table structure; the storage engineer cares about disk blocks and indexes. The **three-schema architecture** separates these concerns.
-
-::: callout-note
-## {{< fa building-columns >}} Scenario — The AAUP Academic Information System
-
-Picture the **Arab American University – Palestine (AAUP)** academic information system (the one you use through the student portal and SIS). Thousands of people touch the *same* underlying database every day, but each of them sees it very differently:
-
-- {{< fa user-graduate >}} **A student in the Computer Engineering Department** logs into the portal to check her grades for *Database Systems* and register for next semester's courses. She should only see **her own** courses, grades, GPA, and schedule — never another student's record.
-- {{< fa chalkboard-user >}} **A course instructor** opens the faculty portal to enter grades for *Database Systems — Section 1*. He should see the list of students enrolled in **his sections only**, plus the assessment columns (midterm, project, final) — but **not** salary information or other instructors' sections.
-- {{< fa user-tie >}} **The Registrar's office** needs a dashboard of enrollment counts per faculty (Engineering, Medicine, Law, Arts) and graduation statistics across the whole university.
-- {{< fa money-bill-wave >}} **The Finance department** generates tuition invoices and payroll — they see student fees and staff salaries, but not academic grades.
-- {{< fa user-gear >}} **The database administrator (DBA)** in the IT Center at Jenin campus is responsible for the entire logical schema — every table, every foreign key, every constraint.
-- {{< fa server >}} **The system engineer** tunes physical storage: which tables live on SSD, which columns are indexed, how backups are scheduled across the Jenin and Ramallah data centers.
-
-One database. Six very different views. The **three-schema architecture** is what makes this possible.
-:::
-
-```{mermaid}
-%%| eval: true
-%%| echo: false
-flowchart TD
-    U1["👩‍🎓 Student"]
-    U2["👨‍🏫 Instructor"]
-    U3["🏛️ Registrar"]
-    U4["💰 Finance"]
-
-    subgraph EXT["🔹 External Level"]
-      V1["my_grades_view"]
-      V2["my_sections_view"]
-      V3["enrollment_stats_view"]
-      V4["billing_view"]
-    end
-
-    subgraph CONC["🔸 Conceptual Level (AAUP logical schema)"]
-      direction LR
-      S1["Student"]
-      S2["Course"]
-      S3["Section"]
-      S4["Enrollment"]
-      S5["Instructor"]
-      S6["Faculty"]
-    end
-
-    subgraph INT["🔻 Internal Level (physical storage)"]
-      P1["Tablespaces · B+ tree indexes<br/>Partitioning · Backups"]
-    end
-
-    U1 --> V1
-    U2 --> V2
-    U3 --> V3
-    U4 --> V4
-
-    V1 <--> CONC
-    V2 <--> CONC
-    V3 <--> CONC
-    V4 <--> CONC
-
-    CONC <--> INT
-```
-
-*Mappings: external ⇄ conceptual (for each view) and conceptual ⇄ internal (managed by the DBMS).*
-
-**Conceptual schema in detail:**
-
-- `Student(student_id, name, faculty, department, gpa)`
-- `Course(course_code, title, credits)`
-- `Section(section_id, course_code, instructor_id, semester)`
-- `Enrollment(student_id, section_id, grade)`
-- `Instructor(instructor_id, name, department, salary)`
-- `Faculty(faculty_id, name, campus)`
-
-**Internal-level details at AAUP:** tablespaces on SSD at the Jenin data center, B+ tree indexes on `student_id` and `course_code`, `Enrollment` partitioned by semester, nightly replication to the Ramallah site.
-
-- **External level** — *what each user sees.* At AAUP this is the set of **views** behind every portal screen: `my_grades_view`, `my_sections_view`, `enrollment_stats_view`, `billing_view`. Each view exposes only the rows and columns that user is authorized to see.
-- **Conceptual level** — *the complete logical schema maintained by the AAUP DBA.* All tables (`Student`, `Course`, `Section`, `Enrollment`, `Instructor`, `Faculty`), all columns, all primary/foreign keys, all constraints. This is the single source of truth.
-- **Internal level** — *how the data is physically stored.* Tablespaces on SSD at the Jenin campus data center, B+ tree indexes on `student_id` and `course_code`, partitioning of `Enrollment` by semester, and nightly replication to the Ramallah site. No student, no instructor, and no application program ever sees this.
-
-### Data Independence — An AAUP Example
-
-The three-level separation provides **data independence** — the ability to change one level without rewriting the level(s) above it.
-
-| Type | Definition | Example at AAUP |
-|------|-----------|-----------------|
-| **Logical data independence** | Change the *conceptual* schema without rewriting external views or application programs | The Registrar adds a new `mobile_number` column to `Student` so the university can send SMS notifications. Ahmed still logs in and sees his grades exactly as before — the student portal was not touched. |
-| **Physical data independence** | Change the *internal* schema (e.g., add an index, switch storage engine) without changing the conceptual schema | The IT team adds a B+ tree index on `Enrollment(section_id)` so grade-sheet queries run 100× faster. No SQL query, no portal, no report has to be rewritten. |
-
-::: callout-tip
-Physical independence is relatively easy to achieve (most DBMSs do it well). Logical independence is harder — adding a column is safe, but splitting `Student` into `Student` + `StudentContact`, or renaming `gpa` to `cumulative_gpa`, forces every view and application that referenced the old structure to be updated.
-:::
-
-The three-schema architecture explains *how* a DBMS provides data independence. To communicate with the DBMS — to define those schemas and manipulate that data — we need a language.
+To communicate with a DBMS — to define those schemas and manipulate that data — we need a language.
 
 ---
 
@@ -829,178 +474,11 @@ With users and roles defined, we can look inside the DBMS to understand the soft
 
 ---
 
-## DBMS Deployment Architecture
+## Where Does the DBMS Run?
 
-A DBMS does not always run on the same machine as the application that uses it. **Deployment architecture** describes how many independent layers (*tiers*) exist between the end user and the DBMS engine. More tiers increase security and scalability at the cost of added complexity.
+Before diving into the internals, it is worth asking a simpler question: *where does the DBMS actually run relative to the user?* Your MySQL CLI session on your laptop, MySQL Workbench connecting to a lab server, and a student logging into the AAUP portal from Chrome are three very different arrangements — classically called **1-tier**, **2-tier**, and **3-tier** deployments. Each adds a network hop, a security boundary, and an independent scaling point.
 
-![DBMS Tier Architecture Overview](../images/dbms-tier-architecture.png){fig-align="center" width="80%"}
-
----
-
-### 1-Tier (Single-Tier) Architecture
-
-All components — user interface, application logic, and the DBMS — reside on a **single machine**. The user interacts directly with the database with no network involvement.
-
-![1-Tier (Single-Tier) Architecture](../images/1tier-architecture.png){fig-align="center" width="80%"}
-
-![Example of Single Tier DBMS Architecture](../images/1tier-architecture-example.png){fig-align="center" width="80%"}
-
-::: callout-tip
-## {{< fa terminal >}} You have already used a 1-tier setup — in the Database Lab!
-
-Remember the **Database Systems lab at AAUP**? When you installed MySQL Server on your own laptop and then opened the [MySQL shell from the Windows Command Prompt]{fg="#2980b9" .bold} to run your first `SELECT` — **that was a 1-tier architecture**.
-
-```bash
-C:\> mysql -u root -p
-Enter password: ********
-mysql> USE company;
-mysql> SELECT * FROM employee;
-```
-
-On your laptop at that moment:
-
-- {{< fa desktop >}} **The client** (the `mysql` shell) — running on your machine
-- {{< fa gears >}} **The application logic** (you typing SQL) — running on your machine
-- {{< fa database >}} **The DBMS server** (`mysqld`) + the data files — [also running on your machine]{bg="#f39c12" fg="#000000"}
-
-No network, no other users, no separate server — everything on one box. That is exactly what *single-tier* means. Any program that uses SQLite (which is just a library embedded inside your application) is 1-tier by design.
-
-> Note: once you connect from one laptop to a **MySQL server running on a different machine** (e.g., `mysql -h lab-server -u student -p`), you have crossed into **2-tier** territory — covered next.
-:::
-
-**When to use:** Learning environments, local development, single-user desktop tools (e.g., a SQLite-backed app, MS Access on a single laptop, or your MySQL lab setup).
-
-| Advantage | Disadvantage |
-|-----------|-------------|
-| Simple — no network needed | Single user only |
-| No network latency | No isolation between app and DB |
-| Full direct control | Cannot scale |
-
----
-
-### 2-Tier (Client-Server) Architecture
-
-The **client** runs the user interface and application logic; the **DBMS** runs on a separate **server**. Communication uses standard APIs (JDBC, ODBC, native drivers) over a TCP network.
-
-```{mermaid}
-%%| eval: true
-%%| echo: false
-flowchart LR
-    C["💻 Client<br/>UI + Application Logic"]
-    S["🗄️ DB Server<br/>DBMS + Database"]
-    C <-->|"SQL over TCP<br/>(JDBC / ODBC)"| S
-    style C fill:#e8f4fd,stroke:#2980b9,stroke-width:2px
-    style S fill:#fdf2e9,stroke:#e67e22,stroke-width:2px
-```
-
-![Example of 2-Tier (Client-Server) Architecture](../images/2tier-architecture-example.png){fig-align="center" width="80%"}
-
-::: callout-tip
-## {{< fa diagram-project >}} You have used 2-tier too — every time you open MySQL Workbench
-
-When you launch **MySQL Workbench** and click a connection to run a query, you are using a textbook [2-tier architecture]{fg="#2980b9" .bold}.
-
-- {{< fa desktop >}} **Client (Tier 1)** — `MySQLWorkbench.exe` on your laptop: the query editor, schema inspector, EER diagram designer, and result grid. *All the UI and application logic runs here.*
-- {{< fa database >}} **DB Server (Tier 2)** — `mysqld` listening on TCP port **3306**, executing your SQL and sending rows back.
-- {{< fa network-wired >}} **The wire between them** — the **MySQL native protocol** (the same role JDBC / ODBC plays for Java / .NET apps).
-
-This stays 2-tier [even when Workbench and the server are on the *same* laptop]{bg="#f39c12" fg="#000000"} (connecting to `localhost:3306`). What defines the tier is the *process / protocol* separation, not physical location. Connect to a remote server instead (e.g., the lab server `mysql-lab.aaup.edu`) and you simply change the hostname — the architecture is identical.
-
-> **Rule of thumb**
->
-> - `mysql` CLI on the same machine as the server → taught as **1-tier** (all-in-one bundled lab setup)
-> - Workbench ↔ `mysqld` over TCP (local or remote) → **2-tier**
-> - Browser → web server → database → **3-tier** (see next section)
-:::
-
-**When to use:** Departmental applications, internal tools where the developer controls all clients (e.g., a bank teller terminal, a clinic management desktop app).
-
-| Advantage | Disadvantage |
-|-----------|-------------|
-| Multiple concurrent users | Business logic lives on client — hard to update |
-| Server handles query processing | Direct DB exposure is a security risk |
-| Better performance than 1-tier | Server becomes bottleneck as clients grow |
-
----
-
-### 3-Tier Architecture
-
-An **application server** (middle tier) is inserted between the client and the DBMS. The client never communicates directly with the database — it only talks to the application server.
-
-```{mermaid}
-%%| eval: true
-%%| echo: false
-flowchart TD
-    P["🖥️ Presentation Tier<br/>Browser · Mobile App · Desktop GUI"]
-    A["⚙️ Application Tier<br/>Web Server + Business Logic<br/>Node.js · Django · Spring · Laravel"]
-    D["🗄️ Data Tier<br/>DBMS Server<br/>MySQL · PostgreSQL · MongoDB"]
-    P <-->|"HTTP / REST / GraphQL"| A
-    A <-->|"JDBC / ODBC / DB driver"| D
-    style P fill:#e8f4fd,stroke:#2980b9,stroke-width:2px
-    style A fill:#eafaf1,stroke:#27ae60,stroke-width:2px
-    style D fill:#fdf2e9,stroke:#e67e22,stroke-width:2px
-```
-
-![Example of 3-Tier Architecture](../images/3tier-architecture-example.png){fig-align="center" width="80%"}
-
-::: callout-tip
-## {{< fa graduation-cap >}} Scenario — AAUP student opens the portal from her laptop
-
-Sara opens Chrome on her laptop in the café and visits `https://portal.aaup.edu` to check her Database Systems grade. What she thinks is "one click" is actually a [3-tier architecture]{fg="#2980b9" .bold} in action:
-
-- {{< fa laptop >}} **Presentation Tier (Sara's laptop)** — Chrome renders HTML, CSS, and JavaScript. It knows **nothing** about tables, SQL, or the database. It only speaks **HTTPS** to the portal.
-- {{< fa server >}} **Application Tier (AAUP web/app server)** — running somewhere in the Jenin campus data center (e.g., Node.js / Django / Laravel). It:
-  1. Receives Sara's HTTPS request.
-  2. Checks her session / JWT token — is she logged in? is she Sara?
-  3. Applies business rules (students can see **their own** grades only).
-  4. Translates the request into SQL and forwards it to the DBMS.
-- {{< fa database >}} **Data Tier (AAUP database server)** — MySQL / PostgreSQL on a protected server, [reachable only from the app server]{bg="#f39c12" fg="#000000"}, never from the public Internet. It runs:
-
-  ```sql
-  SELECT course_code, grade
-  FROM   Enrollment
-  WHERE  student_id = '202012345';
-  ```
-
-  and returns the rows to the app tier, which renders them into the HTML page Sara sees.
-
-**Why three tiers instead of two?**
-
-| Concern | What 3-tier gives AAUP |
-|---|---|
-| {{< fa shield-halved >}} **Security** | The database is behind a firewall; Sara's browser cannot talk to it directly. Even if her laptop is compromised, the attacker cannot run raw SQL. |
-| {{< fa users >}} **Scalability** | When registration opens and 10,000 students hit the portal at once, AAUP adds more app servers behind a load balancer without touching the DB. |
-| {{< fa user-shield >}} **Authorization** | "Students see only their rows" is enforced by the app tier — a single trusted place — not by every desktop client. |
-| {{< fa wrench >}} **Maintainability** | The portal team can redesign the UI, or swap Laravel for Node.js, without ever touching the database schema. |
-
-Now compare this to Sara running `mysql -u sara -p` on her laptop (1-tier) or opening Workbench against the lab server (2-tier). Same data, completely different architectures — each fit for a different purpose.
-:::
-
-**When to use:** Virtually all modern web applications — e-commerce, banking portals, social media, ERP systems.
-
-| Concern | How 3-tier addresses it |
-|---------|------------------------|
-| **Security** | DBMS is never directly reachable from the Internet |
-| **Scalability** | App servers can be load-balanced independently of the DB |
-| **Maintainability** | Business logic changes in the app tier leave the DB untouched |
-| **DB portability** | Swapping MySQL for PostgreSQL requires changes only in the app tier |
-| **Complexity** | More layers = harder to debug and deploy |
-
----
-
-### Tier Architecture at a Glance
-
-| | 1-Tier | 2-Tier | 3-Tier |
-|--|--------|--------|--------|
-| **Concurrent users** | 1 | Dozens–hundreds | Millions |
-| **Security** | None | Low | High |
-| **Scalability** | None | Limited | High |
-| **Complexity** | Minimal | Moderate | High |
-| **Typical example** | SQLite on a laptop | Bank teller app | Amazon.com |
-
-::: callout-note
-The tier architecture describes *where* the DBMS engine runs relative to the user. The **internal** components of the DBMS itself — the Query Processor, Storage Manager, and Disk Storage — are covered in detail in **Chapter 2, Section 2.4**.
-:::
+Because deployment architecture is really an engineering trade-off rather than a foundational concept, the full treatment — with AAUP lab / Workbench / portal walkthroughs, trade-offs, connection pooling, and cloud/serverless variants — lives in [Chapter 2, §DBMS Deployment Architecture](../part-01-foundations/ch02-concepts-architecture.qmd#sec-deployment).
 
 ---
 

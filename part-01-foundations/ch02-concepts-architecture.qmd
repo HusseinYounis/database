@@ -3,6 +3,8 @@ title: "Database System Concepts & Architecture"
 subtitle: "Chapter 2"
 ---
 
+{{< epigraph "The purpose of abstracting is not to be vague, but to create a new semantic level in which one can be absolutely precise." source="Edsger W. Dijkstra" >}}
+
 Chapter 1 answered *why* we use a database. This chapter answers *how* we build and structure one — tracing the full journey from a blank page to a running system, and then examining the internal machinery that makes that system work reliably.
 
 ---
@@ -47,47 +49,303 @@ With the lifecycle established, we now look more closely at one of its most impo
 
 ---
 
-## Data Abstraction Levels
+## Three-Schema Architecture (ANSI/SPARC) {#sec-three-schema}
 
-The three-schema architecture from Chapter 1 described *what* the three levels are. Here we go one level deeper and explain *how* each level is realized in a real DBMS.
+Chapter 1 introduced the *schema vs. instance* distinction. A full DBMS actually separates **three** schemas, not two — the user's view, the logical tables, and the physical storage. This section describes each level, shows an AAUP example, and explains the **data independence** the separation buys us.
+
+As a database grows, different people interact with it differently: end users care about a grade-entry form; the application developer cares about the logical table structure; the storage engineer cares about disk blocks and indexes. The **three-schema architecture** separates these concerns.
+
+::: callout-note
+## {{< fa building-columns >}} Scenario — The AAUP Academic Information System
+
+Picture the **Arab American University – Palestine (AAUP)** academic information system (the one you use through the student portal and SIS). Thousands of people touch the *same* underlying database every day, but each of them sees it very differently:
+
+- {{< fa user-graduate >}} **A student in the Computer Engineering Department** logs into the portal to check her grades for *Database Systems* and register for next semester's courses. She should only see **her own** courses, grades, GPA, and schedule — never another student's record.
+- {{< fa chalkboard-user >}} **A course instructor** opens the faculty portal to enter grades for *Database Systems — Section 1*. He should see the list of students enrolled in **his sections only**, plus the assessment columns (midterm, project, final) — but **not** salary information or other instructors' sections.
+- {{< fa user-tie >}} **The Registrar's office** needs a dashboard of enrollment counts per faculty (Engineering, Medicine, Law, Arts) and graduation statistics across the whole university.
+- {{< fa money-bill-wave >}} **The Finance department** generates tuition invoices and payroll — they see student fees and staff salaries, but not academic grades.
+- {{< fa user-gear >}} **The database administrator (DBA)** in the IT Center at Jenin campus is responsible for the entire logical schema — every table, every foreign key, every constraint.
+- {{< fa server >}} **The system engineer** tunes physical storage: which tables live on SSD, which columns are indexed, how backups are scheduled across the Jenin and Ramallah data centers.
+
+One database. Six very different views. The **three-schema architecture** is what makes this possible.
+:::
 
 ```{mermaid}
 %%| eval: true
 %%| echo: false
-flowchart TD
-    UA["User A<br/>grade portal"]
-    UB["User B<br/>payroll app"]
-    UC["User C<br/>BI dashboard"]
+flowchart TB
+    %% ---------- USERS ----------
+    subgraph USERS ["👥 End users"]
+      direction LR
+      U1["👩‍🎓 Student<br/>own grades"]
+      U2["👨‍🏫 Instructor<br/>own sections"]
+      U3["🏛️ Registrar<br/>dashboards"]
+      U4["💰 Finance<br/>tuition + payroll"]
+    end
 
-    E["External Level — Views<br/>SQL: CREATE VIEW, column subsets, row filters"]
-    C["Conceptual Level — Tables & Constraints<br/>SQL: CREATE TABLE, PRIMARY KEY, FOREIGN KEY"]
-    I["Internal Level — Physical Storage<br/>B+ tree indexes · heap files · sort-merge joins · buffer pages"]
+    %% ---------- EXTERNAL LEVEL ----------
+    subgraph EXT ["🔹 External Level — user views"]
+      direction LR
+      V1["my_grades_view"]
+      V2["my_section_roster_view"]
+      V3["enrollment_stats_view"]
+      V4["billing_payroll_view"]
+    end
 
-    UA & UB & UC --> E
-    E <-->|"view definition<br/>mapping"| C
-    C <-->|"storage<br/>mapping"| I
+    %% ---------- CONCEPTUAL LEVEL ----------
+    subgraph CONC ["🔸 Conceptual Level — AAUP logical schema"]
+      direction LR
+      S1[("Student")]
+      S2[("Course")]
+      S3[("Section")]
+      S4[("Enrollment")]
+      S5[("Instructor")]
+      S6[("Faculty")]
+    end
+
+    %% ---------- INTERNAL LEVEL ----------
+    subgraph INT ["🔻 Internal Level — physical storage"]
+      direction LR
+      P1["SSD tablespaces<br/>Jenin DC"]
+      P2["B+ tree indexes<br/>student_id, course_code"]
+      P3["Enrollment<br/>partitioned by semester"]
+      P4["Nightly replica<br/>to Ramallah"]
+    end
+
+    %% ---------- ADMIN ACTORS ----------
+    DBA(["👤 DBA"]):::admin
+    SE(["⚙️ System Engineer"]):::admin
+
+    %% ---------- USER → VIEW ----------
+    U1 -->|SQL| V1
+    U2 -->|SQL| V2
+    U3 -->|BI| V3
+    U4 -->|BI| V4
+
+    %% ---------- EXTERNAL ⇄ CONCEPTUAL ----------
+    V1 <--> CONC
+    V2 <--> CONC
+    V3 <--> CONC
+    V4 <--> CONC
+
+    %% ---------- CONCEPTUAL ⇄ INTERNAL ----------
+    CONC <--> INT
+
+    %% ---------- ADMIN LINKS ----------
+    DBA -. defines .-> CONC
+    SE  -. tunes .-> INT
+
+    classDef admin fill:#fef3c7,stroke:#b7791f,color:#000;
 ```
 
-### Physical Level (Internal)
-Describes *how* data is physically stored: file organizations, record formats, access paths. The storage team (or the DBMS itself for automated systems) decides on heap files vs. clustered indexes, page sizes, and compression. Users never see this level.
+*Two ANSI/SPARC mappings — **external ⇄ conceptual** (one per view) and **conceptual ⇄ internal** (managed by the DBMS) — are what give us data independence.*
 
-### Logical Level (Conceptual)
-Describes *what* data is stored and their relationships, without physical detail. This is where table definitions, foreign keys, and constraints live. DBAs and application developers work here.
+### The Three Levels
 
-### View Level (External)
-A projection of the logical level tailored to a user group. A grade-entry view shows only the student's own rows; a payroll view shows only salary-related columns. Multiple views can coexist over the same conceptual schema.
+- **External level** — *what each user sees.* At AAUP this is the set of **views** behind every portal screen: `my_grades_view`, `my_sections_view`, `enrollment_stats_view`, `billing_view`. Each view exposes only the rows and columns that user is authorized to see.
+- **Conceptual level** — *the complete logical schema maintained by the AAUP DBA.* All tables (`Student`, `Course`, `Section`, `Enrollment`, `Instructor`, `Faculty`), all columns, all primary/foreign keys, all constraints. This is the single source of truth. Table definitions, foreign keys, and constraints live here; this is the level DBAs and application developers work in.
+- **Internal level** — *how the data is physically stored.* Tablespaces on SSD at the Jenin campus data center, B+ tree indexes on `student_id` and `course_code`, partitioning of `Enrollment` by semester, and nightly replication to the Ramallah site. File organizations, record formats, and access paths live here; users never see this level.
+
+**Conceptual schema in detail:**
+
+- `Student(student_id, name, faculty, department, gpa)`
+- `Course(course_code, title, credits)`
+- `Section(section_id, course_code, instructor_id, semester)`
+- `Enrollment(student_id, section_id, grade)`
+- `Instructor(instructor_id, name, department, salary)`
+- `Faculty(faculty_id, name, campus)`
 
 ::: callout-tip
 **Why views matter beyond simplicity**: Views are the main mechanism for implementing **column-level access control**. By granting `SELECT` on a view but not on the base table, you can share a salary report that omits the `Ssn` (social security number) column entirely.
 :::
 
-The abstraction levels are defined in the *design* of the database. When the database is actually *deployed*, it runs inside a larger **system architecture** that determines how clients connect to it.
+### Data Independence — An AAUP Example
+
+The three-level separation provides **data independence** — the ability to change one level without rewriting the level(s) above it.
+
+| Type | Definition | Example at AAUP |
+|------|-----------|-----------------|
+| **Logical data independence** | Change the *conceptual* schema without rewriting external views or application programs | The Registrar adds a new `mobile_number` column to `Student` so the university can send SMS notifications. Ahmed still logs in and sees his grades exactly as before — the student portal was not touched. |
+| **Physical data independence** | Change the *internal* schema (e.g., add an index, switch storage engine) without changing the conceptual schema | The IT team adds a B+ tree index on `Enrollment(section_id)` so grade-sheet queries run 100× faster. No SQL query, no portal, no report has to be rewritten. |
+
+::: callout-tip
+Physical independence is relatively easy to achieve (most DBMSs do it well). Logical independence is harder — adding a column is safe, but splitting `Student` into `Student` + `StudentContact`, or renaming `gpa` to `cumulative_gpa`, forces every view and application that referenced the old structure to be updated.
+:::
+
+The abstraction levels describe the *design* of the database. When the database is actually *deployed*, it runs inside a larger **system architecture** that determines how clients connect to it.
 
 ---
 
-## DBMS Deployment Architecture — Practical Considerations
+## DBMS Deployment Architecture {#sec-deployment}
 
-Chapter 1 (Section 1.8) introduced the 1-tier, 2-tier, and 3-tier deployment architectures conceptually. Here we examine the engineering trade-offs each tier imposes and how modern systems extend beyond the basic three tiers.
+A DBMS does not always run on the same machine as the application that uses it. **Deployment architecture** describes how many independent layers (*tiers*) exist between the end user and the DBMS engine. More tiers increase security and scalability at the cost of added complexity.
+
+![DBMS Tier Architecture Overview](../images/dbms-tier-architecture.png){fig-align="center" width="80%"}
+
+---
+
+### 1-Tier (Single-Tier) Architecture
+
+All components — user interface, application logic, and the DBMS — reside on a **single machine**. The user interacts directly with the database with no network involvement.
+
+![1-Tier (Single-Tier) Architecture](../images/1tier-architecture.png){fig-align="center" width="80%"}
+
+![Example of Single Tier DBMS Architecture](../images/1tier-architecture-example.png){fig-align="center" width="80%"}
+
+::: callout-tip
+## {{< fa terminal >}} You have already used a 1-tier setup — in the Database Lab!
+
+Remember the **Database Systems lab at AAUP**? When you installed MySQL Server on your own laptop and then opened the [MySQL shell from the Windows Command Prompt]{fg="#2980b9" .bold} to run your first `SELECT` — **that was a 1-tier architecture**.
+
+```bash
+C:\> mysql -u root -p
+Enter password: ********
+mysql> USE company;
+mysql> SELECT * FROM employee;
+```
+
+On your laptop at that moment:
+
+- {{< fa desktop >}} **The client** (the `mysql` shell) — running on your machine
+- {{< fa gears >}} **The application logic** (you typing SQL) — running on your machine
+- {{< fa database >}} **The DBMS server** (`mysqld`) + the data files — [also running on your machine]{bg="#f39c12" fg="#000000"}
+
+No network, no other users, no separate server — everything on one box. That is exactly what *single-tier* means. Any program that uses SQLite (which is just a library embedded inside your application) is 1-tier by design.
+
+> Note: once you connect from one laptop to a **MySQL server running on a different machine** (e.g., `mysql -h lab-server -u student -p`), you have crossed into **2-tier** territory — covered next.
+:::
+
+**When to use:** Learning environments, local development, single-user desktop tools (e.g., a SQLite-backed app, MS Access on a single laptop, or your MySQL lab setup).
+
+| Advantage | Disadvantage |
+|-----------|-------------|
+| Simple — no network needed | Single user only |
+| No network latency | No isolation between app and DB |
+| Full direct control | Cannot scale |
+
+---
+
+### 2-Tier (Client-Server) Architecture
+
+The **client** runs the user interface and application logic; the **DBMS** runs on a separate **server**. Communication uses standard APIs (JDBC, ODBC, native drivers) over a TCP network.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart LR
+    C["💻 Client<br/>UI + Application Logic"]
+    S["🗄️ DB Server<br/>DBMS + Database"]
+    C <-->|"SQL over TCP<br/>(JDBC / ODBC)"| S
+    style C fill:#e8f4fd,stroke:#2980b9,stroke-width:2px
+    style S fill:#fdf2e9,stroke:#e67e22,stroke-width:2px
+```
+
+![Example of 2-Tier (Client-Server) Architecture](../images/2tier-architecture-example.png){fig-align="center" width="80%"}
+
+::: callout-tip
+## {{< fa diagram-project >}} You have used 2-tier too — every time you open MySQL Workbench
+
+When you launch **MySQL Workbench** and click a connection to run a query, you are using a textbook [2-tier architecture]{fg="#2980b9" .bold}.
+
+- {{< fa desktop >}} **Client (Tier 1)** — `MySQLWorkbench.exe` on your laptop: the query editor, schema inspector, EER diagram designer, and result grid. *All the UI and application logic runs here.*
+- {{< fa database >}} **DB Server (Tier 2)** — `mysqld` listening on TCP port **3306**, executing your SQL and sending rows back.
+- {{< fa network-wired >}} **The wire between them** — the **MySQL native protocol** (the same role JDBC / ODBC plays for Java / .NET apps).
+
+This stays 2-tier [even when Workbench and the server are on the *same* laptop]{bg="#f39c12" fg="#000000"} (connecting to `localhost:3306`). What defines the tier is the *process / protocol* separation, not physical location. Connect to a remote server instead (e.g., the lab server `mysql-lab.aaup.edu`) and you simply change the hostname — the architecture is identical.
+
+> **Rule of thumb**
+>
+> - `mysql` CLI on the same machine as the server → taught as **1-tier** (all-in-one bundled lab setup)
+> - Workbench ↔ `mysqld` over TCP (local or remote) → **2-tier**
+> - Browser → web server → database → **3-tier** (see next section)
+:::
+
+**When to use:** Departmental applications, internal tools where the developer controls all clients (e.g., a bank teller terminal, a clinic management desktop app).
+
+| Advantage | Disadvantage |
+|-----------|-------------|
+| Multiple concurrent users | Business logic lives on client — hard to update |
+| Server handles query processing | Direct DB exposure is a security risk |
+| Better performance than 1-tier | Server becomes bottleneck as clients grow |
+
+---
+
+### 3-Tier Architecture
+
+An **application server** (middle tier) is inserted between the client and the DBMS. The client never communicates directly with the database — it only talks to the application server.
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+flowchart TD
+    P["🖥️ Presentation Tier<br/>Browser · Mobile App · Desktop GUI"]
+    A["⚙️ Application Tier<br/>Web Server + Business Logic<br/>Node.js · Django · Spring · Laravel"]
+    D["🗄️ Data Tier<br/>DBMS Server<br/>MySQL · PostgreSQL · MongoDB"]
+    P <-->|"HTTP / REST / GraphQL"| A
+    A <-->|"JDBC / ODBC / DB driver"| D
+    style P fill:#e8f4fd,stroke:#2980b9,stroke-width:2px
+    style A fill:#eafaf1,stroke:#27ae60,stroke-width:2px
+    style D fill:#fdf2e9,stroke:#e67e22,stroke-width:2px
+```
+
+![Example of 3-Tier Architecture](../images/3tier-architecture-example.png){fig-align="center" width="80%"}
+
+::: callout-tip
+## {{< fa graduation-cap >}} Scenario — AAUP student opens the portal from her laptop
+
+Sara opens Chrome on her laptop in the café and visits `https://portal.aaup.edu` to check her Database Systems grade. What she thinks is "one click" is actually a [3-tier architecture]{fg="#2980b9" .bold} in action:
+
+- {{< fa laptop >}} **Presentation Tier (Sara's laptop)** — Chrome renders HTML, CSS, and JavaScript. It knows **nothing** about tables, SQL, or the database. It only speaks **HTTPS** to the portal.
+- {{< fa server >}} **Application Tier (AAUP web/app server)** — running somewhere in the Jenin campus data center (e.g., Node.js / Django / Laravel). It:
+  1. Receives Sara's HTTPS request.
+  2. Checks her session / JWT token — is she logged in? is she Sara?
+  3. Applies business rules (students can see **their own** grades only).
+  4. Translates the request into SQL and forwards it to the DBMS.
+- {{< fa database >}} **Data Tier (AAUP database server)** — MySQL / PostgreSQL on a protected server, [reachable only from the app server]{bg="#f39c12" fg="#000000"}, never from the public Internet. It runs:
+
+  ```sql
+  SELECT course_code, grade
+  FROM   Enrollment
+  WHERE  student_id = '202012345';
+  ```
+
+  and returns the rows to the app tier, which renders them into the HTML page Sara sees.
+
+**Why three tiers instead of two?**
+
+| Concern | What 3-tier gives AAUP |
+|---|---|
+| {{< fa shield-halved >}} **Security** | The database is behind a firewall; Sara's browser cannot talk to it directly. Even if her laptop is compromised, the attacker cannot run raw SQL. |
+| {{< fa users >}} **Scalability** | When registration opens and 10,000 students hit the portal at once, AAUP adds more app servers behind a load balancer without touching the DB. |
+| {{< fa user-shield >}} **Authorization** | "Students see only their rows" is enforced by the app tier — a single trusted place — not by every desktop client. |
+| {{< fa wrench >}} **Maintainability** | The portal team can redesign the UI, or swap Laravel for Node.js, without ever touching the database schema. |
+
+Now compare this to Sara running `mysql -u sara -p` on her laptop (1-tier) or opening Workbench against the lab server (2-tier). Same data, completely different architectures — each fit for a different purpose.
+:::
+
+**When to use:** Virtually all modern web applications — e-commerce, banking portals, social media, ERP systems.
+
+| Concern | How 3-tier addresses it |
+|---------|------------------------|
+| **Security** | DBMS is never directly reachable from the Internet |
+| **Scalability** | App servers can be load-balanced independently of the DB |
+| **Maintainability** | Business logic changes in the app tier leave the DB untouched |
+| **DB portability** | Swapping MySQL for PostgreSQL requires changes only in the app tier |
+| **Complexity** | More layers = harder to debug and deploy |
+
+---
+
+### Tier Architecture at a Glance
+
+| | 1-Tier | 2-Tier | 3-Tier |
+|--|--------|--------|--------|
+| **Concurrent users** | 1 | Dozens–hundreds | Millions |
+| **Security** | None | Low | High |
+| **Scalability** | None | Limited | High |
+| **Complexity** | Minimal | Moderate | High |
+| **Typical example** | SQLite on a laptop | Bank teller app | Amazon.com |
+
+---
 
 ### Why Tier Count Matters
 
@@ -280,16 +538,7 @@ For `WHERE Dno = 5`, if the catalog says `Dno` has 8 distinct values over 30,000
 
 ## Types of Database Systems
 
-### By Data Model
-
-| Category | Examples | Covered |
-|----------|---------|---------|
-| Relational | MySQL, PostgreSQL, Oracle, SQL Server | Ch 5–13 |
-| Document | MongoDB, CouchDB | Ch 15 |
-| Key-Value | Redis, DynamoDB | Ch 14 |
-| Wide-column | Apache Cassandra, HBase | Ch 14 |
-| Graph | Neo4j, Amazon Neptune | Ch 14 |
-| Search | Elasticsearch | Ch 14 |
+Databases can be classified along three independent axes — the data model they use, where they run, and how many users they serve. A full tour of the data-model axis (relational, document, key-value, wide-column, graph, NewSQL, …) lives in [Appendix B: A Guided Tour of Database Families](../appendix/appendixB-database-families.qmd#sec-appB); here we look at the other two axes, since they directly affect the deployment and internal architecture just covered.
 
 ### By Deployment Location
 

@@ -1,7 +1,11 @@
 ---
 title: "The Relational Data Model"
 subtitle: "Chapter 5"
+filters:
+  - callouty-theorem
 ---
+
+{{< epigraph "Future users of large data banks must be protected from having to know how the data is organized in the machine." source="E. F. Codd, 1970" >}}
 
 Chapters 3 and 4 produced an ER/EER diagram — a conceptual design that is deliberately free of implementation detail. This chapter makes the transition from concept to relational schema: the precise mathematical structure that underlies every SQL table you will ever write.
 
@@ -74,22 +78,24 @@ Throughout this book we use the following notation for relational schemas:
 
 **Company Database schemas** (derived from the ER mapping in Chapter 3):
 
+![Company Database — ER Diagram (Chen Notation)](../images/company-db-er-diagram.png){fig-align="center" width="100%"}
+
 ```
 EMPLOYEE(Ssn, Fname NN, Minit, Lname NN, Bdate, Address, Gender,
-         Salary CK(Salary>0), Super_ssn→EMPLOYEE, Dno NN→DEPARTMENT)
+         Salary CK(Salary>0), Super_ssn→EMPLOYEE(Ssn), Dno NN→DEPARTMENT(Dnumber))
 
-DEPARTMENT(Dnumber, Dname NN U, Mgr_ssn NN→EMPLOYEE, Mgr_start_date)
+DEPARTMENT(Dnumber, Dname NN U, Mgr_ssn NN→EMPLOYEE(Ssn), Mgr_start_date)
 
-DEPT_LOCATIONS(Dnumber→DEPARTMENT, Dlocation)
+DEPT_LOCATIONS(Dnumber→DEPARTMENT(Dnumber), Dlocation)
 
-PROJECT(Pnumber, Pname NN U, Plocation, Dnum NN→DEPARTMENT)
+PROJECT(Pnumber, Pname NN U, Plocation, Dnum NN→DEPARTMENT(Dnumber))
 
-WORKS_ON(Essn→EMPLOYEE, Pno→PROJECT, Hours CK(Hours>=0))
+WORKS_ON(Essn→EMPLOYEE(Ssn), Pno→PROJECT(Pnumber), Hours CK(Hours>=0))
 
-DEPENDENT(Essn→EMPLOYEE, Dependent_name, Gender, Bdate, Relationship)
+DEPENDENT(Essn→EMPLOYEE(Ssn), Dependent_name, Gender, Bdate, Relationship)
 ```
 
-Primary keys are underlined. Foreign keys show the referenced table. Constraints are annotated inline.
+Primary keys are underlined. Foreign keys use `attr→TABLE(pk)` — explicitly naming the referenced primary key attribute, which is necessary whenever the FK column name differs from the PK it references (e.g., `Essn→EMPLOYEE(Ssn)`, `Mgr_ssn→EMPLOYEE(Ssn)`). Constraints are annotated inline.
 
 ---
 
@@ -139,11 +145,21 @@ flowchart TD
 
 ---
 
-## FD-Based Key Identification
+## FD-Based Key Identification {#sec-fd-theory}
 
 ### What is a Functional Dependency?
 
-A **functional dependency (FD)** $X \to Y$ on relation $R$ means: for every valid instance of $R$, if two tuples agree on the value(s) of $X$, they must also agree on the value(s) of $Y$. In other words, $X$ **determines** $Y$.
+::: {#def-fd .definition}
+**Functional Dependency**
+
+A **functional dependency (FD)** $X \to Y$ on relation $R$ holds if, for every valid instance of $R$ and every pair of tuples $t_1, t_2 \in R$:
+
+$$
+t_1[X] = t_2[X] \;\Rightarrow\; t_1[Y] = t_2[Y]
+$$
+
+In words: whenever two tuples agree on $X$, they must agree on $Y$. We say $X$ **determines** $Y$.
+:::
 
 Example from `EMPLOYEE`:
 - `Ssn → Fname, Lname, Salary, Dno` (SSN determines all other attributes)
@@ -151,10 +167,14 @@ Example from `EMPLOYEE`:
 
 ### Identifying Candidate Keys via FDs
 
-A set of attributes $K$ is a **candidate key** of $R$ if and only if:
+::: {#def-candidate-key .definition}
+**Candidate Key**
 
-1. $K \to \{A_1, A_2, \ldots, A_n\}$ (K functionally determines *every* attribute in $R$), **and**
-2. No proper subset $K' \subset K$ satisfies condition 1 (K is minimal).
+A set of attributes $K \subseteq R$ is a **candidate key** of $R$ if and only if:
+
+1. $K \to \{A_1, A_2, \ldots, A_n\}$ — i.e. $K$ functionally determines *every* attribute in $R$, and
+2. No proper subset $K' \subset K$ also satisfies condition 1 ($K$ is minimal).
+:::
 
 **Algorithm:**
 
@@ -175,6 +195,88 @@ Given WORKS_ON(Essn, Pno, Hours), the FDs are:
 - No FD exists from `Essn` alone or `Pno` alone to `Hours`
 
 Therefore `{Essn, Pno}` is the candidate key (and is chosen as PK). This is a **composite key**.
+
+### Types of FDs
+
+| Type | Definition | Example |
+|------|-----------|---------|
+| **Full FD** | $Y$ depends on the *entire* attribute set $X$ | `{Essn, Pno} → Hours` |
+| **Partial FD** | $Y$ depends on a *proper subset* of a composite determinant | `Essn → Fname` when the stated determinant was `{Essn, Pno}` |
+| **Transitive FD** | $X \to Y$ and $Y \to Z$ with $Y$ not a key | `Ssn → Dno → Dname` |
+| **Trivial FD** | $Y \subseteq X$ (always holds) | `{Ssn, Fname} → Ssn` |
+
+Partial and transitive FDs are the root cause of the update anomalies that normalization (Chapter 9) eliminates. For now we only need them to reason about keys.
+
+### Armstrong's Axioms
+
+How do we know *all* the FDs that hold on a relation when only a few are stated? **Armstrong's axioms** are a sound and complete set of inference rules: applying them repeatedly to the stated FDs yields every FD implied by them — no more, no less.
+
+| Axiom | Rule | Intuition |
+|-------|------|-----------|
+| **Reflexivity** | If $Y \subseteq X$ then $X \to Y$ | A set determines its own subsets |
+| **Augmentation** | If $X \to Y$ then $XZ \to YZ$ | Extra attributes preserve the dependency |
+| **Transitivity** | If $X \to Y$ and $Y \to Z$ then $X \to Z$ | FD chains compose |
+
+Three useful derived rules follow from the axioms:
+
+| Rule | Statement |
+|------|-----------|
+| **Union** | If $X \to Y$ and $X \to Z$ then $X \to YZ$ |
+| **Decomposition** | If $X \to YZ$ then $X \to Y$ and $X \to Z$ |
+| **Pseudotransitivity** | If $X \to Y$ and $WY \to Z$ then $WX \to Z$ |
+
+### Attribute Closure $X^+$
+
+Manual axiom application is tedious. The **attribute closure** $X^+$ answers the practical question directly: *"Given the set of FDs $F$, which attributes can $X$ determine?"*
+
+::: {#def-closure .definition}
+**Attribute Closure**
+
+Given a relation $R$ with FD set $F$, the **closure** of an attribute set $X \subseteq R$ under $F$ is
+
+$$
+X^+ = \{\, A \in R \mid F \vdash X \to A \,\}
+$$
+
+— the set of all attributes that can be derived from $X$ using the FDs in $F$.
+:::
+
+**Closure algorithm:**
+
+```
+closure ← X
+repeat:
+    for each FD (α → β) in F:
+        if α ⊆ closure:
+            closure ← closure ∪ β
+until closure unchanged
+return closure
+```
+
+**Worked example** — $F = \{\, A \to B,\; BC \to D,\; A \to C,\; D \to E \,\}$, compute $\{A\}^+$:
+
+| Iteration | Applied FD | Closure grows to |
+|-----------|-----------|------------------|
+| Start | — | $\{A\}$ |
+| 1 | $A \to B$ | $\{A, B\}$ |
+| 2 | $A \to C$ | $\{A, B, C\}$ |
+| 3 | $BC \to D$ | $\{A, B, C, D\}$ |
+| 4 | $D \to E$ | $\{A, B, C, D, E\}$ |
+
+Since $\{A\}^+$ covers all attributes, $\{A\}$ is a **superkey**. Checking that no proper subset is also a superkey (trivially true here — $A$ is a single attribute) confirms $\{A\}$ is a **candidate key**.
+
+### Keys from Closures
+
+The closure algorithm gives a precise, mechanical definition of every key concept:
+
+| Concept | Closure-based definition |
+|---------|--------------------------|
+| **Superkey** | $X$ such that $X^+$ contains all attributes of $R$ |
+| **Candidate key** | A *minimal* superkey — no proper subset of $X$ is also a superkey |
+| **Prime attribute** | A member of *some* candidate key |
+| **Non-prime attribute** | Not a member of any candidate key |
+
+This computational view of keys is what normalization (Chapter 9) and query optimisation (Chapter 11) both build on.
 
 ---
 
@@ -221,13 +323,13 @@ Salary DECIMAL(10,2) CHECK (Salary >= 0)
 
 ### Entity Integrity Constraint
 
-> **No component of a primary key may be NULL.**
+> **No component of a [primary key]{fg="#c0392b" .bold} may be NULL.**
 
 The PK is the tuple's identifier. A NULL PK would mean "we don't know which entity this is" — making the row unidentifiable and violating the relational model.
 
 ### Referential Integrity Constraint
 
-Let $R_1$ have a foreign key $FK$ referencing $R_2$'s primary key $PK$. The constraint is:
+Let $R_1$ have a [foreign key]{fg="#2980b9" .bold} $FK$ referencing $R_2$'s primary key $PK$. The constraint is:
 
 $$\forall t_1 \in r_1: t_1[FK] = \text{NULL} \;\lor\; \exists t_2 \in r_2: t_2[PK] = t_1[FK]$$
 
@@ -331,13 +433,818 @@ The exception: complex rules that require multi-table logic or dynamic threshold
 
 ---
 
+## ER-to-Relational Mapping
+
+Chapters 3 and 4 produced a complete ER / EER diagram for the Company domain. Now that we have the full relational vocabulary — relations, keys, foreign keys, referential actions, and NULL semantics — we can mechanically translate that diagram into a working set of SQL tables. A **seven-step algorithm** covers every legal ER construct; the rest of this section walks through each step on the Company case study and ends with the complete schema in one place.
+
+::: callout-note
+## Algorithm Overview
+
+| Step | ER Construct | Mapping Rule |
+|------|-------------|--------------|
+| 1 | Strong entity type | One table per entity; flatten composites; omit derived; multivalued deferred to Step 6 |
+| 2 | Weak entity type | Composite PK = owner PK + partial key; FK to owner with `ON DELETE CASCADE` |
+| 3 | Binary 1:1 relationship | FK on the **total**-participation side (`NOT NULL`); both-partial → FK nullable |
+| 4 | Binary 1:N relationship | FK on the **N-side**; `NOT NULL` if N-side is total, nullable if partial |
+| 5 | Binary M:N relationship | Junction table; composite PK = both FKs; include relationship attributes |
+| 6 | Multivalued attribute | New table; composite PK = owner FK + attribute value |
+| 7 | N-ary relationship (n > 2) | New table; FKs from all $n$ participating entities; PK = all FKs |
+:::
+
+::: callout-note
+## Schema Notation Shorthand (Recap)
+
+Each step shows the mapping result in **formal schema notation** — a compact, implementation-independent description — before the SQL. The shorthand introduced at the start of this chapter (§Formal Schema Notation) is used throughout:
+
+| Symbol | Meaning | Example |
+|--------|---------|---------|
+| First attribute(s) | Primary Key (PK) — underlined in textbook diagrams | `EMPLOYEE(Ssn, ...)` |
+| `NN` | `NOT NULL` | `Fname NN` |
+| `U` | `UNIQUE` | `Dname NN U` |
+| `CK(expr)` | `CHECK` constraint | `Salary CK(Salary >= 0)` |
+| `→TABLE(pk)` | Foreign Key referencing TABLE's pk attribute | `Dno NN→DEPARTMENT(Dnumber)` |
+| `{ON DELETE X ON UPDATE Y}` | Referential action for that specific FK | `Essn→EMPLOYEE(Ssn) {ON DELETE CASCADE ON UPDATE CASCADE}` |
+| Composite PK | Two or more leading FK attributes | `WORKS_ON(Essn→EMPLOYEE(Ssn), Pno→PROJECT(Pnumber), ...)` |
+:::
+
+---
+
+### Step 1 — Strong Entity Types
+
+**Rule:** For each strong entity type $E$, create one relation. **Flatten** composite attributes (e.g., `Name` → `Fname`, `Minit`, `Lname`). **Omit** derived attributes — compute them at query time. Multivalued attributes are handled in Step 6.
+
+**ER Source — Company Database:**
+
+![Full Company Database ER Diagram.](../images/company-db-er-diagram.png){fig-align="center" width="90%"}
+
+#### Formal Schema
+
+```text
+EMPLOYEE(Ssn, Fname NN, Minit, Lname NN, Bdate,
+         Address,
+         Gender CK(Gender IN ('M','F')),
+         Salary NN CK(Salary >= 0))
+    -- Super_ssn added in Step 4b  |  Dno added in Step 4a
+
+DEPARTMENT(Dnumber CK(Dnumber > 0), Dname NN U)
+    -- Mgr_ssn and Mgr_start_date added in Step 3a
+
+PROJECT(Pnumber CK(Pnumber > 0), Pname NN U, Plocation,
+        Dnum NN→DEPARTMENT(Dnumber))
+```
+
+#### SQL Implementation
+
+##### EMPLOYEE
+
+```sql
+CREATE TABLE Employee (
+    ssn             CHAR(9)         PRIMARY KEY
+                    CHECK (ssn ~ '^\d{9}$'),            -- fixed-length national ID, 9 digits
+    fname           VARCHAR(15)     NOT NULL,
+    minit           CHAR(1),                            -- nullable: not everyone has a middle initial
+    lname           VARCHAR(15)     NOT NULL,
+    -- composite 'Name' flattened into fname, minit, lname above ↑
+    bdate           DATE,                               -- stored; derived 'Age' is omitted
+    address         VARCHAR(100),                       -- single simple attribute as shown in ER diagram
+    gender          CHAR(1)         CHECK (gender IN ('M', 'F')),
+    salary          NUMERIC(10, 2)  NOT NULL CHECK (salary >= 0)
+    -- super_ssn (self-referencing FK) added in Step 4b
+    -- dno (FK to Department)        added in Step 4a
+);
+```
+
+> **Derived attribute rule:** `Age` is derived from `bdate` — do **not** store it.
+> Compute on demand: `EXTRACT(YEAR FROM AGE(bdate)) AS age`
+
+##### DEPARTMENT
+
+```sql
+CREATE TABLE Department (
+    dnumber         INT             PRIMARY KEY CHECK (dnumber > 0),
+    dname           VARCHAR(30)     NOT NULL UNIQUE
+    -- mgr_ssn and mgr_start_date added in Step 3a
+);
+```
+
+##### PROJECT
+
+```sql
+CREATE TABLE Project (
+    pnumber         INT             PRIMARY KEY CHECK (pnumber > 0),
+    pname           VARCHAR(25)     NOT NULL UNIQUE,
+    plocation       VARCHAR(30),
+    dnum            INT             NOT NULL,           -- total participation → NOT NULL
+    FOREIGN KEY (dnum) REFERENCES Department(dnumber)
+        ON DELETE RESTRICT                             -- cannot delete dept with active projects
+        ON UPDATE CASCADE
+);
+```
+
+---
+
+### Step 2 — Weak Entity Types
+
+**Rule:** For each weak entity type $W$ with owner $E$:
+
+- Create table $R$; include all attributes of $W$.
+- Add owner's PK as a FK column (`NOT NULL`).
+- PK of $R$ = **owner FK + partial key** of $W$ (composite).
+- Use `ON DELETE CASCADE` — the weak entity has no independent existence.
+
+**ER Source — DEPENDENT (weak entity, owner: EMPLOYEE):**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-align: center
+erDiagram
+    EMPLOYEE {
+        char_9_ Ssn PK
+        varchar Fname
+        varchar Lname
+    }
+    DEPENDENT {
+        char_9_ Essn FK
+        varchar Dependent_name PK
+        char Gender
+        date Bdate
+        varchar Relationship
+    }
+    EMPLOYEE ||--|{ DEPENDENT : "HAS (identifying relationship)"
+```
+
+#### Formal Schema
+
+```text
+DEPENDENT(Essn NN→EMPLOYEE(Ssn) {ON DELETE CASCADE ON UPDATE CASCADE},
+          Dependent_name NN,
+          Gender CK(Gender IN ('M','F')),
+          Bdate,
+          Relationship NN CK(Relationship IN
+              ('Spouse','Son','Daughter','Father','Mother','Sibling')))
+    PK: (Essn, Dependent_name)       -- composite: owner FK + partial key
+```
+
+#### SQL Implementation
+
+```sql
+CREATE TABLE Dependent (
+    essn            CHAR(9)         NOT NULL,               -- owner FK (part of composite PK)
+    dependent_name  VARCHAR(15)     NOT NULL,               -- partial key
+    gender          CHAR(1)         CHECK (gender IN ('M', 'F')),
+    bdate           DATE,
+    relationship    VARCHAR(10)     NOT NULL
+                    CHECK (relationship IN
+                        ('Spouse', 'Son', 'Daughter', 'Father', 'Mother', 'Sibling')),
+    PRIMARY KEY (essn, dependent_name),                     -- composite PK
+    FOREIGN KEY (essn) REFERENCES Employee(ssn)
+        ON DELETE CASCADE                                   -- employee deleted → all dependents deleted
+        ON UPDATE CASCADE
+);
+```
+
+::: callout-warning
+**`ON DELETE CASCADE` is mandatory for weak entities.** A dependent cannot exist without its owner employee. Omitting it violates the identifying relationship semantics.
+:::
+
+---
+
+### Step 3 — Binary 1:1 Relationships
+
+Three participation scenarios produce different mapping decisions:
+
+| Scenario | Mapping rule | FK nullable? |
+|----------|-------------|-------------|
+| **(a)** One total / one partial | FK on the **total** side; include relationship attrs | `NOT NULL` |
+| **(b)** Both total | Merge tables **or** cross-FKs with `DEFERRABLE` | Both `NOT NULL` |
+| **(c)** Both partial | FK on more stable entity | `NULL` allowed |
+
+#### (a) MANAGES — Department (total) : Employee (partial)
+
+**ER Source:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-align: center
+erDiagram
+    EMPLOYEE {
+        char_9_ Ssn PK
+        varchar Fname
+        varchar Lname
+    }
+    DEPARTMENT {
+        int Dnumber PK
+        varchar Dname
+        char_9_ Mgr_ssn FK "NOT NULL (total)"
+        date Mgr_start_date
+    }
+    EMPLOYEE ||--o{ DEPARTMENT : "MANAGES (1:1)"
+```
+
+**Formal Schema** — FK and relationship attribute added to DEPARTMENT (total side):
+
+```text
+DEPARTMENT(Dnumber CK(Dnumber > 0), Dname NN U,
+           Mgr_ssn NN→EMPLOYEE(Ssn),
+           Mgr_start_date NN)
+    -- Mgr_ssn NOT NULL: every department must have exactly one manager (total participation)
+    -- Mgr_start_date is a relationship attribute of MANAGES
+```
+
+**SQL:**
+
+```sql
+ALTER TABLE Department
+    ADD COLUMN mgr_ssn          CHAR(9)  NOT NULL,          -- total → NOT NULL
+    ADD COLUMN mgr_start_date   DATE     NOT NULL DEFAULT CURRENT_DATE,
+    ADD CONSTRAINT fk_dept_manager
+        FOREIGN KEY (mgr_ssn) REFERENCES Employee(ssn)
+        ON DELETE RESTRICT                                  -- cannot delete an active manager
+        ON UPDATE CASCADE;
+```
+
+#### (b) Both-Total — Person : Passport
+
+**ER Source:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-align: center
+erDiagram
+    PERSON {
+        char_14_ National_id PK
+        varchar Full_name
+        date Birth_date
+        char_9_ Passport_number FK "NOT NULL UNIQUE"
+    }
+    PASSPORT {
+        char_9_ Passport_number PK
+        date Issue_date
+        date Expiry_date
+        char_2_ Country
+    }
+    PERSON ||--|| PASSPORT : "HAS (both total)"
+```
+
+**Formal Schema:**
+
+```text
+PASSPORT(Passport_number, Issue_date NN,
+         Expiry_date NN CK(Expiry_date > Issue_date),
+         Country NN)
+
+PERSON(National_id, Full_name NN, Birth_date NN,
+       Passport_number NN U→PASSPORT)
+    -- NN + UNIQUE together enforce 1:1
+    -- DEFERRABLE needed: Person and Passport must be inserted in a single transaction
+```
+
+**SQL:**
+
+```sql
+CREATE TABLE Passport (
+    passport_number CHAR(9)     PRIMARY KEY,
+    issue_date      DATE        NOT NULL,
+    expiry_date     DATE        NOT NULL CHECK (expiry_date > issue_date),
+    country         CHAR(2)     NOT NULL                    -- ISO 3166-1 alpha-2
+);
+
+CREATE TABLE Person (
+    national_id     CHAR(14)    PRIMARY KEY,
+    full_name       VARCHAR(60) NOT NULL,
+    birth_date      DATE        NOT NULL,
+    passport_number CHAR(9)     NOT NULL UNIQUE,            -- total → NOT NULL; UNIQUE enforces 1:1
+    FOREIGN KEY (passport_number) REFERENCES Passport(passport_number)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+        DEFERRABLE INITIALLY DEFERRED                       -- allow inserting both in one transaction
+);
+```
+
+#### (c) Both-Partial — Employee : ParkingSpot
+
+**ER Source:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-align: center
+erDiagram
+    EMPLOYEE {
+        char_9_ Ssn PK
+        int Spot_id FK "NULL (partial)"
+    }
+    PARKING_SPOT {
+        int Spot_id PK
+        varchar Location
+        varchar Status
+    }
+    EMPLOYEE |o--o| PARKING_SPOT : "ASSIGNED_TO (both partial)"
+```
+
+**Formal Schema:**
+
+```text
+EMPLOYEE(..., Spot_id→PARKING_SPOT)
+    -- Spot_id nullable: partial participation on both sides
+    -- ON DELETE SET NULL: spot freed automatically when employee departs
+```
+
+**SQL:**
+
+```sql
+ALTER TABLE Employee
+    ADD COLUMN spot_id INT NULL,                            -- partial → nullable
+    ADD CONSTRAINT fk_emp_parking
+        FOREIGN KEY (spot_id) REFERENCES ParkingSpot(spot_id)
+        ON DELETE SET NULL                                  -- spot freed when employee leaves
+        ON UPDATE CASCADE;
+```
+
+---
+
+### Step 4 — Binary 1:N Relationships
+
+**Rule:** Add the **1-side's PK** as a FK column to the **N-side** table; include any relationship attributes on the N-side.
+
+| N-side participation | FK nullability | Typical FK action |
+|---------------------|---------------|------------------|
+| **Total** | `NOT NULL` | `RESTRICT` (protect parent) |
+| **Partial** | `NULL` allowed | `SET NULL` or `SET DEFAULT` |
+
+#### (a) WORKS_FOR — Department 1 : N Employee (Employee total)
+
+**ER Source:**
+
+![EMPLOYEE–DEPARTMENT relationship with Min-Max notation.](../images/EMPLOYEE-DEPARTMENT-minmax.png){fig-align="center" width="75%"}
+
+**Formal Schema** — FK added to EMPLOYEE (N-side, total):
+
+```text
+EMPLOYEE(Ssn, Fname NN, Minit, Lname NN, Bdate,
+         Address,
+         Gender    CK(Gender IN ('M','F')),
+         Salary    NN CK(Salary >= 0),
+         Super_ssn →EMPLOYEE(Ssn),
+         Dno       NN→DEPARTMENT(Dnumber))
+    -- Dno NOT NULL: every employee must belong to exactly one department (total)
+```
+
+**SQL:**
+
+```sql
+ALTER TABLE Employee
+    ADD COLUMN dno INT NOT NULL,                            -- total → NOT NULL
+    ADD CONSTRAINT fk_emp_dept
+        FOREIGN KEY (dno) REFERENCES Department(dnumber)
+        ON DELETE RESTRICT                                  -- cannot remove dept with employees
+        ON UPDATE CASCADE;
+```
+
+#### (b) SUPERVISES — Employee self-references itself (both sides partial)
+
+**ER Source:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-align: center
+erDiagram
+    EMPLOYEE {
+        char_9_ Ssn PK
+        char_9_ Super_ssn FK "NULL (partial)"
+        varchar Fname
+        varchar Lname
+    }
+    EMPLOYEE }o--o| EMPLOYEE : "SUPERVISES (self-referencing 1:N)"
+```
+
+**Formal Schema:**
+
+```text
+EMPLOYEE(..., Super_ssn→EMPLOYEE(Ssn))
+    -- Super_ssn nullable: top executive has no supervisor (partial on both sides)
+    -- ON DELETE SET NULL: subordinates become unmanaged when supervisor is removed
+```
+
+**SQL:**
+
+```sql
+ALTER TABLE Employee
+    ADD COLUMN super_ssn CHAR(9) NULL,                      -- partial → nullable
+    ADD CONSTRAINT fk_emp_supervisor
+        FOREIGN KEY (super_ssn) REFERENCES Employee(ssn)
+        ON DELETE SET NULL                                  -- supervisor deleted → subordinates unmanaged
+        ON UPDATE CASCADE;
+```
+
+::: callout-note
+**Self-referencing FK** — the FK points back to the same table (`Employee` references `Employee`). The root of the reporting hierarchy has `super_ssn = NULL`.
+:::
+
+#### (c) CONTROLS — Department 1 : N Project (Project total)
+
+Already handled in Step 1: `Project.dnum NOT NULL` was declared with its FK. **No further action needed.**
+
+---
+
+### Step 5 — Binary M:N Relationships
+
+**Rule:** Create a **junction table** $R$. Add both entity PKs as FK columns. PK of $R$ = combination of both FKs (both are `NOT NULL` since they form the key). Include relationship attributes as additional columns.
+
+#### WORKS_ON — Employee M:N Project (relationship attribute: Hours)
+
+**ER Source:**
+
+![WORKS_ON M:N relationship with Hours attribute.](../images/Works_On.png){fig-align="center" width="75%"}
+
+**Formal Schema:**
+
+```text
+WORKS_ON(Essn→EMPLOYEE(Ssn) {ON DELETE CASCADE ON UPDATE CASCADE},
+         Pno→PROJECT(Pnumber)  {ON DELETE CASCADE ON UPDATE CASCADE},
+         Hours CK(Hours >= 0 AND Hours <= 168))
+    PK: (Essn, Pno)
+    -- Both FKs are NOT NULL (they form the composite PK)
+```
+
+**SQL:**
+
+```sql
+CREATE TABLE Works_On (
+    essn    CHAR(9)         NOT NULL,
+    pno     INT             NOT NULL,
+    hours   NUMERIC(5, 1)   CHECK (hours >= 0 AND hours <= 168),   -- max realistic work hours/week
+    PRIMARY KEY (essn, pno),
+    FOREIGN KEY (essn) REFERENCES Employee(ssn)
+        ON DELETE CASCADE                                   -- employee leaves → remove assignments
+        ON UPDATE CASCADE,
+    FOREIGN KEY (pno)  REFERENCES Project(pnumber)
+        ON DELETE CASCADE                                   -- project cancelled → remove assignments
+        ON UPDATE CASCADE
+);
+```
+
+::: callout-note
+**`CASCADE` vs `RESTRICT` on junction tables:**
+
+| Junction row has … | Recommended action |
+|--------------------|--------------------|
+| No independent meaning (pure association) | `CASCADE` — remove the link when either entity is removed |
+| Independent business meaning (e.g., a contract, a grade) | `RESTRICT` — preserve the record even after one entity is deleted |
+:::
+
+---
+
+### Step 6 — Multivalued Attributes
+
+**Rule:** For each multivalued attribute $A$ on entity $E$, create a new table $R$. PK of $R$ = (owner FK + attribute value). Use `ON DELETE CASCADE`.
+
+#### DEPT_LOCATIONS — multivalued `Locations` on Department
+
+**ER Source:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-align: center
+erDiagram
+    DEPARTMENT {
+        int Dnumber PK
+        varchar Dname
+    }
+    DEPT_LOCATIONS {
+        int Dnumber FK
+        varchar Dlocation PK
+    }
+    DEPARTMENT ||--|{ DEPT_LOCATIONS : "has locations (multivalued)"
+```
+
+**Formal Schema:**
+
+```text
+DEPT_LOCATIONS(Dnumber→DEPARTMENT(Dnumber) {ON DELETE CASCADE ON UPDATE CASCADE},
+               Dlocation NN)
+    PK: (Dnumber, Dlocation)     -- composite PK prevents duplicate locations per dept
+```
+
+**SQL:**
+
+```sql
+CREATE TABLE Dept_Locations (
+    dnumber     INT             NOT NULL,
+    dlocation   VARCHAR(30)     NOT NULL,
+    PRIMARY KEY (dnumber, dlocation),                       -- composite PK prevents duplicates
+    FOREIGN KEY (dnumber) REFERENCES Department(dnumber)
+        ON DELETE CASCADE                                   -- department deleted → all locations deleted
+        ON UPDATE CASCADE
+);
+```
+
+#### EMPLOYEE_PHONES — multivalued `Phone_numbers` on Employee
+
+**ER Source:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-align: center
+erDiagram
+    EMPLOYEE {
+        char_9_ Ssn PK
+        varchar Fname
+    }
+    EMPLOYEE_PHONES {
+        char_9_ Ssn FK
+        varchar Phone_type PK
+        varchar Phone_number
+    }
+    EMPLOYEE ||--|{ EMPLOYEE_PHONES : "has phones (multivalued)"
+```
+
+**Formal Schema:**
+
+```text
+EMPLOYEE_PHONES(Ssn→EMPLOYEE(Ssn) {ON DELETE CASCADE ON UPDATE CASCADE},
+                Phone_type NN CK(Phone_type IN ('Mobile','Home','Work')),
+                Phone_number NN CK(Phone_number ~ '^\+?[\d\s\-()]{7,20}$'))
+    PK: (Ssn, Phone_type)        -- one number per type per employee
+```
+
+**SQL:**
+
+```sql
+CREATE TABLE Employee_Phones (
+    ssn          CHAR(9)        NOT NULL,
+    phone_type   VARCHAR(10)    NOT NULL CHECK (phone_type IN ('Mobile', 'Home', 'Work')),
+    phone_number VARCHAR(20)    NOT NULL
+                 CHECK (phone_number ~ '^\+?[\d\s\-\(\)]{7,20}$'),
+    PRIMARY KEY (ssn, phone_type),                          -- one number per type per employee
+    FOREIGN KEY (ssn) REFERENCES Employee(ssn)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+```
+
+---
+
+### Step 7 — N-ary Relationships (n > 2)
+
+**Rule:** Create a new table $R$. Add FKs from all $n$ participating entity tables. PK of $R$ = combination of all FKs. Include any relationship attributes as additional columns.
+
+#### SUPPLY — ternary (Supplier × Project × Part)
+
+*A supplier supplies a specific part to a specific project.*
+
+**ER Source:**
+
+```{mermaid}
+%%| eval: true
+%%| echo: false
+%%| fig-align: center
+erDiagram
+    SUPPLIER {
+        int Supplier_id PK
+        varchar Sname
+    }
+    PROJECT {
+        int Pnumber PK
+        varchar Pname
+    }
+    PART {
+        int Part_id PK
+        varchar Part_name
+    }
+    SUPPLY {
+        int Supplier_id FK
+        int Project_id  FK
+        int Part_id     FK
+        int Quantity
+        numeric Unit_price
+        date Supply_date
+    }
+    SUPPLIER ||--o{ SUPPLY : "provides"
+    PROJECT  ||--o{ SUPPLY : "receives"
+    PART     ||--o{ SUPPLY : "used_in"
+```
+
+**Formal Schema:**
+
+```text
+SUPPLY(Supplier_id→SUPPLIER        {ON DELETE RESTRICT ON UPDATE CASCADE},
+       Project_id→PROJECT(Pnumber)  {ON DELETE RESTRICT ON UPDATE CASCADE},
+       Part_id→PART                 {ON DELETE RESTRICT ON UPDATE CASCADE},
+       Quantity    NN CK(Quantity > 0),
+       Unit_price  NN CK(Unit_price >= 0),
+       Supply_date NN)
+    PK: (Supplier_id, Project_id, Part_id)
+    -- All three FKs are NOT NULL (they form the composite PK)
+```
+
+**SQL:**
+
+```sql
+CREATE TABLE Supply (
+    supplier_id     INT             NOT NULL,
+    project_id      INT             NOT NULL,
+    part_id         INT             NOT NULL,
+    quantity        INT             NOT NULL CHECK (quantity > 0),
+    unit_price      NUMERIC(10, 2)  NOT NULL CHECK (unit_price >= 0),
+    supply_date     DATE            NOT NULL DEFAULT CURRENT_DATE,
+    PRIMARY KEY (supplier_id, project_id, part_id),         -- all three FKs form composite PK
+    FOREIGN KEY (supplier_id) REFERENCES Supplier(supplier_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (project_id)  REFERENCES Project(pnumber)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (part_id)     REFERENCES Part(part_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+);
+```
+
+---
+
+### FK Referential Action Reference
+
+When a referenced row is deleted or its PK is updated, the DBMS applies the declared action:
+
+| Action | On `DELETE` | On `UPDATE` | Best for |
+|--------|------------|------------|---------|
+| `RESTRICT` *(default)* | Block delete if child rows exist | Block update | Records with independent business meaning |
+| `CASCADE` | Delete child rows automatically | Propagate the new PK value | Weak entities; purely associative junction rows |
+| `SET NULL` | Set FK column(s) to `NULL` | Set FK column(s) to `NULL` | Optional (partial) relationships |
+| `SET DEFAULT` | Set FK column(s) to their declared default | Set FK column(s) to default | Reassign to a fallback/placeholder entity |
+| `NO ACTION` | Like `RESTRICT` but checked at end of transaction | Same | Deferred constraint checking |
+
+---
+
+### NULL Summary
+
+| Situation | FK nullable? | Typical referential action |
+|-----------|-------------|--------------------------|
+| Weak entity FK to owner | **NOT NULL** (part of PK) | `CASCADE` |
+| 1:1 — FK on total-participation side | **NOT NULL** | `RESTRICT` |
+| 1:1 — FK on partial-participation side | `NULL` allowed | `SET NULL` |
+| 1:N — N-side **total** participation | **NOT NULL** | `RESTRICT` |
+| 1:N — N-side **partial** participation | `NULL` allowed | `SET NULL` |
+| M:N junction table FKs | **NOT NULL** (part of PK) | `CASCADE` |
+| N-ary junction table FKs | **NOT NULL** (part of PK) | `RESTRICT` |
+| Self-referencing FK (supervisor) | `NULL` allowed | `SET NULL` |
+
+---
+
+## Final Company Database Schema
+
+### Formal Schema (Complete)
+
+```text
+EMPLOYEE(Ssn, Fname NN, Minit, Lname NN, Bdate,
+         Address,
+         Gender    CK(Gender IN ('M','F')),
+         Salary    NN CK(Salary >= 0),
+         Super_ssn →EMPLOYEE(Ssn)          {ON DELETE SET NULL  ON UPDATE CASCADE},
+         Dno       NN→DEPARTMENT(Dnumber)  {ON DELETE RESTRICT  ON UPDATE CASCADE})
+
+DEPARTMENT(Dnumber CK(Dnumber > 0), Dname NN U,
+           Mgr_ssn NN→EMPLOYEE(Ssn)        {ON DELETE RESTRICT  ON UPDATE CASCADE},
+           Mgr_start_date NN)
+
+DEPT_LOCATIONS(Dnumber→DEPARTMENT(Dnumber) {ON DELETE CASCADE   ON UPDATE CASCADE},
+               Dlocation NN)
+    PK: (Dnumber, Dlocation)
+
+PROJECT(Pnumber CK(Pnumber > 0), Pname NN U, Plocation,
+        Dnum NN→DEPARTMENT(Dnumber)         {ON DELETE RESTRICT  ON UPDATE CASCADE})
+
+WORKS_ON(Essn→EMPLOYEE(Ssn)                {ON DELETE CASCADE   ON UPDATE CASCADE},
+         Pno→PROJECT(Pnumber)              {ON DELETE CASCADE   ON UPDATE CASCADE},
+         Hours CK(Hours >= 0 AND Hours <= 168))
+    PK: (Essn, Pno)
+
+DEPENDENT(Essn→EMPLOYEE(Ssn)               {ON DELETE CASCADE   ON UPDATE CASCADE},
+          Dependent_name NN,
+          Gender CK(Gender IN ('M','F')),
+          Bdate,
+          Relationship NN CK(Relationship IN
+              ('Spouse','Son','Daughter','Father','Mother','Sibling')))
+    PK: (Essn, Dependent_name)
+```
+
+### Full SQL Script (dependency order)
+
+```sql
+-- ============================================================
+-- Step 1b: Strong Entity — Department  (created first; no FK deps)
+-- ============================================================
+CREATE TABLE Department (
+    dnumber         INT             PRIMARY KEY CHECK (dnumber > 0),
+    dname           VARCHAR(30)     NOT NULL UNIQUE,
+    mgr_ssn         CHAR(9)         NOT NULL,           -- Step 3a: MANAGES (total) → NOT NULL
+    mgr_start_date  DATE            NOT NULL DEFAULT CURRENT_DATE
+    -- FK to Employee added via ALTER after Employee is created (circular dep)
+);
+
+-- ============================================================
+-- Step 1a: Strong Entity — Employee  (depends on Department)
+-- ============================================================
+CREATE TABLE Employee (
+    ssn             CHAR(9)         PRIMARY KEY
+                    CHECK (ssn ~ '^\d{9}$'),
+    fname           VARCHAR(15)     NOT NULL,
+    minit           CHAR(1),
+    lname           VARCHAR(15)     NOT NULL,
+    bdate           DATE,                               -- 'Age' is derived → not stored
+    address         VARCHAR(100),                       -- single simple attribute as shown in ER diagram
+    gender          CHAR(1)         CHECK (gender IN ('M', 'F')),
+    salary          NUMERIC(10, 2)  NOT NULL CHECK (salary >= 0),
+    super_ssn       CHAR(9)         NULL,               -- Step 4b: self-ref, partial → nullable
+    dno             INT             NOT NULL,            -- Step 4a: WORKS_FOR, total → NOT NULL
+    FOREIGN KEY (super_ssn) REFERENCES Employee(ssn)
+        ON DELETE SET NULL  ON UPDATE CASCADE,
+    FOREIGN KEY (dno)       REFERENCES Department(dnumber)
+        ON DELETE RESTRICT  ON UPDATE CASCADE
+);
+
+-- Close the circular dependency: 
+ALTER TABLE Department
+    ADD CONSTRAINT fk_dept_manager
+        FOREIGN KEY (mgr_ssn) REFERENCES Employee(ssn)
+        ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- ============================================================
+-- Step 1c: Strong Entity — Project  (depends on Department)
+-- ============================================================
+CREATE TABLE Project (
+    pnumber         INT             PRIMARY KEY CHECK (pnumber > 0),
+    pname           VARCHAR(25)     NOT NULL UNIQUE,
+    plocation       VARCHAR(30),
+    dnum            INT             NOT NULL,            -- Step 4a: CONTROLS, total → NOT NULL
+    FOREIGN KEY (dnum) REFERENCES Department(dnumber)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- ============================================================
+-- Step 2: Weak Entity — Dependent (owner: Employee)
+-- ============================================================
+CREATE TABLE Dependent (
+    essn            CHAR(9)         NOT NULL,           -- owner FK (part of composite PK)
+    dependent_name  VARCHAR(15)     NOT NULL,           -- partial key
+    gender          CHAR(1)         CHECK (gender IN ('M', 'F')),
+    bdate           DATE,
+    relationship    VARCHAR(10)     NOT NULL
+                    CHECK (relationship IN
+                        ('Spouse', 'Son', 'Daughter', 'Father', 'Mother', 'Sibling')),
+    PRIMARY KEY (essn, dependent_name),
+    FOREIGN KEY (essn) REFERENCES Employee(ssn)
+        ON DELETE CASCADE ON UPDATE CASCADE             -- weak entity: cascade is mandatory
+);
+
+-- ============================================================
+-- Step 5: M:N Junction — Works_On (Employee × Project)
+-- ============================================================
+CREATE TABLE Works_On (
+    essn    CHAR(9)         NOT NULL,
+    pno     INT             NOT NULL,
+    hours   NUMERIC(5, 1)   CHECK (hours >= 0 AND hours <= 168),
+    PRIMARY KEY (essn, pno),
+    FOREIGN KEY (essn) REFERENCES Employee(ssn)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (pno)  REFERENCES Project(pnumber)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- ============================================================
+-- Step 6: Multivalued — Dept_Locations (Department.locations)
+-- ============================================================
+CREATE TABLE Dept_Locations (
+    dnumber     INT             NOT NULL,
+    dlocation   VARCHAR(30)     NOT NULL,
+    PRIMARY KEY (dnumber, dlocation),
+    FOREIGN KEY (dnumber) REFERENCES Department(dnumber)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+```
+
+::: callout-warning
+## Circular FK: Employee ↔ Department
+
+`Employee.dno → Department` and `Department.mgr_ssn → Employee` form a circular foreign-key dependency. You cannot create both constraints simultaneously in a single `CREATE TABLE` sequence. Two solutions:
+
+1. **Two-phase DDL** — create `Department` without `mgr_ssn` FK, create `Employee`, then `ALTER TABLE Department ADD CONSTRAINT ...` to add the missing FK (as shown above).
+2. **Deferred constraints** — declare both FKs as `DEFERRABLE INITIALLY DEFERRED` and wrap the initial inserts in a single transaction. PostgreSQL checks deferred constraints only at `COMMIT`, so both rows can be inserted before either FK is validated.
+:::
+
+---
+
 ## Summary
 
 ::: callout-important
 ## Chapter 5 — Key Takeaways
 
 - A **relation** is a mathematical set of tuples. Properties: no duplicates, no ordering, atomic values (1NF).
-- **Schema notation**: underline = PK, `→Table` = FK, `NN` = NOT NULL, `U` = UNIQUE, `CK(pred)` = CHECK.
+- **Schema notation**: underline = PK, `→Table(pk)` = FK (explicit PK attribute required when names differ), `NN` = NOT NULL, `U` = UNIQUE, `CK(pred)` = CHECK.
 - **Key taxonomy**: superkey → candidate key → {primary key, alternate key} → {natural / surrogate / composite}.
 - **FD-based key identification**: $K$ is a candidate key if $K^+$ = all attributes and $K$ is minimal. Never infer keys from sample data — use business rules.
 - **PK selection guide**: prefer surrogate integers for stability and compactness; keep natural attributes as `UNIQUE NOT NULL` alternate keys.

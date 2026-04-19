@@ -1,0 +1,14 @@
+part-01-foundations/ch01-introduction.qmd:429:#sec-three-schema
+part-01-foundations/ch01-introduction.qmd:481:#sec-deployment
+part-01-foundations/ch02-concepts-architecture.qmd:52:#sec-three-schema
+part-01-foundations/ch02-concepts-architecture.qmd:179:#sec-deployment
+part-01-foundations/ch02-concepts-architecture.qmd:541:#sec-appB
+part-02-data-modeling/ch03-er-modeling.qmd:632:#sec-appC
+part-02-data-modeling/ch03-er-modeling.qmd:681:#sec-appC
+part-02-data-modeling/ch03-er-modeling.qmd:783:#sec-appC
+part-03-relational-model/ch05-relational-model.qmd:146:#sec-fd-theory
+part-05-design/ch09-normalization.qmd:48:#sec-fd-theory
+part-05-design/ch09-normalization.qmd:389:#sec-fd-theory
+appendix/appendixA-apis.qmd:6:#sec-appA
+appendix/appendixB-database-families.qmd:6:#sec-appB
+appendix/appendixC-advanced-constraints.qmd:6:#sec-appC

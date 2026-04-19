@@ -64,6 +64,8 @@ book:
 
   appendices:
     - appendix/appendixA-apis.qmd
+    - appendix/appendixB-database-families.qmd
+    - appendix/appendixC-advanced-constraints.qmd
 
   references: references.bib
 

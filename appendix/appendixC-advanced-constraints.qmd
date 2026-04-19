@@ -1,0 +1,263 @@
+---
+title: "Advanced Constraint Enforcement"
+subtitle: "Appendix C"
+---
+
+# Advanced Constraint Enforcement {#sec-appC}
+
+Some real-world business rules cannot be expressed with ordinary `PRIMARY KEY`, `FOREIGN KEY`, or simple `CHECK` constraints. They require **triggers**, **stored procedures**, deferrable constraints, or subquery-based `CHECK`s — machinery that is introduced formally only in Chapter 5 (foreign-key actions), Chapter 8 (advanced SQL), Chapter 12 (transactions), and Chapter 13 (concurrency).
+
+To keep Chapters 3 and 4 focused on *modelling* rather than *implementation*, the deep-dive walkthroughs are collected here. Each walkthrough references the ER/EER model from which the rule originated.
+
+The examples below come from Chapter 3, §Min-Max Notation.
+
+---
+
+## C.1  Parking-Permit Reassignment — `ON DELETE SET NULL` with a Status Trigger
+
+*Originating rule:* HOLDS_PERMIT is a $(0,1):(0,1)$ relationship — a permit survives when its student leaves and becomes available for the next student (Chapter 3, Example 2).
+
+::: {.callout-note collapse="true"}
+## Representing & Implementing Reassignment ("Permit becomes available when student leaves")
+
+The $(0,1)$:$(0,1)$ constraint captures a subtle real-world rule: a permit is **not destroyed** when a student leaves — it simply becomes unassigned and available for the next student. This must be modelled and enforced at the database level.
+
+**Key design decisions:**
+
+| Decision | Choice | Reason |
+|----------|--------|--------|
+| `student_id` nullable? | **Yes** (`NULL`) | A permit can exist without an owner |
+| On student deletion | `ON DELETE SET NULL` | Permit survives; `student_id` becomes `NULL` |
+| Permit lifecycle | `status` column (`AVAILABLE` / `ASSIGNED` / `SUSPENDED`) | Tracks whether permit is ready to reassign |
+
+**SQL implementation:**
+
+```sql
+CREATE TABLE ParkingPermit (
+    permit_id  VARCHAR(20)  PRIMARY KEY,
+    issue_date DATE         NOT NULL,
+    status     ENUM('AVAILABLE', 'ASSIGNED', 'SUSPENDED') DEFAULT 'AVAILABLE',
+    student_id INT          NULL,   -- NULL = unassigned
+    FOREIGN KEY (student_id) REFERENCES Student(student_id)
+        ON DELETE SET NULL          -- Critical for reassignment!
+);
+
+-- When student leaves:
+DELETE FROM Student WHERE student_id = 123;
+-- → DB automatically sets permit.student_id = NULL via ON DELETE SET NULL
+-- → Permit status can be updated to 'AVAILABLE' via trigger
+```
+
+**Why `ON DELETE SET NULL` — not `ON DELETE CASCADE`?**
+
+- `CASCADE` would **delete** the permit when the student is removed — destroying a physical asset the university still owns.
+- `SET NULL` **releases** the permit back into the pool, preserving it for the next student.
+
+**Optionally, a trigger can automate the status reset:**
+
+```sql
+CREATE OR REPLACE FUNCTION release_permit()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE ParkingPermit
+    SET    status = 'AVAILABLE'
+    WHERE  student_id = OLD.student_id;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_release_permit
+AFTER DELETE ON Student
+FOR EACH ROW EXECUTE FUNCTION release_permit();
+```
+
+> The ER diagram's $(0,1)$:$(0,1)$ pairs say nothing about *how* to implement reassignment — that detail lives entirely in the physical schema. This is a good example of why ER modelling and physical implementation are separate concerns.
+:::
+
+---
+
+## C.2  OFFERS Timing — Enforcing "Within the First Semester" with a Trigger
+
+*Originating rule:* Every new department must create its first course within one semester of activation (Chapter 3, Example 3 — OFFERS).
+
+::: {.callout-warning collapse="true"}
+## Timing Constraint: "Within the first semester"
+
+The $(1,N)$ constraint on Department enforces that every department has **at least one course in the current database state** — but it says nothing about *when* that course must be created. The "within first semester" requirement is a temporal business rule that a static ER diagram cannot capture.
+
+It must be enforced through one of the following mechanisms:
+
+- **Application workflow** — block department activation (e.g., status remains `PENDING`) until at least one course is created and linked.
+- **Database triggers with status flags** — a `BEFORE INSERT` or `AFTER UPDATE` trigger checks the department's course count before allowing its status to change to `ACTIVE`.
+- **Business process controls** — documented policy enforced by administrators; not representable in a static ER model.
+
+```sql
+-- Example: prevent activating a department with no courses
+CREATE OR REPLACE FUNCTION check_dept_has_course()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.status = 'ACTIVE' THEN
+        IF (SELECT COUNT(*) FROM Course WHERE dept_id = NEW.dept_id) = 0 THEN
+            RAISE EXCEPTION
+                'Department % cannot be activated without at least one course.', NEW.dept_id;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_dept_activation
+BEFORE UPDATE ON Department
+FOR EACH ROW EXECUTE FUNCTION check_dept_has_course();
+```
+:::
+
+---
+
+## C.3  Specific Value Constraints $(0,3)$, $(2,5)$, … — Enforcement Strategies
+
+*Originating rule:* Some relationships require exact counts (e.g. "a project team must have 2 to 5 members"). Standard SQL foreign keys cannot count; four complementary strategies are available.
+
+#### How to Enforce Specific Value Constraints in the Database
+
+Four complementary strategies exist, each with different trade-offs:
+
+**1. `CHECK` Constraints with Subqueries**
+
+Some DBMSs — notably **PostgreSQL** — permit a subquery inside a `CHECK` constraint, letting the database count related rows at write time.
+
+```sql
+-- PostgreSQL: enforce that a project has at most 5 members
+ALTER TABLE WORKS_ON
+  ADD CONSTRAINT chk_team_size
+  CHECK (
+    (SELECT COUNT(*)
+     FROM   WORKS_ON w
+     WHERE  w.pno = NEW.pno) <= 5
+  );
+```
+
+> **Portability note:** MySQL, SQL Server, and SQLite do **not** support subqueries inside `CHECK` constraints. Using this approach ties the schema to a specific DBMS.
+
+---
+
+**2. Triggers (`BEFORE INSERT / UPDATE / DELETE`)**
+
+Triggers fire automatically before (or after) a data-modification statement, giving you full procedural logic to count rows and raise an error.
+
+```sql
+-- PostgreSQL trigger: enforce (2,5) team size on WORKS_ON
+CREATE OR REPLACE FUNCTION check_team_size()
+RETURNS TRIGGER AS $$
+DECLARE
+  cnt INTEGER;
+BEGIN
+  SELECT COUNT(*) INTO cnt
+  FROM   WORKS_ON
+  WHERE  pno = NEW.pno;
+
+  IF cnt >= 5 THEN
+    RAISE EXCEPTION
+      'Team size limit exceeded for project %: max 5 members.', NEW.pno;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_team_size_insert
+BEFORE INSERT OR UPDATE ON WORKS_ON
+FOR EACH ROW EXECUTE FUNCTION check_team_size();
+```
+
+```sql
+-- Also enforce the minimum (2) on DELETE
+CREATE OR REPLACE FUNCTION check_team_min()
+RETURNS TRIGGER AS $$
+DECLARE
+  cnt INTEGER;
+BEGIN
+  -- Count remaining rows after the delete
+  SELECT COUNT(*) - 1 INTO cnt
+  FROM   WORKS_ON
+  WHERE  pno = OLD.pno;
+
+  IF cnt < 2 THEN
+    RAISE EXCEPTION
+      'Project % must retain at least 2 members.', OLD.pno;
+  END IF;
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_team_size_delete
+BEFORE DELETE ON WORKS_ON
+FOR EACH ROW EXECUTE FUNCTION check_team_min();
+```
+
+Triggers work across all major DBMSs (PostgreSQL, MySQL, SQL Server, Oracle) though the exact syntax differs.
+
+---
+
+**3. Application Logic**
+
+Business rules that are hard to express in SQL can live in the application layer (Java, Python, Node.js, etc.). The application queries the current count before every insert or delete and rejects the operation when the constraint would be violated.
+
+```python
+# Python / SQLAlchemy example
+def add_member_to_project(session, emp_ssn, proj_no):
+    count = session.query(WorksOn)\
+                   .filter_by(pno=proj_no)\
+                   .count()
+    if count >= 5:
+        raise ValueError(
+            f"Project {proj_no} already has the maximum of 5 members."
+        )
+    session.add(WorksOn(essn=emp_ssn, pno=proj_no))
+    session.commit()
+```
+
+> **Caution:** Application-layer enforcement can be bypassed by direct database access tools (e.g., a DBA running a raw SQL script). Pair it with a trigger for defence-in-depth.
+
+---
+
+**4. Stored Procedures**
+
+Encapsulate all insert/update/delete operations for the affected table inside stored procedures and revoke direct-write privileges from application users. The procedure performs the count check before executing the DML.
+
+```sql
+-- MySQL stored procedure enforcing (0,3) on ORDERS per CUSTOMER
+DELIMITER $$
+CREATE PROCEDURE add_order(IN p_cust_id INT, IN p_order_data VARCHAR(255))
+BEGIN
+  DECLARE v_count INT;
+
+  SELECT COUNT(*) INTO v_count
+  FROM   ORDERS
+  WHERE  cust_id = p_cust_id;
+
+  IF v_count >= 3 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT =
+        'Customer has reached the maximum of 3 active orders.';
+  END IF;
+
+  INSERT INTO ORDERS (cust_id, order_data)
+  VALUES (p_cust_id, p_order_data);
+END$$
+DELIMITER ;
+```
+
+---
+
+::: callout-note
+**Summary: choosing an enforcement strategy**
+
+| Strategy | Works in | Bypassed by direct SQL? | Notes |
+|----------|----------|------------------------|-------|
+| `CHECK` + subquery | PostgreSQL only | No | Least portable |
+| Triggers | All major DBMSs | No | Best database-level guarantee |
+| Application logic | Any | Yes (direct access) | Flexible; pair with triggers |
+| Stored procedures | All major DBMSs | Only if user has direct write rights | Centralises business logic |
+
+For production systems, **triggers** or **stored procedures** are the most reliable choices because they enforce the rule at the database level regardless of which client is writing data.
+:::
