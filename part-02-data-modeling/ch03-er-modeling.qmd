@@ -25,7 +25,7 @@ ER modeling was introduced by Peter Chen in 1976. Its core contribution was givi
 | Code first | Logic drives storage; hard to change later |
 | ER diagram first | Clean conceptual model; easy to review with users; maps to any DBMS |
 
-An ER diagram is always drawn **before** writing any SQL. It is then converted to a relational schema using a mechanical mapping process (covered at the end of this chapter).
+An ER diagram is always drawn **before** writing any SQL. It is then converted to a relational schema using a seven-step mechanical mapping process covered in [Chapter 5 — The Relational Model](../part-03-relational-model/ch05-relational-model.qmd#er-to-relational-mapping).
 
 ---
 
@@ -121,10 +121,10 @@ A **weak entity type** has **no key attribute of its own** — it cannot be uniq
 ::: callout-important
 **Example:** `DEPENDENT` is weak under `EMPLOYEE`.
 
-- `DEPENDENT` has a partial key: `Dependent_Name`
+- `DEPENDENT` has a partial key: `Name`
 - Two dependents of *different* employees may share the same name — perfectly fine.
 - Two dependents of the *same* employee may **not** share the same name.
-- Full identifier: `(Ssn, Dependent_Name)` — a composite key where `Ssn` comes from the owner.
+- Full identifier: `(SSN, Name)` — a composite key where `SSN` comes from the owner.
 
 If an employee is deleted, all their dependents are deleted too (CASCADE). A dependent record cannot exist without an employee.
 :::
@@ -153,7 +153,7 @@ An **attribute** is a property that describes an entity type or relationship typ
 | **Derived** | Computed from another stored attribute; not physically stored | **Dashed** oval | `Age` derived from `Bdate` |
 | **Stored** | Permanently stored; may be a source for derived attributes | Plain oval | `Bdate` |
 | **Key** | Uniquely identifies each entity instance | Oval with **underlined** text | `Ssn`, `Dnumber` |
-| **Partial key** | Identifies weak entity instances within the owner; not globally unique | Oval with **dashed underline** | `Dependent_Name` |
+| **Partial key** | Identifies weak entity instances within the owner; not globally unique | Oval with **dashed underline** | `Name` (of DEPENDENT) |
 | **Complex** | Both composite and multivalued | Nested double oval | `{Address(Street, City, Zip)}` |
 | **NULL** | Value is unknown or not applicable | — | `Super_ssn` for a top-level manager |
 
@@ -217,8 +217,8 @@ A **relationship instance** is one specific pairing of entity instances.
 
 | Degree | Name | Example |
 |--------|------|---------|
-| 1 | Unary (recursive) | `EMPLOYEE` **Supervises** `EMPLOYEE` |
-| 2 | Binary | `EMPLOYEE` **Works_For** `DEPARTMENT` |
+| 1 | Unary (recursive) | `EMPLOYEE` **SUPERVISION** `EMPLOYEE` |
+| 2 | Binary | `EMPLOYEE` **WORKS_FOR** `DEPARTMENT` |
 | 3 | Ternary | `EMPLOYEE` **Supplies** `PROJECT` with `PART` |
 
 Most real-world relationships are **binary**. Before using a ternary relationship, ask whether it can be decomposed into two binary ones without losing information.
@@ -284,7 +284,7 @@ Total participation means the entity **cannot exist** in the database without be
 Some relationships carry their own data — a value that belongs to the **pairing** of two entities, not to either entity alone.
 
 ::: callout-important
-`Hours` in *Works_On* is a **relationship attribute**: it is the number of hours *this employee* spends on *this project*.
+`Hours` in *WORKS_ON* is a **relationship attribute**: it is the number of hours *this employee* spends on *this project*.
 
 - Storing it with `EMPLOYEE` is wrong: hours on which project?
 - Storing it with `PROJECT` is wrong: hours by which employee?
@@ -293,7 +293,7 @@ Some relationships carry their own data — a value that belongs to the **pairin
 
 In Chen notation, relationship attributes are drawn as ovals attached to the diamond.
 
-![Works_On relationship attribute — Hours is attached to the Works_On diamond because it belongs to the (Employee, Project) pairing, not to either entity alone](../images/Works_On.png){fig-align="center" width="50%"}
+![WORKS_ON relationship attribute — Hours is attached to the WORKS_ON diamond because it belongs to the (Employee, Project) pairing, not to either entity alone](../images/Works_On.png){fig-align="center" width="50%"}
 
 ### Recursive (Unary) Relationships
 
@@ -305,14 +305,14 @@ The diagram below shows two versions of the same idea — the top one is **wrong
 
 **Why the first diagram is wrong:** `Supervisor` is not a different kind of thing from `Employee` — a supervisor *is* an employee who happens to manage others. Drawing two separate entity boxes implies two different tables in the database, which is incorrect.
 
-**Why the second diagram is correct:** A single `Employee` entity with a **recursive** `supervises` relationship back to itself, with two labelled roles: `supervisor` (1 side) and `supervised` (N side). One entity maps to one table — the role is just a label on the line.
+**Why the second diagram is correct:** A single `Employee` entity with a **recursive** `SUPERVISION` relationship back to itself, with two labelled roles: `Supervisor` (1 side) and `Supervisee` (N side). One entity maps to one table — the role is just a label on the line.
 
 **Why both sides are partial (single line):**
 
 | Role | Min | Reason |
 |------|-----|--------|
-| `supervised` (N side) | 0 | Not every employee supervises anyone — a regular worker never plays the supervisor role |
-| `supervisor` (1 side) | 0 | Not every employee has a supervisor — the top-level manager (CEO) has no one above them |
+| `Supervisor` (1 side) | 0 | Not every employee supervises others — a regular worker never plays the supervisor role |
+| `Supervisee` (N side) | 0 | Not every employee has a supervisor — the top-level manager has no one above them |
 
 Both sides are $(0,N)$ and $(0,1)$ respectively — **partial participation**, shown as single lines on both ends.
 
@@ -365,7 +365,7 @@ Before using a ternary relationship, verify that the three-way combination is tr
 
 ## Worked Example: The Company Database
 
-We now apply everything above to a realistic requirements document. The resulting ER diagram is the **Company Database** — the running example used throughout Chapters 3–8.
+This section walks through the complete ER design process for the **Company Database** — the running example that appears in every chapter from here through Chapter 8. Starting from a plain-English requirements paragraph, we apply the three-step extraction method — nouns → entities and attributes, verb phrases → relationships, quantifiers → cardinality and participation — arriving at a verified Chen-notation ER diagram.
 
 ### Requirements
 
@@ -381,98 +381,142 @@ We now apply everything above to a realistic requirements document. The resultin
 
 ### Step 1 — Extract Entities and Attributes
 
-**Rule:** Circle all nouns. For each noun, ask: *"Does it have an independent existence and need multiple facts stored about it?"*
+**Rule:** Scan the requirements for all nouns and noun phrases. For each, ask: *"Does it have an independent existence and need multiple facts stored about it?"* If yes → entity. If it is a single fact about something else → attribute. If it depends on another entity for its identity → weak entity.
 
 | Noun | Entity or Attribute? | Notes |
 |------|---------------------|-------|
 | Department | **Strong Entity** | Has name, number, locations — independent existence |
-| Name (dept) | Attribute of DEPARTMENT | Key attribute |
-| Number (dept) | Attribute of DEPARTMENT | Candidate key |
+| Name (dept) | Simple attribute of DEPARTMENT | Unique per requirements but not the diagrammatic key |
+| Number (dept) | **Key attribute** of DEPARTMENT | Underlined oval — uniquely identifies each department |
 | Employee | **Strong Entity** | Has SSN, name, salary — independent existence |
-| Manager | Role of EMPLOYEE, not a separate entity | Expressed via a 1:1 relationship |
-| Start date (mgr) | Attribute of **Manages relationship** | Depends on the manager-department pairing |
-| Location (dept) | **Multivalued attribute** of DEPARTMENT | "Several locations" |
-| SSN | Attribute of EMPLOYEE | **Key attribute** |
-| First/Middle/Last name | **Composite attribute** Name of EMPLOYEE | Sub-attributes |
-| Date of birth | Attribute of EMPLOYEE | Stored; Age is derived from it |
-| Address | Attribute of EMPLOYEE | Simple (or composite if sub-parts needed) |
-| Gender, Salary | Attributes of EMPLOYEE | Simple |
-| Hours | Attribute of **Works_On relationship** | Depends on Employee + Project pairing |
+| Manager | Role of EMPLOYEE, not a separate entity | Expressed via the 1:1 MANAGES relationship |
+| Start_date (mgr) | Attribute of **MANAGES relationship** | Depends on the manager–department pairing, not on either entity alone |
+| Locations (dept) | **Multivalued attribute** of DEPARTMENT | "Several locations" → double oval |
+| SSN | **Key attribute** of EMPLOYEE | Underlined oval — uniquely identifies each employee |
+| Name (emp) | **Composite attribute** of EMPLOYEE | Breaks into sub-attributes: Fname, Minit, Lname |
+| Fname, Minit, Lname | Sub-attributes of Name (emp) | Component ovals under the Name composite |
+| Bdate | Simple (stored) attribute of EMPLOYEE | Source for the derived attribute Age |
+| Age | **Derived attribute** of EMPLOYEE | Dashed oval — computed from Bdate; not physically stored |
+| Address | Simple attribute of EMPLOYEE | Single value per employee in this schema |
+| Gender | Simple attribute of EMPLOYEE | |
+| Salary | Simple attribute of EMPLOYEE | |
+| Hours | Attribute of **WORKS_ON relationship** | Depends on the (Employee, Project) pairing — not on either entity alone |
 | Project | **Strong Entity** | Has name, number, location |
-| Location (proj) | Simple attribute of PROJECT | Only one per project |
-| Dependent | **Weak Entity** | No key of its own — identified via EMPLOYEE |
-| Dep. name, gender, DOB, relationship | Attributes of DEPENDENT | `Dependent_Name` is partial key |
+| Number (proj) | **Key attribute** of PROJECT | Underlined oval |
+| Name (proj) | Simple attribute of PROJECT | |
+| Location (proj) | Simple attribute of PROJECT | Single value — only one location per project |
+| Dependent | **Weak Entity** | No key of its own — identified by EMPLOYEE via HAS |
+| Name (dep) | **Partial key** of DEPENDENT | Dashed-underline oval — unique within one employee's dependents |
+| Gender, Bdate, Relationship | Simple attributes of DEPENDENT | |
+
+::: callout-tip
+**Entity vs. attribute decision for Manager:** The word "manager" is a *role*, not a separate kind of thing. Managers are employees who happen to manage a department. Creating a separate MANAGER entity would duplicate all employee data. The correct model is a 1:1 relationship (MANAGES) between EMPLOYEE and DEPARTMENT, with `Start_date` as a relationship attribute.
+:::
 
 ---
 
 ### Step 2 — Extract Relationships
 
-**Rule:** Circle all verb phrases. For each, identify: which entities are involved, the cardinality, and the participation.
+**Rule:** Scan the requirements for verb phrases. For each, identify: the two (or more) entities involved, the cardinality ratio, the participation on each side, and the official relationship name to use in the diagram.
 
-| Verb phrase | Entities | Cardinality | Participation |
-|------------|---------|-------------|--------------|
-| "works in" | EMPLOYEE ↔ DEPARTMENT | N:1 | Employee: total *("exactly one")*; Dept: partial *(text silent — assumption needed)* |
-| "works on" | EMPLOYEE ↔ PROJECT | M:N | Employee: partial *("may work on several" = optional)*; Project: partial *(text silent — assumption needed)* |
-| "managed by" | DEPARTMENT ↔ EMPLOYEE | 1:1 | Dept: total; Employee: partial |
-| "controlled by" | PROJECT ↔ DEPARTMENT | N:1 | Project: total; Dept: partial |
-| "has dependents" | EMPLOYEE ↔ DEPENDENT | 1:N | Employee: partial; Dependent: total (identifying) |
-| "supervised by" | EMPLOYEE ↔ EMPLOYEE | 1:N (recursive) | Supervisee: partial; Supervisor: partial |
+A cardinality label answers: *"Given one instance of entity A, how many instances of entity B can be associated with it?"* Participation answers: *"Must every instance of this entity participate — or is it optional?"*
+
+| Verb phrase | Relationship | Entities | Cardinality | Participation |
+|------------|-------------|---------|-------------|--------------|
+| "works in exactly one department" | **WORKS_FOR** | EMPLOYEE ↔ DEPARTMENT | N:1 | Employee: **total** *("exactly one")*; Dept: **total** *(design assumption — a dept with no employees would not exist)* |
+| "works on several projects" | **WORKS_ON** | EMPLOYEE ↔ PROJECT | M:N | Employee: **total** *(design assumption)*; Project: **total** *(design assumption — a project without staff is not operational)* |
+| "managed by exactly one employee" | **MANAGES** | DEPARTMENT ↔ EMPLOYEE | 1:1 | Dept: **total** *("exactly one")*; Employee: partial *("manager" is a role, not all employees manage)* |
+| "controlled by exactly one department" | **CONTROLS** | PROJECT ↔ DEPARTMENT | N:1 | Project: **total** *("exactly one")*; Dept: partial *(a dept may control no projects)* |
+| "may have dependents" | **HAS** | EMPLOYEE ↔ DEPENDENT | 1:N | Employee: partial *("may have" = optional)*; Dependent: **total** *(identifying — a dependent cannot exist without its employee owner)* |
+| "supervised by at most one other employee" | **SUPERVISION** | EMPLOYEE ↔ EMPLOYEE | 1:N (recursive) | Supervisee: partial *("at most one" — some have none)*; Supervisor: partial *(not all employees supervise anyone)* |
+
+::: callout-note
+**On design assumptions:** The requirements text directly states total participation for Employee in WORKS_FOR, Department in MANAGES, Project in CONTROLS, and Dependent in HAS. The remaining total-participation decisions — Department in WORKS_FOR, Employee in WORKS_ON, and Project in WORKS_ON — are **design assumptions** made explicit in the diagram. They are reasonable operational defaults but must be confirmed with stakeholders before implementation.
+:::
 
 ---
 
 ### Step 3 — ER Diagram in Chen Notation
 
-The following diagram uses Chen notation conventions:
-- **Rectangles** = strong entities
-- **Double rectangles** = weak entities
-- **Diamonds** = relationships
-- **Double diamond** = identifying relationship
-- **Ovals** = attributes
-- **Double oval** = multivalued attribute
-- **Dashed oval** = derived attribute
-- **Underlined text in oval** = key attribute
-- **Double line** = total participation; **Single line** = partial participation
-- **1 / N / M labels** = cardinality at the entity end of the line
+The diagram below is assembled from the entities, attributes, and relationships identified in Steps 1 and 2. Review each symbol against the legend before reading the callout.
+
+**Symbol legend:**
+
+| Symbol | Meaning |
+|--------|---------|
+| Single rectangle | Strong entity |
+| Double rectangle | Weak entity |
+| Single diamond | Relationship |
+| Double diamond | Identifying relationship (for weak entity) |
+| Plain oval | Simple attribute |
+| Double oval | Multivalued attribute |
+| Dashed oval | Derived attribute |
+| Underlined name in oval | Key attribute |
+| Dashed-underlined name in oval | Partial key (weak entity) |
+| Double line on entity–relationship edge | Total participation (every instance must participate) |
+| Single line on entity–relationship edge | Partial participation (optional) |
+| 1 / N / M label near entity | Cardinality (maximum) on that side |
 
 ![Company Database — ER Diagram (Chen Notation)](../images/company-db-er-diagram.png){fig-align="center" width="100%"}
 
 ::: callout-note
 ## Reading the diagram
 
-- **Double lines** connecting Employee to *works in* and Employee to *has* indicate **total participation**.
-- **M and N labels** show cardinality: M:N for Works_On, N:1 for WorksFor, 1:1 for Manages.
-- `Locations` (double oval) is a multivalued attribute of DEPARTMENT.
-- `Age` (dashed oval) is derived from `Bdate`.
-- `Has_Dependent` is a **double diamond** (identifying relationship).
-- `DEPENDENT` is a **double rectangle** (weak entity).
-- `Dep_Name` with dashed underline is the **partial key** — uniquely identifies a dependent only combined with the owner employee's key.
+**Entities and their keys:**
+
+- `Employee` (rectangle): key = `SSN` (underlined). `Name` is composite → `Fname`, `Minit`, `Lname`. `Age` (dashed oval) is derived from `Bdate`.
+- `Department` (rectangle): key = `Number` (underlined). `Locations` (double oval) is multivalued — a department can have several locations.
+- `Project` (rectangle): key = `Number` (underlined). `Location` is a single-valued attribute.
+- `Dependent` (double rectangle, weak entity): partial key = `Name` (dashed-underline). Identified by the combination `(SSN, Name)`.
+
+**Relationships and cardinality:**
+
+- `WORKS_FOR` (N:1): N employees work for 1 department. Both sides have **double lines** → Employee total (every employee must be in a department) and Department total (a department must have employees).
+- `MANAGES` (1:1): 1 employee manages 1 department. `Start_date` is a relationship attribute on MANAGES. Department side: **double line** (total — a department must have a manager). Employee side: single line (partial — not every employee is a manager).
+- `WORKS_ON` (M:N): M employees work on N projects. `Hours` is a relationship attribute on WORKS_ON. Both sides have **double lines** → both Employee and Project have total participation.
+- `CONTROLS` (N:1): N projects controlled by 1 department. Project side: **double line** (total). Department side: single line (partial — a department may control no projects).
+- `SUPERVISION` (1:N, recursive): An employee (Supervisor role, 1 side) may supervise many employees (Supervisee role, N side). Both sides: single lines (partial — not every employee supervises, and the top-level manager has no supervisor).
+- `HAS` (1:N, **double diamond** = identifying): 1 employee may have N dependents. Employee side: single line (partial — an employee need not have dependents). Dependent side: **double line** (total — every dependent record must be tied to an employee).
 :::
 
 ---
 
 ### Full Constraint Summary
 
-| Relationship | Entities | Cardinality | EMPLOYEE side | Other entity side |
-|-------------|---------|-------------|--------------|------------------|
-| works in | EMPLOYEE – DEPARTMENT | N:1 | $(1,1)$ total *("exactly one")* | $(0,N)$ partial *(assumption — text silent)* |
-| Managed by | EMPLOYEE – DEPARTMENT | 1:1 | $(0,1)$ partial | $(1,1)$ total |
-| works on | EMPLOYEE – PROJECT | M:N | $(0,N)$ partial *("may work on several")* | $(0,N)$ partial *(assumption — text silent)* |
-| controlled by | PROJECT – DEPARTMENT | N:1 | $(1,1)$ total (proj) | $(0,N)$ partial |
-| supervised by | EMPLOYEE – EMPLOYEE | 1:N | $(0,1)$ partial (supervisee) | $(0,N)$ partial (supervisor) |
-| has | EMPLOYEE – DEPENDENT | 1:N | $(0,N)$ partial | $(1,1)$ total (identifying) |
+The table below consolidates all six relationships. The **diagram column** records what the drawn diagram actually shows; the **source** column records whether that constraint came directly from the requirements text or was an assumption made during design.
+
+| Relationship | Entities | Cardinality | Entity A side | Entity B side |
+|-------------|---------|-------------|--------------|---------------|
+| WORKS_FOR | EMPLOYEE – DEPARTMENT | N:1 | $(1,1)$ **total** *— "exactly one dept" (stated)* | $(1,N)$ **total** *— dept must have employees (assumed)* |
+| MANAGES | EMPLOYEE – DEPARTMENT | 1:1 | $(0,1)$ partial *— not all employees manage (stated)* | $(1,1)$ **total** *— every dept has a manager (stated)* |
+| WORKS_ON | EMPLOYEE – PROJECT | M:N | $(1,N)$ **total** *— employee must work on projects (assumed)* | $(1,N)$ **total** *— project must have staff (assumed)* |
+| CONTROLS | PROJECT – DEPARTMENT | N:1 | $(1,1)$ **total** *— project has exactly one dept (stated)* | $(0,N)$ partial *— dept may control no projects (stated)* |
+| SUPERVISION | EMPLOYEE – EMPLOYEE | 1:N | $(0,1)$ partial *— Supervisee (at most one supervisor)* | $(0,N)$ partial *— Supervisor (may supervise nobody)* |
+| HAS | EMPLOYEE – DEPENDENT | 1:N | $(0,N)$ partial *— employee need not have dependents (stated)* | $(1,1)$ **total** *— dependent must have an owner (identifying)* |
 
 ::: callout-important
 ## Stated vs. Assumed Constraints
 
-The requirements text uses **"exactly one"** only for the Employee side of *WorksFor* and for *Manages/Controls/HasDependent* — those constraints are **directly stated**.
+**Directly stated** in the requirements text:
 
-The Department side of *WorksFor* and both sides of *WorksOn* are **not addressed by the text**. In practice you must ask the stakeholder:
+| Constraint | Evidence in text |
+|-----------|-----------------|
+| Employee total in WORKS_FOR | "works in *exactly one* department" |
+| Department total in MANAGES | "managed by *exactly one* employee" |
+| Project total in CONTROLS | "controlled by *exactly one* department" |
+| Dependent total in HAS | Identifying relationship — dependents cannot exist without an owner |
+| Employee partial in MANAGES | "manager" is a role — not all employees are managers |
+| Employee partial in HAS | "may have dependents" — optional |
 
-- *"Can a department exist with zero employees?"* → If no → total; if yes → partial.
-- *"Can a project exist with no employees assigned yet?"* → If yes → partial.
-- *"Must every employee work on at least one project?"* → If no → partial.
+**Design assumptions** (not stated, but encoded as total in this diagram):
 
-Until answered, the correct notation is **partial** $(0,N)$ or $(0,M)$ — never assume total without evidence.
+| Constraint | Design reasoning |
+|-----------|-----------------|
+| Department total in WORKS_FOR | A department with zero employees would not exist operationally |
+| Employee total in WORKS_ON | In this schema, employees without active project assignments are not tracked |
+| Project total in WORKS_ON | A project with no assigned staff is not yet operational |
+
+These assumptions are explicit so they can be revisited when requirements change. To relax any one of them to partial, change the double line to a single line in the diagram and drop the `NOT NULL` constraint from the corresponding foreign key column in SQL.
 :::
 
 ---
@@ -509,25 +553,35 @@ The $(min, max)$ pair is written on the line **next to the entity it constrains*
 - An entity of type $E_1$ may be related to **at least $min_1$** and **at most $max_1$** entities of type $E_2$.
 - Likewise, $min_2$ is the minimum number and $max_2$ is the maximum number of $E_1$ entities to which an $E_2$ entity is related.
 
-**Example — EMPLOYEE and DEPARTMENT:**
+### Illustrative Example — EMPLOYEE and DEPARTMENT
 
-![Min-Max placement on the WorksFor relationship.](../images/EMPLOYEE-DEPARTMENT-minmax.png){fig-align="center" width="70%"}
+The diagram below shows Min-Max annotation on a generic EMPLOYEE–DEPARTMENT relationship. The values here are **chosen to illustrate specific constraint patterns** and are independent of the Company Database worked example.
 
-- $(1,1)$ next to EMPLOYEE: every employee works for **exactly one** department.
-- $(4,N)$ next to DEPARTMENT: every department has **at least 4** employees (no upper limit).
+![Min-Max notation on an EMPLOYEE–DEPARTMENT relationship (illustrative values).](../images/EMPLOYEE-DEPARTMENT-minmax.png){fig-align="center" width="70%"}
+
+| Pair | Placed next to | Meaning |
+|------|---------------|---------|
+| $(1,1)$ | EMPLOYEE | Every employee is associated with **exactly one** department — mandatory and singular. |
+| $(4,N)$ | DEPARTMENT | Every department has **at least 4** employees — a specific minimum business rule. |
+
+::: callout-note
+The $(4,N)$ on the DEPARTMENT side is intentionally a specific-value constraint to show that Min-Max is not limited to the four standard combinations. The Company Database uses $(1,N)$ for this side — see the table in the next section.
+:::
+
+---
 
 ### Company Database in Min-Max Notation
 
-The table re-expresses every relationship from the Worked Example using $(min, max)$ pairs so you can compare them against the Chen diagram drawn earlier.
+The table below re-expresses every relationship from the Worked Example using $(min, max)$ pairs, consistent with the Full Constraint Summary and the Chen diagram.
 
 | Relationship | Entity A | $(min,max)$ on A | Entity B | $(min,max)$ on B |
 |-------------|----------|-----------------|----------|-----------------|
-| WorksFor | EMPLOYEE | $(1,1)$ | DEPARTMENT | $(4,N)$ |
-| Manages | EMPLOYEE | $(0,1)$ | DEPARTMENT | $(1,1)$ |
-| WorksOn | EMPLOYEE | $(1,N)$ | PROJECT | $(1,N)$ |
-| Controls | PROJECT | $(1,1)$ | DEPARTMENT | $(0,N)$ |
-| Supervises | EMPLOYEE (supervisee) | $(0,1)$ | EMPLOYEE (supervisor) | $(0,N)$ |
-| HasDependent | EMPLOYEE | $(0,N)$ | DEPENDENT | $(1,1)$ |
+| WORKS_FOR | EMPLOYEE | $(1,1)$ | DEPARTMENT | $(1,N)$ |
+| MANAGES | EMPLOYEE | $(0,1)$ | DEPARTMENT | $(1,1)$ |
+| WORKS_ON | EMPLOYEE | $(1,N)$ | PROJECT | $(1,N)$ |
+| CONTROLS | PROJECT | $(1,1)$ | DEPARTMENT | $(0,N)$ |
+| SUPERVISION | EMPLOYEE (Supervisee) | $(0,1)$ | EMPLOYEE (Supervisor) | $(0,N)$ |
+| HAS | EMPLOYEE | $(0,N)$ | DEPENDENT | $(1,1)$ |
 
 ::: callout-tip
 **Why use Min-Max instead of Chen labels?**
@@ -924,7 +978,7 @@ With the ER / EER diagram now finalised, the next step is to translate it into c
 6. **Participation**: total (double line) = entity cannot exist without this relationship; partial (single line) = optional.
 7. **Min-Max** $(min,max)$ gives exact lower and upper bounds — more precise than cardinality ratio alone.
 8. **Relationship attributes** belong to the relationship when their value depends on the combination of both participating entities.
-9. **7-step mapping**: Strong → table (1); Weak → table with composite PK (2); 1:1 → FK on total side (3); 1:N → FK on N-side (4); M:N → junction table (5); Multivalued → separate table (6); N-ary → new table (7).
+9. **7-step mapping** *(covered in Chapter 5)*: Strong → table (1); Weak → table with composite PK (2); 1:1 → FK on total side (3); 1:N → FK on N-side (4); M:N → junction table (5); Multivalued → separate table (6); N-ary → new table (7). The full walkthrough and SQL script for the Company Database appear in [Chapter 5, §ER-to-Relational Mapping](../part-03-relational-model/ch05-relational-model.qmd#er-to-relational-mapping).
 :::
 
 ---
@@ -934,52 +988,59 @@ With the ER / EER diagram now finalised, the next step is to translate it into c
 ### Conceptual
 
 1. Define **entity type**, **entity instance**, and **key attribute**. Give a concrete example of each from the Company Database.
-2. Explain the difference between a **composite attribute** and a **multivalued attribute**. How does each affect the relational mapping?
+2. Explain the difference between a **composite attribute** and a **multivalued attribute**. How does each appear in the ER diagram? *(Their effect on the relational mapping is covered in Chapter 5.)*
 3. What is a **weak entity type**? What distinguishes it visually in Chen notation? Give a real-world example other than DEPENDENT.
 4. What is the difference between **Chen notation**, **Min-Max notation**, and **Crow's Foot notation**? In what context is each used?
 
 ### Short-Answer / Compare
 
-5. Compare **cardinality ratio** and **$(min,max)$** notation. Write the $(min,max)$ constraints for *WorksFor* and explain each value.
-6. Explain what **total participation** means for EMPLOYEE in *WorksFor*. What SQL constraint enforces this?
-7. Describe the difference between a **relationship attribute** and an **entity attribute**. Why does `Hours` belong to *WorksOn* and not to EMPLOYEE or PROJECT?
-8. Why is `Mgr_start_date` a relationship attribute of *Manages* rather than an attribute of EMPLOYEE or DEPARTMENT?
+5. Compare **cardinality ratio** and **$(min,max)$** notation. Write the $(min,max)$ constraints for *WORKS_FOR* and explain each value.
+6. Explain what **total participation** means for EMPLOYEE in *WORKS_FOR*. What SQL constraint enforces this?
+7. Describe the difference between a **relationship attribute** and an **entity attribute**. Why does `Hours` belong to *WORKS_ON* and not to EMPLOYEE or PROJECT?
+8. Why is `Start_date` a relationship attribute of *MANAGES* rather than an attribute of EMPLOYEE or DEPARTMENT?
 
 ### True / False (with explanation)
 
 9. *"A many-to-many relationship can safely be represented by adding a FK to one of the two entity tables."* — True or False?
 10. *"Derived attributes must be stored in the database to avoid recomputing them."* — True or False?
-11. *"In the 7-step mapping, a multivalued attribute of a strong entity becomes a separate table."* — True or False?
-12. *"A weak entity always has total participation in its identifying relationship."* — True or False?
+11. *"A weak entity always has total participation in its identifying relationship."* — True or False?
 
 ### Multiple Choice
 
-13. Which step of the 7-step mapping handles M:N relationships?
-    - (a) Step 3 — (b) Step 4 — **(c) Step 5** ✓ — (d) Step 6
-
-14. In Chen notation, a **double diamond** represents:
+12. In Chen notation, a **double diamond** represents:
     - (a) A ternary relationship
     - (b) A many-to-many relationship
     - **(c) An identifying relationship for a weak entity** ✓
     - (d) A recursive relationship
 
-15. In Crow's Foot notation, `──o{──` on the right end of a line means:
+13. In Crow's Foot notation, `──o{──` on the right end of a line means:
     - (a) Exactly one — (b) One or many — **(c) Zero or many** ✓ — (d) Zero or one
-
-16. For the *Manages* (1:1) relationship, the FK is placed in the `DEPARTMENT` table because:
-    - (a) DEPARTMENT has more rows
-    - **(b) Every DEPARTMENT must have a manager (total participation), minimizing NULLs** ✓
-    - (c) SQL does not support 1:1 keys on EMPLOYEE
-    - (d) Managers are employees, so the FK must point outward
 
 ### Design Exercise
 
-17. A car rental company stores: **Vehicles** (plate number, make, model, year, mileage), **Customers** (customer ID, name, driving licence), and **Rentals** (pickup date, return date, total cost). Each rental involves exactly one vehicle and one customer. A vehicle can be rented many times (but not simultaneously).
+14. A car rental company stores: **Vehicles** (plate number, make, model, year, mileage), **Customers** (customer ID, name, driving licence), and **Rentals** (pickup date, return date, total cost). Each rental involves exactly one vehicle and one customer. A vehicle can be rented many times (but not simultaneously).
 
     (a) Draw a complete ER diagram in Chen notation with entity types, attribute types, key attributes, relationship types, cardinality ratios, and participation constraints.
-    (b) Apply the 7-step mapping to produce a relational schema.
-    (c) Identify which FKs may be NULL and which must be NOT NULL. Justify each.
 
-### SQL Preview
+::: {.callout-note collapse="false"}
+## Mapping & SQL Questions — See Chapter 5
 
-18. Write the SQL `CREATE TABLE` statement for the `WORKS_ON` table (Step 5 mapping), including the PK and both FKs. Which SQL keyword enforces NOT NULL on FK columns?
+The questions below require relational-model vocabulary (foreign keys, referential integrity, NULL semantics) and the 7-step ER-to-Relational algorithm, all developed in **[Chapter 5 — The Relational Model](../part-03-relational-model/ch05-relational-model.qmd#er-to-relational-mapping)**. Review them here as a forward-preview of what mapping entails.
+
+- **Design Exercise (continued)** — For the car rental ER diagram you drew above:
+  - (b) Apply the 7-step mapping to produce a relational schema.
+  - (c) Identify which FKs may be NULL and which must be NOT NULL. Justify each.
+
+- **True / False** — *"In the 7-step mapping, a multivalued attribute of a strong entity becomes a separate table."*
+
+- **Multiple Choice** — Which step of the 7-step mapping handles M:N relationships?
+  - (a) Step 3  (b) Step 4  **(c) Step 5** ✓  (d) Step 6
+
+- **Multiple Choice** — For the *MANAGES* (1:1) relationship, the FK is placed in the `DEPARTMENT` table because:
+  - (a) DEPARTMENT has more rows
+  - **(b) Every DEPARTMENT must have a manager (total participation), minimizing NULLs** ✓
+  - (c) SQL does not support 1:1 keys on EMPLOYEE
+  - (d) Managers are employees, so the FK must point outward
+
+- **SQL** — Write the `CREATE TABLE` statement for the `WORKS_ON` table (Step 5 mapping), including the composite PK and both FKs. Which SQL keyword enforces NOT NULL on FK columns?
+:::
