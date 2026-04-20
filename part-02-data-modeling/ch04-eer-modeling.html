@@ -441,6 +441,18 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Database APIs and Connectivity</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixB-database-families.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">A Guided Tour of Database Families</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixC-advanced-constraints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Advanced Constraint Enforcement</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -511,6 +523,15 @@ window.Quarto = {
 
 </header>
 
+
+<div class="epigraph-wrapper clearfix">
+<figure class="text-end w-50 float-end figure">
+<blockquote class="epigraph blockquote">
+<p>A good model is a simplification of reality that retains exactly
+those details that matter for the question at hand.</p></blockquote>
+<figcaption class="blockquote-footer">George E. P. Box (adapted)</figcaption>
+</figure>
+</div>
 
 <p>The ER model of Chapter 3 handles most real-world data structures, but it lacks one critical capability: <strong>type hierarchies</strong>. When some employees are engineers, some are managers, and a few are engineer-managers, the basic ER model forces you to bundle everything into one bloated entity type or fragment the design artificially. The Enhanced ER (EER) model adds three mechanisms — <em>specialization/generalization</em>, <em>aggregation</em>, and <em>union types</em> — to handle these situations cleanly.</p>
 <hr>
@@ -1554,332 +1575,334 @@ COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</code></pre>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Chapter 4"</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>The ER model of Chapter 3 handles most real-world data structures, but it lacks one critical capability: **type hierarchies**. When some employees are engineers, some are managers, and a few are engineer-managers, the basic ER model forces you to bundle everything into one bloated entity type or fragment the design artificially. The Enhanced ER (EER) model adds three mechanisms — *specialization/generalization*, *aggregation*, and *union types* — to handle these situations cleanly.</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>{{&lt; epigraph "A good model is a simplification of reality that retains exactly those details that matter for the question at hand." source="George E. P. Box (adapted)" &gt;}}</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>The ER model of Chapter 3 handles most real-world data structures, but it lacks one critical capability: **type hierarchies**. When some employees are engineers, some are managers, and a few are engineer-managers, the basic ER model forces you to bundle everything into one bloated entity type or fragment the design artificially. The Enhanced ER (EER) model adds three mechanisms — *specialization/generalization*, *aggregation*, and *union types* — to handle these situations cleanly.</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Subclasses, Superclasses, and Inheritance</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>An entity type $S$ is a **subclass** of entity type $C$ if:</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Every entity instance of $S$ is *also* an instance of $C$</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$S$ has attributes or relationships that are not meaningful for all of $C$</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>$C$ is called the **superclass** of $S$, and the pair forms a **superclass/subclass (IS-A) relationship**.</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Subclasses, Superclasses, and Inheritance</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>An entity type $S$ is a **subclass** of entity type $C$ if:</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Every entity instance of $S$ is *also* an instance of $C$</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$S$ has attributes or relationships that are not meaningful for all of $C$</span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    EMP[<span class="ot">"</span><span class="st">EMPLOYEE&lt;br/&gt;(superclass)&lt;br/&gt;Ssn, Fname, Lname, Salary</span><span class="ot">"</span>]</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    SEC[<span class="ot">"</span><span class="st">SECRETARY&lt;br/&gt;TypingSpeed</span><span class="ot">"</span>]</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    ENG[<span class="ot">"</span><span class="st">ENGINEER&lt;br/&gt;EngType</span><span class="ot">"</span>]</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    MGR[<span class="ot">"</span><span class="st">MANAGER&lt;br/&gt;MgrBonus</span><span class="ot">"</span>]</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; SEC</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; ENG</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; MGR</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="fu">### Type Inheritance</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>$C$ is called the **superclass** of $S$, and the pair forms a **superclass/subclass (IS-A) relationship**.</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    EMP[<span class="ot">"</span><span class="st">EMPLOYEE&lt;br/&gt;(superclass)&lt;br/&gt;Ssn, Fname, Lname, Salary</span><span class="ot">"</span>]</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    SEC[<span class="ot">"</span><span class="st">SECRETARY&lt;br/&gt;TypingSpeed</span><span class="ot">"</span>]</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    ENG[<span class="ot">"</span><span class="st">ENGINEER&lt;br/&gt;EngType</span><span class="ot">"</span>]</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    MGR[<span class="ot">"</span><span class="st">MANAGER&lt;br/&gt;MgrBonus</span><span class="ot">"</span>]</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; SEC</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; ENG</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; MGR</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>A subclass entity **inherits** all attributes and participation in relationships of its superclass. It additionally has its own **specific attributes** and may participate in its own **specific relationships**.</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="fu">### Type Inheritance</span></span>
 <span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>Inheritance is *implicit* in the EER model — you do not explicitly copy attributes from superclass to subclass in the diagram. When you map to relational tables (§4.7), you choose how to physically represent shared attributes.</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>With the IS-A relationship established, we can now distinguish between two design processes that produce it.</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>A subclass entity **inherits** all attributes and participation in relationships of its superclass. It additionally has its own **specific attributes** and may participate in its own **specific relationships**.</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>Inheritance is *implicit* in the EER model — you do not explicitly copy attributes from superclass to subclass in the diagram. When you map to relational tables (§4.7), you choose how to physically represent shared attributes.</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>With the IS-A relationship established, we can now distinguish between two design processes that produce it.</span>
 <span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Specialization</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>**Specialization** is a **top-down** design process: starting with a superclass, the designer defines subclasses that represent better-defined subsets of the superclass.</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Specialization</span></span>
 <span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>*Rationale:* Some entities in <span class="in">`EMPLOYEE`</span> have attributes irrelevant to others — not every employee has a <span class="in">`TypingSpeed`</span>, but every secretary does. Specializing <span class="in">`EMPLOYEE`</span> into <span class="in">`SECRETARY`</span> keeps the schema clean.</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>**Specialization** is a **top-down** design process: starting with a superclass, the designer defines subclasses that represent better-defined subsets of the superclass.</span>
 <span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="fu">### Constraints on Specialization</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>*Rationale:* Some entities in <span class="in">`EMPLOYEE`</span> have attributes irrelevant to others — not every employee has a <span class="in">`TypingSpeed`</span>, but every secretary does. Specializing <span class="in">`EMPLOYEE`</span> into <span class="in">`SECRETARY`</span> keeps the schema clean.</span>
 <span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>A specialization carries two independent constraints, each with two options:</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### Constraints on Specialization</span></span>
 <span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. Disjointness Constraint</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>A specialization carries two independent constraints, each with two options:</span>
 <span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constraint <span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span></span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|--------|---------|</span></span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Disjoint (d)** | Circle with `d` | Each entity belongs to **at most one** subclass <span class="pp">|</span></span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Overlapping (o)** | Circle with `o` | An entity may belong to **multiple** subclasses simultaneously <span class="pp">|</span></span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>**Disjoint example:** An employee is either <span class="in">`HOURLY_EMPLOYEE`</span> or <span class="in">`SALARIED_EMPLOYEE`</span> — never both. Payroll would not compute correctly if an employee appeared in both.</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. Disjointness Constraint</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constraint <span class="pp">|</span> Symbol <span class="pp">|</span> Meaning <span class="pp">|</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|--------|---------|</span></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Disjoint (d)** | Circle with `d` | Each entity belongs to **at most one** subclass <span class="pp">|</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Overlapping (o)** | Circle with `o` | An entity may belong to **multiple** subclasses simultaneously <span class="pp">|</span></span>
 <span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>**Overlapping example:** A university <span class="in">`PERSON`</span> can simultaneously be a <span class="in">`STUDENT`</span> and an <span class="in">`EMPLOYEE`</span> (e.g., a teaching assistant). Excluding one membership would lose data.</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>**Disjoint example:** An employee is either <span class="in">`HOURLY_EMPLOYEE`</span> or <span class="in">`SALARIED_EMPLOYEE`</span> — never both. Payroll would not compute correctly if an employee appeared in both.</span>
 <span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. Completeness Constraint</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>**Overlapping example:** A university <span class="in">`PERSON`</span> can simultaneously be a <span class="in">`STUDENT`</span> and an <span class="in">`EMPLOYEE`</span> (e.g., a teaching assistant). Excluding one membership would lose data.</span>
 <span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constraint <span class="pp">|</span> Notation <span class="pp">|</span> Meaning <span class="pp">|</span></span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|---------|</span></span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total** | Double line from superclass to circle | Every superclass entity **must** belong to at least one subclass <span class="pp">|</span></span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial** | Single line from superclass to circle | A superclass entity **may** belong to no subclass <span class="pp">|</span></span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>**Total example:** Every <span class="in">`SHAPE`</span> must be either a <span class="in">`CIRCLE`</span>, <span class="in">`RECTANGLE`</span>, or <span class="in">`TRIANGLE`</span> — there are no "generic shapes" stored.</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. Completeness Constraint</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Constraint <span class="pp">|</span> Notation <span class="pp">|</span> Meaning <span class="pp">|</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|----------|---------|</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total** | Double line from superclass to circle | Every superclass entity **must** belong to at least one subclass <span class="pp">|</span></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial** | Single line from superclass to circle | A superclass entity **may** belong to no subclass <span class="pp">|</span></span>
 <span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>**Partial example:** Not every <span class="in">`EMPLOYEE`</span> is a manager — most employees have no subclass membership.</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>**Total example:** Every <span class="in">`SHAPE`</span> must be either a <span class="in">`CIRCLE`</span>, <span class="in">`RECTANGLE`</span>, or <span class="in">`TRIANGLE`</span> — there are no "generic shapes" stored.</span>
 <span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a><span class="fu">### Combining the Two Constraints</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>**Partial example:** Not every <span class="in">`EMPLOYEE`</span> is a manager — most employees have no subclass membership.</span>
 <span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Combination <span class="pp">|</span> Practical meaning <span class="pp">|</span> Example <span class="pp">|</span></span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|------------------|---------|</span></span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total + Disjoint** <span class="pp">|</span> Every superclass entity is in exactly one subclass <span class="pp">|</span> EMPLOYEE → {HOURLY, SALARIED} <span class="pp">|</span></span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total + Overlapping** <span class="pp">|</span> Every entity is in at least one, possibly many subclasses <span class="pp">|</span> PERSON → {STUDENT, EMPLOYEE} <span class="pp">|</span></span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial + Disjoint** <span class="pp">|</span> Some entities are in no subclass; those that are fall in at most one <span class="pp">|</span> VEHICLE → {CAR, TRUCK} (a bicycle doesn't fit) <span class="pp">|</span></span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial + Overlapping** <span class="pp">|</span> Some entities are in no subclass; some are in multiple <span class="pp">|</span> PRODUCT → {DIGITAL, PHYSICAL} (can be both for a bundled product) <span class="pp">|</span></span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="fu">### Combining the Two Constraints</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Combination <span class="pp">|</span> Practical meaning <span class="pp">|</span> Example <span class="pp">|</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|------------------|---------|</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total + Disjoint** <span class="pp">|</span> Every superclass entity is in exactly one subclass <span class="pp">|</span> EMPLOYEE → {HOURLY, SALARIED} <span class="pp">|</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Total + Overlapping** <span class="pp">|</span> Every entity is in at least one, possibly many subclasses <span class="pp">|</span> PERSON → {STUDENT, EMPLOYEE} <span class="pp">|</span></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial + Disjoint** <span class="pp">|</span> Some entities are in no subclass; those that are fall in at most one <span class="pp">|</span> VEHICLE → {CAR, TRUCK} (a bicycle doesn't fit) <span class="pp">|</span></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partial + Overlapping** <span class="pp">|</span> Some entities are in no subclass; some are in multiple <span class="pp">|</span> PRODUCT → {DIGITAL, PHYSICAL} (can be both for a bundled product) <span class="pp">|</span></span>
 <span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## Generalization</span></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>**Generalization** is the **bottom-up** process: the designer observes that several entity types share common attributes and abstracts those into a new superclass.</span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## Generalization</span></span>
 <span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>*Example:* Designing independently, you create <span class="in">`CAR`</span>, <span class="in">`TRUCK`</span>, and <span class="in">`MOTORCYCLE`</span> all with <span class="in">`LicensePlate`</span>, <span class="in">`Make`</span>, <span class="in">`Model`</span>, <span class="in">`Year`</span>. Noticing the overlap, you generalize them into <span class="in">`VEHICLE`</span>, extracting the shared attributes:</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>**Generalization** is the **bottom-up** process: the designer observes that several entity types share common attributes and abstracts those into a new superclass.</span>
 <span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
-<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>flowchart BT</span>
-<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>    CAR[<span class="ot">"</span><span class="st">CAR&lt;br/&gt;+ NumDoors</span><span class="ot">"</span>] --&gt; VEH</span>
-<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>    TRUCK[<span class="ot">"</span><span class="st">TRUCK&lt;br/&gt;+ PayloadTons</span><span class="ot">"</span>] --&gt; VEH</span>
-<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>    MOTO[<span class="ot">"</span><span class="st">MOTORCYCLE&lt;br/&gt;+ HasSidecar</span><span class="ot">"</span>] --&gt; VEH</span>
-<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>    VEH[<span class="ot">"</span><span class="st">VEHICLE&lt;br/&gt;LicensePlate&lt;br/&gt;Make · Model · Year</span><span class="ot">"</span>]</span>
-<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>**Specialization vs. Generalization** produce identical EER diagrams. The distinction is purely in the *decision process* (top-down design vs. bottom-up abstraction). In practice, real designs mix both: you may generalize two existing entities and then specialize the resulting superclass further.</span>
-<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>With hierarchies defined, the next structural concept addresses how entities organize into trees versus networks.</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>*Example:* Designing independently, you create <span class="in">`CAR`</span>, <span class="in">`TRUCK`</span>, and <span class="in">`MOTORCYCLE`</span> all with <span class="in">`LicensePlate`</span>, <span class="in">`Make`</span>, <span class="in">`Model`</span>, <span class="in">`Year`</span>. Noticing the overlap, you generalize them into <span class="in">`VEHICLE`</span>, extracting the shared attributes:</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>flowchart BT</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>    CAR[<span class="ot">"</span><span class="st">CAR&lt;br/&gt;+ NumDoors</span><span class="ot">"</span>] --&gt; VEH</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>    TRUCK[<span class="ot">"</span><span class="st">TRUCK&lt;br/&gt;+ PayloadTons</span><span class="ot">"</span>] --&gt; VEH</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>    MOTO[<span class="ot">"</span><span class="st">MOTORCYCLE&lt;br/&gt;+ HasSidecar</span><span class="ot">"</span>] --&gt; VEH</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>    VEH[<span class="ot">"</span><span class="st">VEHICLE&lt;br/&gt;LicensePlate&lt;br/&gt;Make · Model · Year</span><span class="ot">"</span>]</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>**Specialization vs. Generalization** produce identical EER diagrams. The distinction is purely in the *decision process* (top-down design vs. bottom-up abstraction). In practice, real designs mix both: you may generalize two existing entities and then specialize the resulting superclass further.</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>With hierarchies defined, the next structural concept addresses how entities organize into trees versus networks.</span>
 <span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## Specialization Hierarchies and Lattices</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Structure <span class="pp">|</span> Description <span class="pp">|</span> Constraint <span class="pp">|</span></span>
-<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|-------------|-----------|</span></span>
-<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Specialization hierarchy** <span class="pp">|</span> Each subclass has exactly one direct superclass <span class="pp">|</span> Produces a tree <span class="pp">|</span></span>
-<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Specialization lattice** <span class="pp">|</span> A subclass can have more than one direct superclass <span class="pp">|</span> Produces a DAG (directed acyclic graph) <span class="pp">|</span></span>
-<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>In a **lattice**, a subclass inherits from **all** its superclasses — this is **multiple inheritance**.</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Specialization Hierarchies and Lattices</span></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Structure <span class="pp">|</span> Description <span class="pp">|</span> Constraint <span class="pp">|</span></span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------|-------------|-----------|</span></span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Specialization hierarchy** <span class="pp">|</span> Each subclass has exactly one direct superclass <span class="pp">|</span> Produces a tree <span class="pp">|</span></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Specialization lattice** <span class="pp">|</span> A subclass can have more than one direct superclass <span class="pp">|</span> Produces a DAG (directed acyclic graph) <span class="pp">|</span></span>
 <span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
-<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
-<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>    EMP[<span class="ot">"</span><span class="st">EMPLOYEE&lt;br/&gt;Ssn, Salary</span><span class="ot">"</span>]</span>
-<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>    STU[<span class="ot">"</span><span class="st">STUDENT&lt;br/&gt;StudentId, Gpa</span><span class="ot">"</span>]</span>
-<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>    STUDEMP[<span class="ot">"</span><span class="st">STUDENT_EMPLOYEE&lt;br/&gt;(inherits Ssn, Salary, StudentId, Gpa)</span><span class="ot">"</span>]</span>
-<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; STUDEMP</span>
-<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>    STU --&gt; STUDEMP</span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>A <span class="in">`STUDENT_EMPLOYEE`</span> entity must simultaneously be an instance of both <span class="in">`EMPLOYEE`</span> *and* `STUDENT`. This is the key distinction between a lattice node (shared subclass) and a union type (§4.6), where membership in *only one* superclass is required.</span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>In a **lattice**, a subclass inherits from **all** its superclasses — this is **multiple inheritance**.</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>    EMP[<span class="ot">"</span><span class="st">EMPLOYEE&lt;br/&gt;Ssn, Salary</span><span class="ot">"</span>]</span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>    STU[<span class="ot">"</span><span class="st">STUDENT&lt;br/&gt;StudentId, Gpa</span><span class="ot">"</span>]</span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>    STUDEMP[<span class="ot">"</span><span class="st">STUDENT_EMPLOYEE&lt;br/&gt;(inherits Ssn, Salary, StudentId, Gpa)</span><span class="ot">"</span>]</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>    EMP --&gt; STUDEMP</span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>    STU --&gt; STUDEMP</span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>A <span class="in">`STUDENT_EMPLOYEE`</span> entity must simultaneously be an instance of both <span class="in">`EMPLOYEE`</span> *and* `STUDENT`. This is the key distinction between a lattice node (shared subclass) and a union type (§4.6), where membership in *only one* superclass is required.</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## Aggregation</span></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>**Aggregation** promotes an existing *relationship type* to a higher-level entity, allowing that relationship to participate in another relationship.</span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="fu">## Aggregation</span></span>
 <span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why Aggregation?</span></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>**Aggregation** promotes an existing *relationship type* to a higher-level entity, allowing that relationship to participate in another relationship.</span>
 <span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>Consider: "An <span class="in">`EMPLOYEE`</span> **Works_On** a `PROJECT`. For some assignments, a specific `MACHINE` is **Used** during that assignment."</span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why Aggregation?</span></span>
 <span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>You might try to add <span class="in">`MACHINE`</span> as a third participant in <span class="in">`Works_On`</span> (making it ternary). But that implies that every combination of (Employee, Project, Machine) is an assignment — whereas the real constraint is: *given an existing (Employee, Project) assignment*, a machine may be used. Aggregation captures this:</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>Consider: "An <span class="in">`EMPLOYEE`</span> **Works_On** a `PROJECT`. For some assignments, a specific `MACHINE` is **Used** during that assignment."</span>
 <span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
-<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
-<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
-<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>    subgraph AGG[<span class="ot">"</span><span class="st">Aggregated entity: ASSIGNMENT</span><span class="ot">"</span>]</span>
-<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>        EMP[<span class="ot">"</span><span class="st">EMPLOYEE</span><span class="ot">"</span>] -- Works_On --&gt; PROJ[<span class="ot">"</span><span class="st">PROJECT</span><span class="ot">"</span>]</span>
-<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>    end</span>
-<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>    AGG -- Uses --&gt; MACH[<span class="ot">"</span><span class="st">MACHINE&lt;br/&gt;MachineId, Type</span><span class="ot">"</span>]</span>
-<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>The aggregated entity (<span class="in">`ASSIGNMENT`</span>) is a *virtual entity* made from the <span class="in">`Works_On`</span> relationship. It can now participate in <span class="in">`Uses`</span> with <span class="in">`MACHINE`</span>.</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>You might try to add <span class="in">`MACHINE`</span> as a third participant in <span class="in">`Works_On`</span> (making it ternary). But that implies that every combination of (Employee, Project, Machine) is an assignment — whereas the real constraint is: *given an existing (Employee, Project) assignment*, a machine may be used. Aggregation captures this:</span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>    subgraph AGG[<span class="ot">"</span><span class="st">Aggregated entity: ASSIGNMENT</span><span class="ot">"</span>]</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>        EMP[<span class="ot">"</span><span class="st">EMPLOYEE</span><span class="ot">"</span>] -- Works_On --&gt; PROJ[<span class="ot">"</span><span class="st">PROJECT</span><span class="ot">"</span>]</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>    end</span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a>    AGG -- Uses --&gt; MACH[<span class="ot">"</span><span class="st">MACHINE&lt;br/&gt;MachineId, Type</span><span class="ot">"</span>]</span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>When mapped to relational tables, the aggregation maps to its junction table (<span class="in">`WORKS_ON`</span>) plus an additional <span class="in">`USES`</span> table that references <span class="in">`WORKS_ON`</span>'s primary key.</span>
-<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>The aggregated entity (<span class="in">`ASSIGNMENT`</span>) is a *virtual entity* made from the <span class="in">`Works_On`</span> relationship. It can now participate in <span class="in">`Uses`</span> with <span class="in">`MACHINE`</span>.</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>When mapped to relational tables, the aggregation maps to its junction table (<span class="in">`WORKS_ON`</span>) plus an additional <span class="in">`USES`</span> table that references <span class="in">`WORKS_ON`</span>'s primary key.</span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Category (UNION) Types</span></span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a>A **category** (or *Union type*) is a subclass that can come from **different, unrelated superclass types**. The key difference from a lattice node:</span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a><span class="fu">## Category (UNION) Types</span></span>
 <span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Feature <span class="pp">|</span> Lattice node (shared subclass) <span class="pp">|</span> Category (Union) <span class="pp">|</span></span>
-<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------------------------------|-----------------|</span></span>
-<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Superclasses <span class="pp">|</span> Multiple, related IS-A hierarchy <span class="pp">|</span> Multiple, different types <span class="pp">|</span></span>
-<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Membership <span class="pp">|</span> Entity must be in **all** superclasses | Entity is in **exactly one** superclass <span class="pp">|</span></span>
-<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Arrows from multiple parents <span class="pp">|</span> <span class="in">`U`</span> circle <span class="pp">|</span></span>
-<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>**Example:** A <span class="in">`VEHICLE_OWNER`</span> can be either a <span class="in">`PERSON`</span> or a <span class="in">`COMPANY`</span>. A <span class="in">`VEHICLE_OWNER`</span> instance is exactly one of these — not both.</span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>A **category** (or *Union type*) is a subclass that can come from **different, unrelated superclass types**. The key difference from a lattice node:</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Feature <span class="pp">|</span> Lattice node (shared subclass) <span class="pp">|</span> Category (Union) <span class="pp">|</span></span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------------------------------|-----------------|</span></span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Superclasses <span class="pp">|</span> Multiple, related IS-A hierarchy <span class="pp">|</span> Multiple, different types <span class="pp">|</span></span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Membership <span class="pp">|</span> Entity must be in **all** superclasses | Entity is in **exactly one** superclass <span class="pp">|</span></span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Symbol <span class="pp">|</span> Arrows from multiple parents <span class="pp">|</span> <span class="in">`U`</span> circle <span class="pp">|</span></span>
 <span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
-<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
-<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
-<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a>    PER[<span class="ot">"</span><span class="st">PERSON&lt;br/&gt;Ssn, Name, Bdate</span><span class="ot">"</span>]</span>
-<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>    COMP[<span class="ot">"</span><span class="st">COMPANY&lt;br/&gt;CompanyId, CompanyName</span><span class="ot">"</span>]</span>
-<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>    CIRC[<span class="ot">"</span><span class="st">⊂ U ⊃</span><span class="ot">"</span>]</span>
-<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>    OWN[<span class="ot">"</span><span class="st">VEHICLE_OWNER&lt;br/&gt;OwnerId</span><span class="ot">"</span>]</span>
-<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a>    PER --&gt; CIRC</span>
-<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>    COMP --&gt; CIRC</span>
-<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>    CIRC --&gt; OWN</span>
-<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>Categories require a **surrogate key** (<span class="in">`OwnerId`</span>) because the natural keys of different superclasses are incompatible types (e.g., <span class="in">`Ssn`</span> vs. <span class="in">`CompanyId`</span>).</span>
-<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a>**Example:** A <span class="in">`VEHICLE_OWNER`</span> can be either a <span class="in">`PERSON`</span> or a <span class="in">`COMPANY`</span>. A <span class="in">`VEHICLE_OWNER`</span> instance is exactly one of these — not both.</span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>    PER[<span class="ot">"</span><span class="st">PERSON&lt;br/&gt;Ssn, Name, Bdate</span><span class="ot">"</span>]</span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>    COMP[<span class="ot">"</span><span class="st">COMPANY&lt;br/&gt;CompanyId, CompanyName</span><span class="ot">"</span>]</span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a>    CIRC[<span class="ot">"</span><span class="st">⊂ U ⊃</span><span class="ot">"</span>]</span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a>    OWN[<span class="ot">"</span><span class="st">VEHICLE_OWNER&lt;br/&gt;OwnerId</span><span class="ot">"</span>]</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>    PER --&gt; CIRC</span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a>    COMP --&gt; CIRC</span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a>    CIRC --&gt; OWN</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a>Categories require a **surrogate key** (<span class="in">`OwnerId`</span>) because the natural keys of different superclasses are incompatible types (e.g., <span class="in">`Ssn`</span> vs. <span class="in">`CompanyId`</span>).</span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="fu">## EER-to-Relational Mapping</span></span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Specialization — Four Options</span></span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a><span class="fu">## EER-to-Relational Mapping</span></span>
 <span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>Given a superclass $C$ with subclasses $S_1, S_2, \ldots, S_k$:</span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Specialization — Four Options</span></span>
 <span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Option <span class="pp">|</span> Schema design <span class="pp">|</span> Best when <span class="pp">|</span></span>
-<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|--------------|-----------|</span></span>
-<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **A — Single table** <span class="pp">|</span> One table for all subclasses; NULL for inapplicable columns; add a <span class="in">`Type`</span> discriminator column <span class="pp">|</span> Few subclasses, few subclass-specific attributes. Simple queries but wastes space with NULLs. <span class="pp">|</span></span>
-<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **B — Subclass tables only** | One table per subclass; each table includes *all inherited* superclass attributes (no shared superclass table) | Total **and** disjoint. Fast subclass-only queries; no joins needed. But super-class-wide queries require UNION. <span class="pp">|</span></span>
-<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **C — Superclass + subclass tables** | Table for superclass with its attributes; each subclass table stores only subclass-specific attributes + FK to superclass | **Most common**. Works for overlapping or partial. Superclass-wide query uses superclass table alone; subclass-specific query joins two tables. <span class="pp">|</span></span>
-<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **D — Superclass table with all attributes** <span class="pp">|</span> Single table, same as Option A but no separate subclass tables at all <span class="pp">|</span> Legacy or read-only schemas; maximum NULL tolerance. <span class="pp">|</span></span>
-<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a>**Default choice: Option C.**</span>
-<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a><span class="in">EMPLOYEE(Ssn PK, Fname, Lname, Salary)</span></span>
-<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a><span class="in">SECRETARY(Ssn FK→EMPLOYEE, TypingSpeed)</span></span>
-<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a><span class="in">ENGINEER(Ssn FK→EMPLOYEE, EngType)</span></span>
-<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a><span class="in">MANAGER(Ssn FK→EMPLOYEE, MgrBonus)</span></span>
-<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>A query asking for all engineers joins <span class="in">`EMPLOYEE`</span> with <span class="in">`ENGINEER`</span>. A query asking for all employees' names goes to <span class="in">`EMPLOYEE`</span> alone.</span>
-<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Aggregation</span></span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>Given a superclass $C$ with subclasses $S_1, S_2, \ldots, S_k$:</span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Option <span class="pp">|</span> Schema design <span class="pp">|</span> Best when <span class="pp">|</span></span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|--------------|-----------|</span></span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **A — Single table** <span class="pp">|</span> One table for all subclasses; NULL for inapplicable columns; add a <span class="in">`Type`</span> discriminator column <span class="pp">|</span> Few subclasses, few subclass-specific attributes. Simple queries but wastes space with NULLs. <span class="pp">|</span></span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **B — Subclass tables only** | One table per subclass; each table includes *all inherited* superclass attributes (no shared superclass table) | Total **and** disjoint. Fast subclass-only queries; no joins needed. But super-class-wide queries require UNION. <span class="pp">|</span></span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **C — Superclass + subclass tables** | Table for superclass with its attributes; each subclass table stores only subclass-specific attributes + FK to superclass | **Most common**. Works for overlapping or partial. Superclass-wide query uses superclass table alone; subclass-specific query joins two tables. <span class="pp">|</span></span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **D — Superclass table with all attributes** <span class="pp">|</span> Single table, same as Option A but no separate subclass tables at all <span class="pp">|</span> Legacy or read-only schemas; maximum NULL tolerance. <span class="pp">|</span></span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a>**Default choice: Option C.**</span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a><span class="in">EMPLOYEE(Ssn PK, Fname, Lname, Salary)</span></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a><span class="in">SECRETARY(Ssn FK→EMPLOYEE, TypingSpeed)</span></span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a><span class="in">ENGINEER(Ssn FK→EMPLOYEE, EngType)</span></span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a><span class="in">MANAGER(Ssn FK→EMPLOYEE, MgrBonus)</span></span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>A query asking for all engineers joins <span class="in">`EMPLOYEE`</span> with <span class="in">`ENGINEER`</span>. A query asking for all employees' names goes to <span class="in">`EMPLOYEE`</span> alone.</span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Map the aggregated relationship to a junction table (Step 5 from Ch 3).</span>
-<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Add a new table for the outer relationship that includes the junction table's PK as a foreign key.</span>
-<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Aggregation</span></span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Map the aggregated relationship to a junction table (Step 5 from Ch 3).</span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Add a new table for the outer relationship that includes the junction table's PK as a foreign key.</span>
 <span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a><span class="in">WORKS_ON(Essn, Pno, Hours)           -- from aggregated Works_On</span></span>
-<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a><span class="in">USES(Essn, Pno, MachineId, StartTime) -- new table; (Essn,Pno) FK→WORKS_ON</span></span>
-<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Categories</span></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a><span class="in">WORKS_ON(Essn, Pno, Hours)           -- from aggregated Works_On</span></span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a><span class="in">USES(Essn, Pno, MachineId, StartTime) -- new table; (Essn,Pno) FK→WORKS_ON</span></span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Assign a **surrogate key** to the category that is type-neutral.</span>
-<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Create the category table using only the surrogate key plus category-specific attributes.</span>
-<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Add the surrogate key as a FK to each superclass table.</span>
-<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mapping Categories</span></span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Assign a **surrogate key** to the category that is type-neutral.</span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Create the category table using only the surrogate key plus category-specific attributes.</span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Add the surrogate key as a FK to each superclass table.</span>
 <span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a><span class="in">VEHICLE_OWNER(OwnerId PK, LicenseCount)</span></span>
-<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="in">PERSON(Ssn PK, Name, Bdate, OwnerId FK→VEHICLE_OWNER)</span></span>
-<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a><span class="in">COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</span></span>
-<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>**Example:**</span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a><span class="in">VEHICLE_OWNER(OwnerId PK, LicenseCount)</span></span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a><span class="in">PERSON(Ssn PK, Name, Bdate, OwnerId FK→VEHICLE_OWNER)</span></span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a><span class="in">COMPANY(CompanyId PK, CompanyName, OwnerId FK→VEHICLE_OWNER)</span></span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## EER vs. Object-Oriented Mapping</span></span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>The EER specialization/generalization hierarchy closely resembles inheritance in object-oriented languages. The correspondences are:</span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a><span class="fu">## EER vs. Object-Oriented Mapping</span></span>
 <span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OOP concept <span class="pp">|</span> EER concept <span class="pp">|</span></span>
-<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|-------------|</span></span>
-<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Superclass / parent class <span class="pp">|</span> Superclass entity type <span class="pp">|</span></span>
-<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Subclass / child class <span class="pp">|</span> Subclass entity type <span class="pp">|</span></span>
-<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Single inheritance <span class="pp">|</span> Specialization hierarchy (tree) <span class="pp">|</span></span>
-<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Multiple inheritance <span class="pp">|</span> Specialization lattice <span class="pp">|</span></span>
-<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Abstract class <span class="pp">|</span> Total specialization superclass (no bare instances) <span class="pp">|</span></span>
-<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Concrete class <span class="pp">|</span> Partial specialization superclass (bare instances allowed) <span class="pp">|</span></span>
-<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a>The critical difference: OOP inheritance is about *behavior* (methods); EER inheritance is about *data* (attributes and relationships only).</span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a>The EER specialization/generalization hierarchy closely resembles inheritance in object-oriented languages. The correspondences are:</span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OOP concept <span class="pp">|</span> EER concept <span class="pp">|</span></span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|-------------|</span></span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Superclass / parent class <span class="pp">|</span> Superclass entity type <span class="pp">|</span></span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Subclass / child class <span class="pp">|</span> Subclass entity type <span class="pp">|</span></span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Single inheritance <span class="pp">|</span> Specialization hierarchy (tree) <span class="pp">|</span></span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Multiple inheritance <span class="pp">|</span> Specialization lattice <span class="pp">|</span></span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Abstract class <span class="pp">|</span> Total specialization superclass (no bare instances) <span class="pp">|</span></span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Concrete class <span class="pp">|</span> Partial specialization superclass (bare instances allowed) <span class="pp">|</span></span>
 <span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>The critical difference: OOP inheritance is about *behavior* (methods); EER inheritance is about *data* (attributes and relationships only).</span>
 <span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter 4 — Key Takeaways</span></span>
-<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**EER** extends ER with superclass/subclass type hierarchies, enabling **type inheritance**.</span>
-<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Specialization** (top-down) divides a superclass into subclasses. **Generalization** (bottom-up) abstracts common attributes into a new superclass. Both produce the same diagram.</span>
-<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Two constraints must be declared for every specialization: **disjointness** (d/o) and **completeness** (total/partial).</span>
-<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Specialization hierarchy**: each subclass has exactly one superclass (tree). **Specialization lattice**: a subclass can have multiple superclasses (DAG) — multiple inheritance.</span>
-<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Aggregation** promotes a relationship to an entity so that it can itself participate in a further relationship.</span>
-<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Category (union type)**: a subclass whose instances can come from *different* superclass types (union); contrast with lattice nodes (intersection).</span>
-<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Mapping to relational: four options for specialization; **Option C** (superclass table + subclass tables with FK) is the standard default.</span>
-<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a><span class="fu">## Chapter 4 — Key Takeaways</span></span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**EER** extends ER with superclass/subclass type hierarchies, enabling **type inheritance**.</span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Specialization** (top-down) divides a superclass into subclasses. **Generalization** (bottom-up) abstracts common attributes into a new superclass. Both produce the same diagram.</span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Two constraints must be declared for every specialization: **disjointness** (d/o) and **completeness** (total/partial).</span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Specialization hierarchy**: each subclass has exactly one superclass (tree). **Specialization lattice**: a subclass can have multiple superclasses (DAG) — multiple inheritance.</span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Aggregation** promotes a relationship to an entity so that it can itself participate in a further relationship.</span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Category (union type)**: a subclass whose instances can come from *different* superclass types (union); contrast with lattice nodes (intersection).</span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Mapping to relational: four options for specialization; **Option C** (superclass table + subclass tables with FK) is the standard default.</span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a><span class="fu">## Review Questions</span></span>
 <span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define the **IS-A relationship** in EER modeling. Why is it fundamentally different from a regular ER relationship?</span>
-<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>What is **type inheritance** in the context of EER? If <span class="in">`ENGINEER`</span> is a subclass of <span class="in">`EMPLOYEE`</span>, what attributes does an <span class="in">`ENGINEER`</span> entity have?</span>
-<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explain the difference between a **specialization hierarchy** and a **specialization lattice**. When does a lattice arise?</span>
-<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a><span class="fu">### Short-Answer / Compare</span></span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conceptual</span></span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Define the **IS-A relationship** in EER modeling. Why is it fundamentally different from a regular ER relationship?</span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>What is **type inheritance** in the context of EER? If <span class="in">`ENGINEER`</span> is a subclass of <span class="in">`EMPLOYEE`</span>, what attributes does an <span class="in">`ENGINEER`</span> entity have?</span>
+<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Explain the difference between a **specialization hierarchy** and a **specialization lattice**. When does a lattice arise?</span>
 <span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Compare **total** and **partial** completeness constraints with **disjoint** and **overlapping** disjointness constraints. Give one real-world example for each of the four possible combinations.</span>
-<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Why is **aggregation** needed? Can the same modeling objective always be achieved with a ternary relationship instead? Give a scenario where aggregation is strictly necessary.</span>
-<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Compare a **category (union type)** to a **lattice node (shared subclass)**. Which requires a surrogate key, and why?</span>
-<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a><span class="fu">### True / False (with explanation)</span></span>
+<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a><span class="fu">### Short-Answer / Compare</span></span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Compare **total** and **partial** completeness constraints with **disjoint** and **overlapping** disjointness constraints. Give one real-world example for each of the four possible combinations.</span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Why is **aggregation** needed? Can the same modeling objective always be achieved with a ternary relationship instead? Give a scenario where aggregation is strictly necessary.</span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Compare a **category (union type)** to a **lattice node (shared subclass)**. Which requires a surrogate key, and why?</span>
 <span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>*"In a total, disjoint specialization, a superclass entity may exist without belonging to any subclass."* — True or False? Explain.</span>
-<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>*"Type inheritance means that subclass tables in Option C must repeat all superclass attribute definitions."* — True or False? Explain.</span>
-<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>*"An overlapping specialization means every entity must belong to multiple subclasses."* — True or False? Explain.</span>
-<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>*"Aggregation and ternary relationships always model the same information, just with different notation."* — True or False? Explain.</span>
-<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiple Choice</span></span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a><span class="fu">### True / False (with explanation)</span></span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>*"In a total, disjoint specialization, a superclass entity may exist without belonging to any subclass."* — True or False? Explain.</span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>*"Type inheritance means that subclass tables in Option C must repeat all superclass attribute definitions."* — True or False? Explain.</span>
+<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a><span class="ss">9. </span>*"An overlapping specialization means every entity must belong to multiple subclasses."* — True or False? Explain.</span>
+<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a><span class="ss">10. </span>*"Aggregation and ternary relationships always model the same information, just with different notation."* — True or False? Explain.</span>
 <span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>Which mapping option for specialization is best when the specialization is **total and disjoint** and queries almost always target individual subclasses?</span>
-<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Option A  **(b) Option B** ✓  (c) Option C  (d) Option D</span>
-<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a><span class="ss">12. </span>A <span class="in">`STUDENT_EMPLOYEE`</span> that inherits from both <span class="in">`STUDENT`</span> and <span class="in">`EMPLOYEE`</span> is an example of:</span>
-<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) A union type</span>
-<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) A category</span>
-<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>**(c) A shared subclass in a specialization lattice** ✓</span>
-<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(d) An aggregation</span>
-<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design Exercise</span></span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiple Choice</span></span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a><span class="ss">11. </span>Which mapping option for specialization is best when the specialization is **total and disjoint** and queries almost always target individual subclasses?</span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Option A  **(b) Option B** ✓  (c) Option C  (d) Option D</span>
+<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a><span class="ss">12. </span>A <span class="in">`STUDENT_EMPLOYEE`</span> that inherits from both <span class="in">`STUDENT`</span> and <span class="in">`EMPLOYEE`</span> is an example of:</span>
+<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) A union type</span>
+<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) A category</span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>**(c) A shared subclass in a specialization lattice** ✓</span>
+<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(d) An aggregation</span>
 <span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a><span class="ss">13. </span>A hospital manages three kinds of patients: **Inpatients** (admitted, have a bed number and ward), **Outpatients** (have scheduled appointments), and some patients who are both inpatients and outpatients (continuity-of-care cases).</span>
-<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Model this using EER notation: superclass, subclasses, disjointness constraint, completeness constraint.</span>
-<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) Is the disjointness constraint **disjoint** or **overlapping**? Is the completeness **total** or **partial**? Justify.</span>
-<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(c) Map the EER model to relational tables using Option C. Write the table schemas with primary and foreign keys.</span>
-<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a><span class="fu">### SQL / Query Exercise</span></span>
+<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design Exercise</span></span>
+<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a><span class="ss">13. </span>A hospital manages three kinds of patients: **Inpatients** (admitted, have a bed number and ward), **Outpatients** (have scheduled appointments), and some patients who are both inpatients and outpatients (continuity-of-care cases).</span>
+<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(a) Model this using EER notation: superclass, subclasses, disjointness constraint, completeness constraint.</span>
+<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(b) Is the disjointness constraint **disjoint** or **overlapping**? Is the completeness **total** or **partial**? Justify.</span>
+<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>(c) Map the EER model to relational tables using Option C. Write the table schemas with primary and foreign keys.</span>
 <span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a><span class="ss">14. </span>Using Option C mapping for <span class="in">`EMPLOYEE → {SECRETARY, ENGINEER, MANAGER}`</span>:</span>
-<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a>    <span class="in">```sql</span></span>
-<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a>    EMPLOYEE(Ssn, Fname, Lname, Salary)</span>
-<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>    ENGINEER(Ssn, EngType, LicenseNum)</span>
-<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a>    <span class="in">```</span></span>
-<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>    Write a SQL query that retrieves the full name, salary, and engineering type for all engineers. Then write a second query that returns *all* employees including non-engineers (NULLs where engineering data is absent). Which SQL keyword enables the second result?</span>
+<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a><span class="fu">### SQL / Query Exercise</span></span>
+<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a><span class="ss">14. </span>Using Option C mapping for <span class="in">`EMPLOYEE → {SECRETARY, ENGINEER, MANAGER}`</span>:</span>
+<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>    <span class="in">```sql</span></span>
+<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a>    EMPLOYEE(Ssn, Fname, Lname, Salary)</span>
+<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>    ENGINEER(Ssn, EngType, LicenseNum)</span>
+<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a>    <span class="in">```</span></span>
+<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a>    Write a SQL query that retrieves the full name, salary, and engineering type for all engineers. Then write a second query that returns *all* employees including non-engineers (NULLs where engineering data is absent). Which SQL keyword enables the second result?</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -398,6 +398,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Database APIs and Connectivity</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixB-database-families.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">A Guided Tour of Database Families</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixC-advanced-constraints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Advanced Constraint Enforcement</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -1164,9 +1176,9 @@ db.sessions.createIndex({ createdAt: 1 }, { expireAfterSeconds: 3600 })</code></
 <ol start="11" type="1">
 <li><p>Translate the following normalized SQL schema and query into a MongoDB document design and equivalent aggregation pipeline:</p>
 <p><strong>SQL Schema:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Employee(Ssn PK, Name, Salary, Dno FK→Department)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Employee(Ssn PK, Name, Salary, Dno FK→Department(Dnumber))</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>Department(Dnumber PK, Dname)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>Works_On(Essn FK→Employee, Pno FK→Project, Hours)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>Works_On(Essn FK→Employee(Ssn), Pno FK→Project(Pnumber), Hours)</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>Project(Pnumber PK, Pname, Plocation)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>SQL Query:</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> E.Name, D.Dname, <span class="fu">SUM</span>(W.Hours) <span class="kw">AS</span> total_hours</span>
@@ -2258,9 +2270,9 @@ db.sessions.createIndex({ createdAt: 1 }, { expireAfterSeconds: 3600 })</code></
 <span id="cb23-592"><a href="#cb23-592" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-593"><a href="#cb23-593" aria-hidden="true" tabindex="-1"></a>    **SQL Schema:**</span>
 <span id="cb23-594"><a href="#cb23-594" aria-hidden="true" tabindex="-1"></a>    <span class="in">```sql</span></span>
-<span id="cb23-595"><a href="#cb23-595" aria-hidden="true" tabindex="-1"></a>    Employee(Ssn PK, Name, Salary, Dno FK→Department)</span>
+<span id="cb23-595"><a href="#cb23-595" aria-hidden="true" tabindex="-1"></a>    Employee(Ssn PK, Name, Salary, Dno FK→Department(Dnumber))</span>
 <span id="cb23-596"><a href="#cb23-596" aria-hidden="true" tabindex="-1"></a>    Department(Dnumber PK, Dname)</span>
-<span id="cb23-597"><a href="#cb23-597" aria-hidden="true" tabindex="-1"></a>    Works_On(Essn FK→Employee, Pno FK→Project, Hours)</span>
+<span id="cb23-597"><a href="#cb23-597" aria-hidden="true" tabindex="-1"></a>    Works_On(Essn FK→Employee(Ssn), Pno FK→Project(Pnumber), Hours)</span>
 <span id="cb23-598"><a href="#cb23-598" aria-hidden="true" tabindex="-1"></a>    Project(Pnumber PK, Pname, Plocation)</span>
 <span id="cb23-599"><a href="#cb23-599" aria-hidden="true" tabindex="-1"></a>    <span class="in">```</span></span>
 <span id="cb23-600"><a href="#cb23-600" aria-hidden="true" tabindex="-1"></a></span>

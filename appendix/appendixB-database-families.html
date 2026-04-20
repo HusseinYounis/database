@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Appendix B — A Guided Tour of Database Families – Fundamentals of Database Systems</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../appendix/appendixC-advanced-constraints.html" rel="next">
+<link href="../appendix/appendixA-apis.html" rel="prev">
+<link href="../images/cover.jpeg" rel="icon" type="image/jpeg">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-a06763021a52c43c40a351ac8b799b8f.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8e86ef72155d1dc4db3057c8122fb000.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdown.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdownKatex.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdownHighlight.js"></script>
+<script src="../site_libs/quarto-contrib/quizdown-0.6.0/quizdown-init.js"></script>
+<link href="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
+<link href="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&amp;family=JetBrains+Mono:ital,wght@0,400;0,500&amp;family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@antonz/sqlite@3.40.0/dist/sqlite3.js"></script>
+<script src="https://unpkg.com/sqlime@0.1.3/dist/sqlime-db.js"></script>
+<script src="https://unpkg.com/sqlime@0.1.3/dist/sqlime-examples.js"></script>
+    <style type="text/css">
+    .ps-root .ps-algorithm {
+      border-top: 2px solid;
+      border-bottom: 2px solid;
+    }
+    .pseudocode-container {
+      text-align: left;
+    }
+    </style>
+  
+      <style type="text/css">
+      .ps-algorithm > .ps-line {
+        text-align: left;
+      }
+      </style>
+    
+
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../appendix/appendixA-apis.html">Appendices</a></li><li class="breadcrumb-item"><a href="../appendix/appendixB-database-families.html"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">A Guided Tour of Database Families</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Fundamentals of Database Systems</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="../Fundamentals-of-Database-Systems.pdf">
+              <i class="bi bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="../Fundamentals-of-Database-Systems.epub">
+              <i class="bi bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-01-foundations/ch01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Database Systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-01-foundations/ch02-concepts-architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Database System Concepts &amp; Architecture</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Data Modeling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-02-data-modeling/ch03-er-modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Entity-Relationship (ER) Modeling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-02-data-modeling/ch04-eer-modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Enhanced Entity-Relationship (EER) Modeling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: The Relational Model</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-03-relational-model/ch05-relational-model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Relational Data Model</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-03-relational-model/ch06-relational-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Relational Algebra</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part IV: Structured Query Language (SQL)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-04-sql/ch07-sql-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">SQL Basics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-04-sql/ch08-advanced-sql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Advanced SQL</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part V: Database Design Theory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-05-design/ch09-normalization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Normalization &amp; Functional Dependencies</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VI: Storage, Indexing &amp; Query Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-06-storage-query/ch10-storage-indexing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Storage &amp; Indexing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-06-storage-query/ch11-query-processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Query Processing &amp; Optimization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VII: Transaction Management</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-07-transactions/ch12-transactions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Transaction Processing</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-07-transactions/ch13-concurrency.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Concurrency Control &amp; Scheduling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part VIII: NoSQL &amp; Modern Databases</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-08-nosql/ch14-nosql-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Introduction to NoSQL Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-08-nosql/ch15-mongodb.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">MongoDB — Document Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixA-apis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Database APIs and Connectivity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixB-database-families.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">A Guided Tour of Database Families</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix/appendixC-advanced-constraints.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Advanced Constraint Enforcement</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#sec-appB" id="toc-sec-appB" class="nav-link active" data-scroll-target="#sec-appB"><span class="header-section-number">C</span> A Guided Tour of Database Families</a>
+  <ul class="collapse">
+  <li><a href="#years-of-database-models" id="toc-years-of-database-models" class="nav-link" data-scroll-target="#years-of-database-models"><span class="header-section-number">C.1</span> 70 Years of Database Models</a></li>
+  <li><a href="#flat-file-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d6c696e6573203e7d7d" id="toc-flat-file-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d6c696e6573203e7d7d" class="nav-link" data-scroll-target="#flat-file-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d6c696e6573203e7d7d"><span class="header-section-number">C.2</span> 1. Flat File Model <i class="fa-solid fa-file-lines" aria-label="file-lines"></i></a></li>
+  <li><a href="#hierarchical-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120736974656d6170203e7d7d" id="toc-hierarchical-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120736974656d6170203e7d7d" class="nav-link" data-scroll-target="#hierarchical-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120736974656d6170203e7d7d"><span class="header-section-number">C.3</span> 2. Hierarchical Model <i class="fa-solid fa-sitemap" aria-label="sitemap"></i></a></li>
+  <li><a href="#network-model-codasyl-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206469616772616d2d70726f6a656374203e7d7d" id="toc-network-model-codasyl-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206469616772616d2d70726f6a656374203e7d7d" class="nav-link" data-scroll-target="#network-model-codasyl-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206469616772616d2d70726f6a656374203e7d7d"><span class="header-section-number">C.4</span> 3. Network Model (CODASYL) <i class="fa-solid fa-diagram-project" aria-label="diagram-project"></i></a></li>
+  <li><a href="#relational-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c65203e7d7d" id="toc-relational-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c65203e7d7d" class="nav-link" data-scroll-target="#relational-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c65203e7d7d"><span class="header-section-number">C.5</span> 4. Relational Model <i class="fa-solid fa-table" aria-label="table"></i></a></li>
+  <li><a href="#object-oriented-oodb-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265203e7d7d" id="toc-object-oriented-oodb-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265203e7d7d" class="nav-link" data-scroll-target="#object-oriented-oodb-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265203e7d7d"><span class="header-section-number">C.6</span> 5. Object-Oriented (OODB) <i class="fa-solid fa-cube" aria-label="cube"></i></a></li>
+  <li><a href="#object-relational-ordbms-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265732d737461636b6564203e7d7d" id="toc-object-relational-ordbms-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265732d737461636b6564203e7d7d" class="nav-link" data-scroll-target="#object-relational-ordbms-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265732d737461636b6564203e7d7d"><span class="header-section-number">C.7</span> 6. Object-Relational (ORDBMS) <i class="fa-solid fa-cubes-stacked" aria-label="cubes-stacked"></i></a></li>
+  <li><a href="#nosql-models-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206461746162617365203e7d7d" id="toc-nosql-models-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206461746162617365203e7d7d" class="nav-link" data-scroll-target="#nosql-models-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206461746162617365203e7d7d"><span class="header-section-number">C.8</span> 7. NoSQL Models <i class="fa-solid fa-database" aria-label="database"></i></a>
+  <ul class="collapse">
+  <li><a href="#a.-key-value-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206b6579203e7d7d" id="toc-a.-key-value-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206b6579203e7d7d" class="nav-link" data-scroll-target="#a.-key-value-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206b6579203e7d7d"><span class="header-section-number">C.8.1</span> 7a. Key-Value Stores <i class="fa-solid fa-key" aria-label="key"></i></a></li>
+  <li><a href="#b.-document-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d636f6465203e7d7d" id="toc-b.-document-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d636f6465203e7d7d" class="nav-link" data-scroll-target="#b.-document-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d636f6465203e7d7d"><span class="header-section-number">C.8.2</span> 7b. Document Stores <i class="fa-solid fa-file-code" aria-label="file-code"></i></a></li>
+  <li><a href="#c.-column-family-wide-column-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c652d636f6c756d6e73203e7d7d" id="toc-c.-column-family-wide-column-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c652d636f6c756d6e73203e7d7d" class="nav-link" data-scroll-target="#c.-column-family-wide-column-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c652d636f6c756d6e73203e7d7d"><span class="header-section-number">C.8.3</span> 7c. Column-Family (Wide-Column) Stores <i class="fa-solid fa-table-columns" aria-label="table-columns"></i></a></li>
+  <li><a href="#d.-graph-databases-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636972636c652d6e6f646573203e7d7d" id="toc-d.-graph-databases-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636972636c652d6e6f646573203e7d7d" class="nav-link" data-scroll-target="#d.-graph-databases-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636972636c652d6e6f646573203e7d7d"><span class="header-section-number">C.8.4</span> 7d. Graph Databases <i class="fa-solid fa-circle-nodes" aria-label="circle-nodes"></i></a></li>
+  </ul></li>
+  <li><a href="#newsql-cloud-native-distributed-sql-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636c6f7564203e7d7d" id="toc-newsql-cloud-native-distributed-sql-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636c6f7564203e7d7d" class="nav-link" data-scroll-target="#newsql-cloud-native-distributed-sql-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636c6f7564203e7d7d"><span class="header-section-number">C.9</span> 8. NewSQL &amp; Cloud-Native Distributed SQL <i class="fa-solid fa-cloud" aria-label="cloud"></i></a></li>
+  <li><a href="#side-by-side-comparison" id="toc-side-by-side-comparison" class="nav-link" data-scroll-target="#side-by-side-comparison"><span class="header-section-number">C.10</span> Side-by-Side Comparison</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../appendix/appendixA-apis.html">Appendices</a></li><li class="breadcrumb-item"><a href="../appendix/appendixB-database-families.html"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">A Guided Tour of Database Families</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Appendix B — A Guided Tour of Database Families</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Appendix B</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="sec-appB" class="level1" data-number="C">
+<h1 data-number="C"><span class="header-section-number">C</span> A Guided Tour of Database Families</h1>
+<p>Chapter 1 introduced the <strong>relational model</strong> as today’s dominant model and referenced its place in the wider family of data models. This appendix expands that reference: it surveys the main database families that exist in industry today, explains <em>why</em> each one was invented, and where each is still used.</p>
+<p>Read it as a reference chapter. You do not need this material to follow Chapters 2–13 — the relational model carries those chapters — but when you encounter NoSQL in Part VIII, or need to justify a technology choice in a project, this tour is your map.</p>
+<hr>
+<section id="years-of-database-models" class="level2" data-number="C.1">
+<h2 data-number="C.1" class="anchored" data-anchor-id="years-of-database-models"><span class="header-section-number">C.1</span> 70 Years of Database Models</h2>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="appendixB-database-families_files/figure-html/mermaid-figure-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="appendixB-database-families_files/figure-html/mermaid-figure-1.png" style="width:16.56in;height:6.12in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="flat-file-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d6c696e6573203e7d7d" class="level2" data-number="C.2">
+<h2 data-number="C.2" class="anchored" data-anchor-id="flat-file-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d6c696e6573203e7d7d"><span class="header-section-number">C.2</span> 1. Flat File Model <i class="fa-solid fa-file-lines" aria-label="file-lines"></i></h2>
+<p>One file, one record per line, delimited columns. No relationships, no constraints.</p>
+<p><strong>Real-world examples:</strong> Excel / Google Sheets, CSV exports, <code>/etc/passwd</code>, Windows <code>.ini</code> files, small <code>.log</code> files.</p>
+<p><strong>Example — <code>/etc/passwd</code> style flat file</strong> (7 colon-separated fields: <em>username : password : UID : GID : full name : home directory : login shell</em>):</p>
+<pre data-code-line-numbers=""><code>root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+hussein:x:1000:1000:Hussein Khalidi,,,:/home/hussein:/bin/bash
+ahmed:x:1001:1001:Ahmed Mansour,,,:/home/ahmed:/bin/zsh
+sara:x:1002:1002:Sara Odeh,,,:/home/sara:/bin/bash
+mysql:x:119:128:MySQL Server,,,:/nonexistent:/bin/false</code></pre>
+<p>Each line is one record; fields are positional and separated by <code>:</code>. There is no schema file, no type checking, no index — every lookup is a full scan, and any program that reads it must agree on the field order by convention only.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Extremely simple and human-readable</li>
+<li>Works in any tool (Notepad, Excel, any language’s string library)</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>All the Notepad Scenario problems: no integrity, no concurrency, redundancy</li>
+<li>Cannot scale beyond a few thousand rows</li>
+</ul>
+<hr>
+</section>
+<section id="hierarchical-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120736974656d6170203e7d7d" class="level2" data-number="C.3">
+<h2 data-number="C.3" class="anchored" data-anchor-id="hierarchical-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120736974656d6170203e7d7d"><span class="header-section-number">C.3</span> 2. Hierarchical Model <i class="fa-solid fa-sitemap" aria-label="sitemap"></i></h2>
+<p>Data is organized as a <strong>tree</strong> — each record has exactly <strong>one parent</strong>. Developed in the 1960s for mainframe systems.</p>
+<div class="cell" data-eval="true" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<p><a href="appendixB-database-families_files/figure-html/mermaid-figure-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="appendixB-database-families_files/figure-html/mermaid-figure-2.png" style="width:6.71in;height:3.98in" class="figure-img"></a></p>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Real-world examples:</strong> IBM <strong>IMS</strong> (still runs many banks and airlines today!), XML documents, JSON trees, LDAP directories, the Windows Registry.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Very fast for tree-shaped traversals (org charts, file systems, bill-of-materials)</li>
+<li>Simple, predictable navigation — follow parent/child pointers</li>
+<li>Enforces strict 1-to-many structure natively</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>Awkward for <strong>many-to-many</strong> relationships — a student enrolled in two departments would need to be duplicated</li>
+<li>Schema changes require rebuilding the tree</li>
+<li>No declarative query language — the programmer walks the hierarchy by hand</li>
+</ul>
+<hr>
+</section>
+<section id="network-model-codasyl-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206469616772616d2d70726f6a656374203e7d7d" class="level2" data-number="C.4">
+<h2 data-number="C.4" class="anchored" data-anchor-id="network-model-codasyl-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206469616772616d2d70726f6a656374203e7d7d"><span class="header-section-number">C.4</span> 3. Network Model (CODASYL) <i class="fa-solid fa-diagram-project" aria-label="diagram-project"></i></h2>
+<p>Like the hierarchical model, but a record can have <strong>many parents</strong> — so many-to-many relationships are supported directly through explicit pointers.</p>
+<div id="fig-network-model" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-network-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/network-model-example.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;C.1: Network model — records (nodes) can belong to multiple parent sets through explicit pointer links, unlike a strict tree."><img src="../images/network-model-example.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:65.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-network-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;C.1: Network model — records (nodes) can belong to multiple parent sets through explicit pointer links, unlike a strict tree.
+</figcaption>
+</figure>
+</div>
+<p><strong>Real-world examples:</strong> IDMS (still running inside some European banks and insurance companies), Raima DB, older mainframe systems at airlines and telecoms.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Supports many-to-many relationships without duplication</li>
+<li>Very fast when the access paths are known in advance</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>No declarative query language — the programmer navigates pointers by hand</li>
+<li>Schema changes are extremely painful</li>
+<li>Largely replaced by relational databases since the 1980s</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Both hierarchical and network models were displaced by the relational model because Codd’s math-based foundation allowed <strong>declarative queries</strong> (“what” instead of “how”) and automatic query optimization.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="relational-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c65203e7d7d" class="level2" data-number="C.5">
+<h2 data-number="C.5" class="anchored" data-anchor-id="relational-model-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c65203e7d7d"><span class="header-section-number">C.5</span> 4. Relational Model <i class="fa-solid fa-table" aria-label="table"></i></h2>
+<p>Data as <strong>tables</strong> (rows + columns); relationships via <strong>foreign keys</strong>; queries via <strong>SQL</strong>. Invented by E.F. Codd in 1970, still the #1 database model today.</p>
+<p><strong>Real-world examples:</strong> Facebook (MySQL), Instagram (PostgreSQL), Booking.com (Oracle + MySQL), Uber’s core services (PostgreSQL + MySQL), most banks worldwide, AAUP’s own student portal.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Declarative SQL — you say <em>what</em>, the database figures out <em>how</em></li>
+<li>Strong ACID guarantees (safe for money, grades, medical records)</li>
+<li>Huge ecosystem: tools, drivers, hosting, experts everywhere</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>Rigid schema — changing columns on a live table is expensive</li>
+<li>Joins get slow on very large datasets</li>
+<li>Not ideal for deeply nested JSON or graph-shaped data</li>
+</ul>
+<p>This is the model that dominates <strong>Parts III – VII</strong> of this book.</p>
+<hr>
+</section>
+<section id="object-oriented-oodb-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265203e7d7d" class="level2" data-number="C.6">
+<h2 data-number="C.6" class="anchored" data-anchor-id="object-oriented-oodb-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265203e7d7d"><span class="header-section-number">C.6</span> 5. Object-Oriented (OODB) <i class="fa-solid fa-cube" aria-label="cube"></i></h2>
+<p>Stores objects exactly as they exist in a Java / C++ / C# program — no mapping to tables.</p>
+<div id="fig-oodb-model" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-oodb-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/oodb-student-department.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;C.2: OODB example — each entity is a class with attributes and methods; relationships are direct object references (e.g.&nbsp;Student.Dept_no → Department) rather than foreign-key joins."><img src="../images/oodb-student-department.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:55.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-oodb-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;C.2: OODB example — each entity is a class with <em>attributes</em> and <em>methods</em>; relationships are direct object references (e.g.&nbsp;<code>Student.Dept_no → Department</code>) rather than foreign-key joins.
+</figcaption>
+</figure>
+</div>
+<p><strong>Real-world examples:</strong> ObjectDB (used inside some CAD and telecom systems), db4o (embedded in apps), Gemstone/S (financial trading). Niche today.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>No impedance mismatch between code and database</li>
+<li>Natural fit for inheritance and complex nested types</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>No dominant query language (OQL never caught on)</li>
+<li>Tiny ecosystem; lost the market to <strong>relational + ORM</strong> (Hibernate, Django ORM, Entity Framework)</li>
+</ul>
+<hr>
+</section>
+<section id="object-relational-ordbms-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265732d737461636b6564203e7d7d" class="level2" data-number="C.7">
+<h2 data-number="C.7" class="anchored" data-anchor-id="object-relational-ordbms-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612063756265732d737461636b6564203e7d7d"><span class="header-section-number">C.7</span> 6. Object-Relational (ORDBMS) <i class="fa-solid fa-cubes-stacked" aria-label="cubes-stacked"></i></h2>
+<p>A relational database with object-like extras: user-defined types, arrays, JSON columns, spatial types, inheritance.</p>
+<p><strong>Real-world examples:</strong> <strong>PostgreSQL</strong> (the gold standard — used by Apple, Instagram, Reddit), Oracle Database, modern SQL Server and MySQL (JSON columns, <code>GEOMETRY</code>, arrays).</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Keeps SQL + ACID but adds rich types (<code>JSONB</code>, <code>ARRAY</code>, <code>GEOMETRY</code>, <code>UUID</code>)</li>
+<li>Single database can handle both traditional and document-style data</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>Extensions are vendor-specific — moving from Oracle to PostgreSQL is harder than moving pure SQL</li>
+</ul>
+<hr>
+</section>
+<section id="nosql-models-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206461746162617365203e7d7d" class="level2" data-number="C.8">
+<h2 data-number="C.8" class="anchored" data-anchor-id="nosql-models-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206461746162617365203e7d7d"><span class="header-section-number">C.8</span> 7. NoSQL Models <i class="fa-solid fa-database" aria-label="database"></i></h2>
+<p>A family of <strong>non-relational</strong> databases born in the 2000s at web-scale companies (Google, Amazon, Facebook) to handle data volumes and write rates that single-server relational databases could not match. Four main sub-families:</p>
+<section id="a.-key-value-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206b6579203e7d7d" class="level3" data-number="C.8.1">
+<h3 data-number="C.8.1" class="anchored" data-anchor-id="a.-key-value-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661206b6579203e7d7d"><span class="header-section-number">C.8.1</span> 7a. Key-Value Stores <i class="fa-solid fa-key" aria-label="key"></i></h3>
+<p>A giant distributed hash table: <code>get(key)</code> / <code>put(key, value)</code>. The simplest NoSQL model.</p>
+<div id="fig-key-value-store" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-key-value-store-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/key-value-store.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;C.3: Key-value store — each key maps directly to an opaque value; the design prioritises reliability, horizontal scalability, and 24/7 availability over rich querying."><img src="../images/key-value-store.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:55.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-key-value-store-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;C.3: Key-value store — each key maps directly to an opaque value; the design prioritises reliability, horizontal scalability, and 24/7 availability over rich querying.
+</figcaption>
+</figure>
+</div>
+<p><strong>Real-world examples:</strong> <strong>Redis</strong> (Twitter timeline cache, Stack Overflow, GitHub, Shopify), <strong>Memcached</strong> (Facebook), <strong>Amazon DynamoDB</strong> (Amazon’s own shopping cart, Lyft, Airbnb sessions), etcd (inside Kubernetes).</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Blazingly fast (often in-memory, microsecond latency)</li>
+<li>Scales horizontally to millions of operations per second</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>No queries across values — you can only fetch by key</li>
+<li>No joins, no <code>WHERE</code>, no rich schema</li>
+</ul>
+</section>
+<section id="b.-document-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d636f6465203e7d7d" class="level3" data-number="C.8.2">
+<h3 data-number="C.8.2" class="anchored" data-anchor-id="b.-document-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c2066612066696c652d636f6465203e7d7d"><span class="header-section-number">C.8.2</span> 7b. Document Stores <i class="fa-solid fa-file-code" aria-label="file-code"></i></h3>
+<p>Store self-contained <strong>JSON-like documents</strong>; each document can have a different shape. Query on any nested field.</p>
+<div id="fig-document-store" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-document-store-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/document-store-mongodb.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;C.4: Document store — a single MongoDB document can embed sub-documents and arrays, keeping related data together instead of splitting it across joined tables. (Source: Studio 3T)"><img src="../images/document-store-mongodb.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-document-store-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;C.4: Document store — a single MongoDB document can embed sub-documents and arrays, keeping related data together instead of splitting it across joined tables. <em>(Source: Studio 3T)</em>
+</figcaption>
+</figure>
+</div>
+<p><strong>Real-world examples:</strong> <strong>MongoDB</strong> (The New York Times, Forbes, eBay, Adobe), <strong>Couchbase</strong> (LinkedIn, PayPal), <strong>Firebase Firestore</strong> (many mobile apps), Amazon DocumentDB.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Flexible schema — add fields without migrations</li>
+<li>Natural fit for JSON from web and mobile APIs</li>
+<li>Good horizontal scalability</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>Cross-document joins are awkward (or absent)</li>
+<li>Easy to end up with inconsistent document shapes over time</li>
+</ul>
+<p>MongoDB is covered in depth in <strong>Chapter 15</strong>.</p>
+</section>
+<section id="c.-column-family-wide-column-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c652d636f6c756d6e73203e7d7d" class="level3" data-number="C.8.3">
+<h3 data-number="C.8.3" class="anchored" data-anchor-id="c.-column-family-wide-column-stores-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c206661207461626c652d636f6c756d6e73203e7d7d"><span class="header-section-number">C.8.3</span> 7c. Column-Family (Wide-Column) Stores <i class="fa-solid fa-table-columns" aria-label="table-columns"></i></h3>
+<p>Data is stored by <strong>column families</strong> rather than whole rows; optimized for huge, sparse tables and write-heavy workloads. Inspired by Google’s <strong>Bigtable</strong> paper (2006).</p>
+<div id="fig-wide-column" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-wide-column-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/wide-column-store.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;C.5: Wide-column store — each row is keyed by a row-key and holds a sparse set of (column, value) pairs; different rows can have different columns. (Source: ScyllaDB)"><img src="../images/wide-column-store.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-wide-column-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;C.5: Wide-column store — each row is keyed by a row-key and holds a sparse set of <code>(column, value)</code> pairs; different rows can have different columns. <em>(Source: ScyllaDB)</em>
+</figcaption>
+</figure>
+</div>
+<p><strong>Real-world examples:</strong> <strong>Apache Cassandra</strong> (Netflix viewing history, Apple iCloud, Instagram messaging), <strong>HBase</strong> (Facebook Messenger, Pinterest), <strong>Google Bigtable</strong> (Google Search, Gmail, Google Analytics), <strong>ScyllaDB</strong> (Discord messages).</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Massive write throughput — millions of writes/sec across a cluster</li>
+<li>Linear horizontal scaling by adding nodes</li>
+<li>Great for time-series, IoT, logs</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>Ad-hoc queries are limited — you must design around known access patterns</li>
+<li>No joins, weaker consistency by default</li>
+</ul>
+</section>
+<section id="d.-graph-databases-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636972636c652d6e6f646573203e7d7d" class="level3" data-number="C.8.4">
+<h3 data-number="C.8.4" class="anchored" data-anchor-id="d.-graph-databases-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636972636c652d6e6f646573203e7d7d"><span class="header-section-number">C.8.4</span> 7d. Graph Databases <i class="fa-solid fa-circle-nodes" aria-label="circle-nodes"></i></h3>
+<p>First-class support for <strong>nodes</strong> (entities) and <strong>edges</strong> (relationships). Queries are traversals like <em>“friends of friends within 3 hops”</em>.</p>
+<div id="fig-graph-database" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-graph-database-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/graph-database.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;C.6: Graph database — data is modelled as nodes connected by typed edges (relationships), each carrying its own properties. (Source: OpenXcell)"><img src="../images/graph-database.webp" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-graph-database-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;C.6: Graph database — data is modelled as <em>nodes</em> connected by typed <em>edges</em> (relationships), each carrying its own properties. <em>(Source: OpenXcell)</em>
+</figcaption>
+</figure>
+</div>
+<p><strong>Real-world examples:</strong> <strong>Neo4j</strong> (NASA’s lessons-learned graph, eBay delivery routing, UBS fraud detection), <strong>Amazon Neptune</strong> (Amazon product recommendations), <strong>TigerGraph</strong> (Jaguar, China Mobile), LinkedIn’s own social graph engine.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Relationship queries are orders of magnitude faster than SQL joins</li>
+<li>Natural fit for social networks, recommendations, fraud detection, knowledge graphs</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>Poor fit for plain tabular analytics</li>
+<li>Smaller ecosystem than relational or document stores</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="newsql-cloud-native-distributed-sql-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636c6f7564203e7d7d" class="level2" data-number="C.9">
+<h2 data-number="C.9" class="anchored" data-anchor-id="newsql-cloud-native-distributed-sql-b58fc729-690b-4000-b19f-365a4093b2ff7b7b3c20666120636c6f7564203e7d7d"><span class="header-section-number">C.9</span> 8. NewSQL &amp; Cloud-Native Distributed SQL <i class="fa-solid fa-cloud" aria-label="cloud"></i></h2>
+<p>A 2010s answer to: <em>“Can we get NoSQL’s horizontal scalability <strong>and</strong> relational SQL + ACID?”</em> Yes — at the cost of more complex infrastructure.</p>
+<p><strong>Real-world examples:</strong> <strong>Google Spanner</strong> (Google Ads, Gmail metadata), <strong>CockroachDB</strong> (DoorDash, Netflix billing), <strong>YugabyteDB</strong>, <strong>TiDB</strong> (Shopee, Bank of China), <strong>Amazon Aurora</strong> (most large AWS customers).</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li>Standard SQL and ACID transactions</li>
+<li>Scales horizontally across regions / continents</li>
+<li>No need to re-learn a new query language</li>
+</ul>
+<p><strong>Disadvantages</strong></p>
+<ul>
+<li>Operationally complex — more moving parts than a single MySQL server</li>
+<li>Young ecosystem; fewer DBAs with deep experience</li>
+<li>Cross-region writes still have latency costs</li>
+</ul>
+<hr>
+</section>
+<section id="side-by-side-comparison" class="level2" data-number="C.10">
+<h2 data-number="C.10" class="anchored" data-anchor-id="side-by-side-comparison"><span class="header-section-number">C.10</span> Side-by-Side Comparison</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Family</th>
+<th>Shape of data</th>
+<th>Query style</th>
+<th>ACID</th>
+<th>Horizontal scale</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Flat file</td>
+<td>Rows in one file</td>
+<td>Parse by hand</td>
+<td>❌</td>
+<td>❌</td>
+<td>CSV</td>
+</tr>
+<tr class="even">
+<td>Hierarchical</td>
+<td>Tree (one parent)</td>
+<td>Navigate</td>
+<td>Partial</td>
+<td>Limited</td>
+<td>IBM IMS, XML</td>
+</tr>
+<tr class="odd">
+<td>Network (CODASYL)</td>
+<td>Graph via pointers</td>
+<td>Navigate</td>
+<td>Partial</td>
+<td>Limited</td>
+<td>IDMS</td>
+</tr>
+<tr class="even">
+<td><strong>Relational</strong></td>
+<td>Tables + FKs</td>
+<td><strong>SQL (declarative)</strong></td>
+<td><strong>✅</strong></td>
+<td>Medium</td>
+<td>MySQL, Postgres, Oracle</td>
+</tr>
+<tr class="odd">
+<td>Object-oriented</td>
+<td>Objects</td>
+<td>OQL / API</td>
+<td>Partial</td>
+<td>Limited</td>
+<td>ObjectDB</td>
+</tr>
+<tr class="even">
+<td>Object-relational</td>
+<td>Tables + rich types</td>
+<td>SQL + extensions</td>
+<td>✅</td>
+<td>Medium</td>
+<td>PostgreSQL</td>
+</tr>
+<tr class="odd">
+<td>Key-value</td>
+<td><code>(key, value)</code> blobs</td>
+<td><code>get</code> / <code>put</code></td>
+<td>Per-key</td>
+<td>✅✅✅</td>
+<td>Redis, DynamoDB</td>
+</tr>
+<tr class="even">
+<td>Document</td>
+<td>JSON documents</td>
+<td>Query DSL over JSON</td>
+<td>Per-document</td>
+<td>✅✅</td>
+<td><strong>MongoDB</strong></td>
+</tr>
+<tr class="odd">
+<td>Column-family</td>
+<td>Sparse wide rows</td>
+<td>CQL / API</td>
+<td>Tunable</td>
+<td>✅✅✅</td>
+<td>Cassandra, HBase</td>
+</tr>
+<tr class="even">
+<td>Graph</td>
+<td>Nodes + edges</td>
+<td>Cypher / Gremlin</td>
+<td>✅</td>
+<td>✅</td>
+<td>Neo4j</td>
+</tr>
+<tr class="odd">
+<td>NewSQL</td>
+<td>Tables + FKs</td>
+<td>SQL</td>
+<td>✅</td>
+<td>✅✅✅</td>
+<td>Spanner, CockroachDB</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span><i class="fa-solid fa-compass" aria-label="compass"></i> How to choose (rule of thumb)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Tabular data with real relationships?</strong> → Relational (start here by default).</li>
+<li><strong>Each record is a self-contained document with nested fields?</strong> → Document (MongoDB).</li>
+<li><strong>Distributed cache or session store?</strong> → Key-value (Redis).</li>
+<li><strong>Relationships between entities are the main query pattern?</strong> → Graph (Neo4j).</li>
+<li><strong>Petabyte-scale writes, time series, telemetry?</strong> → Column-family (Cassandra).</li>
+<li><strong>SQL + ACID <em>and</em> global horizontal scale?</strong> → NewSQL (Spanner, CockroachDB).</li>
+</ul>
+<p>Modern systems often combine <strong>several</strong> of these — this is called <strong>polyglot persistence</strong>. The AAUP portal might use PostgreSQL for grades, Redis for sessions, and Elasticsearch for search, all in the same application.</p>
+</div>
+</div>
+<p>NoSQL families are covered in depth in <strong>Part VIII (Chapters 14–15)</strong>.</p>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../appendix/appendixA-apis.html" class="pagination-link" aria-label="Database APIs and Connectivity">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Database APIs and Connectivity</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../appendix/appendixC-advanced-constraints.html" class="pagination-link" aria-label="Advanced Constraint Enforcement">
+        <span class="nav-page-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Advanced Constraint Enforcement</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false" data-code-line-numbers=""><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "A Guided Tour of Database Families"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Appendix B"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># A Guided Tour of Database Families {#sec-appB}</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>Chapter 1 introduced the **relational model** as today's dominant model and referenced its place in the wider family of data models. This appendix expands that reference: it surveys the main database families that exist in industry today, explains *why* each one was invented, and where each is still used.</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>Read it as a reference chapter. You do not need this material to follow Chapters 2–13 — the relational model carries those chapters — but when you encounter NoSQL in Part VIII, or need to justify a technology choice in a project, this tour is your map.</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## 70 Years of Database Models</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>timeline</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    title <span class="dv">70</span> Years of Database Models</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1960</span>s : Flat file</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>          : Hierarchical (IMS)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1970</span>s : Network (CODASYL)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>          : Relational (Codd)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1980</span>s : SQL standardized</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>          : Object-oriented</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1990</span>s : Object-relational (ORDBMS)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>          : XML databases</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2000</span>s : NoSQL wave</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>          : Key-value · Document · Column-family · Graph</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2010</span>s : NewSQL</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>          : Cloud-native distributed SQL</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Flat File Model {{&lt; fa file-lines &gt;}}</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>One file, one record per line, delimited columns. No relationships, no constraints.</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** Excel / Google Sheets, CSV exports, <span class="in">`/etc/passwd`</span>, Windows <span class="in">`.ini`</span> files, small <span class="in">`.log`</span> files.</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>**Example — `/etc/passwd` style flat file** (7 colon-separated fields: *username : password : UID : GID : full name : home directory : login shell*):</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="in">root:x:0:0:root:/root:/bin/bash</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="in">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="in">hussein:x:1000:1000:Hussein Khalidi,,,:/home/hussein:/bin/bash</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="in">ahmed:x:1001:1001:Ahmed Mansour,,,:/home/ahmed:/bin/zsh</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="in">sara:x:1002:1002:Sara Odeh,,,:/home/sara:/bin/bash</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="in">mysql:x:119:128:MySQL Server,,,:/nonexistent:/bin/false</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>Each line is one record; fields are positional and separated by <span class="in">`:`</span>. There is no schema file, no type checking, no index — every lookup is a full scan, and any program that reads it must agree on the field order by convention only.</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Extremely simple and human-readable</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Works in any tool (Notepad, Excel, any language's string library)</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>All the Notepad Scenario problems: no integrity, no concurrency, redundancy</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cannot scale beyond a few thousand rows</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Hierarchical Model {{&lt; fa sitemap &gt;}}</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>Data is organized as a **tree** — each record has exactly **one parent**. Developed in the 1960s for mainframe systems.</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>%%| <span class="fu">eval</span>: true</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>%%| echo: false</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>    U[<span class="ot">"</span><span class="st">AAUP</span><span class="ot">"</span>] --&gt; F1[<span class="ot">"</span><span class="st">Faculty: Engineering</span><span class="ot">"</span>]</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>    U --&gt; F2[<span class="ot">"</span><span class="st">Faculty: Medicine</span><span class="ot">"</span>]</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    F1 --&gt; D1[<span class="ot">"</span><span class="st">Dept: Computer Eng</span><span class="ot">"</span>]</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>    F1 --&gt; D2[<span class="ot">"</span><span class="st">Dept: Civil Eng</span><span class="ot">"</span>]</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>    D1 --&gt; S1[<span class="ot">"</span><span class="st">Student 001</span><span class="ot">"</span>]</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>    D1 --&gt; S2[<span class="ot">"</span><span class="st">Student 002</span><span class="ot">"</span>]</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>    D2 --&gt; S3[<span class="ot">"</span><span class="st">Student 101</span><span class="ot">"</span>]</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** IBM **IMS** (still runs many banks and airlines today!), XML documents, JSON trees, LDAP directories, the Windows Registry.</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Very fast for tree-shaped traversals (org charts, file systems, bill-of-materials)</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Simple, predictable navigation — follow parent/child pointers</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Enforces strict 1-to-many structure natively</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Awkward for **many-to-many** relationships — a student enrolled in two departments would need to be duplicated</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Schema changes require rebuilding the tree</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No declarative query language — the programmer walks the hierarchy by hand</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Network Model (CODASYL) {{&lt; fa diagram-project &gt;}}</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>Like the hierarchical model, but a record can have **many parents** — so many-to-many relationships are supported directly through explicit pointers.</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a><span class="al">![Network model — records (nodes) can belong to multiple parent sets through explicit pointer links, unlike a strict tree.](../images/network-model-example.png)</span>{#fig-network-model width=65% fig-align="center"}</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** IDMS (still running inside some European banks and insurance companies), Raima DB, older mainframe systems at airlines and telecoms.</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Supports many-to-many relationships without duplication</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Very fast when the access paths are known in advance</span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No declarative query language — the programmer navigates pointers by hand</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Schema changes are extremely painful</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Largely replaced by relational databases since the 1980s</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>Both hierarchical and network models were displaced by the relational model because Codd's math-based foundation allowed **declarative queries** ("what" instead of "how") and automatic query optimization.</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Relational Model {{&lt; fa table &gt;}}</span></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>Data as **tables** (rows + columns); relationships via **foreign keys**; queries via **SQL**. Invented by E.F. Codd in 1970, still the #1 database model today.</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** Facebook (MySQL), Instagram (PostgreSQL), Booking.com (Oracle + MySQL), Uber's core services (PostgreSQL + MySQL), most banks worldwide, AAUP's own student portal.</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Declarative SQL — you say *what*, the database figures out *how*</span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Strong ACID guarantees (safe for money, grades, medical records)</span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Huge ecosystem: tools, drivers, hosting, experts everywhere</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Rigid schema — changing columns on a live table is expensive</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Joins get slow on very large datasets</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Not ideal for deeply nested JSON or graph-shaped data</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>This is the model that dominates **Parts III – VII** of this book.</span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Object-Oriented (OODB) {{&lt; fa cube &gt;}}</span></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>Stores objects exactly as they exist in a Java / C++ / C# program — no mapping to tables.</span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a><span class="al">![OODB example — each entity is a class with *attributes* and *methods*; relationships are direct object references (e.g. `Student.Dept_no → Department`) rather than foreign-key joins.](../images/oodb-student-department.png)</span>{#fig-oodb-model width=55% fig-align="center"}</span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** ObjectDB (used inside some CAD and telecom systems), db4o (embedded in apps), Gemstone/S (financial trading). Niche today.</span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No impedance mismatch between code and database</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Natural fit for inheritance and complex nested types</span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No dominant query language (OQL never caught on)</span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Tiny ecosystem; lost the market to **relational + ORM** (Hibernate, Django ORM, Entity Framework)</span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Object-Relational (ORDBMS) {{&lt; fa cubes-stacked &gt;}}</span></span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>A relational database with object-like extras: user-defined types, arrays, JSON columns, spatial types, inheritance.</span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** **PostgreSQL** (the gold standard — used by Apple, Instagram, Reddit), Oracle Database, modern SQL Server and MySQL (JSON columns, <span class="in">`GEOMETRY`</span>, arrays).</span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Keeps SQL + ACID but adds rich types (<span class="in">`JSONB`</span>, <span class="in">`ARRAY`</span>, <span class="in">`GEOMETRY`</span>, <span class="in">`UUID`</span>)</span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Single database can handle both traditional and document-style data</span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Extensions are vendor-specific — moving from Oracle to PostgreSQL is harder than moving pure SQL</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. NoSQL Models {{&lt; fa database &gt;}}</span></span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>A family of **non-relational** databases born in the 2000s at web-scale companies (Google, Amazon, Facebook) to handle data volumes and write rates that single-server relational databases could not match. Four main sub-families:</span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7a. Key-Value Stores {{&lt; fa key &gt;}}</span></span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>A giant distributed hash table: <span class="in">`get(key)`</span> / <span class="in">`put(key, value)`</span>. The simplest NoSQL model.</span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a><span class="al">![Key-value store — each key maps directly to an opaque value; the design prioritises reliability, horizontal scalability, and 24/7 availability over rich querying.](../images/key-value-store.png)</span>{#fig-key-value-store width=55% fig-align="center"}</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** **Redis** (Twitter timeline cache, Stack Overflow, GitHub, Shopify), **Memcached** (Facebook), **Amazon DynamoDB** (Amazon's own shopping cart, Lyft, Airbnb sessions), etcd (inside Kubernetes).</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Blazingly fast (often in-memory, microsecond latency)</span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Scales horizontally to millions of operations per second</span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No queries across values — you can only fetch by key</span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No joins, no <span class="in">`WHERE`</span>, no rich schema</span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7b. Document Stores {{&lt; fa file-code &gt;}}</span></span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>Store self-contained **JSON-like documents**; each document can have a different shape. Query on any nested field.</span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a><span class="al">![Document store — a single MongoDB document can embed sub-documents and arrays, keeping related data together instead of splitting it across joined tables. *(Source: Studio 3T)*](../images/document-store-mongodb.png)</span>{#fig-document-store width=70% fig-align="center"}</span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** **MongoDB** (The New York Times, Forbes, eBay, Adobe), **Couchbase** (LinkedIn, PayPal), **Firebase Firestore** (many mobile apps), Amazon DocumentDB.</span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Flexible schema — add fields without migrations</span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Natural fit for JSON from web and mobile APIs</span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Good horizontal scalability</span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cross-document joins are awkward (or absent)</span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Easy to end up with inconsistent document shapes over time</span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a>MongoDB is covered in depth in **Chapter 15**.</span>
+<span id="cb2-231"><a href="#cb2-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-232"><a href="#cb2-232" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7c. Column-Family (Wide-Column) Stores {{&lt; fa table-columns &gt;}}</span></span>
+<span id="cb2-233"><a href="#cb2-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-234"><a href="#cb2-234" aria-hidden="true" tabindex="-1"></a>Data is stored by **column families** rather than whole rows; optimized for huge, sparse tables and write-heavy workloads. Inspired by Google's **Bigtable** paper (2006).</span>
+<span id="cb2-235"><a href="#cb2-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-236"><a href="#cb2-236" aria-hidden="true" tabindex="-1"></a><span class="al">![Wide-column store — each row is keyed by a row-key and holds a sparse set of `(column, value)` pairs; different rows can have different columns. *(Source: ScyllaDB)*](../images/wide-column-store.png)</span>{#fig-wide-column width=70% fig-align="center"}</span>
+<span id="cb2-237"><a href="#cb2-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-238"><a href="#cb2-238" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** **Apache Cassandra** (Netflix viewing history, Apple iCloud, Instagram messaging), **HBase** (Facebook Messenger, Pinterest), **Google Bigtable** (Google Search, Gmail, Google Analytics), **ScyllaDB** (Discord messages).</span>
+<span id="cb2-239"><a href="#cb2-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-240"><a href="#cb2-240" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-241"><a href="#cb2-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-242"><a href="#cb2-242" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Massive write throughput — millions of writes/sec across a cluster</span>
+<span id="cb2-243"><a href="#cb2-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Linear horizontal scaling by adding nodes</span>
+<span id="cb2-244"><a href="#cb2-244" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Great for time-series, IoT, logs</span>
+<span id="cb2-245"><a href="#cb2-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-246"><a href="#cb2-246" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-247"><a href="#cb2-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-248"><a href="#cb2-248" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ad-hoc queries are limited — you must design around known access patterns</span>
+<span id="cb2-249"><a href="#cb2-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No joins, weaker consistency by default</span>
+<span id="cb2-250"><a href="#cb2-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-251"><a href="#cb2-251" aria-hidden="true" tabindex="-1"></a><span class="fu">### 7d. Graph Databases {{&lt; fa circle-nodes &gt;}}</span></span>
+<span id="cb2-252"><a href="#cb2-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-253"><a href="#cb2-253" aria-hidden="true" tabindex="-1"></a>First-class support for **nodes** (entities) and **edges** (relationships). Queries are traversals like *"friends of friends within 3 hops"*.</span>
+<span id="cb2-254"><a href="#cb2-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-255"><a href="#cb2-255" aria-hidden="true" tabindex="-1"></a><span class="al">![Graph database — data is modelled as *nodes* connected by typed *edges* (relationships), each carrying its own properties. *(Source: OpenXcell)*](../images/graph-database.webp)</span>{#fig-graph-database width=70% fig-align="center"}</span>
+<span id="cb2-256"><a href="#cb2-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-257"><a href="#cb2-257" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** **Neo4j** (NASA's lessons-learned graph, eBay delivery routing, UBS fraud detection), **Amazon Neptune** (Amazon product recommendations), **TigerGraph** (Jaguar, China Mobile), LinkedIn's own social graph engine.</span>
+<span id="cb2-258"><a href="#cb2-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-259"><a href="#cb2-259" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-260"><a href="#cb2-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-261"><a href="#cb2-261" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Relationship queries are orders of magnitude faster than SQL joins</span>
+<span id="cb2-262"><a href="#cb2-262" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Natural fit for social networks, recommendations, fraud detection, knowledge graphs</span>
+<span id="cb2-263"><a href="#cb2-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-264"><a href="#cb2-264" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-265"><a href="#cb2-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-266"><a href="#cb2-266" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Poor fit for plain tabular analytics</span>
+<span id="cb2-267"><a href="#cb2-267" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Smaller ecosystem than relational or document stores</span>
+<span id="cb2-268"><a href="#cb2-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-269"><a href="#cb2-269" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-270"><a href="#cb2-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-271"><a href="#cb2-271" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8. NewSQL &amp; Cloud-Native Distributed SQL {{&lt; fa cloud &gt;}}</span></span>
+<span id="cb2-272"><a href="#cb2-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-273"><a href="#cb2-273" aria-hidden="true" tabindex="-1"></a>A 2010s answer to: *"Can we get NoSQL's horizontal scalability **and** relational SQL + ACID?"* Yes — at the cost of more complex infrastructure.</span>
+<span id="cb2-274"><a href="#cb2-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-275"><a href="#cb2-275" aria-hidden="true" tabindex="-1"></a>**Real-world examples:** **Google Spanner** (Google Ads, Gmail metadata), **CockroachDB** (DoorDash, Netflix billing), **YugabyteDB**, **TiDB** (Shopee, Bank of China), **Amazon Aurora** (most large AWS customers).</span>
+<span id="cb2-276"><a href="#cb2-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-277"><a href="#cb2-277" aria-hidden="true" tabindex="-1"></a>**Advantages**</span>
+<span id="cb2-278"><a href="#cb2-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-279"><a href="#cb2-279" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Standard SQL and ACID transactions</span>
+<span id="cb2-280"><a href="#cb2-280" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Scales horizontally across regions / continents</span>
+<span id="cb2-281"><a href="#cb2-281" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No need to re-learn a new query language</span>
+<span id="cb2-282"><a href="#cb2-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-283"><a href="#cb2-283" aria-hidden="true" tabindex="-1"></a>**Disadvantages**</span>
+<span id="cb2-284"><a href="#cb2-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-285"><a href="#cb2-285" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Operationally complex — more moving parts than a single MySQL server</span>
+<span id="cb2-286"><a href="#cb2-286" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Young ecosystem; fewer DBAs with deep experience</span>
+<span id="cb2-287"><a href="#cb2-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cross-region writes still have latency costs</span>
+<span id="cb2-288"><a href="#cb2-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-289"><a href="#cb2-289" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-290"><a href="#cb2-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-291"><a href="#cb2-291" aria-hidden="true" tabindex="-1"></a><span class="fu">## Side-by-Side Comparison</span></span>
+<span id="cb2-292"><a href="#cb2-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-293"><a href="#cb2-293" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Family <span class="pp">|</span> Shape of data <span class="pp">|</span> Query style <span class="pp">|</span> ACID <span class="pp">|</span> Horizontal scale <span class="pp">|</span> Example <span class="pp">|</span></span>
+<span id="cb2-294"><a href="#cb2-294" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|---|---|</span></span>
+<span id="cb2-295"><a href="#cb2-295" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Flat file <span class="pp">|</span> Rows in one file <span class="pp">|</span> Parse by hand <span class="pp">|</span> ❌ <span class="pp">|</span> ❌ <span class="pp">|</span> CSV <span class="pp">|</span></span>
+<span id="cb2-296"><a href="#cb2-296" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Hierarchical <span class="pp">|</span> Tree (one parent) <span class="pp">|</span> Navigate <span class="pp">|</span> Partial <span class="pp">|</span> Limited <span class="pp">|</span> IBM IMS, XML <span class="pp">|</span></span>
+<span id="cb2-297"><a href="#cb2-297" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Network (CODASYL) <span class="pp">|</span> Graph via pointers <span class="pp">|</span> Navigate <span class="pp">|</span> Partial <span class="pp">|</span> Limited <span class="pp">|</span> IDMS <span class="pp">|</span></span>
+<span id="cb2-298"><a href="#cb2-298" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Relational** | Tables + FKs | **SQL (declarative)** | **✅** <span class="pp">|</span> Medium <span class="pp">|</span> MySQL, Postgres, Oracle <span class="pp">|</span></span>
+<span id="cb2-299"><a href="#cb2-299" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Object-oriented <span class="pp">|</span> Objects <span class="pp">|</span> OQL / API <span class="pp">|</span> Partial <span class="pp">|</span> Limited <span class="pp">|</span> ObjectDB <span class="pp">|</span></span>
+<span id="cb2-300"><a href="#cb2-300" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Object-relational <span class="pp">|</span> Tables + rich types <span class="pp">|</span> SQL + extensions <span class="pp">|</span> ✅ <span class="pp">|</span> Medium <span class="pp">|</span> PostgreSQL <span class="pp">|</span></span>
+<span id="cb2-301"><a href="#cb2-301" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Key-value <span class="pp">|</span> <span class="in">`(key, value)`</span> blobs <span class="pp">|</span> <span class="in">`get`</span> / <span class="in">`put`</span> <span class="pp">|</span> Per-key <span class="pp">|</span> ✅✅✅ <span class="pp">|</span> Redis, DynamoDB <span class="pp">|</span></span>
+<span id="cb2-302"><a href="#cb2-302" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Document <span class="pp">|</span> JSON documents <span class="pp">|</span> Query DSL over JSON <span class="pp">|</span> Per-document <span class="pp">|</span> ✅✅ <span class="pp">|</span> **MongoDB** <span class="pp">|</span></span>
+<span id="cb2-303"><a href="#cb2-303" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Column-family <span class="pp">|</span> Sparse wide rows <span class="pp">|</span> CQL / API <span class="pp">|</span> Tunable <span class="pp">|</span> ✅✅✅ <span class="pp">|</span> Cassandra, HBase <span class="pp">|</span></span>
+<span id="cb2-304"><a href="#cb2-304" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Graph <span class="pp">|</span> Nodes + edges <span class="pp">|</span> Cypher / Gremlin <span class="pp">|</span> ✅ <span class="pp">|</span> ✅ <span class="pp">|</span> Neo4j <span class="pp">|</span></span>
+<span id="cb2-305"><a href="#cb2-305" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> NewSQL <span class="pp">|</span> Tables + FKs <span class="pp">|</span> SQL <span class="pp">|</span> ✅ <span class="pp">|</span> ✅✅✅ <span class="pp">|</span> Spanner, CockroachDB <span class="pp">|</span></span>
+<span id="cb2-306"><a href="#cb2-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-307"><a href="#cb2-307" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb2-308"><a href="#cb2-308" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa compass &gt;}} How to choose (rule of thumb)</span></span>
+<span id="cb2-309"><a href="#cb2-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-310"><a href="#cb2-310" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tabular data with real relationships?** → Relational (start here by default).</span>
+<span id="cb2-311"><a href="#cb2-311" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Each record is a self-contained document with nested fields?** → Document (MongoDB).</span>
+<span id="cb2-312"><a href="#cb2-312" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Distributed cache or session store?** → Key-value (Redis).</span>
+<span id="cb2-313"><a href="#cb2-313" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Relationships between entities are the main query pattern?** → Graph (Neo4j).</span>
+<span id="cb2-314"><a href="#cb2-314" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Petabyte-scale writes, time series, telemetry?** → Column-family (Cassandra).</span>
+<span id="cb2-315"><a href="#cb2-315" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**SQL + ACID *and* global horizontal scale?** → NewSQL (Spanner, CockroachDB).</span>
+<span id="cb2-316"><a href="#cb2-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-317"><a href="#cb2-317" aria-hidden="true" tabindex="-1"></a>Modern systems often combine **several** of these — this is called **polyglot persistence**. The AAUP portal might use PostgreSQL for grades, Redis for sessions, and Elasticsearch for search, all in the same application.</span>
+<span id="cb2-318"><a href="#cb2-318" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-319"><a href="#cb2-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-320"><a href="#cb2-320" aria-hidden="true" tabindex="-1"></a>NoSQL families are covered in depth in **Part VIII (Chapters 14–15)**.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+    <script type="text/javascript">
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let pseudocodeOptions = {
+          indentSize: el.dataset.indentSize,
+          commentDelimiter: " " + el.dataset.commentDelimiter + " ",
+          lineNumber: el.dataset.lineNumber.toLowerCase() === "true",
+          lineNumberPunc: el.dataset.lineNumberPunc,
+          noEnd: el.dataset.noEnd.toLowerCase() === "true",
+          titlePrefix: el.dataset.captionPrefix,
+        };
+        pseudocode.renderElement(el.querySelector(".pseudocode"), pseudocodeOptions);
+      });
+    })(document);
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let captionSpan = el.querySelector(".ps-root > .ps-algorithm > .ps-line > .ps-keyword")
+        if (captionSpan !== null) {
+          let captionPrefix = el.dataset.captionPrefix + " ";
+          let captionNumber = "";
+          if (el.dataset.pseudocodeNumber) {
+            captionNumber = el.dataset.pseudocodeNumber + " ";
+            if (el.dataset.chapterLevel) {
+              captionNumber = el.dataset.chapterLevel + "." + captionNumber;
+            }
+          }
+          captionSpan.innerHTML = captionPrefix + captionNumber;
+        }
+      });
+    })(document);
+    </script>
+  
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
+<script src="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.js"></script>
+</body></html>
