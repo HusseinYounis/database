@@ -109,8 +109,6 @@ div.csl-indent {
 <link href="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.css" rel="stylesheet">
 <script src="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -577,16 +575,16 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <p>Imagine you are building a simple student-grade system for your department. You create three text files:</p>
-<p><i class="fa-solid fa-file-lines" aria-label="file-lines"></i> <strong><code>students.txt</code></strong></p>
+<p>📄 <strong><code>students.txt</code></strong></p>
 <pre data-code-line-numbers=""><code>001, Ahmed Khalidi, Computer_Eng
 002, Sara Hasan,    Computer_Eng
 003, Omar Zayed,    Information_Sys</code></pre>
-<p><i class="fa-solid fa-file-lines" aria-label="file-lines"></i> <strong><code>grades.txt</code></strong></p>
+<p>📄 <strong><code>grades.txt</code></strong></p>
 <pre data-code-line-numbers=""><code>001, Database, 92
 001, Networks, 85
 002, Database, 78
 003, Database, 90</code></pre>
-<p><i class="fa-solid fa-file-lines" aria-label="file-lines"></i> <strong><code>departments.txt</code></strong></p>
+<p>📄 <strong><code>departments.txt</code></strong></p>
 <pre data-code-line-numbers=""><code>Computer_Eng,    Dr_Mansour, Building_A
 Information_Sys, Dr_Younis,  Building_B</code></pre>
 <p>Simple. Clean. Until it is not.</p>
@@ -600,7 +598,7 @@ Information_Sys, Dr_Younis,  Building_B</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><i class="fa-solid fa-magnifying-glass" aria-label="magnifying-glass"></i> Problem 1 — Search is <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">O(n)</span>
+<span class="screen-reader-only">Important</span>🔍 Problem 1 — Search is <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">O(n)</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -635,15 +633,15 @@ Information_Sys, Dr_Younis,  Building_B</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><i class="fa-solid fa-rotate" aria-label="rotate"></i> Problem 2 — Updates break <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">consistency</span>
+<span class="screen-reader-only">Important</span>🔄 Problem 2 — Updates break <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">consistency</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Ahmed transfers departments. You update <code>students.txt</code>. Two weeks later someone notices a derived report still shows the old department. You forgot to update another file that duplicated the value.</p>
 <p><strong>Example — the real issue:</strong></p>
-<p><i class="fa-solid fa-file-lines" aria-label="file-lines"></i> <code>students.txt</code> <em>(updated — new department)</em></p>
+<p>📄 <code>students.txt</code> <em>(updated — new department)</em></p>
 <pre data-code-line-numbers=""><code>001, Ahmed Khalidi, Information_Sys</code></pre>
-<p><i class="fa-solid fa-file-lines" aria-label="file-lines"></i> <code>enrollment_report.txt</code> <em>(stale — still says old department)</em></p>
+<p>📄 <code>enrollment_report.txt</code> <em>(stale — still says old department)</em></p>
 <pre data-code-line-numbers=""><code>001, Ahmed Khalidi, Computer_Eng, Database, 92</code></pre>
 <p>Two files, <span class="light-content" data-bg="#f39c12" data-fg="#000000" style="color: #000000;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f39c12;">two truths</span>, no way for the system to detect the conflict.</p>
 </div>
@@ -654,7 +652,7 @@ Information_Sys, Dr_Younis,  Building_B</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><i class="fa-solid fa-users" aria-label="users"></i> Problem 3 — Concurrent access <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">destroys data</span>
+<span class="screen-reader-only">Important</span>👥 Problem 3 — Concurrent access <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">destroys data</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -712,7 +710,7 @@ Information_Sys, Dr_Younis,  Building_B</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><i class="fa-solid fa-diagram-project" aria-label="diagram-project"></i> Problem 4 — Relationships require <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">40+ lines of code</span>
+<span class="screen-reader-only">Important</span>📊 Problem 4 — Relationships require <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">40+ lines of code</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -746,13 +744,13 @@ Information_Sys, Dr_Younis,  Building_B</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><i class="fa-solid fa-ban" aria-label="ban"></i> Problem 5 — No types, no <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">validation</span>
+<span class="screen-reader-only">Important</span>🚫 Problem 5 — No types, no <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">validation</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Nothing prevents a user from typing garbage into the grade column. Every variant crashes or silently corrupts your analytics.</p>
 <p><strong>Example — the real issue:</strong></p>
-<p><i class="fa-solid fa-file-lines" aria-label="file-lines"></i> <code>grades.txt</code></p>
+<p>📄 <code>grades.txt</code></p>
 <pre data-code-line-numbers=""><code>001, Database, 92
 002, Database, 92.5
 003, Database, 92,5        ← comma used as decimal separator
@@ -770,13 +768,13 @@ Information_Sys, Dr_Younis,  Building_B</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><i class="fa-solid fa-plug-circle-exclamation" aria-label="plug-circle-exclamation"></i> Problem 6 — Crashes leave <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">corrupt files</span>
+<span class="screen-reader-only">Important</span>⚡ Problem 6 — Crashes leave <span class="light-content" data-fg="#c0392b" style="color: #c0392b;">corrupt files</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Power is cut in the middle of a batch update. Half the file is in the new format; half is in the old. There is no recovery log.</p>
 <p><strong>Example — the real issue:</strong></p>
-<p><i class="fa-solid fa-file-lines" aria-label="file-lines"></i> <code>grades.txt</code> <em>(mid-write, power cut here ↯)</em></p>
+<p>📄 <code>grades.txt</code> <em>(mid-write, power cut here ↯)</em></p>
 <pre data-code-line-numbers=""><code>001, Database, 92          ← old row, untouched
 002, Database, 78          ← old row, untouched
 003, Database, 90          ← partially rewritten
@@ -897,7 +895,7 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><i class="fa-solid fa-folder-open" aria-label="folder-open"></i> A database is, literally, a set of files on disk
+<span class="screen-reader-only">Important</span>📂 A database is, literally, a set of files on disk
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -926,7 +924,7 @@ Note
 </colgroup>
 <thead>
 <tr class="header">
-<th><i class="fa-solid fa-layer-group" aria-label="layer-group"></i> Concern</th>
+<th>📚 Concern</th>
 <th>What “just files” give you</th>
 <th>What the DBMS gives you</th>
 </tr>
@@ -985,7 +983,7 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span><i class="fa-solid fa-lightbulb" aria-label="lightbulb"></i> The one-sentence summary
+<span class="screen-reader-only">Tip</span>💡 The one-sentence summary
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1071,7 +1069,7 @@ Figure&nbsp;1.1: Anatomy of a relation: rows are <em>tuples</em>, columns are <e
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span><i class="fa-solid fa-compass" aria-label="compass"></i> Quick preview
+<span class="screen-reader-only">Note</span>🧭 Quick preview
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -2167,14 +2165,14 @@ Show Answer
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>Imagine you are building a simple student-grade system for your department. You create three text files:</span>
 <span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>{{&lt; fa file-lines &gt;}} **`students.txt`**</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>📄 **`students.txt`**</span>
 <span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="in">001, Ahmed Khalidi, Computer_Eng</span></span>
 <span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="in">002, Sara Hasan,    Computer_Eng</span></span>
 <span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="in">003, Omar Zayed,    Information_Sys</span></span>
 <span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>{{&lt; fa file-lines &gt;}} **`grades.txt`**</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>📄 **`grades.txt`**</span>
 <span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="in">001, Database, 92</span></span>
 <span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="in">001, Networks, 85</span></span>
@@ -2182,7 +2180,7 @@ Show Answer
 <span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="in">003, Database, 90</span></span>
 <span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>{{&lt; fa file-lines &gt;}} **`departments.txt`**</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>📄 **`departments.txt`**</span>
 <span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="in">Computer_Eng,    Dr_Mansour, Building_A</span></span>
 <span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="in">Information_Sys, Dr_Younis,  Building_B</span></span>
@@ -2194,7 +2192,7 @@ Show Answer
 <span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Six Problems That Appear Immediately</span></span>
 <span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa magnifying-glass &gt;}} Problem 1 — Search is [O(n)]{fg="#c0392b" .bold}</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🔍 Problem 1 — Search is [O(n)]{fg="#c0392b" .bold}</span></span>
 <span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>To find Ahmed's grades, your program reads every line of <span class="in">`grades.txt`</span> from top to bottom until it finds <span class="in">`001`</span>. With 1,000 students that is manageable. With 1,000,000 students — a national exam registry — that scan takes several *seconds* per query, every query.</span>
 <span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a></span>
@@ -2232,18 +2230,18 @@ Show Answer
 <span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa rotate &gt;}} Problem 2 — Updates break [consistency]{fg="#c0392b" .bold}</span></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🔄 Problem 2 — Updates break [consistency]{fg="#c0392b" .bold}</span></span>
 <span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>Ahmed transfers departments. You update <span class="in">`students.txt`</span>. Two weeks later someone notices a derived report still shows the old department. You forgot to update another file that duplicated the value.</span>
 <span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>**Example — the real issue:**</span>
 <span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>{{&lt; fa file-lines &gt;}} <span class="in">`students.txt`</span> *(updated — new department)*</span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>📄 <span class="in">`students.txt`</span> *(updated — new department)*</span>
 <span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a><span class="in">001, Ahmed Khalidi, Information_Sys</span></span>
 <span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>{{&lt; fa file-lines &gt;}} <span class="in">`enrollment_report.txt`</span> *(stale — still says old department)*</span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>📄 <span class="in">`enrollment_report.txt`</span> *(stale — still says old department)*</span>
 <span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a><span class="in">001, Ahmed Khalidi, Computer_Eng, Database, 92</span></span>
 <span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
@@ -2252,7 +2250,7 @@ Show Answer
 <span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa users &gt;}} Problem 3 — Concurrent access [destroys data]{fg="#c0392b" .bold}</span></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a><span class="fu">## 👥 Problem 3 — Concurrent access [destroys data]{fg="#c0392b" .bold}</span></span>
 <span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a>Two users edit <span class="in">`grades.txt`</span> at the same time. The last save wins — the earlier save is silently overwritten.</span>
 <span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a></span>
@@ -2292,7 +2290,7 @@ Show Answer
 <span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a><span class="co">## {{&lt; fa diagram-project &gt;}} Problem 4 — Relationships require [40+ lines of code]{fg="#c0392b" .bold}</span></span>
+<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a><span class="co">## 📊 Problem 4 — Relationships require [40+ lines of code]{fg="#c0392b" .bold}</span></span>
 <span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a><span class="ot">"</span><span class="st">List all students in Building A with a grade above 80.</span><span class="ot">"</span></span>
 <span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a></span>
@@ -2324,13 +2322,13 @@ Show Answer
 <span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a><span class="co">## {{&lt; fa ban &gt;}} Problem 5 — No types, no [validation]{fg="#c0392b" .bold}</span></span>
+<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a><span class="co">## 🚫 Problem 5 — No types, no [validation]{fg="#c0392b" .bold}</span></span>
 <span id="cb16-181"><a href="#cb16-181" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-182"><a href="#cb16-182" aria-hidden="true" tabindex="-1"></a>Nothing prevents a user from typing garbage into the grade column. Every variant crashes <span class="ot">or</span> silently corrupts your analytics.</span>
 <span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a>*<span class="dt">*Example</span> — the real issue:**</span>
 <span id="cb16-185"><a href="#cb16-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-186"><a href="#cb16-186" aria-hidden="true" tabindex="-1"></a>{{&lt; fa file-lines &gt;}} <span class="ot">`</span><span class="st">grades.txt</span><span class="ot">`</span></span>
+<span id="cb16-186"><a href="#cb16-186" aria-hidden="true" tabindex="-1"></a>📄 <span class="ot">`</span><span class="st">grades.txt</span><span class="ot">`</span></span>
 <span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a>001, Database, 92</span>
 <span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a>002, Database, 92.5</span>
@@ -2349,13 +2347,13 @@ Show Answer
 <span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb16-203"><a href="#cb16-203" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-204"><a href="#cb16-204" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa plug-circle-exclamation &gt;}} Problem 6 — Crashes leave [corrupt files]{fg="#c0392b" .bold}</span></span>
+<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## ⚡ Problem 6 — Crashes leave [corrupt files]{fg="#c0392b" .bold}</span></span>
 <span id="cb16-206"><a href="#cb16-206" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a>Power is cut in the middle of a batch update. Half the file is in the new format; half is in the old. There is no recovery log.</span>
 <span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-209"><a href="#cb16-209" aria-hidden="true" tabindex="-1"></a>**Example — the real issue:**</span>
 <span id="cb16-210"><a href="#cb16-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a>{{&lt; fa file-lines &gt;}} <span class="in">`grades.txt`</span> *(mid-write, power cut here ↯)*</span>
+<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a>📄 <span class="in">`grades.txt`</span> *(mid-write, power cut here ↯)*</span>
 <span id="cb16-212"><a href="#cb16-212" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-213"><a href="#cb16-213" aria-hidden="true" tabindex="-1"></a><span class="in">001, Database, 92          ← old row, untouched</span></span>
 <span id="cb16-214"><a href="#cb16-214" aria-hidden="true" tabindex="-1"></a><span class="in">002, Database, 78          ← old row, untouched</span></span>
@@ -2421,7 +2419,7 @@ Show Answer
 <span id="cb16-274"><a href="#cb16-274" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Database Is Just Files — The DBMS Is the *Container*</span></span>
 <span id="cb16-275"><a href="#cb16-275" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-276"><a href="#cb16-276" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
-<span id="cb16-277"><a href="#cb16-277" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa folder-open &gt;}} A database is, literally, a set of files on disk</span></span>
+<span id="cb16-277"><a href="#cb16-277" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📂 A database is, literally, a set of files on disk</span></span>
 <span id="cb16-278"><a href="#cb16-278" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-279"><a href="#cb16-279" aria-hidden="true" tabindex="-1"></a>When you run <span class="in">`CREATE DATABASE company;`</span> in MySQL, the server simply <span class="co">[</span><span class="ot">creates a folder on disk</span><span class="co">]</span>{fg="#c0392b" .bold} named <span class="in">`company/`</span>. When you run <span class="in">`CREATE TABLE employee (...)`</span>, MySQL writes files like <span class="in">`employee.ibd`</span> into that folder. Your rows, indexes, and even the data dictionary all live on disk as **bytes in files** — nothing magical.</span>
 <span id="cb16-280"><a href="#cb16-280" aria-hidden="true" tabindex="-1"></a></span>
@@ -2446,7 +2444,7 @@ Show Answer
 <span id="cb16-299"><a href="#cb16-299" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-300"><a href="#cb16-300" aria-hidden="true" tabindex="-1"></a><span class="ex">**What</span> the DBMS adds on top of the raw files:<span class="pp">**</span></span>
 <span id="cb16-301"><a href="#cb16-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-302"><a href="#cb16-302" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span> <span class="ex">{{</span><span class="op">&lt;</span> fa <span class="ex">layer-group</span> <span class="op">&gt;</span>}} Concern <span class="kw">|</span> <span class="ex">What</span> <span class="st">"just files"</span> give you <span class="kw">|</span> <span class="ex">What</span> the DBMS gives you <span class="kw">|</span></span>
+<span id="cb16-302"><a href="#cb16-302" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span> <span class="ex">📚</span> Concern <span class="kw">|</span> <span class="ex">What</span> <span class="st">"just files"</span> give you <span class="kw">|</span> <span class="ex">What</span> the DBMS gives you <span class="kw">|</span></span>
 <span id="cb16-303"><a href="#cb16-303" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span><span class="ex">---</span><span class="kw">|</span><span class="ex">---</span><span class="kw">|</span><span class="ex">---</span><span class="kw">|</span></span>
 <span id="cb16-304"><a href="#cb16-304" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span> <span class="ex">**OS</span> integration<span class="pp">**</span> <span class="kw">|</span> <span class="ex">Raw</span> <span class="kw">`</span>read<span class="kw">`</span><span class="ex">/</span><span class="kw">`</span>write<span class="kw">`</span> <span class="ex">syscalls</span> <span class="kw">|</span> <span class="ex">Buffered,</span> page-aligned I/O<span class="kw">;</span> <span class="ex">direct-I/O</span> for WAL<span class="kw">;</span> <span class="kw">`</span>fsync<span class="kw">`</span> <span class="cf">for</span> durability <span class="kw">|</span></span>
 <span id="cb16-305"><a href="#cb16-305" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span> <span class="ex">**Memory</span> / cache<span class="pp">**</span> <span class="kw">|</span> <span class="ex">Nothing</span> — every read hits disk <span class="kw">|</span> <span class="ex">**Buffer</span> pool<span class="pp">**</span> — hot pages stay in RAM <span class="er">(</span><span class="ex">thousands</span> of times faster than disk<span class="kw">)</span> <span class="kw">|</span></span>
@@ -2459,7 +2457,7 @@ Show Answer
 <span id="cb16-312"><a href="#cb16-312" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span> <span class="ex">**Networking**</span> <span class="kw">|</span> <span class="ex">Local</span> access only <span class="kw">|</span> <span class="ex">TCP</span> listener, connection pool, client drivers <span class="er">(</span><span class="ex">JDBC/ODBC</span><span class="kw">)</span> <span class="kw">|</span></span>
 <span id="cb16-313"><a href="#cb16-313" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-314"><a href="#cb16-314" aria-hidden="true" tabindex="-1"></a><span class="ex">:::</span> callout-tip</span>
-<span id="cb16-315"><a href="#cb16-315" aria-hidden="true" tabindex="-1"></a><span class="co">## {{&lt; fa lightbulb &gt;}} The one-sentence summary</span></span>
+<span id="cb16-315"><a href="#cb16-315" aria-hidden="true" tabindex="-1"></a><span class="co">## 💡 The one-sentence summary</span></span>
 <span id="cb16-316"><a href="#cb16-316" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-317"><a href="#cb16-317" aria-hidden="true" tabindex="-1"></a><span class="ex">A</span> <span class="pp">**</span>database<span class="pp">**</span> is where your data <span class="pp">*</span>lives<span class="pp">*</span> <span class="er">(</span><span class="ex">on</span> disk<span class="kw">)</span><span class="bu">.</span> A <span class="pp">**</span>DBMS<span class="pp">**</span> is the [runtime container]{bg=<span class="st">"#f39c12"</span> fg=<span class="st">"#000000"</span>} that turns those dead bytes into a reliable, fast, multi-user, queryable service — exactly like an operating system turns a <span class="kw">`</span>.exe<span class="kw">`</span> <span class="fu">file</span> into a running program.</span>
 <span id="cb16-318"><a href="#cb16-318" aria-hidden="true" tabindex="-1"></a><span class="ex">:::</span></span>
@@ -2531,7 +2529,7 @@ Show Answer
 <span id="cb16-386"><a href="#cb16-386" aria-hidden="true" tabindex="-1"></a>You do not need a complete tour of those families to follow the rest of this book. A short preview follows here; the full guided tour — with industry examples, advantages, and disadvantages of every family — lives in **Appendix B: A Guided Tour of Database Families** (<span class="co">[</span><span class="ot">`@sec-appB`</span><span class="co">](../appendix/appendixB-database-families.qmd)</span>).</span>
 <span id="cb16-387"><a href="#cb16-387" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-388"><a href="#cb16-388" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb16-389"><a href="#cb16-389" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa compass &gt;}} Quick preview</span></span>
+<span id="cb16-389"><a href="#cb16-389" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🧭 Quick preview</span></span>
 <span id="cb16-390"><a href="#cb16-390" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-391"><a href="#cb16-391" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Relational** (MySQL, PostgreSQL, Oracle) — tables + foreign keys + SQL. Dominant in enterprise software; the model used in Parts III–VII of this book.</span>
 <span id="cb16-392"><a href="#cb16-392" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Document** (MongoDB) — JSON-shaped records with flexible schemas. Covered in Chapter 15.</span>

@@ -89,8 +89,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-contrib/interactive-sql-1.0.0/interactive-sql.css" rel="stylesheet">
 <script src="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="../site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -645,18 +643,18 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span><i class="fa-solid fa-building-columns" aria-label="building-columns"></i> Scenario — The AAUP Academic Information System
+<span class="screen-reader-only">Note</span>🏛️ Scenario — The AAUP Academic Information System
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Picture the <strong>Arab American University – Palestine (AAUP)</strong> academic information system (the one you use through the student portal and SIS). Thousands of people touch the <em>same</em> underlying database every day, but each of them sees it very differently:</p>
 <ul>
-<li><i class="fa-solid fa-user-graduate" aria-label="user-graduate"></i> <strong>A student in the Computer Engineering Department</strong> logs into the portal to check her grades for <em>Database Systems</em> and register for next semester’s courses. She should only see <strong>her own</strong> courses, grades, GPA, and schedule — never another student’s record.</li>
-<li><i class="fa-solid fa-chalkboard-user" aria-label="chalkboard-user"></i> <strong>A course instructor</strong> opens the faculty portal to enter grades for <em>Database Systems — Section 1</em>. He should see the list of students enrolled in <strong>his sections only</strong>, plus the assessment columns (midterm, project, final) — but <strong>not</strong> salary information or other instructors’ sections.</li>
-<li><i class="fa-solid fa-user-tie" aria-label="user-tie"></i> <strong>The Registrar’s office</strong> needs a dashboard of enrollment counts per faculty (Engineering, Medicine, Law, Arts) and graduation statistics across the whole university.</li>
-<li><i class="fa-solid fa-money-bill-wave" aria-label="money-bill-wave"></i> <strong>The Finance department</strong> generates tuition invoices and payroll — they see student fees and staff salaries, but not academic grades.</li>
-<li><i class="fa-solid fa-user-gear" aria-label="user-gear"></i> <strong>The database administrator (DBA)</strong> in the IT Center at Jenin campus is responsible for the entire logical schema — every table, every foreign key, every constraint.</li>
-<li><i class="fa-solid fa-server" aria-label="server"></i> <strong>The system engineer</strong> tunes physical storage: which tables live on SSD, which columns are indexed, how backups are scheduled across the Jenin and Ramallah data centers.</li>
+<li>🎓 <strong>A student in the Computer Engineering Department</strong> logs into the portal to check her grades for <em>Database Systems</em> and register for next semester’s courses. She should only see <strong>her own</strong> courses, grades, GPA, and schedule — never another student’s record.</li>
+<li>👨‍🏫 <strong>A course instructor</strong> opens the faculty portal to enter grades for <em>Database Systems — Section 1</em>. He should see the list of students enrolled in <strong>his sections only</strong>, plus the assessment columns (midterm, project, final) — but <strong>not</strong> salary information or other instructors’ sections.</li>
+<li>👔 <strong>The Registrar’s office</strong> needs a dashboard of enrollment counts per faculty (Engineering, Medicine, Law, Arts) and graduation statistics across the whole university.</li>
+<li>💵 <strong>The Finance department</strong> generates tuition invoices and payroll — they see student fees and staff salaries, but not academic grades.</li>
+<li>⚙️ <strong>The database administrator (DBA)</strong> in the IT Center at Jenin campus is responsible for the entire logical schema — every table, every foreign key, every constraint.</li>
+<li>🖥️ <strong>The system engineer</strong> tunes physical storage: which tables live on SSD, which columns are indexed, how backups are scheduled across the Jenin and Ramallah data centers.</li>
 </ul>
 <p>One database. Six very different views. The <strong>three-schema architecture</strong> is what makes this possible.</p>
 </div>
@@ -792,7 +790,7 @@ Tip
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span><i class="fa-solid fa-terminal" aria-label="terminal"></i> You have already used a 1-tier setup — in the Database Lab!
+<span class="screen-reader-only">Tip</span>💻 You have already used a 1-tier setup — in the Database Lab!
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -803,9 +801,9 @@ Tip
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mysql</span><span class="op">&gt;</span> SELECT <span class="pp">*</span> FROM employee<span class="kw">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>On your laptop at that moment:</p>
 <ul>
-<li><i class="fa-solid fa-desktop" aria-label="desktop"></i> <strong>The client</strong> (the <code>mysql</code> shell) — running on your machine</li>
-<li><i class="fa-solid fa-gears" aria-label="gears"></i> <strong>The application logic</strong> (you typing SQL) — running on your machine</li>
-<li><i class="fa-solid fa-database" aria-label="database"></i> <strong>The DBMS server</strong> (<code>mysqld</code>) + the data files — <span class="light-content" data-bg="#f39c12" data-fg="#000000" style="color: #000000;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f39c12;">also running on your machine</span></li>
+<li>🖥️ <strong>The client</strong> (the <code>mysql</code> shell) — running on your machine</li>
+<li>⚙️ <strong>The application logic</strong> (you typing SQL) — running on your machine</li>
+<li>🗄️ <strong>The DBMS server</strong> (<code>mysqld</code>) + the data files — <span class="light-content" data-bg="#f39c12" data-fg="#000000" style="color: #000000;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f39c12;">also running on your machine</span></li>
 </ul>
 <p>No network, no other users, no separate server — everything on one box. That is exactly what <em>single-tier</em> means. Any program that uses SQLite (which is just a library embedded inside your application) is 1-tier by design.</p>
 <blockquote class="blockquote">
@@ -868,15 +866,15 @@ Tip
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span><i class="fa-solid fa-diagram-project" aria-label="diagram-project"></i> You have used 2-tier too — every time you open MySQL Workbench
+<span class="screen-reader-only">Tip</span>📊 You have used 2-tier too — every time you open MySQL Workbench
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>When you launch <strong>MySQL Workbench</strong> and click a connection to run a query, you are using a textbook <span class="light-content" data-fg="#2980b9" style="color: #2980b9;">2-tier architecture</span>.</p>
 <ul>
-<li><i class="fa-solid fa-desktop" aria-label="desktop"></i> <strong>Client (Tier 1)</strong> — <code>MySQLWorkbench.exe</code> on your laptop: the query editor, schema inspector, EER diagram designer, and result grid. <em>All the UI and application logic runs here.</em></li>
-<li><i class="fa-solid fa-database" aria-label="database"></i> <strong>DB Server (Tier 2)</strong> — <code>mysqld</code> listening on TCP port <strong>3306</strong>, executing your SQL and sending rows back.</li>
-<li><i class="fa-solid fa-network-wired" aria-label="network-wired"></i> <strong>The wire between them</strong> — the <strong>MySQL native protocol</strong> (the same role JDBC / ODBC plays for Java / .NET apps).</li>
+<li>🖥️ <strong>Client (Tier 1)</strong> — <code>MySQLWorkbench.exe</code> on your laptop: the query editor, schema inspector, EER diagram designer, and result grid. <em>All the UI and application logic runs here.</em></li>
+<li>🗄️ <strong>DB Server (Tier 2)</strong> — <code>mysqld</code> listening on TCP port <strong>3306</strong>, executing your SQL and sending rows back.</li>
+<li>🔌 <strong>The wire between them</strong> — the <strong>MySQL native protocol</strong> (the same role JDBC / ODBC plays for Java / .NET apps).</li>
 </ul>
 <p>This stays 2-tier <span class="light-content" data-bg="#f39c12" data-fg="#000000" style="color: #000000;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f39c12;">even when Workbench and the server are on the <em>same</em> laptop</span> (connecting to <code>localhost:3306</code>). What defines the tier is the <em>process / protocol</em> separation, not physical location. Connect to a remote server instead (e.g., the lab server <code>mysql-lab.aaup.edu</code>) and you simply change the hostname — the architecture is identical.</p>
 <blockquote class="blockquote">
@@ -948,21 +946,21 @@ Tip
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span><i class="fa-solid fa-graduation-cap" aria-label="graduation-cap"></i> Scenario — AAUP student opens the portal from her laptop
+<span class="screen-reader-only">Tip</span>🎓 Scenario — AAUP student opens the portal from her laptop
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Sara opens Chrome on her laptop in the café and visits <code>https://portal.aaup.edu</code> to check her Database Systems grade. What she thinks is “one click” is actually a <span class="light-content" data-fg="#2980b9" style="color: #2980b9;">3-tier architecture</span> in action:</p>
 <ul>
-<li><p><i class="fa-solid fa-laptop" aria-label="laptop"></i> <strong>Presentation Tier (Sara’s laptop)</strong> — Chrome renders HTML, CSS, and JavaScript. It knows <strong>nothing</strong> about tables, SQL, or the database. It only speaks <strong>HTTPS</strong> to the portal.</p></li>
-<li><p><i class="fa-solid fa-server" aria-label="server"></i> <strong>Application Tier (AAUP web/app server)</strong> — running somewhere in the Jenin campus data center (e.g., Node.js / Django / Laravel). It:</p>
+<li><p>💻 <strong>Presentation Tier (Sara’s laptop)</strong> — Chrome renders HTML, CSS, and JavaScript. It knows <strong>nothing</strong> about tables, SQL, or the database. It only speaks <strong>HTTPS</strong> to the portal.</p></li>
+<li><p>🖥️ <strong>Application Tier (AAUP web/app server)</strong> — running somewhere in the Jenin campus data center (e.g., Node.js / Django / Laravel). It:</p>
 <ol type="1">
 <li>Receives Sara’s HTTPS request.</li>
 <li>Checks her session / JWT token — is she logged in? is she Sara?</li>
 <li>Applies business rules (students can see <strong>their own</strong> grades only).</li>
 <li>Translates the request into SQL and forwards it to the DBMS.</li>
 </ol></li>
-<li><p><i class="fa-solid fa-database" aria-label="database"></i> <strong>Data Tier (AAUP database server)</strong> — MySQL / PostgreSQL on a protected server, <span class="light-content" data-bg="#f39c12" data-fg="#000000" style="color: #000000;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f39c12;">reachable only from the app server</span>, never from the public Internet. It runs:</p>
+<li><p>🗄️ <strong>Data Tier (AAUP database server)</strong> — MySQL / PostgreSQL on a protected server, <span class="light-content" data-bg="#f39c12" data-fg="#000000" style="color: #000000;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f39c12;">reachable only from the app server</span>, never from the public Internet. It runs:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-code-line-numbers=""><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> course_code, grade</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span>   Enrollment</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span>  student_id <span class="op">=</span> <span class="st">'202012345'</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -982,19 +980,19 @@ Tip
 </thead>
 <tbody>
 <tr class="odd">
-<td><i class="fa-solid fa-shield-halved" aria-label="shield-halved"></i> <strong>Security</strong></td>
+<td>🛡️ <strong>Security</strong></td>
 <td>The database is behind a firewall; Sara’s browser cannot talk to it directly. Even if her laptop is compromised, the attacker cannot run raw SQL.</td>
 </tr>
 <tr class="even">
-<td><i class="fa-solid fa-users" aria-label="users"></i> <strong>Scalability</strong></td>
+<td>👥 <strong>Scalability</strong></td>
 <td>When registration opens and 10,000 students hit the portal at once, AAUP adds more app servers behind a load balancer without touching the DB.</td>
 </tr>
 <tr class="odd">
-<td><i class="fa-solid fa-user-shield" aria-label="user-shield"></i> <strong>Authorization</strong></td>
+<td>🛡️ <strong>Authorization</strong></td>
 <td>“Students see only their rows” is enforced by the app tier — a single trusted place — not by every desktop client.</td>
 </tr>
 <tr class="even">
-<td><i class="fa-solid fa-wrench" aria-label="wrench"></i> <strong>Maintainability</strong></td>
+<td>🔧 <strong>Maintainability</strong></td>
 <td>The portal team can redesign the UI, or swap Laravel for Node.js, without ever touching the database schema.</td>
 </tr>
 </tbody>
@@ -2181,16 +2179,16 @@ Note
 <span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>As a database grows, different people interact with it differently: end users care about a grade-entry form; the application developer cares about the logical table structure; the storage engineer cares about disk blocks and indexes. The **three-schema architecture** separates these concerns.</span>
 <span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa building-columns &gt;}} Scenario — The AAUP Academic Information System</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🏛️ Scenario — The AAUP Academic Information System</span></span>
 <span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>Picture the **Arab American University – Palestine (AAUP)** academic information system (the one you use through the student portal and SIS). Thousands of people touch the *same* underlying database every day, but each of them sees it very differently:</span>
 <span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa user-graduate &gt;}} **A student in the Computer Engineering Department** logs into the portal to check her grades for *Database Systems* and register for next semester's courses. She should only see **her own** courses, grades, GPA, and schedule — never another student's record.</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa chalkboard-user &gt;}} **A course instructor** opens the faculty portal to enter grades for *Database Systems — Section 1*. He should see the list of students enrolled in **his sections only**, plus the assessment columns (midterm, project, final) — but **not** salary information or other instructors' sections.</span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa user-tie &gt;}} **The Registrar's office** needs a dashboard of enrollment counts per faculty (Engineering, Medicine, Law, Arts) and graduation statistics across the whole university.</span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa money-bill-wave &gt;}} **The Finance department** generates tuition invoices and payroll — they see student fees and staff salaries, but not academic grades.</span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa user-gear &gt;}} **The database administrator (DBA)** in the IT Center at Jenin campus is responsible for the entire logical schema — every table, every foreign key, every constraint.</span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa server &gt;}} **The system engineer** tunes physical storage: which tables live on SSD, which columns are indexed, how backups are scheduled across the Jenin and Ramallah data centers.</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🎓 **A student in the Computer Engineering Department** logs into the portal to check her grades for *Database Systems* and register for next semester's courses. She should only see **her own** courses, grades, GPA, and schedule — never another student's record.</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>👨‍🏫 **A course instructor** opens the faculty portal to enter grades for *Database Systems — Section 1*. He should see the list of students enrolled in **his sections only**, plus the assessment columns (midterm, project, final) — but **not** salary information or other instructors' sections.</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>👔 **The Registrar's office** needs a dashboard of enrollment counts per faculty (Engineering, Medicine, Law, Arts) and graduation statistics across the whole university.</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>💵 **The Finance department** generates tuition invoices and payroll — they see student fees and staff salaries, but not academic grades.</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>⚙️ **The database administrator (DBA)** in the IT Center at Jenin campus is responsible for the entire logical schema — every table, every foreign key, every constraint.</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🖥️ **The system engineer** tunes physical storage: which tables live on SSD, which columns are indexed, how backups are scheduled across the Jenin and Ramallah data centers.</span>
 <span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>One database. Six very different views. The **three-schema architecture** is what makes this possible.</span>
 <span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>:::</span>
@@ -2318,7 +2316,7 @@ Note
 <span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a><span class="al">![Example of Single Tier DBMS Architecture](../images/1tier-architecture-example.png)</span>{fig-align="center" width="80%"}</span>
 <span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa terminal &gt;}} You have already used a 1-tier setup — in the Database Lab!</span></span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="fu">## 💻 You have already used a 1-tier setup — in the Database Lab!</span></span>
 <span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>Remember the **Database Systems lab at AAUP**? When you installed MySQL Server on your own laptop and then opened the [MySQL shell from the Windows Command Prompt]{fg="#2980b9" .bold} to run your first `SELECT` — **that was a 1-tier architecture**.</span>
 <span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a></span>
@@ -2331,9 +2329,9 @@ Note
 <span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>On your laptop at that moment:</span>
 <span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa desktop &gt;}} **The client** (the <span class="in">`mysql`</span> shell) — running on your machine</span>
-<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa gears &gt;}} **The application logic** (you typing SQL) — running on your machine</span>
-<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa database &gt;}} **The DBMS server** (<span class="in">`mysqld`</span>) + the data files — <span class="co">[</span><span class="ot">also running on your machine</span><span class="co">]</span>{bg="#f39c12" fg="#000000"}</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🖥️ **The client** (the <span class="in">`mysql`</span> shell) — running on your machine</span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>⚙️ **The application logic** (you typing SQL) — running on your machine</span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🗄️ **The DBMS server** (<span class="in">`mysqld`</span>) + the data files — <span class="co">[</span><span class="ot">also running on your machine</span><span class="co">]</span>{bg="#f39c12" fg="#000000"}</span>
 <span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a>No network, no other users, no separate server — everything on one box. That is exactly what *single-tier* means. Any program that uses SQLite (which is just a library embedded inside your application) is 1-tier by design.</span>
 <span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a></span>
@@ -2368,13 +2366,13 @@ Note
 <span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a><span class="al">![Example of 2-Tier (Client-Server) Architecture](../images/2tier-architecture-example.png)</span>{fig-align="center" width="80%"}</span>
 <span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa diagram-project &gt;}} You have used 2-tier too — every time you open MySQL Workbench</span></span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📊 You have used 2-tier too — every time you open MySQL Workbench</span></span>
 <span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a>When you launch **MySQL Workbench** and click a connection to run a query, you are using a textbook <span class="co">[</span><span class="ot">2-tier architecture</span><span class="co">]</span>{fg="#2980b9" .bold}.</span>
 <span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa desktop &gt;}} **Client (Tier 1)** — <span class="in">`MySQLWorkbench.exe`</span> on your laptop: the query editor, schema inspector, EER diagram designer, and result grid. *All the UI and application logic runs here.*</span>
-<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa database &gt;}} **DB Server (Tier 2)** — `mysqld` listening on TCP port **3306**, executing your SQL and sending rows back.</span>
-<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa network-wired &gt;}} **The wire between them** — the **MySQL native protocol** (the same role JDBC / ODBC plays for Java / .NET apps).</span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🖥️ **Client (Tier 1)** — <span class="in">`MySQLWorkbench.exe`</span> on your laptop: the query editor, schema inspector, EER diagram designer, and result grid. *All the UI and application logic runs here.*</span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🗄️ **DB Server (Tier 2)** — `mysqld` listening on TCP port **3306**, executing your SQL and sending rows back.</span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🔌 **The wire between them** — the **MySQL native protocol** (the same role JDBC / ODBC plays for Java / .NET apps).</span>
 <span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>This stays 2-tier <span class="co">[</span><span class="ot">even when Workbench and the server are on the *same* laptop</span><span class="co">]</span>{bg="#f39c12" fg="#000000"} (connecting to <span class="in">`localhost:3306`</span>). What defines the tier is the *process / protocol* separation, not physical location. Connect to a remote server instead (e.g., the lab server <span class="in">`mysql-lab.aaup.edu`</span>) and you simply change the hostname — the architecture is identical.</span>
 <span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a></span>
@@ -2416,17 +2414,17 @@ Note
 <span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a><span class="al">![Example of 3-Tier Architecture](../images/3tier-architecture-example.png)</span>{fig-align="center" width="80%"}</span>
 <span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## {{&lt; fa graduation-cap &gt;}} Scenario — AAUP student opens the portal from her laptop</span></span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🎓 Scenario — AAUP student opens the portal from her laptop</span></span>
 <span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a>Sara opens Chrome on her laptop in the café and visits <span class="in">`https://portal.aaup.edu`</span> to check her Database Systems grade. What she thinks is "one click" is actually a <span class="co">[</span><span class="ot">3-tier architecture</span><span class="co">]</span>{fg="#2980b9" .bold} in action:</span>
 <span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa laptop &gt;}} **Presentation Tier (Sara's laptop)** — Chrome renders HTML, CSS, and JavaScript. It knows **nothing** about tables, SQL, or the database. It only speaks **HTTPS** to the portal.</span>
-<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa server &gt;}} **Application Tier (AAUP web/app server)** — running somewhere in the Jenin campus data center (e.g., Node.js / Django / Laravel). It:</span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>💻 **Presentation Tier (Sara's laptop)** — Chrome renders HTML, CSS, and JavaScript. It knows **nothing** about tables, SQL, or the database. It only speaks **HTTPS** to the portal.</span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🖥️ **Application Tier (AAUP web/app server)** — running somewhere in the Jenin campus data center (e.g., Node.js / Django / Laravel). It:</span>
 <span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a><span class="ss">  1. </span>Receives Sara's HTTPS request.</span>
 <span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a><span class="ss">  2. </span>Checks her session / JWT token — is she logged in? is she Sara?</span>
 <span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a><span class="ss">  3. </span>Applies business rules (students can see **their own** grades only).</span>
 <span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a><span class="ss">  4. </span>Translates the request into SQL and forwards it to the DBMS.</span>
-<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>{{&lt; fa database &gt;}} **Data Tier (AAUP database server)** — MySQL / PostgreSQL on a protected server, <span class="co">[</span><span class="ot">reachable only from the app server</span><span class="co">]</span>{bg="#f39c12" fg="#000000"}, never from the public Internet. It runs:</span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>🗄️ **Data Tier (AAUP database server)** — MySQL / PostgreSQL on a protected server, <span class="co">[</span><span class="ot">reachable only from the app server</span><span class="co">]</span>{bg="#f39c12" fg="#000000"}, never from the public Internet. It runs:</span>
 <span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a>  <span class="in">```sql</span></span>
 <span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> course_code, grade</span>
@@ -2440,10 +2438,10 @@ Note
 <span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Concern <span class="pp">|</span> What 3-tier gives AAUP <span class="pp">|</span></span>
 <span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
-<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> {{&lt; fa shield-halved &gt;}} **Security** <span class="pp">|</span> The database is behind a firewall; Sara's browser cannot talk to it directly. Even if her laptop is compromised, the attacker cannot run raw SQL. <span class="pp">|</span></span>
-<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> {{&lt; fa users &gt;}} **Scalability** <span class="pp">|</span> When registration opens and 10,000 students hit the portal at once, AAUP adds more app servers behind a load balancer without touching the DB. <span class="pp">|</span></span>
-<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> {{&lt; fa user-shield &gt;}} **Authorization** <span class="pp">|</span> "Students see only their rows" is enforced by the app tier — a single trusted place — not by every desktop client. <span class="pp">|</span></span>
-<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> {{&lt; fa wrench &gt;}} **Maintainability** <span class="pp">|</span> The portal team can redesign the UI, or swap Laravel for Node.js, without ever touching the database schema. <span class="pp">|</span></span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 🛡️ **Security** <span class="pp">|</span> The database is behind a firewall; Sara's browser cannot talk to it directly. Even if her laptop is compromised, the attacker cannot run raw SQL. <span class="pp">|</span></span>
+<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 👥 **Scalability** <span class="pp">|</span> When registration opens and 10,000 students hit the portal at once, AAUP adds more app servers behind a load balancer without touching the DB. <span class="pp">|</span></span>
+<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 🛡️ **Authorization** <span class="pp">|</span> "Students see only their rows" is enforced by the app tier — a single trusted place — not by every desktop client. <span class="pp">|</span></span>
+<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 🔧 **Maintainability** <span class="pp">|</span> The portal team can redesign the UI, or swap Laravel for Node.js, without ever touching the database schema. <span class="pp">|</span></span>
 <span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a>Now compare this to Sara running <span class="in">`mysql -u sara -p`</span> on her laptop (1-tier) or opening Workbench against the lab server (2-tier). Same data, completely different architectures — each fit for a different purpose.</span>
 <span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a>:::</span>
