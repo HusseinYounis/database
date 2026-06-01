@@ -16,14 +16,14 @@ Before databases existed, every programmer answered that question the same way: 
 
 Imagine you are building a simple student-grade system for your department. You create three text files:
 
-{{< fa file-lines >}} **`students.txt`**
+📄 **`students.txt`**
 ```
 001, Ahmed Khalidi, Computer_Eng
 002, Sara Hasan,    Computer_Eng
 003, Omar Zayed,    Information_Sys
 ```
 
-{{< fa file-lines >}} **`grades.txt`**
+📄 **`grades.txt`**
 ```
 001, Database, 92
 001, Networks, 85
@@ -31,7 +31,7 @@ Imagine you are building a simple student-grade system for your department. You 
 003, Database, 90
 ```
 
-{{< fa file-lines >}} **`departments.txt`**
+📄 **`departments.txt`**
 ```
 Computer_Eng,    Dr_Mansour, Building_A
 Information_Sys, Dr_Younis,  Building_B
@@ -43,7 +43,7 @@ Simple. Clean. Until it is not.
 ### The Six Problems That Appear Immediately
 
 ::: callout-important
-## {{< fa magnifying-glass >}} Problem 1 — Search is [O(n)]{fg="#c0392b" .bold}
+## 🔍 Problem 1 — Search is [O(n)]{fg="#c0392b" .bold}
 
 To find Ahmed's grades, your program reads every line of `grades.txt` from top to bottom until it finds `001`. With 1,000 students that is manageable. With 1,000,000 students — a national exam registry — that scan takes several *seconds* per query, every query.
 
@@ -81,18 +81,18 @@ Algorithm LINEAR_SEARCH(file, key):
 :::
 
 ::: callout-important
-## {{< fa rotate >}} Problem 2 — Updates break [consistency]{fg="#c0392b" .bold}
+## 🔄 Problem 2 — Updates break [consistency]{fg="#c0392b" .bold}
 
 Ahmed transfers departments. You update `students.txt`. Two weeks later someone notices a derived report still shows the old department. You forgot to update another file that duplicated the value.
 
 **Example — the real issue:**
 
-{{< fa file-lines >}} `students.txt` *(updated — new department)*
+📄 `students.txt` *(updated — new department)*
 ```
 001, Ahmed Khalidi, Information_Sys
 ```
 
-{{< fa file-lines >}} `enrollment_report.txt` *(stale — still says old department)*
+📄 `enrollment_report.txt` *(stale — still says old department)*
 ```
 001, Ahmed Khalidi, Computer_Eng, Database, 92
 ```
@@ -101,7 +101,7 @@ Two files, [two truths]{bg="#f39c12" fg="#000000"}, no way for the system to det
 :::
 
 ::: callout-important
-## {{< fa users >}} Problem 3 — Concurrent access [destroys data]{fg="#c0392b" .bold}
+## 👥 Problem 3 — Concurrent access [destroys data]{fg="#c0392b" .bold}
 
 Two users edit `grades.txt` at the same time. The last save wins — the earlier save is silently overwritten.
 
@@ -141,7 +141,7 @@ This is the classic [Lost Update]{fg="#c0392b" .bold} anomaly — one transactio
 :::
 
 ::: callout-important
-## {{< fa diagram-project >}} Problem 4 — Relationships require [40+ lines of code]{fg="#c0392b" .bold}
+## 📊 Problem 4 — Relationships require [40+ lines of code]{fg="#c0392b" .bold}
 
 "List all students in Building A with a grade above 80."
 
@@ -173,13 +173,13 @@ Three nested loops, three file opens, manual joins. In SQL this is **one line**.
 :::
 
 ::: callout-important
-## {{< fa ban >}} Problem 5 — No types, no [validation]{fg="#c0392b" .bold}
+## 🚫 Problem 5 — No types, no [validation]{fg="#c0392b" .bold}
 
 Nothing prevents a user from typing garbage into the grade column. Every variant crashes or silently corrupts your analytics.
 
 **Example — the real issue:**
 
-{{< fa file-lines >}} `grades.txt`
+📄 `grades.txt`
 ```
 001, Database, 92
 002, Database, 92.5
@@ -198,13 +198,13 @@ One malformed record kills the whole report.
 :::
 
 ::: callout-important
-## {{< fa plug-circle-exclamation >}} Problem 6 — Crashes leave [corrupt files]{fg="#c0392b" .bold}
+## ⚡ Problem 6 — Crashes leave [corrupt files]{fg="#c0392b" .bold}
 
 Power is cut in the middle of a batch update. Half the file is in the new format; half is in the old. There is no recovery log.
 
 **Example — the real issue:**
 
-{{< fa file-lines >}} `grades.txt` *(mid-write, power cut here ↯)*
+📄 `grades.txt` *(mid-write, power cut here ↯)*
 ```
 001, Database, 92          ← old row, untouched
 002, Database, 78          ← old row, untouched
@@ -270,7 +270,7 @@ The combination of a database and its DBMS is called a **database system**. In e
 ### The Database Is Just Files — The DBMS Is the *Container*
 
 ::: callout-important
-## {{< fa folder-open >}} A database is, literally, a set of files on disk
+## 📂 A database is, literally, a set of files on disk
 
 When you run `CREATE DATABASE company;` in MySQL, the server simply [creates a folder on disk]{fg="#c0392b" .bold} named `company/`. When you run `CREATE TABLE employee (...)`, MySQL writes files like `employee.ibd` into that folder. Your rows, indexes, and even the data dictionary all live on disk as **bytes in files** — nothing magical.
 
@@ -295,7 +295,7 @@ Think of it exactly like programs and operating systems:
 
 **What the DBMS adds on top of the raw files:**
 
-| {{< fa layer-group >}} Concern | What "just files" give you | What the DBMS gives you |
+| 📚 Concern | What "just files" give you | What the DBMS gives you |
 |---|---|---|
 | **OS integration** | Raw `read`/`write` syscalls | Buffered, page-aligned I/O; direct-I/O for WAL; `fsync` for durability |
 | **Memory / cache** | Nothing — every read hits disk | **Buffer pool** — hot pages stay in RAM (thousands of times faster than disk) |
@@ -308,7 +308,7 @@ Think of it exactly like programs and operating systems:
 | **Networking** | Local access only | TCP listener, connection pool, client drivers (JDBC/ODBC) |
 
 ::: callout-tip
-## {{< fa lightbulb >}} The one-sentence summary
+## 💡 The one-sentence summary
 
 A **database** is where your data *lives* (on disk). A **DBMS** is the [runtime container]{bg="#f39c12" fg="#000000"} that turns those dead bytes into a reliable, fast, multi-user, queryable service — exactly like an operating system turns a `.exe` file into a running program.
 :::
@@ -380,7 +380,7 @@ The relational model is not the only data model in use. A wider ecosystem of dat
 You do not need a complete tour of those families to follow the rest of this book. A short preview follows here; the full guided tour — with industry examples, advantages, and disadvantages of every family — lives in **Appendix B: A Guided Tour of Database Families** ([`@sec-appB`](../appendix/appendixB-database-families.qmd)).
 
 ::: callout-note
-## {{< fa compass >}} Quick preview
+## 🧭 Quick preview
 
 - **Relational** (MySQL, PostgreSQL, Oracle) — tables + foreign keys + SQL. Dominant in enterprise software; the model used in Parts III–VII of this book.
 - **Document** (MongoDB) — JSON-shaped records with flexible schemas. Covered in Chapter 15.

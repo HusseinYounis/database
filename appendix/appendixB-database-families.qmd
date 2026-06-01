@@ -34,7 +34,7 @@ timeline
 
 ---
 
-## 1. Flat File Model {{< fa file-lines >}}
+## 1. Flat File Model 📄
 
 One file, one record per line, delimited columns. No relationships, no constraints.
 
@@ -65,7 +65,7 @@ Each line is one record; fields are positional and separated by `:`. There is no
 
 ---
 
-## 2. Hierarchical Model {{< fa sitemap >}}
+## 2. Hierarchical Model 🗺️
 
 Data is organized as a **tree** — each record has exactly **one parent**. Developed in the 1960s for mainframe systems.
 
@@ -98,7 +98,7 @@ flowchart TD
 
 ---
 
-## 3. Network Model (CODASYL) {{< fa diagram-project >}}
+## 3. Network Model (CODASYL) 📊
 
 Like the hierarchical model, but a record can have **many parents** — so many-to-many relationships are supported directly through explicit pointers.
 
@@ -123,7 +123,7 @@ Both hierarchical and network models were displaced by the relational model beca
 
 ---
 
-## 4. Relational Model {{< fa table >}}
+## 4. Relational Model 📋
 
 Data as **tables** (rows + columns); relationships via **foreign keys**; queries via **SQL**. Invented by E.F. Codd in 1970, still the #1 database model today.
 
@@ -145,7 +145,7 @@ This is the model that dominates **Parts III – VII** of this book.
 
 ---
 
-## 5. Object-Oriented (OODB) {{< fa cube >}}
+## 5. Object-Oriented (OODB) 📦
 
 Stores objects exactly as they exist in a Java / C++ / C# program — no mapping to tables.
 
@@ -165,7 +165,7 @@ Stores objects exactly as they exist in a Java / C++ / C# program — no mapping
 
 ---
 
-## 6. Object-Relational (ORDBMS) {{< fa cubes-stacked >}}
+## 6. Object-Relational (ORDBMS) 🧱
 
 A relational database with object-like extras: user-defined types, arrays, JSON columns, spatial types, inheritance.
 
@@ -182,11 +182,11 @@ A relational database with object-like extras: user-defined types, arrays, JSON 
 
 ---
 
-## 7. NoSQL Models {{< fa database >}}
+## 7. NoSQL Models 🗄️
 
 A family of **non-relational** databases born in the 2000s at web-scale companies (Google, Amazon, Facebook) to handle data volumes and write rates that single-server relational databases could not match. Four main sub-families:
 
-### 7a. Key-Value Stores {{< fa key >}}
+### 7a. Key-Value Stores 🔑
 
 A giant distributed hash table: `get(key)` / `put(key, value)`. The simplest NoSQL model.
 
@@ -204,7 +204,7 @@ A giant distributed hash table: `get(key)` / `put(key, value)`. The simplest NoS
 - No queries across values — you can only fetch by key
 - No joins, no `WHERE`, no rich schema
 
-### 7b. Document Stores {{< fa file-code >}}
+### 7b. Document Stores 📝
 
 Store self-contained **JSON-like documents**; each document can have a different shape. Query on any nested field.
 
@@ -225,7 +225,7 @@ Store self-contained **JSON-like documents**; each document can have a different
 
 MongoDB is covered in depth in **Chapter 15**.
 
-### 7c. Column-Family (Wide-Column) Stores {{< fa table-columns >}}
+### 7c. Column-Family (Wide-Column) Stores 📊
 
 Data is stored by **column families** rather than whole rows; optimized for huge, sparse tables and write-heavy workloads. Inspired by Google's **Bigtable** paper (2006).
 
@@ -244,11 +244,11 @@ Data is stored by **column families** rather than whole rows; optimized for huge
 - Ad-hoc queries are limited — you must design around known access patterns
 - No joins, weaker consistency by default
 
-### 7d. Graph Databases {{< fa circle-nodes >}}
+### 7d. Graph Databases 🔗
 
 First-class support for **nodes** (entities) and **edges** (relationships). Queries are traversals like *"friends of friends within 3 hops"*.
 
-![Graph database — data is modelled as *nodes* connected by typed *edges* (relationships), each carrying its own properties. *(Source: OpenXcell)*](../images/graph-database.webp){#fig-graph-database width=70% fig-align="center"}
+![Graph database — data is modelled as *nodes* connected by typed *edges* (relationships), each carrying its own properties. *(Source: OpenXcell)*](../images/graph-database.png){#fig-graph-database width=70% fig-align="center"}
 
 **Real-world examples:** **Neo4j** (NASA's lessons-learned graph, eBay delivery routing, UBS fraud detection), **Amazon Neptune** (Amazon product recommendations), **TigerGraph** (Jaguar, China Mobile), LinkedIn's own social graph engine.
 
@@ -264,7 +264,7 @@ First-class support for **nodes** (entities) and **edges** (relationships). Quer
 
 ---
 
-## 8. NewSQL & Cloud-Native Distributed SQL {{< fa cloud >}}
+## 8. NewSQL & Cloud-Native Distributed SQL ☁️
 
 A 2010s answer to: *"Can we get NoSQL's horizontal scalability **and** relational SQL + ACID?"* Yes — at the cost of more complex infrastructure.
 
@@ -301,7 +301,7 @@ A 2010s answer to: *"Can we get NoSQL's horizontal scalability **and** relationa
 | NewSQL | Tables + FKs | SQL | ✅ | ✅✅✅ | Spanner, CockroachDB |
 
 ::: callout-tip
-## {{< fa compass >}} How to choose (rule of thumb)
+## 🧭 How to choose (rule of thumb)
 
 - **Tabular data with real relationships?** → Relational (start here by default).
 - **Each record is a self-contained document with nested fields?** → Document (MongoDB).

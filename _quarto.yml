@@ -107,6 +107,7 @@ format:
     mermaid-format: png
 
   pdf:
+    latex-auto-install: true
     documentclass: scrbook
     classoption: [oneside]
     papersize: a4
