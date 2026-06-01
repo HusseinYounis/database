@@ -1,6 +1,10 @@
 /.quarto/
 /_book/
 *_files/
+/site_libs/
+# Quarto HTML render artifacts in source dirs
+*.html
+!js/*.html
 *.rdb
 *.rdx
 .Rproj.user

@@ -1,18 +1,335 @@
 ---
 title: "Relational Algebra"
 subtitle: "Chapter 6"
+format:
+  html:
+    html-table-processing: none
 ---
+
+```{=html}
+<!-- Load the RELAX engine bundle (built from open-source RelaX) -->
+<script src="../js/relax-embed.bundle.js"></script>
+<style>
+.relax-widget {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin: 1em 0;
+  background: #f8f9fa;
+  font-family: inherit;
+}
+.relax-widget textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.88em;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 6px 8px;
+  resize: vertical;
+  background: #fff;
+}
+.relax-widget .rw-run {
+  margin-top: 8px;
+  padding: 5px 18px;
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+.relax-widget .rw-run:hover { background: #0b5ed7; }
+.relax-widget .rw-result {
+  margin-top: 10px;
+  overflow-x: auto;
+}
+.relax-widget .rw-result table {
+  border-collapse: collapse;
+  font-size: 0.82em;
+  width: auto;
+}
+.relax-widget .rw-result th {
+  background: #343a40;
+  color: #fff;
+  padding: 4px 10px;
+  border: 1px solid #dee2e6;
+  white-space: nowrap;
+}
+.relax-widget .rw-result td {
+  padding: 3px 10px;
+  border: 1px solid #dee2e6;
+  white-space: nowrap;
+}
+.relax-widget .rw-result tr:nth-child(even) td { background: #f0f4f8; }
+.relax-widget .rw-meta {
+  font-size: 0.78em;
+  color: #6c757d;
+  margin-top: 4px;
+}
+.relax-widget .rw-error {
+  color: #dc3545;
+  font-size: 0.85em;
+  margin-top: 8px;
+  white-space: pre-wrap;
+}
+
+/* ── Exercise + Solution widgets ── */
+.rx-ex-formula {
+  background: #0d1b2e;
+  border: 1px solid #2a4a7f;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 1em;
+  overflow-x: auto;
+  color: #e8eaf6;
+  margin-bottom: 10px;
+  line-height: 1.8;
+}
+.rx-ex-formula .math { font-style:italic; font-weight:700; color:#82b1ff; font-size:1.05em; }
+.rx-ex-formula sub { font-size:.78em; color:#b2ebf2; }
+.rx-sol-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+@media (max-width: 700px) { .rx-sol-grid { grid-template-columns: 1fr; } }
+.rx-sol-tree-wrap {
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  background: #fafbff;
+  overflow: auto;
+  max-height: 340px;
+  padding: 12px;
+}
+.rx-sol-table-wrap {
+  overflow: auto;
+  max-height: 340px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+}
+.rx-sol-table { border-collapse: collapse; font-size:.8em; width:100%; }
+.rx-sol-table thead { position:sticky; top:0; }
+.rx-sol-table th { background:#1e3a5f; color:#fff; padding:5px 10px; text-align:left; white-space:nowrap; }
+.rx-sol-table th small { display:block; font-weight:400; opacity:.7; font-size:.8em; }
+.rx-sol-table td { padding:4px 10px; border-bottom:1px solid #f0f0f0; font-family:monospace; font-size:.9em; white-space:nowrap; }
+.rx-sol-table tbody tr:hover { background:#f0f4fa; }
+.rx-sol-meta { font-size:.78em; color:#6c757d; margin-top:4px; border-left:3px solid #1e3a5f; padding-left:6px; }
+.rx-sol-error { color:#c0392b; background:#fdecea; border:1px solid #e57373; border-radius:5px; padding:8px 12px; font-size:.85em; white-space:pre-wrap; margin-top:8px; }
+/* Tree re-use from appendix */
+.rx-sol-tree .ra-tree { display:flex; flex-direction:column; align-items:center; }
+.rx-sol-tree .ra-tree ul { list-style:none; margin:0; padding:12px 0 0 0; position:relative; display:flex; gap:0; }
+.rx-sol-tree .ra-tree ul::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:2px; height:12px; background:#8ab0d8; }
+.rx-sol-tree .ra-tree li { list-style:none; padding:0 8px; display:flex; flex-direction:column; align-items:center; position:relative; }
+.rx-sol-tree .ra-tree li::before,.rx-sol-tree .ra-tree li::after { content:''; position:absolute; top:0; right:50%; border-top:2px solid #8ab0d8; width:50%; height:0; }
+.rx-sol-tree .ra-tree li::after { right:auto; left:50%; }
+.rx-sol-tree .ra-tree li:first-child::before,.rx-sol-tree .ra-tree li:last-child::after { border-top:none; }
+.rx-sol-tree .ra-tree li:only-child::before,.rx-sol-tree .ra-tree li:only-child::after { display:none; }
+.rx-sol-tree .ra-tree li > .ra-node-wrap::before { content:''; display:block; width:2px; height:12px; background:#8ab0d8; margin:0 auto; }
+.rx-sol-tree .ra-node-wrap { display:flex; flex-direction:column; align-items:center; position:relative; }
+.rx-sol-tree .ra-node-box { background:linear-gradient(145deg,#1e3a5f,#2c5282); color:#fff; padding:5px 12px; border-radius:6px; font-family:monospace; font-size:.78em; white-space:nowrap; box-shadow:0 2px 5px rgba(0,0,0,.2); text-align:center; min-width:70px; cursor:default; }
+.rx-sol-tree .ra-node-box.leaf { background:linear-gradient(145deg,#1a5c3a,#2d8555); }
+.rx-sol-tree .ra-node-rows { display:block; font-family:'Segoe UI',sans-serif; font-size:.72em; font-weight:400; opacity:.8; margin-top:2px; }
+</style>
+<script>
+// Schema text shared across all widgets
+var _relaxSchemaText = null;
+var _relaxGroup     = null;
+
+function _getRelaxGroup() {
+  if (_relaxGroup) return _relaxGroup;
+  var el = document.getElementById('relax-schema-text');
+  if (!el) return null;
+  _relaxSchemaText = el.textContent;
+  var g = window.relaxAPI.relaxParseGroup(_relaxSchemaText);
+  if ('error' in g) { console.error('RELAX schema parse error:', g.error); return null; }
+  _relaxGroup = g;
+  return g;
+}
+
+function runRelaxWidget(textareaId, resultId, metaId) {
+  var group = _getRelaxGroup();
+  if (!group) {
+    document.getElementById(resultId).innerHTML =
+      '<span class="rw-error">Schema not loaded yet. Expand the schema callout above first.</span>';
+    return;
+  }
+  var query = document.getElementById(textareaId).value.trim();
+  if (!query) return;
+  var res = window.relaxAPI.relaxExec(group, query);
+  var out = document.getElementById(resultId);
+  var meta = document.getElementById(metaId);
+  if (res.error) {
+    out.innerHTML = '<span class="rw-error">' + res.error + '</span>';
+    meta.textContent = '';
+    return;
+  }
+  var html = '<table><thead><tr>';
+  for (var i = 0; i < res.columns.length; i++) {
+    html += '<th>' + res.columns[i].name + '<br><small style="font-weight:normal;opacity:.7">' + res.columns[i].type + '</small></th>';
+  }
+  html += '</tr></thead><tbody>';
+  for (var r = 0; r < res.rows.length; r++) {
+    html += '<tr>';
+    for (var c = 0; c < res.rows[r].length; c++) {
+      var v = res.rows[r][c];
+      html += '<td>' + (v === null ? '<em style="color:#aaa">null</em>' : v) + '</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  out.innerHTML = html;
+  meta.textContent = 'Degree: ' + res.columns.length + '   |   Rows: ' + res.rowCount;
+}
+
+/* Full solution widget: formula bar + side-by-side tree + table */
+function runSolution(widgetId, query) {
+  var group = _getRelaxGroup();
+  var formulaEl = document.getElementById(widgetId + '-formula');
+  var treeEl    = document.getElementById(widgetId + '-tree');
+  var tableEl   = document.getElementById(widgetId + '-table');
+  var metaEl    = document.getElementById(widgetId + '-meta');
+  var gridEl    = document.getElementById(widgetId + '-grid');
+
+  if (!group) {
+    formulaEl.innerHTML = '<span class="rx-sol-error">Schema not loaded. Expand the RELAX schema block above first.</span>';
+    return;
+  }
+
+  var res = window.relaxAPI.relaxExec(group, query);
+
+  if (res.error) {
+    formulaEl.innerHTML = '<span class="rx-sol-error">' + res.error + '</span>';
+    if (gridEl) gridEl.style.display = 'none';
+    return;
+  }
+
+  /* Formula */
+  var fhtml = (res.formulaHtml || query).replace(/^\s*\(\s*/,'').replace(/\s*\)\s*$/,'');
+  formulaEl.innerHTML = fhtml;
+
+  /* Tree */
+  if (res.tree && treeEl) {
+    treeEl.innerHTML = '<div class="ra-tree"><ul>' + _buildTreeHtml(res.tree) + '</ul></div>';
+    _attachTreeEvents(treeEl, res.tree);
+  }
+
+  /* Table */
+  if (tableEl) {
+    if (res.columns.length === 0) {
+      tableEl.innerHTML = '<em style="color:#6c757d;padding:8px;display:block;">Empty result.</em>';
+    } else {
+      var th = '<thead><tr>';
+      for (var i = 0; i < res.columns.length; i++) {
+        var cn = res.columns[i].name;
+        var dot = cn.indexOf('.');
+        var rel = dot >= 0 ? cn.substring(0, dot) : '';
+        var nm  = dot >= 0 ? cn.substring(dot+1) : cn;
+        th += '<th>' + _esc(nm) + (rel ? '<small>'+_esc(rel)+'</small>' : '') + '<small>'+_esc(res.columns[i].type)+'</small></th>';
+      }
+      th += '</tr></thead>';
+      var tb = '<tbody>';
+      for (var r = 0; r < res.rows.length; r++) {
+        tb += '<tr>';
+        for (var c = 0; c < res.rows[r].length; c++) {
+          var v = res.rows[r][c];
+          tb += '<td>' + (v === null ? '<em style="opacity:.45">null</em>' : _esc(String(v))) + '</td>';
+        }
+        tb += '</tr>';
+      }
+      tb += '</tbody>';
+      tableEl.innerHTML = '<table class="rx-sol-table">' + th + tb + '</table>';
+    }
+  }
+
+  if (metaEl) metaEl.textContent = 'Degree: ' + res.columns.length + '   |   Rows: ' + res.rowCount;
+  if (gridEl) gridEl.style.display = 'grid';
+}
+
+function _esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* Shared fixed popup for solution trees */
+var _solPopup = null;
+function _getSolPopup() {
+  if (!_solPopup) {
+    _solPopup = document.createElement('div');
+    _solPopup.className = 'ra-node-popup';
+    _solPopup.style.cssText = 'display:none;position:fixed;z-index:99999;background:#1a2035;color:#e8eaf6;border:1px solid #3a4a7a;border-radius:7px;padding:10px 14px;min-width:200px;max-width:340px;box-shadow:0 8px 28px rgba(0,0,0,.55);font-family:monospace;font-size:.78em;line-height:1.7;pointer-events:none;';
+    document.body.appendChild(_solPopup);
+  }
+  return _solPopup;
+}
+
+function _showSolPopup(nodeData, boxEl) {
+  if (!nodeData.columns || nodeData.columns.length === 0) return;
+  var p = _getSolPopup();
+  var html = '<div style="font-weight:700;color:#90caf9;margin-bottom:4px;">Schema · ' + nodeData.columns.length + ' cols, ' + (nodeData.rowCount >= 0 ? nodeData.rowCount + ' rows' : '?') + '</div>';
+  for (var i = 0; i < nodeData.columns.length; i++) {
+    html += '<div style="display:flex;justify-content:space-between;gap:12px;"><span style="color:#e0e0e0">'+_esc(nodeData.columns[i].name)+'</span><span style="color:#80cbc4">'+_esc(nodeData.columns[i].type)+'</span></div>';
+  }
+  p.innerHTML = html;
+  p.style.display = 'block';
+  var r = boxEl.getBoundingClientRect();
+  var ph = p.offsetHeight || 100, pw = p.offsetWidth || 220;
+  var top = r.top - ph - 10; if (top < 8) top = r.bottom + 10;
+  var left = Math.max(8, Math.min(r.left + r.width/2 - pw/2, window.innerWidth - pw - 8));
+  p.style.top = top + 'px'; p.style.left = left + 'px';
+}
+
+function _buildTreeHtml(node) {
+  var isLeaf = !node.children || node.children.length === 0;
+  var cls = isLeaf ? 'ra-node-box leaf' : 'ra-node-box';
+  var badge = node.rowCount >= 0 ? '<span class="ra-node-rows">'+node.rowCount+' row'+(node.rowCount!==1?'s':'')+'</span>' : '';
+  var html = '<li><div class="ra-node-wrap"><div class="'+cls+'">'+node.htmlLabel+badge+'</div>';
+  if (!isLeaf) {
+    html += '<ul>';
+    for (var i = 0; i < node.children.length; i++) html += _buildTreeHtml(node.children[i]);
+    html += '</ul>';
+  }
+  html += '</div></li>';
+  return html;
+}
+
+function _attachTreeEvents(rootEl, treeNode) {
+  function attach(liEl, node) {
+    var box = liEl.querySelector(':scope > .ra-node-wrap > .ra-node-box');
+    if (box && node.columns && node.columns.length > 0) {
+      (function(n, b){ b.addEventListener('mouseenter', function(){ _showSolPopup(n, b); }); })(node, box);
+      box.addEventListener('mouseleave', function(){ var p=_getSolPopup(); p.style.display='none'; });
+    }
+    var ul = liEl.querySelector(':scope > .ra-node-wrap > ul');
+    if (ul && node.children) {
+      var lis = ul.querySelectorAll(':scope > li');
+      for (var i = 0; i < node.children.length; i++) { if (lis[i]) attach(lis[i], node.children[i]); }
+    }
+  }
+  var rootLi = rootEl.querySelector('ul > li');
+  if (rootLi) attach(rootLi, treeNode);
+}
+</script>
+```
 
 SQL is a *declarative* language: you say *what* you want; the DBMS decides *how* to compute it. The "how" is determined by translating your SQL into **relational algebra** — a *procedural* formal language where every operation is an explicit step. Understanding relational algebra means understanding how the query optimizer thinks, why certain queries are fast, and what is happening beneath every `JOIN` you write.
 
-::: callout-note
-## Practise with the RELAX Calculator
+::: callout-tip
+## 🧪 Interactive RELAX — Try Every Example Yourself!
 
-Every example in this chapter can be run interactively in the **RELAX relational algebra calculator** at:
+This chapter includes **live RELAX widgets** so you can run every expression directly in the page.
+You can also use the full **interactive calculator** in this book at [Appendix D — RELAX Calculator](../appendix/appendixD-relax-calculator.html), which includes **5 different database schemas** to practise with:
 
-[https://nireas.iee.ihu.gr/relax/calc.htm](https://nireas.iee.ihu.gr/relax/calc.htm)
+| Schema | Domain |
+|--------|--------|
+| 🏢 Enhanced Company DB | Employees, departments, projects |
+| 🎓 University DB | Students, faculty, courses, enrolment |
+| 🛒 E-Commerce DB | Customers, products, orders, reviews |
+| 🏥 Hospital DB | Patients, doctors, admissions |
+| 📚 Library DB | Members, books, loans, fines |
 
-To load the Company Database, paste the **inline-relation schema** from §6.1 into the *Group Editor* panel, then type the algebra expression in the query box. Both keyboard Greek symbols and LaTeX-style notation (`\sigma`, `\pi`, `\bowtie`) are accepted.
+For the external standalone calculator, visit:
+[https://nireas.iee.ihu.gr/relax/calc.htm](https://nireas.iee.ihu.gr/relax/calc.htm) — paste the **RELAX schema** from the collapsible box below (§6.1) into the *Group Editor*, then type your expression in the query box.
 :::
 
 ---
@@ -24,8 +341,14 @@ The following schema loads the complete Enhanced Company Database — 30 employe
 ::: {.callout-tip collapse="true"}
 ## Click to expand: RELAX inline-relation schema (paste into Group Editor)
 
-```
-group: Enhanced Company Database (imported from SQL)
+```{=html}
+<div style="position:relative;">
+  <button id="relax-copy-btn"
+    onclick="navigator.clipboard.writeText(document.getElementById('relax-schema-text').textContent).then(()=>{this.textContent='✓ Copied!';this.style.background='#2e7d32';setTimeout(()=>{this.textContent='Copy';this.style.background='#1976d2'},2000)})"
+    style="position:absolute;top:8px;right:8px;z-index:10;padding:4px 12px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.8em;font-family:sans-serif;">
+    Copy
+  </button>
+  <pre id="relax-schema-text" style="background:#f8f8f8;border:1px solid #ddd;border-radius:4px;padding:1em 1em 1em 1em;overflow:auto;font-size:0.82em;line-height:1.5;white-space:pre;">group: Enhanced Company Database (imported from SQL)
 
 Employee = {
     Fname:string, Minit:string, Lname:string, Ssn:string, Bdate:string, Address:string, Gender:string, Salary:number, Super_ssn:string, Dno:number
@@ -142,7 +465,8 @@ Dependent = {
     '016', 'Noor Fattouni', 'F', '2018-08-30', 'Daughter'
     '019', 'Majd Zahr', 'M', '2020-03-15', 'Son'
     '022', 'Tala Jabari', 'F', '2015-11-08', 'Daughter'
-}
+}</pre>
+</div>
 ```
 :::
 
@@ -155,7 +479,11 @@ erDiagram
     Employee {
         string Ssn PK
         string Fname
+        string Minit
         string Lname
+        string Bdate
+        string Address
+        string Gender
         number Salary
         string Super_ssn FK
         number Dno FK
@@ -164,10 +492,12 @@ erDiagram
         number Dnumber PK
         string Dname
         string Mgr_ssn FK
+        string Mgr_start_date
     }
     Project {
         number Pnumber PK
         string Pname
+        string Plocation
         number Dnum FK
     }
     Works_On {
@@ -178,6 +508,9 @@ erDiagram
     Dependent {
         string Essn PK
         string Dependent_name PK
+        string Gender
+        string Bdate
+        string Relationship
     }
     Dept_Locations {
         number Dnumber PK
@@ -225,7 +558,98 @@ Degree: k    Cardinality: m rows (estimated)
 
 Column names in a result use **qualified notation** `Table.Column` when there is ambiguity (e.g., after a Cartesian product that produces two `Ssn` columns).
 
----
+### How Results Are Presented in This Chapter
+
+The diagrams below show the four ways you will see a query result presented:
+
+```{=html}
+<!-- Result format illustration -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:1.2em 0;">
+
+  <!-- 1. LaTeX Formula -->
+  <div style="border:1px solid #c8d8ef;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.07);">
+    <div style="background:#1e3a5f;color:#fff;font-weight:700;font-size:.85em;padding:8px 14px;letter-spacing:.04em;">
+      ① LaTeX Expression
+    </div>
+    <div style="background:#0d1b2e;padding:14px 18px;text-align:center;min-height:60px;display:flex;align-items:center;justify-content:center;">
+      <span style="color:#82b1ff;font-size:1.15em;font-style:italic;font-family:serif;">
+        σ<sub style="color:#b2ebf2;font-size:.8em;">Salary &gt; 65000</sub>(Employee)
+      </span>
+    </div>
+    <div style="background:#f0f4fa;padding:8px 14px;font-size:.78em;color:#5a6a8a;border-top:1px solid #dde6f0;">
+      The formal mathematical notation — describes <em>what</em> the query computes
+    </div>
+  </div>
+
+  <!-- 2. RELAX Syntax -->
+  <div style="border:1px solid #c8d8ef;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.07);">
+    <div style="background:#1a5c3a;color:#fff;font-weight:700;font-size:.85em;padding:8px 14px;letter-spacing:.04em;">
+      ② RELAX Calculator Syntax
+    </div>
+    <div style="background:#f8f9fa;padding:14px 18px;font-family:'SFMono-Regular',Consolas,monospace;font-size:.92em;min-height:60px;display:flex;align-items:center;">
+      <code style="background:none;color:#1a5c3a;font-size:1em;">σ Salary &gt; 65000 (Employee)</code>
+    </div>
+    <div style="background:#f0f4fa;padding:8px 14px;font-size:.78em;color:#5a6a8a;border-top:1px solid #dde6f0;">
+      Typed into the RELAX widget or calculator — uses Unicode symbols (σ, π, ⨝…)
+    </div>
+  </div>
+
+  <!-- 3. Result Table -->
+  <div style="border:1px solid #c8d8ef;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.07);">
+    <div style="background:#1e3a5f;color:#fff;font-weight:700;font-size:.85em;padding:8px 14px;letter-spacing:.04em;">
+      ③ Result Table
+    </div>
+    <div style="padding:10px;background:#fff;overflow-x:auto;">
+      <table style="border-collapse:collapse;font-size:.8em;width:100%;">
+        <thead>
+          <tr>
+            <th style="background:#1e3a5f;color:#fff;padding:5px 10px;text-align:left;">Fname<br><small style="opacity:.7;font-weight:400;">string</small></th>
+            <th style="background:#1e3a5f;color:#fff;padding:5px 10px;text-align:left;">Salary<br><small style="opacity:.7;font-weight:400;">number</small></th>
+            <th style="background:#1e3a5f;color:#fff;padding:5px 10px;text-align:left;">Dno<br><small style="opacity:.7;font-weight:400;">number</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #eee;"><td style="padding:4px 10px;font-family:monospace;">Ali</td><td style="padding:4px 10px;font-family:monospace;">73000</td><td style="padding:4px 10px;font-family:monospace;">4</td></tr>
+          <tr style="background:#f0f4fa;border-bottom:1px solid #eee;"><td style="padding:4px 10px;font-family:monospace;">Mohammed</td><td style="padding:4px 10px;font-family:monospace;">67000</td><td style="padding:4px 10px;font-family:monospace;">2</td></tr>
+          <tr style="border-bottom:1px solid #eee;"><td style="padding:4px 10px;font-family:monospace;">Hussein</td><td style="padding:4px 10px;font-family:monospace;">71000</td><td style="padding:4px 10px;font-family:monospace;">null</td></tr>
+          <tr style="background:#f0f4fa;"><td colspan="3" style="padding:4px 10px;color:#6c757d;font-style:italic;font-size:.9em;">… more rows …</td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:.75em;color:#6c757d;margin-top:6px;border-left:3px solid #1e3a5f;padding-left:6px;">Degree: 10 &nbsp;|&nbsp; Rows: 14</div>
+    </div>
+    <div style="background:#f0f4fa;padding:8px 14px;font-size:.78em;color:#5a6a8a;border-top:1px solid #dde6f0;">
+      Tabular result — column headers show name + type; row count shown below
+    </div>
+  </div>
+
+  <!-- 4. Expression Tree -->
+  <div style="border:1px solid #c8d8ef;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.07);">
+    <div style="background:#1e3a5f;color:#fff;font-weight:700;font-size:.85em;padding:8px 14px;letter-spacing:.04em;">
+      ④ Expression Tree
+    </div>
+    <div style="background:#fafbff;padding:14px;display:flex;flex-direction:column;align-items:center;gap:0;min-height:100px;">
+      <!-- Tree visual -->
+      <div style="background:linear-gradient(145deg,#1e3a5f,#2c5282);color:#fff;padding:6px 16px;border-radius:6px;font-family:monospace;font-size:.82em;white-space:nowrap;">
+        σ<sub>Salary&gt;65000</sub>
+        <span style="display:block;font-size:.72em;opacity:.75;margin-top:2px;">14 rows</span>
+      </div>
+      <div style="width:2px;height:20px;background:#8ab0d8;"></div>
+      <div style="background:linear-gradient(145deg,#1a5c3a,#2d8555);color:#fff;padding:6px 16px;border-radius:6px;font-family:monospace;font-size:.82em;white-space:nowrap;">
+        Employee
+        <span style="display:block;font-size:.72em;opacity:.75;margin-top:2px;">30 rows</span>
+      </div>
+    </div>
+    <div style="background:#f0f4fa;padding:8px 14px;font-size:.78em;color:#5a6a8a;border-top:1px solid #dde6f0;">
+      Tree view — hover over a node to see its schema; row counts shown per node
+    </div>
+  </div>
+
+</div>
+```
+
+::: callout-note
+In the **Solution** boxes throughout this chapter, clicking **▶ Run** executes the expression live and shows **all four views** — formula, tree, table, and row count — just like [Appendix D](../appendix/appendixD-relax-calculator.html).
+:::
 
 ## Fundamental Operations
 
@@ -236,37 +660,108 @@ $$\sigma_{\text{condition}}(R)$$
 Returns the subset of tuples in $R$ that satisfy the *predicate*. Equivalent to a SQL `WHERE` clause.
 
 **Properties:**
-- Degree of result = degree of $R$ (same columns)
-- Cardinality of result ≤ cardinality of $R$
-- Conditions: $=, \neq, <, >, \leq, \geq$, combined with $\land$ (AND), $\lor$ (OR), $\lnot$ (NOT)
 
-::: {.panel-tabset}
-## LaTeX Notation
+| Property | Value |
+|---|---|
+| Input | Relation $R$ |
+| Output columns | Same as $R$ (degree unchanged) |
+| Output rows | All tuples where condition is **true** (cardinality ≤ $|R|$) |
+| Condition operators | $=, \neq, <, >, \leq, \geq$, combined with $\land$ (AND), $\lor$ (OR), $\lnot$ (NOT) |
+
+**Syntax:**
+
+| Format | Notation |
+|--------|----------|
+| LaTeX | $\sigma_{\textit{condition}}(\textit{Relation})$ |
+| RELAX | `σ condition (Relation)` |
+| SQL | `SELECT * FROM Relation WHERE condition` |
+
+---
+
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.1 — Simple Selection
+
+**List all employees whose salary is greater than 65,000.**
+
+Write the relational algebra expression using the $\sigma$ operator on the `Employee` relation.
+
+**LaTeX:**
 $$\sigma_{\text{Salary} > 65000}(\text{Employee})$$
 
-## RELAX Input
+**RELAX syntax:**
 ```
 σ Salary > 65000 (Employee)
 ```
+
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex1">
+  <div class="rx-ex-formula" id="ex1-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex1','σ Salary > 65000 (Employee)')"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex1-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex1-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex1-table"></div>
+      <div class="rx-sol-meta" id="ex1-meta"></div>
+    </div>
+  </div>
+</div>
+```
+:::
 :::
 
-**Result Schema:**
-```
-Result: Employee(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dno)
-Degree: 10
-Cardinality: ~12 rows (employees earning > 65,000)
-```
+---
 
-**Compound example** — employees in department 1 earning more than 60,000:
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.2 — Compound Selection
 
-::: {.panel-tabset}
-## LaTeX Notation
+**List all employees who work in department 1 AND earn more than 60,000.**
+
+**LaTeX:**
 $$\sigma_{\text{Dno}=1 \;\land\; \text{Salary}>60000}(\text{Employee})$$
 
-## RELAX Input
+**RELAX syntax:**
 ```
 σ Dno = 1 and Salary > 60000 (Employee)
 ```
+
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex2">
+  <div class="rx-ex-formula" id="ex2-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex2','σ Dno = 1 and Salary > 60000 (Employee)')"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex2-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex2-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex2-table"></div>
+      <div class="rx-sol-meta" id="ex2-meta"></div>
+    </div>
+  </div>
+</div>
+```
+:::
 :::
 
 **SQL equivalent:**
@@ -283,24 +778,108 @@ $$\pi_{A_1, A_2, \ldots, A_k}(R)$$
 Returns a relation containing only the listed attributes. Duplicate tuples are **eliminated** (set semantics).
 
 **Properties:**
-- Degree of result = $k$ (number of listed attributes)
-- Cardinality ≤ cardinality of $R$ (duplicates eliminated)
 
-::: {.panel-tabset}
-## LaTeX Notation
-$$\pi_{\text{Fname, Lname, Salary}}(\text{Employee})$$
+| Property | Value |
+|---|---|
+| Input | Relation $R$ |
+| Output columns | Only $A_1, \ldots, A_k$ (degree = $k$) |
+| Output rows | Cardinality ≤ $|R|$ — duplicates removed |
 
-## RELAX Input
+**Syntax:**
+
+| Format | Notation |
+|--------|----------|
+| LaTeX | $\pi_{A_1,\, A_2,\, \ldots}(\textit{Relation})$ |
+| RELAX | `π A1, A2, … (Relation)` |
+| SQL | `SELECT DISTINCT A1, A2, … FROM Relation` |
+
+---
+
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.3 — Simple Projection
+
+**List the first name, last name, and salary of every employee.**
+
+**LaTeX:**
+$$\pi_{\text{Fname,\; Lname,\; Salary}}(\text{Employee})$$
+
+**RELAX syntax:**
 ```
 π Fname, Lname, Salary (Employee)
 ```
+
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex3">
+  <div class="rx-ex-formula" id="ex3-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex3','π Fname, Lname, Salary (Employee)')"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex3-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex3-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex3-table"></div>
+      <div class="rx-sol-meta" id="ex3-meta"></div>
+    </div>
+  </div>
+</div>
+```
+:::
 :::
 
-**Result Schema:**
+---
+
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.4 — Combined Select + Project
+
+**List the first name and salary of all female employees earning above 60,000.**
+
+*Hint: compose $\pi$ outside $\sigma$.*
+
+**LaTeX:**
+$$\pi_{\text{Fname,\; Salary}}\!\left(\sigma_{\text{Gender}='\text{F}'\;\land\;\text{Salary}>60000}(\text{Employee})\right)$$
+
+**RELAX syntax:**
 ```
-Result: (Fname, Lname, Salary)
-Degree: 3    Cardinality: ≤ 30 rows
+π Fname, Salary (σ Gender = 'F' and Salary > 60000 (Employee))
 ```
+
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex4">
+  <div class="rx-ex-formula" id="ex4-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex4',\"π Fname, Salary (σ Gender = 'F' and Salary > 60000 (Employee))\")"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex4-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex4-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex4-table"></div>
+      <div class="rx-sol-meta" id="ex4-meta"></div>
+    </div>
+  </div>
+</div>
+```
+:::
+:::
 
 ::: callout-tip
 The SQL keyword `DISTINCT` corresponds to projection in the formal model. Without `DISTINCT`, SQL is a **bag** (multiset) operation; with it, SQL matches formal **set** semantics.
@@ -322,24 +901,59 @@ $\cup$, $\cap$, and $-$ all require **union-compatible** operands:
 2. Corresponding attributes must have **compatible domains** (same or convertible types)
 3. The **result takes the attribute names from the left operand** ($R$)
 
-::: {.panel-tabset}
-## LaTeX Notation
+**Syntax:**
+
+| Format | Notation |
+|--------|----------|
+| LaTeX | $R \cup S$ |
+| RELAX | `(expr1) ∪ (expr2)` |
+| SQL | `… UNION …` |
+
+---
+
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.5 — Union
+
+**Find all SSNs that appear in either the Employee table or the Works_On table.**
+
+**LaTeX:**
 $$\pi_{\text{Ssn}}(\text{Employee}) \;\cup\; \pi_{\text{Essn}}(\text{Works\_On})$$
 
-## RELAX Input
+**RELAX syntax:**
 ```
 (π Ssn (Employee)) ∪ (π Essn (Works_On))
 ```
+
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex5">
+  <div class="rx-ex-formula" id="ex5-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex5','(π Ssn (Employee)) ∪ (π Essn (Works_On))')"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex5-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex5-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex5-table"></div>
+      <div class="rx-sol-meta" id="ex5-meta"></div>
+    </div>
+  </div>
+</div>
+```
+:::
 :::
 
-**Result Schema:**
-```
-Result: (Ssn)          ← name taken from LEFT operand
-Degree: 1
-Cardinality: ≤ 30 + 20 = 50 (minus duplicates)
-```
+**SQL equivalent:** `UNION` removes duplicates; `UNION ALL` keeps all rows (bag semantics).
 
-**SQL equivalent:** `UNION` (removes duplicates); `UNION ALL` (keeps duplicates → bag semantics).
 
 ---
 
@@ -349,26 +963,66 @@ $$R - S$$
 
 Returns tuples that are in $R$ but **not** in $S$. Requires union compatibility.
 
-::: {.panel-tabset}
-## LaTeX Notation
+**Syntax:**
+
+| Format | Notation |
+|--------|----------|
+| LaTeX | $R - S$ |
+| RELAX | `(expr1) - (expr2)` |
+| SQL | `… EXCEPT …` or `NOT EXISTS / NOT IN` |
+
+---
+
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.6 — Set Difference
+
+**Find the SSNs of employees who are NOT currently assigned to any project.**
+
+*The SSNs in Employee minus the SSNs in Works_On.*
+
+**LaTeX:**
 $$\pi_{\text{Ssn}}(\text{Employee}) \;-\; \pi_{\text{Essn}}(\text{Works\_On})$$
 
-## RELAX Input
+**RELAX syntax:**
 ```
 (π Ssn (Employee)) - (π Essn (Works_On))
 ```
+
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex6">
+  <div class="rx-ex-formula" id="ex6-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex6','(π Ssn (Employee)) - (π Essn (Works_On))')"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex6-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex6-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex6-table"></div>
+      <div class="rx-sol-meta" id="ex6-meta"></div>
+    </div>
+  </div>
+</div>
+```
+:::
 :::
 
-This returns the SSNs of employees who are **not** currently assigned to any project.
-
-**Result Schema:**
-```
-Result: (Ssn)          ← name from LEFT operand
-Degree: 1
-Cardinality: ≤ 30 (employees not in Works_On)
+**SQL equivalent:**
+```sql
+SELECT Ssn FROM Employee
+EXCEPT
+SELECT Essn FROM Works_On;
 ```
 
-**SQL equivalent:** `EXCEPT` (standard) or `NOT EXISTS` / `NOT IN` subquery.
 
 ---
 
@@ -379,28 +1033,69 @@ $$R \times S$$
 Returns every possible combination of one tuple from $R$ with one tuple from $S$.
 
 **Properties:**
-- Degree = degree($R$) + degree($S$) — columns from both; qualified as `R.col` and `S.col` for shared names
-- Cardinality = $|R| \times |S|$
 
-::: {.panel-tabset}
-## LaTeX Notation
+| Property | Value |
+|---|---|
+| Output degree | degree($R$) + degree($S$) — shared names qualified as `R.col` and `S.col` |
+| Output cardinality | $|R| \times |S|$ |
+
+**Syntax:**
+
+| Format | Notation |
+|--------|----------|
+| LaTeX | $R \times S$ |
+| RELAX | `R × S` |
+| SQL | `FROM R CROSS JOIN S` |
+
+---
+
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.7 — Cartesian Product
+
+**Produce all combinations of Employee and Department rows.**
+
+Notice the resulting degree (columns) and cardinality (rows).
+
+**LaTeX:**
 $$\text{Employee} \times \text{Department}$$
 
-## RELAX Input
+**RELAX syntax:**
 ```
 Employee × Department
 ```
-:::
 
-**Result Schema:**
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex7">
+  <div class="rx-ex-formula" id="ex7-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex7','Employee × Department')"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex7-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex7-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex7-table"></div>
+      <div class="rx-sol-meta" id="ex7-meta"></div>
+    </div>
+  </div>
+</div>
 ```
-Result: (Employee.Fname, …, Employee.Dno, Department.Dname, …, Department.Dnumber, …)
-Degree: 10 + 4 = 14    Cardinality: 30 × 8 = 240 rows
-```
+:::
+:::
 
 ::: callout-important
-The raw Cartesian product generates 240 rows but most are meaningless combinations. It is almost always followed by a $\sigma$ to keep only matching rows — that combination is precisely a **join**.
+The raw Cartesian product generates **30 × 8 = 240 rows** but most are meaningless combinations. It is almost always followed by a $\sigma$ to keep only matching rows — that combination is precisely a **join**.
 :::
+
 
 ---
 
@@ -457,27 +1152,61 @@ A natural join automatically:
 
 **Column collapse rule:** If $R$ has columns $(A, B, C)$ and $S$ has columns $(B, C, D)$, then $R \bowtie S$ has columns $(A, B, C, D)$ — not $(A, B, C, B, C, D)$.
 
-::: {.panel-tabset}
-## LaTeX Notation
+**Syntax:**
+
+| Format | Notation |
+|--------|----------|
+| LaTeX | $R \bowtie S$ |
+| RELAX | `R ⋈ S` |
+| SQL | `FROM R NATURAL JOIN S` |
+
+---
+
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.8 — Natural Join
+
+**Join the Employee and Works_On tables on their common column (Ssn = Essn — but note: these have different names! Try a natural join and observe what happens, then use theta join below).**
+
+**LaTeX:**
 $$\text{Employee} \bowtie \text{Works\_On}$$
 
-## RELAX Input
+**RELAX syntax:**
 ```
 Employee ⋈ Works_On
 ```
-:::
 
-**Result Schema:**
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex8">
+  <div class="rx-ex-formula" id="ex8-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex8','Employee ⋈ Works_On')"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex8-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex8-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex8-table"></div>
+      <div class="rx-sol-meta" id="ex8-meta"></div>
+    </div>
+  </div>
+</div>
 ```
-Employee(Fname,…,Ssn,…,Dno) ⋈ Works_On(Essn, Pno, Hours)
-Common attribute: Ssn=Essn → joined on equality; one column kept
-Result: (Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dno, Pno, Hours)
-Degree: 10 + 3 - 1 = 12    Cardinality: ≤ 20 rows (Works_On has 20 rows)
-```
+:::
+:::
 
 ::: callout-note
 In the Company Database, `Employee.Ssn` and `Works_On.Essn` are the **intended** join columns but have *different names*. RELAX's natural join will not match them automatically. Use a **theta join** with the explicit condition `Ssn = Essn`, or first rename one column.
 :::
+
 
 ---
 
@@ -487,22 +1216,56 @@ $$R \bowtie_\theta S = \sigma_\theta(R \times S)$$
 
 A theta join is a Cartesian product filtered by condition $\theta$. When $\theta$ uses only equality (`=`), it is an **equijoin**.
 
-::: {.panel-tabset}
-## LaTeX Notation
+**Syntax:**
+
+| Format | Notation |
+|--------|----------|
+| LaTeX | $R \bowtie_{\theta} S$ |
+| RELAX | `R ⋈ condition S` |
+| SQL | `FROM R JOIN S ON condition` |
+
+---
+
+::: {.callout-caution icon="false"}
+## ✏️ Exercise 6.9 — Equijoin
+
+**Join Employee and Works_On on Ssn = Essn to see each employee's project assignments.**
+
+**LaTeX:**
 $$\text{Employee} \bowtie_{\text{Ssn}=\text{Essn}} \text{Works\_On}$$
 
-## RELAX Input
+**RELAX syntax:**
 ```
 Employee ⋈ Ssn = Essn Works_On
 ```
-:::
 
-**Result Schema:**
+::: {.callout-tip collapse="true" icon="false"}
+## 💡 Solution — Click to expand
+
+```{=html}
+<div id="ex9">
+  <div class="rx-ex-formula" id="ex9-formula" style="margin-bottom:8px;">
+    <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
+  </div>
+  <button onclick="runSolution('ex9','Employee ⋈ Ssn = Essn Works_On')"
+    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+    ▶ Run
+  </button>
+  <div id="ex9-grid" class="rx-sol-grid" style="display:none;">
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">🌳 Expression Tree</div>
+      <div class="rx-sol-tree-wrap rx-sol-tree" id="ex9-tree"></div>
+    </div>
+    <div>
+      <div style="font-size:.78em;font-weight:700;color:#1e3a5f;margin-bottom:4px;">📊 Result Table</div>
+      <div class="rx-sol-table-wrap" id="ex9-table"></div>
+      <div class="rx-sol-meta" id="ex9-meta"></div>
+    </div>
+  </div>
+</div>
 ```
-Result: (Employee.Fname,…,Employee.Ssn,…,Works_On.Essn, Works_On.Pno, Works_On.Hours)
-Degree: 13    (both Ssn and Essn are kept — unlike natural join)
-Cardinality: 20 rows
-```
+:::
+:::
 
 ---
 
