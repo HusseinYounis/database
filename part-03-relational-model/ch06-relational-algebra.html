@@ -2433,7 +2433,7 @@ The <code>Dept_Locations</code> table has <code>Dnumber</code> as a foreign key.
 <p><strong>Step 2 — Natural join the renamed relation with Department:</strong></p>
 <p><span class="math display">\rho_{\text{EmpR}(\ldots,\text{Dnumber})}(\text{Employee}) \;\bowtie\; \text{Department}</span></p>
 <p><strong>RELAX syntax:</strong></p>
-<pre data-code-line-numbers=""><code>ρ EmpR(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dnumber) (Employee) ⋈ Department</code></pre>
+<pre data-code-line-numbers=""><code>ρ Dnumber ← Dno (Employee) ⋈ Department</code></pre>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-36-contents" aria-controls="callout-36" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -2451,7 +2451,7 @@ The <code>Dept_Locations</code> table has <code>Dnumber</code> as a foreign key.
   <div class="rx-ex-formula" id="ex8c-formula" style="margin-bottom:8px;">
     <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
   </div>
-  <button onclick="runSolution('ex8c','ρ EmpR(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dnumber) (Employee) ⋈ Department')" style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+  <button onclick="runSolution('ex8c','ρ Dnumber ← Dno (Employee) ⋈ Department')" style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
     ▶ Run
   </button>
   <div id="ex8c-grid" class="rx-sol-grid" style="display:none;">
@@ -2486,7 +2486,7 @@ The <code>Dept_Locations</code> table has <code>Dnumber</code> as a foreign key.
 <p>Compose <span class="math inline">\pi</span> outside the join to select only the useful columns. This is the standard pattern for extracting meaningful information from a join.</p>
 <p><strong>LaTeX:</strong> <span class="math display">\pi_{\text{Fname, Lname, Dname}}\!\left(\rho_{\text{EmpR}(\ldots,\text{Dnumber})}(\text{Employee}) \;\bowtie\; \text{Department}\right)</span></p>
 <p><strong>RELAX syntax:</strong></p>
-<pre data-code-line-numbers=""><code>π Fname, Lname, Dname (ρ EmpR(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dnumber) (Employee) ⋈ Department)</code></pre>
+<pre data-code-line-numbers=""><code>π Fname, Lname, Dname (ρ Dnumber ← Dno (Employee) ⋈ Department)</code></pre>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-38-contents" aria-controls="callout-38" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -2504,7 +2504,7 @@ The <code>Dept_Locations</code> table has <code>Dnumber</code> as a foreign key.
   <div class="rx-ex-formula" id="ex8d-formula" style="margin-bottom:8px;">
     <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
   </div>
-  <button onclick="runSolution('ex8d','π Fname, Lname, Dname (ρ EmpR(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dnumber) (Employee) ⋈ Department)')" style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+  <button onclick="runSolution('ex8d','π Fname, Lname, Dname (ρ Dnumber ← Dno (Employee) ⋈ Department)')" style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
     ▶ Run
   </button>
   <div id="ex8d-grid" class="rx-sol-grid" style="display:none;">
@@ -2877,10 +2877,10 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p><strong>Find the SSNs of employees who work on every project controlled by department 1.</strong></p>
-<p><code>Works_On</code> records <code>(Essn, Pno)</code> pairs. The divisor is the set of Pnumbers of dept-1 projects. Division returns Essns that appear with <strong>every</strong> Pnumber in the divisor.</p>
-<p><strong>LaTeX:</strong> <span class="math display">\pi_{\text{Essn, Pno}}(\text{Works\_On}) \;\div\; \pi_{\text{Pnumber}}(\sigma_{\text{Dnum}=1}(\text{Project}))</span></p>
+<p><code>Works_On</code> records <code>(Essn, Pno)</code> pairs. The divisor is the set of project numbers of dept-1 projects. Because <code>Project</code> names this column <code>Pnumber</code> while <code>Works_On</code> names it <code>Pno</code>, we must rename the divisor column before dividing.</p>
+<p><strong>LaTeX:</strong> <span class="math display">\pi_{\text{Essn, Pno}}(\text{Works\_On}) \;\div\; \rho_{\text{Pno}\leftarrow\text{Pnumber}}\!\left(\pi_{\text{Pnumber}}(\sigma_{\text{Dnum}=1}(\text{Project}))\right)</span></p>
 <p><strong>RELAX syntax:</strong></p>
-<pre data-code-line-numbers=""><code>(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Dnum = 1 (Project)))</code></pre>
+<pre data-code-line-numbers=""><code>(π Essn, Pno (Works_On)) ÷ (ρ Pno ← Pnumber (π Pnumber (σ Dnum = 1 (Project))))</code></pre>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-48-contents" aria-controls="callout-48" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -2893,12 +2893,12 @@ Note
 </div>
 <div id="callout-48" class="callout-48-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The divisor projects <code>Pnumber</code> of dept-1 projects (Pnumbers 1, 2, 3). Only Essns that appear in <code>Works_On</code> with <strong>all</strong> of those project numbers are returned.</p>
+<p>The divisor renames <code>Pnumber → Pno</code> so its schema <code>{Pno}</code> is a subset of the dividend’s schema <code>{Essn, Pno}</code>. Only Essns that appear in <code>Works_On</code> with <strong>all</strong> of dept-1’s project numbers (Pno 1, 2, 3) are returned.</p>
 <div id="ex14">
   <div class="rx-ex-formula" id="ex14-formula" style="margin-bottom:8px;">
     <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
   </div>
-  <button onclick="runSolution('ex14','(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Dnum = 1 (Project)))')" style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+  <button onclick="runSolution('ex14','(π Essn, Pno (Works_On)) ÷ (ρ Pno ← Pnumber (π Pnumber (σ Dnum = 1 (Project))))')" style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
     ▶ Run
   </button>
   <div id="ex14-grid" class="rx-sol-grid" style="display:none;">
@@ -2930,9 +2930,9 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p><strong>Find the SSNs of employees who work on every project located in ‘Bellaire’.</strong></p>
-<p><strong>LaTeX:</strong> <span class="math display">\pi_{\text{Essn, Pno}}(\text{Works\_On}) \;\div\; \pi_{\text{Pnumber}}(\sigma_{\text{Plocation}='\text{Bellaire}'}(\text{Project}))</span></p>
+<p><strong>LaTeX:</strong> <span class="math display">\pi_{\text{Essn, Pno}}(\text{Works\_On}) \;\div\; \rho_{\text{Pno}\leftarrow\text{Pnumber}}\!\left(\pi_{\text{Pnumber}}(\sigma_{\text{Plocation}='\text{Bellaire}'}(\text{Project}))\right)</span></p>
 <p><strong>RELAX syntax:</strong></p>
-<pre data-code-line-numbers=""><code>(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Plocation = 'Bellaire' (Project)))</code></pre>
+<pre data-code-line-numbers=""><code>(π Essn, Pno (Works_On)) ÷ (ρ Pno ← Pnumber (π Pnumber (σ Plocation = 'Bellaire' (Project))))</code></pre>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-50-contents" aria-controls="callout-50" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -2950,7 +2950,7 @@ Note
   <div class="rx-ex-formula" id="ex14b-formula" style="margin-bottom:8px;">
     <em style="color:#6c757d;font-size:.9em;">Click Run to see the executed expression…</em>
   </div>
-  <button onclick="runSolution('ex14b',&quot;(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Plocation = 'Bellaire' (Project)))&quot;)" style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
+  <button onclick="runSolution('ex14b',&quot;(π Essn, Pno (Works_On)) ÷ (ρ Pno ← Pnumber (π Pnumber (σ Plocation = 'Bellaire' (Project))))&quot;)" style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;">
     ▶ Run
   </button>
   <div id="ex14b-grid" class="rx-sol-grid" style="display:none;">
@@ -5823,7 +5823,7 @@ Note
 <span id="cb46-1568"><a href="#cb46-1568" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1569"><a href="#cb46-1569" aria-hidden="true" tabindex="-1"></a>**RELAX syntax:**</span>
 <span id="cb46-1570"><a href="#cb46-1570" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb46-1571"><a href="#cb46-1571" aria-hidden="true" tabindex="-1"></a><span class="in">ρ EmpR(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dnumber) (Employee) ⋈ Department</span></span>
+<span id="cb46-1571"><a href="#cb46-1571" aria-hidden="true" tabindex="-1"></a><span class="in">ρ Dnumber ← Dno (Employee) ⋈ Department</span></span>
 <span id="cb46-1572"><a href="#cb46-1572" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb46-1573"><a href="#cb46-1573" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1574"><a href="#cb46-1574" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" icon="false"}</span>
@@ -5836,7 +5836,7 @@ Note
 <span id="cb46-1581"><a href="#cb46-1581" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div class="rx-ex-formula" id="ex8c-formula" style="margin-bottom:8px;"&gt;</span></span>
 <span id="cb46-1582"><a href="#cb46-1582" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;em style="color:#6c757d;font-size:.9em;"&gt;Click Run to see the executed expression…&lt;/em&gt;</span></span>
 <span id="cb46-1583"><a href="#cb46-1583" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
-<span id="cb46-1584"><a href="#cb46-1584" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;button onclick="runSolution('ex8c','ρ EmpR(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dnumber) (Employee) ⋈ Department')"</span></span>
+<span id="cb46-1584"><a href="#cb46-1584" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;button onclick="runSolution('ex8c','ρ Dnumber ← Dno (Employee) ⋈ Department')"</span></span>
 <span id="cb46-1585"><a href="#cb46-1585" aria-hidden="true" tabindex="-1"></a><span class="in">    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;"&gt;</span></span>
 <span id="cb46-1586"><a href="#cb46-1586" aria-hidden="true" tabindex="-1"></a><span class="in">    ▶ Run</span></span>
 <span id="cb46-1587"><a href="#cb46-1587" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/button&gt;</span></span>
@@ -5870,7 +5870,7 @@ Note
 <span id="cb46-1615"><a href="#cb46-1615" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1616"><a href="#cb46-1616" aria-hidden="true" tabindex="-1"></a>**RELAX syntax:**</span>
 <span id="cb46-1617"><a href="#cb46-1617" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb46-1618"><a href="#cb46-1618" aria-hidden="true" tabindex="-1"></a><span class="in">π Fname, Lname, Dname (ρ EmpR(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dnumber) (Employee) ⋈ Department)</span></span>
+<span id="cb46-1618"><a href="#cb46-1618" aria-hidden="true" tabindex="-1"></a><span class="in">π Fname, Lname, Dname (ρ Dnumber ← Dno (Employee) ⋈ Department)</span></span>
 <span id="cb46-1619"><a href="#cb46-1619" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb46-1620"><a href="#cb46-1620" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1621"><a href="#cb46-1621" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" icon="false"}</span>
@@ -5883,7 +5883,7 @@ Note
 <span id="cb46-1628"><a href="#cb46-1628" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div class="rx-ex-formula" id="ex8d-formula" style="margin-bottom:8px;"&gt;</span></span>
 <span id="cb46-1629"><a href="#cb46-1629" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;em style="color:#6c757d;font-size:.9em;"&gt;Click Run to see the executed expression…&lt;/em&gt;</span></span>
 <span id="cb46-1630"><a href="#cb46-1630" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
-<span id="cb46-1631"><a href="#cb46-1631" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;button onclick="runSolution('ex8d','π Fname, Lname, Dname (ρ EmpR(Fname, Minit, Lname, Ssn, Bdate, Address, Gender, Salary, Super_ssn, Dnumber) (Employee) ⋈ Department)')"</span></span>
+<span id="cb46-1631"><a href="#cb46-1631" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;button onclick="runSolution('ex8d','π Fname, Lname, Dname (ρ Dnumber ← Dno (Employee) ⋈ Department)')"</span></span>
 <span id="cb46-1632"><a href="#cb46-1632" aria-hidden="true" tabindex="-1"></a><span class="in">    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;"&gt;</span></span>
 <span id="cb46-1633"><a href="#cb46-1633" aria-hidden="true" tabindex="-1"></a><span class="in">    ▶ Run</span></span>
 <span id="cb46-1634"><a href="#cb46-1634" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/button&gt;</span></span>
@@ -6136,27 +6136,27 @@ Note
 <span id="cb46-1881"><a href="#cb46-1881" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1882"><a href="#cb46-1882" aria-hidden="true" tabindex="-1"></a>**Find the SSNs of employees who work on every project controlled by department 1.**</span>
 <span id="cb46-1883"><a href="#cb46-1883" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-1884"><a href="#cb46-1884" aria-hidden="true" tabindex="-1"></a><span class="in">`Works_On`</span> records <span class="in">`(Essn, Pno)`</span> pairs. The divisor is the set of Pnumbers of dept-1 projects. Division returns Essns that appear with **every** Pnumber in the divisor.</span>
+<span id="cb46-1884"><a href="#cb46-1884" aria-hidden="true" tabindex="-1"></a><span class="in">`Works_On`</span> records <span class="in">`(Essn, Pno)`</span> pairs. The divisor is the set of project numbers of dept-1 projects. Because <span class="in">`Project`</span> names this column <span class="in">`Pnumber`</span> while <span class="in">`Works_On`</span> names it <span class="in">`Pno`</span>, we must rename the divisor column before dividing.</span>
 <span id="cb46-1885"><a href="#cb46-1885" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1886"><a href="#cb46-1886" aria-hidden="true" tabindex="-1"></a>**LaTeX:**</span>
-<span id="cb46-1887"><a href="#cb46-1887" aria-hidden="true" tabindex="-1"></a>$$\pi_{\text{Essn, Pno}}(\text{Works<span class="sc">\_</span>On}) \;\div\; \pi_{\text{Pnumber}}(\sigma_{\text{Dnum}=1}(\text{Project}))$$</span>
+<span id="cb46-1887"><a href="#cb46-1887" aria-hidden="true" tabindex="-1"></a>$$\pi_{\text{Essn, Pno}}(\text{Works<span class="sc">\_</span>On}) \;\div\; \rho_{\text{Pno}\leftarrow\text{Pnumber}}<span class="sc">\!</span>\left(\pi_{\text{Pnumber}}(\sigma_{\text{Dnum}=1}(\text{Project}))\right)$$</span>
 <span id="cb46-1888"><a href="#cb46-1888" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1889"><a href="#cb46-1889" aria-hidden="true" tabindex="-1"></a>**RELAX syntax:**</span>
 <span id="cb46-1890"><a href="#cb46-1890" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb46-1891"><a href="#cb46-1891" aria-hidden="true" tabindex="-1"></a><span class="in">(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Dnum = 1 (Project)))</span></span>
+<span id="cb46-1891"><a href="#cb46-1891" aria-hidden="true" tabindex="-1"></a><span class="in">(π Essn, Pno (Works_On)) ÷ (ρ Pno ← Pnumber (π Pnumber (σ Dnum = 1 (Project))))</span></span>
 <span id="cb46-1892"><a href="#cb46-1892" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb46-1893"><a href="#cb46-1893" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1894"><a href="#cb46-1894" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" icon="false"}</span>
 <span id="cb46-1895"><a href="#cb46-1895" aria-hidden="true" tabindex="-1"></a><span class="fu">## 💡 Solution — Click to expand</span></span>
 <span id="cb46-1896"><a href="#cb46-1896" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-1897"><a href="#cb46-1897" aria-hidden="true" tabindex="-1"></a>The divisor projects <span class="in">`Pnumber`</span> of dept-1 projects (Pnumbers 1, 2, 3). Only Essns that appear in <span class="in">`Works_On`</span> with **all** of those project numbers are returned.</span>
+<span id="cb46-1897"><a href="#cb46-1897" aria-hidden="true" tabindex="-1"></a>The divisor renames <span class="in">`Pnumber → Pno`</span> so its schema <span class="in">`{Pno}`</span> is a subset of the dividend's schema <span class="in">`{Essn, Pno}`</span>. Only Essns that appear in <span class="in">`Works_On`</span> with **all** of dept-1's project numbers (Pno 1, 2, 3) are returned.</span>
 <span id="cb46-1898"><a href="#cb46-1898" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1899"><a href="#cb46-1899" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
 <span id="cb46-1900"><a href="#cb46-1900" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div id="ex14"&gt;</span></span>
 <span id="cb46-1901"><a href="#cb46-1901" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div class="rx-ex-formula" id="ex14-formula" style="margin-bottom:8px;"&gt;</span></span>
 <span id="cb46-1902"><a href="#cb46-1902" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;em style="color:#6c757d;font-size:.9em;"&gt;Click Run to see the executed expression…&lt;/em&gt;</span></span>
 <span id="cb46-1903"><a href="#cb46-1903" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
-<span id="cb46-1904"><a href="#cb46-1904" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;button onclick="runSolution('ex14','(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Dnum = 1 (Project)))')"</span></span>
+<span id="cb46-1904"><a href="#cb46-1904" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;button onclick="runSolution('ex14','(π Essn, Pno (Works_On)) ÷ (ρ Pno ← Pnumber (π Pnumber (σ Dnum = 1 (Project))))')" </span></span>
 <span id="cb46-1905"><a href="#cb46-1905" aria-hidden="true" tabindex="-1"></a><span class="in">    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;"&gt;</span></span>
 <span id="cb46-1906"><a href="#cb46-1906" aria-hidden="true" tabindex="-1"></a><span class="in">    ▶ Run</span></span>
 <span id="cb46-1907"><a href="#cb46-1907" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/button&gt;</span></span>
@@ -6184,11 +6184,11 @@ Note
 <span id="cb46-1929"><a href="#cb46-1929" aria-hidden="true" tabindex="-1"></a>**Find the SSNs of employees who work on every project located in 'Bellaire'.**</span>
 <span id="cb46-1930"><a href="#cb46-1930" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1931"><a href="#cb46-1931" aria-hidden="true" tabindex="-1"></a>**LaTeX:**</span>
-<span id="cb46-1932"><a href="#cb46-1932" aria-hidden="true" tabindex="-1"></a>$$\pi_{\text{Essn, Pno}}(\text{Works<span class="sc">\_</span>On}) \;\div\; \pi_{\text{Pnumber}}(\sigma_{\text{Plocation}='\text{Bellaire}'}(\text{Project}))$$</span>
+<span id="cb46-1932"><a href="#cb46-1932" aria-hidden="true" tabindex="-1"></a>$$\pi_{\text{Essn, Pno}}(\text{Works<span class="sc">\_</span>On}) \;\div\; \rho_{\text{Pno}\leftarrow\text{Pnumber}}<span class="sc">\!</span>\left(\pi_{\text{Pnumber}}(\sigma_{\text{Plocation}='\text{Bellaire}'}(\text{Project}))\right)$$</span>
 <span id="cb46-1933"><a href="#cb46-1933" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1934"><a href="#cb46-1934" aria-hidden="true" tabindex="-1"></a>**RELAX syntax:**</span>
 <span id="cb46-1935"><a href="#cb46-1935" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb46-1936"><a href="#cb46-1936" aria-hidden="true" tabindex="-1"></a><span class="in">(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Plocation = 'Bellaire' (Project)))</span></span>
+<span id="cb46-1936"><a href="#cb46-1936" aria-hidden="true" tabindex="-1"></a><span class="in">(π Essn, Pno (Works_On)) ÷ (ρ Pno ← Pnumber (π Pnumber (σ Plocation = 'Bellaire' (Project))))</span></span>
 <span id="cb46-1937"><a href="#cb46-1937" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb46-1938"><a href="#cb46-1938" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-1939"><a href="#cb46-1939" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" icon="false"}</span>
@@ -6201,7 +6201,7 @@ Note
 <span id="cb46-1946"><a href="#cb46-1946" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div class="rx-ex-formula" id="ex14b-formula" style="margin-bottom:8px;"&gt;</span></span>
 <span id="cb46-1947"><a href="#cb46-1947" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;em style="color:#6c757d;font-size:.9em;"&gt;Click Run to see the executed expression…&lt;/em&gt;</span></span>
 <span id="cb46-1948"><a href="#cb46-1948" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
-<span id="cb46-1949"><a href="#cb46-1949" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;button onclick="runSolution('ex14b',&amp;quot;(π Essn, Pno (Works_On)) ÷ (π Pnumber (σ Plocation = 'Bellaire' (Project)))&amp;quot;)"</span></span>
+<span id="cb46-1949"><a href="#cb46-1949" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;button onclick="runSolution('ex14b',&amp;quot;(π Essn, Pno (Works_On)) ÷ (ρ Pno ← Pnumber (π Pnumber (σ Plocation = 'Bellaire' (Project))))&amp;quot;)"</span></span>
 <span id="cb46-1950"><a href="#cb46-1950" aria-hidden="true" tabindex="-1"></a><span class="in">    style="padding:5px 18px;background:#1d7f3f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:.85em;font-weight:600;margin-bottom:8px;"&gt;</span></span>
 <span id="cb46-1951"><a href="#cb46-1951" aria-hidden="true" tabindex="-1"></a><span class="in">    ▶ Run</span></span>
 <span id="cb46-1952"><a href="#cb46-1952" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/button&gt;</span></span>
